@@ -56,8 +56,8 @@ const ic = (n, extra = "") => `<svg viewBox="0 0 24 24" fill="none" stroke="curr
 /* ---------- Speicher ----------
    Doppelt: localStorage (schnell) + IndexedDB (robuster). Beim Start gewinnt der neuere Stand (Zeitstempel).
    Fragen und Lektionen haben stabile Schlüssel (unabhängig vom Modul), alte Schlüssel werden migriert. */
-const KEY = "smm-coach", VERSION = "0.11.1";
-const DEF = () => ({ lek: {}, q: {}, srs: {}, last: null, tests: [], pruefung: "", day: null, seen: 0, set: { size: "m", theme: "auto", goal: "10", vibe: true }, lastBackup: 0, created: Date.now(), updated: 0, run: null, lastRun: null });
+const KEY = "smm-coach", VERSION = "0.11.2";
+const DEF = () => ({ lek: {}, q: {}, srs: {}, last: null, tests: [], pruefung: "", day: null, seen: 0, set: { size: "m", theme: "auto", goal: "15", vibe: true, step: true, mig1: 1 }, lastBackup: 0, created: Date.now(), updated: 0, run: null, lastRun: null });
 let S = DEF();
 try { const x = JSON.parse(localStorage.getItem(KEY) || "null"); if (x) S = Object.assign(DEF(), x); } catch (e) {}
 const IDB = { db: null };
@@ -107,7 +107,8 @@ S.seen = Date.now();
 const BOX_DAYS = [0, 1, 3, 7, 14, 30];
 /* ---------- Lernhilfen: Tagesziel, Serien, Vibration ---------- */
 const dayLocal = () => { const d = new Date(); return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0"); };
-const goal = () => +(S.set?.goal || 10);
+const goal = () => +(S.set?.goal || 15);
+const stepOn = () => S.set?.step !== false; // Schritt für Schritt: Standard an
 const heute = () => (S.day && S.day.d === dayLocal() ? S.day.n : 0);
 function buzz(p) { if (S.set?.vibe !== false && navigator.vibrate) try { navigator.vibrate(p); } catch (e) {} }
 let serie = 0;
@@ -141,7 +142,8 @@ const POOL_KEYS = new Set(POOL.map(p => p.key));
 const LEGACY_MODS = ["einf", "platt", "unt", "recht", "kpi", "plan", "grund", "content", "ads"];
 // Alte Schlüssel (Modul + 40 Zeichen) und alte Lektionsschlüssel (Modul/Lektion) übernehmen, verwaiste entfernen
 function normalizeState() {
- S.q = S.q || {}; S.srs = S.srs || {}; S.lek = S.lek || {}; S.set = Object.assign({ size: "m", theme: "auto", goal: "10", vibe: true }, S.set || {});
+ S.q = S.q || {}; S.srs = S.srs || {}; S.lek = S.lek || {}; S.set = Object.assign({ size: "m", theme: "auto", goal: "15", vibe: true, step: true }, S.set || {});
+ if (!S.set.mig1) { S.set.goal = "15"; S.set.step = true; S.set.mig1 = 1; } // neue Standards 0.11.2
  for (const p of POOL) for (const mid of LEGACY_MODS) {
   const old = mid + ":" + p.q.slice(0, 40);
   if (old in S.q && !(p.key in S.q)) S.q[p.key] = S.q[old];
@@ -316,8 +318,8 @@ function openStory(mid, lid) {
   if (canSay) speechSynthesis.cancel();
   i = Math.max(0, Math.min(F.length - 1, i + d)); rev = 1; draw();
  };
- const rv = (html, n) => S.set?.step ? `<span class="rv ${n > 0 ? "h" : ""}">${html}</span>` : html;
- const saetze = t => S.set?.step ? t.split(/(?<=[.!?:])\s+(?=[A-ZÄÖÜ„*(])/).map((x, n) => rv(md(x), n)).join(" ") : md(t);
+ const rv = (html, n) => stepOn() ? `<span class="rv ${n > 0 ? "h" : ""}">${html}</span>` : html;
+ const saetze = t => stepOn() ? t.split(/(?<=[.!?:])\s+(?=[A-ZÄÖÜ„*(])/).map((x, n) => rv(md(x), n)).join(" ") : md(t);
  const closeS = () => location.replace("#modul-" + mid);
  storyKey = e => {
   if (e.key === "ArrowRight") go(1); if (e.key === "ArrowLeft") go(-1); if (e.key === "Escape") closeS();
@@ -344,7 +346,7 @@ function openStory(mid, lid) {
   const f = F[i], last = f.k === "ende";
   const kindName = { intro: "Lektion", text: "Wissen", liste: "Überblick", beispiel: "Beispiel", merke: "Merke", check: "Kurz-Check", bild: "Schaubild" }[f.k] || "";
   let body = "";
-  if (f.k === "liste") body = `<span class="kind">${kindName}</span><h2>${md(f.h)}</h2><ul>${f.l.map((x, n) => `<li class="${S.set?.step ? "rv" + (n ? " h" : "") : ""}" style="animation-delay:${n * 60}ms">${md(x)}</li>`).join("")}</ul>`;
+  if (f.k === "liste") body = `<span class="kind">${kindName}</span><h2>${md(f.h)}</h2><ul>${f.l.map((x, n) => `<li class="${stepOn() ? "rv" + (n ? " h" : "") : ""}" style="animation-delay:${n * 60}ms">${md(x)}</li>`).join("")}</ul>`;
   else if (f.k === "beispiel" || f.k === "merke") body = `<span class="kind">${kindName}</span><h2>${md(f.h)}</h2><div class="body">${saetze(f.b)}</div>`;
   else if (f.k === "check") {
    const order = f._o || (f._o = shuf(f.a.map((t, k) => k)));
@@ -378,6 +380,7 @@ function openStory(mid, lid) {
 // Karte so verkleinern, dass nichts abgeschnitten wird. Läuft erneut, wenn Schrift
 // nachgeladen ist oder sich die Größe ändert (iOS: Adressleiste, Drehen, Schriftgröße).
 function fitSlide() {
+ if (!storyEl) return;
  const stage = $(".stage", storyEl), slide = $(".slide", storyEl); if (!stage || !slide) return;
  const avail = stage.clientHeight - 8; if (avail <= 0) return;
  const fits = () => slide.scrollHeight <= avail && slide.scrollHeight <= slide.clientHeight + 1;
@@ -925,8 +928,8 @@ function viewEinstellungen(o = {}) {
  <div class="card"><h2 class="h3">Schriftgröße</h2><p class="small muted" style="margin:2px 0 10px">Gilt für die ganze App.</p>${seg("size", [["s", "Klein"], ["m", "Normal"], ["l", "Groß"], ["xl", "Sehr groß"]], "Schriftgröße")}</div>
  <div class="card"><h2 class="h3">Design</h2><p class="small muted" style="margin:2px 0 10px">„Automatisch“ folgt der Einstellung deines Geräts.</p>${seg("theme", [["auto", "Automatisch"], ["light", "Hell"], ["dark", "Dunkel"]], "Design")}</div>
  <div class="card" id="lernhilfen"><h2 class="h3">Lernhilfen</h2><p class="small muted" style="margin:2px 0 6px">Für mehr Fokus und weniger Überforderung – zum Beispiel bei ADHS.</p>
-  ${[["focus", "Fokusmodus", "Blendet Menüleiste, Statistiken und Extras aus."], ["step", "Schritt für Schritt", "Lektionskarten zeigen Satz für Satz bzw. Punkt für Punkt – weiter mit Tippen."], ["calm", "Ruhige Darstellung", "Keine Animationen, gedämpfte Farben, gut lesbare Schrift mit mehr Abstand."], ["vibe", "Vibration bei Antworten", "Kurzes Feedback bei richtig und falsch (nicht auf iPhone)."]].map(([k, t, d]) => `<label class="check sw"><input type="checkbox" data-opt="${k}" ${(k === "vibe" ? S.set.vibe !== false : !!S.set[k]) ? "checked" : ""}><span><b>${t}</b><span class="small muted">${d}</span></span></label>`).join("")}
-  <h3 class="small" style="margin:14px 0 6px">Tagesziel</h3>${seg("goal", [["5", "5 Fragen"], ["10", "10 Fragen"], ["20", "20 Fragen"]], "Tagesziel")}
+  ${[["focus", "Fokusmodus", "Blendet Menüleiste, Statistiken und Extras aus."], ["step", "Schritt für Schritt", "Lektionskarten zeigen Satz für Satz bzw. Punkt für Punkt – weiter mit Tippen."], ["calm", "Ruhige Darstellung", "Keine Animationen, gedämpfte Farben, gut lesbare Schrift mit mehr Abstand."], ["vibe", "Vibration bei Antworten", "Kurzes Feedback bei richtig und falsch (nicht auf iPhone)."]].map(([k, t, d]) => `<label class="check sw"><input type="checkbox" data-opt="${k}" ${(k === "vibe" || k === "step" ? S.set[k] !== false : !!S.set[k]) ? "checked" : ""}><span><b>${t}</b><span class="small muted">${d}</span></span></label>`).join("")}
+  <h3 class="small" style="margin:14px 0 6px">Tagesziel</h3>${seg("goal", [["10", "10 Fragen"], ["15", "15 Fragen"], ["25", "25 Fragen"]], "Tagesziel")}
   <h3 class="small" style="margin:14px 0 6px">Pausen-Erinnerung</h3>${seg("pomo", [["", "Aus"], ["10", "Nach 10 Min."], ["25", "Nach 25 Min."]], "Pausen-Erinnerung")}
   <h3 class="small" style="margin:14px 0 6px">Zeit im Probetest</h3>${seg("clock", [["", "Ruhig (Balken)"], ["genau", "Genau (Sekunden)"]], "Zeitanzeige im Probetest")}
   <p class="small muted" style="margin-top:12px">Vorlesen: Tippe in Lektionen und Fragen auf ${ic("speaker", 'style="width:16px;height:16px;vertical-align:-3px"')}.</p></div>
