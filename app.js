@@ -1,4 +1,6 @@
 import { MODULE, FRAGEN } from "./data/kurs.js";
+import { GLOSSAR, FORMELN } from "./data/glossar.js";
+import { BILDER } from "./data/bilder.js";
 
 /* ---------- Hilfen ---------- */
 const $ = (s, el = document) => el.querySelector(s);
@@ -17,6 +19,14 @@ const I = {
  unt: '<path d="M4 21V7l8-4 8 4v14M9 21v-5h6v5M8 10h.01M12 10h.01M16 10h.01M8 13h.01M16 13h.01"/>',
  kpi: '<path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/>',
  plan: '<circle cx="12" cy="12" r="9"/><path d="M15.5 8.5l-2 5-5 2 2-5z"/>',
+ gear: '<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 00.3 1.8l.1.1a2 2 0 11-2.8 2.8l-.1-.1a1.7 1.7 0 00-1.8-.3 1.7 1.7 0 00-1 1.5V21a2 2 0 11-4 0v-.1a1.7 1.7 0 00-1.1-1.5 1.7 1.7 0 00-1.8.3l-.1.1a2 2 0 11-2.8-2.8l.1-.1a1.7 1.7 0 00.3-1.8 1.7 1.7 0 00-1.5-1H3a2 2 0 110-4h.1a1.7 1.7 0 001.5-1.1 1.7 1.7 0 00-.3-1.8l-.1-.1a2 2 0 112.8-2.8l.1.1a1.7 1.7 0 001.8.3H9a1.7 1.7 0 001-1.5V3a2 2 0 114 0v.1a1.7 1.7 0 001 1.5 1.7 1.7 0 001.8-.3l.1-.1a2 2 0 112.8 2.8l-.1.1a1.7 1.7 0 00-.3 1.8V9a1.7 1.7 0 001.5 1H21a2 2 0 110 4h-.1a1.7 1.7 0 00-1.5 1z"/>',
+ repeat: '<path d="M4 12a8 8 0 0114-5.3L20 9M20 4v5h-5M20 12a8 8 0 01-14 5.3L4 15M4 20v-5h5"/>',
+ box: '<path d="M3 7l9-4 9 4v10l-9 4-9-4zM3 7l9 4 9-4M12 11v10"/>',
+ abc: '<path d="M4 18l4-12 4 12M5.5 14h5M14 6h4a3 3 0 010 6h-4zM14 12h4.5a3 3 0 010 6H14z"/>',
+ download: '<path d="M12 3v12M7 10l5 5 5-5M5 21h14"/>',
+ upload: '<path d="M12 21V9M7 14l5-5 5 5M5 3h14"/>',
+ trash: '<path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/>',
+ search: '<circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/>',
  info: '<circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5v.5"/>',
  cal: '<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/>',
  pen: '<path d="M4 20l4-1 11-11-3-3L5 16zM14 6l3 3"/>',
@@ -40,10 +50,44 @@ const I = {
 };
 const ic = (n, extra = "") => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ${extra}>${I[n]}</svg>`;
 
-/* ---------- Speicher ---------- */
-let S = { lek: {}, q: {}, last: null, tests: [], pruefung: "" };
-try { Object.assign(S, JSON.parse(localStorage.getItem("smm-coach") || "{}")); } catch (e) {}
-const save = () => { try { localStorage.setItem("smm-coach", JSON.stringify(S)); } catch (e) {} };
+/* ---------- Speicher ----------
+   Doppelt: localStorage (schnell) + IndexedDB (robuster). Dazu persistenten Speicher anfragen
+   und regelmäßig an eine Sicherungsdatei erinnern. */
+const KEY = "smm-coach", VERSION = "0.5.0";
+const DEF = () => ({ lek: {}, q: {}, srs: {}, last: null, tests: [], pruefung: "", set: { size: "m", theme: "auto" }, lastBackup: 0, created: Date.now() });
+let S = DEF();
+try { const x = JSON.parse(localStorage.getItem(KEY) || "null"); if (x) S = Object.assign(DEF(), x); } catch (e) {}
+const IDB = { db: null };
+function idbOpen() { return new Promise(res => { try { const r = indexedDB.open("smm-coach", 1); r.onupgradeneeded = () => r.result.createObjectStore("kv"); r.onsuccess = () => { IDB.db = r.result; res(r.result); }; r.onerror = () => res(null); } catch (e) { res(null); } }); }
+function idbGet() { return new Promise(res => { if (!IDB.db) return res(null); try { const q = IDB.db.transaction("kv").objectStore("kv").get(KEY); q.onsuccess = () => res(q.result || null); q.onerror = () => res(null); } catch (e) { res(null); } }); }
+function idbPut(v) { try { IDB.db?.transaction("kv", "readwrite").objectStore("kv").put(v, KEY); } catch (e) {} }
+const save = () => { const v = JSON.stringify(S); try { localStorage.setItem(KEY, v); } catch (e) {} idbPut(v); };
+const hasProgress = st => st && (Object.keys(st.lek || {}).length || Object.keys(st.q || {}).length || (st.tests || []).length);
+async function storageInit() {
+ await idbOpen();
+ const v = await idbGet();
+ // Hat der Browser localStorage geleert, aber IndexedDB behalten: Lernstand wiederherstellen
+ if (v && !hasProgress(S)) { try { const x = JSON.parse(v); if (hasProgress(x)) { S = Object.assign(DEF(), x); save(); applySettings(); route(); toast("Lernstand wiederhergestellt"); } } catch (e) {} }
+ else if (hasProgress(S)) save();
+ try { if (navigator.storage?.persist && !(await navigator.storage.persisted())) await navigator.storage.persist(); } catch (e) {}
+}
+function applySettings() {
+ const r = document.documentElement;
+ r.dataset.size = S.set?.size || "m";
+ if (S.set?.theme && S.set.theme !== "auto") r.dataset.theme = S.set.theme; else delete r.dataset.theme;
+}
+applySettings();
+
+/* Wiederholen mit System (Leitner): Fach 0–5, Abstand in Tagen */
+const BOX_DAYS = [0, 1, 3, 7, 14, 30];
+function grade(key, ok) {
+ const e = S.srs[key] || { b: 0, w: 0 };
+ if (ok) e.b = Math.min(5, e.b + 1); else { e.b = 0; e.w = (e.w || 0) + 1; }
+ e.due = Date.now() + (ok ? BOX_DAYS[e.b] * 86400000 : 10 * 60000);
+ S.srs[key] = e; S.q[key] = ok;
+}
+const dueKeys = () => Object.entries(S.srs).filter(([, e]) => e.due <= Date.now()).map(([k]) => k);
+const errorKeys = () => Object.entries(S.srs).filter(([, e]) => e.w > 0 && e.b < 3).map(([k]) => k);
 function toast(t) { const el = $("#toast"); el.textContent = t; el.classList.add("on"); clearTimeout(toast.t); toast.t = setTimeout(() => el.classList.remove("on"), 2200); }
 
 /* ---------- Fragenpool ---------- */
@@ -70,7 +114,7 @@ function tabbar(active) {
  return `<nav class="tabbar" aria-label="Navigation">${TABS.map(([h, t, i]) => `<a href="#${h}" class="${active === h ? "on" : ""}">${ic(i)}<span>${t}</span></a>`).join("")}</nav>`;
 }
 function page(active, html) { app.innerHTML = `<div class="wrap">${html}</div>${tabbar(active)}`; window.scrollTo(0, 0); }
-function head() { return `<div class="top"><div class="logo">${ic("bolt", 'stroke="#fff"')}</div><div class="t">SMM Coach<small>Social Media Manager (IHK)</small></div></div>`; }
+function head() { return `<div class="top"><div class="logo">${ic("bolt", 'stroke="#fff"')}</div><div class="t">SMM Coach<small>Social Media Manager (IHK)</small></div><a class="iconbtn" href="#einstellungen" aria-label="Einstellungen">${ic("gear")}</a></div>`; }
 
 function route() {
  closeStory(); clearInterval(testTimer);
@@ -83,6 +127,8 @@ function route() {
  if (h === "pruefung") return viewPruefung();
  if (h === "test") return viewTest();
  if (h === "lehrgang") return viewLehrgang();
+ if (h === "glossar") return viewGlossar();
+ if (h === "einstellungen") return viewEinstellungen();
  return viewStart();
 }
 addEventListener("hashchange", route);
@@ -113,6 +159,8 @@ function viewStart() {
   <div class="hero-stat"><div><b>${lessonsDone}/${lessonsAll}</b><span>Lektionen</span></div><div><b>${POOL.filter(q => S.q[q.key]).length}</b><span>Fragen sicher</span></div><div><b>${best === null ? "–" : best + " %"}</b><span>Bester Test</span></div></div>
   ${n ? `<div class="row"><a class="btn white" href="#lektion-${n.m.id}-${n.l.id}">${ic("play")} ${p > 0 ? "Weiterlernen" : "Erste Lektion starten"}</a></div>` : ""}
  </section>
+ ${(() => { const d = dueKeys().length; return d ? `<a class="cont" href="#quiz-wdh" style="margin-bottom:10px"><div class="thumb" style="background:linear-gradient(135deg,#1864ab,#6741d9)">${ic("repeat")}</div><div><b style="font-size:16px">${d} Wiederholung${d === 1 ? "" : "en"} fällig</b><div class="small muted">Kurz auffrischen, damit es bis zur Prüfung sitzt.</div></div><span class="chev" style="margin-left:auto;color:var(--ink-3)">${ic("right")}</span></a>` : ""; })()}
+ ${hasProgress(S) && Date.now() - (S.lastBackup || S.created || 0) > 14 * 86400000 ? `<a class="cont" href="#einstellungen" style="margin-bottom:10px"><div class="thumb" style="background:linear-gradient(135deg,#495057,#212529)">${ic("download")}</div><div><b style="font-size:16px">Lernstand sichern</b><div class="small muted">Lade eine Sicherungsdatei herunter – falls der Browser Daten löscht.</div></div><span class="chev" style="margin-left:auto;color:var(--ink-3)">${ic("right")}</span></a>` : ""}
  ${S.pruefung ? "" : `<a class="cont" href="#lehrgang" style="margin-bottom:6px"><div class="thumb" style="background:var(--grad-strong)">${ic("cal")}</div><div><b style="font-size:16px">Prüfungstermin eintragen</b><div class="small muted">Dann zeigt dir die App, wie viel du pro Woche lernen solltest.</div></div><span class="chev" style="margin-left:auto;color:var(--ink-3)">${ic("right")}</span></a>`}
  <div class="sec-h"><h2>Deine Module</h2><a class="small muted" href="#lernen">Alle anzeigen</a></div>
  ${ringsHtml()}
@@ -128,8 +176,18 @@ function viewStart() {
 }
 
 /* ---------- Lernen ---------- */
+function toolTiles() {
+ const due = dueKeys().length, err = errorKeys().length;
+ return `<div class="tiles three">
+  <a class="tile" href="#quiz-wdh"><div class="ti" style="background:linear-gradient(135deg,#1864ab,#6741d9)">${ic("repeat")}</div><b>Wiederholen</b><span>${due ? `${due} Frage${due === 1 ? "" : "n"} fällig` : "Nichts fällig"}</span></a>
+  <a class="tile" href="#quiz-fehler"><div class="ti" style="background:linear-gradient(135deg,#c92a2a,#a61e4d)">${ic("box")}</div><b>Fehlerkiste</b><span>${err ? `${err} offene Fehler` : "Leer"}</span></a>
+  <a class="tile" href="#glossar"><div class="ti" style="background:linear-gradient(135deg,#2b8a3e,#1864ab)">${ic("abc")}</div><b>Glossar & Formeln</b><span>${GLOSSAR.length} Begriffe, ${FORMELN.length} Formeln</span></a>
+ </div>`;
+}
 function viewLernen() {
  page("lernen", `${head()}<h1 style="margin-bottom:6px">Lernen</h1><p class="muted" style="margin-bottom:18px">Sechs Module – jedes mit kurzen Lektionen und einem Quiz.</p>
+ ${toolTiles()}
+ <div class="sec-h"><h2>Module</h2></div>
  ${MODULE.map(m => { const p = modProgress(m); return `<a class="cont" href="#modul-${m.id}" style="text-decoration:none;margin-bottom:12px"><div class="thumb" style="background:${modGrad(m)}">${ic(m.id)}</div><div style="flex:1;min-width:0"><b style="font-size:17px">${m.name}</b><div class="small muted">${lekDone(m)}/${m.lektionen.length} Lektionen · ${qDone(m.id)}/${modPool(m.id).length} Fragen</div><div class="bar dark" style="margin-top:8px"><i style="width:${p * 100}%"></i></div></div></a>`; }).join("")}`);
 }
 function viewModul(id) {
@@ -160,7 +218,7 @@ function openStory(mid, lid) {
  addEventListener("keydown", storyKey);
  function draw() {
   const f = F[i], last = f.k === "ende";
-  const kindName = { intro: "Lektion", text: "Wissen", liste: "Überblick", beispiel: "Beispiel", merke: "Merke", check: "Kurz-Check" }[f.k] || "";
+  const kindName = { intro: "Lektion", text: "Wissen", liste: "Überblick", beispiel: "Beispiel", merke: "Merke", check: "Kurz-Check", bild: "Schaubild" }[f.k] || "";
   let body = "";
   if (f.k === "liste") body = `<span class="kind">${kindName}</span><h2>${md(f.h)}</h2><ul>${f.l.map((x, n) => `<li style="animation-delay:${n * 60}ms">${md(x)}</li>`).join("")}</ul>`;
   else if (f.k === "beispiel" || f.k === "merke") body = `<span class="kind">${kindName}</span><h2>${md(f.h)}</h2><div class="body">${md(f.b)}</div>`;
@@ -169,6 +227,7 @@ function openStory(mid, lid) {
    const a = answered[i];
    body = `<span class="kind">${kindName}</span><h2 style="font-size:1.3em">${md(f.q)}</h2>${order.map((k, n) => { let cl = ""; if (a !== undefined) cl = k === f.c ? "ok" : k === a ? "bad" : "dim"; return `<button class="opt ${cl}" data-k="${k}"><span class="l">${"ABCD"[n]}</span><span>${esc(f.a[k])}</span></button>`; }).join("")}${a !== undefined ? `<div class="fb ${a === f.c ? "ok" : "bad"}"><b>${a === f.c ? "Richtig!" : "Nicht ganz."}</b>${esc(f.e)}</div>` : ""}`;
   }
+  else if (f.k === "bild") body = `<span class="kind">${kindName}</span><h2>${md(f.h)}</h2><div class="dg">${BILDER[f.svg] || ""}</div>${f.b ? `<div class="body small-body">${md(f.b)}</div>` : ""}`;
   else if (last) body = `<div style="text-align:center"><div class="confetti">🎉</div><span class="kind">Geschafft</span><h2>${esc(l.titel)}</h2><div class="body">Lektion abgeschlossen. ${nextIn(m, l) ? "Weiter mit der nächsten Lektion?" : "Jetzt im Modul-Quiz festigen!"}</div></div>`;
   else body = `<span class="kind">${kindName}</span><h2>${md(f.h)}</h2><div class="body">${md(f.b)}</div>`;
   const nx = nextIn(m, l);
@@ -183,7 +242,7 @@ function openStory(mid, lid) {
   $(".tapzone.l", storyEl)?.addEventListener("click", () => go(-1));
   $(".tapzone.r", storyEl)?.addEventListener("click", () => go(1));
   fitSlide();
-  $$(".opt", storyEl).forEach(b => b.onclick = () => { if (i in answered) return; answered[i] = +b.dataset.k; const p = POOL.find(p => p.q === f.q); if (p && answered[i] === f.c) S.q[p.key] = true; save(); draw(); });
+  $$(".opt", storyEl).forEach(b => b.onclick = () => { if (i in answered) return; answered[i] = +b.dataset.k; const p = POOL.find(p => p.q === f.q); if (p) grade(p.key, answered[i] === f.c); save(); draw(); });
  }
  draw();
 }
@@ -211,18 +270,20 @@ function musterHtml(q, txt) {
  return `<div class="fb ${n >= q.min ? "ok" : "bad"}" style="margin-top:12px"><b>Musterlösung</b><span class="small">Gefordert: mindestens ${q.min} Punkt${q.min > 1 ? "e" : ""}. ${txt ? `In deiner Antwort erkannt: ${n}.` : ""}</span><ul class="muster">${q.muster.map(([t], i) => `<li class="${hit[i] ? "hit" : ""}">${ic(hit[i] ? "check" : "right", 'stroke-width="3"')}<span>${esc(t)}</span></li>`).join("")}</ul><span class="small muted">Die Erkennung ist nur eine Hilfe – entscheide selbst, ob deine Antwort passt.</span></div>`;
 }
 function viewQuiz(id) {
- const m = modById(id), isMix = id === "mix", isFrei = id === "frei";
- let list = isMix ? shuf(MC_POOL()).slice(0, 10) : isFrei ? shuf(FREI_POOL()) : shuf(modPool(id)).sort((a, b) => (S.q[a.key] ? 1 : 0) - (S.q[b.key] ? 1 : 0));
- if (!m && !isMix && !isFrei) return viewLernen();
+ const m = modById(id), isMix = id === "mix", isFrei = id === "frei", isWdh = id === "wdh", isErr = id === "fehler";
+ const byKeys = ks => shuf(POOL.filter(q => ks.includes(q.key)));
+ let list = isWdh ? byKeys(dueKeys()).slice(0, 20) : isErr ? byKeys(errorKeys()) : isMix ? shuf(MC_POOL()).slice(0, 10) : isFrei ? shuf(FREI_POOL()) : shuf(modPool(id)).sort((a, b) => (S.q[a.key] ? 1 : 0) - (S.q[b.key] ? 1 : 0));
+ if (!m && !isMix && !isFrei && !isWdh && !isErr) return viewLernen();
+ if (!list.length) { page("lernen", `<a class="back" href="#lernen">${ic("left")} Lernen</a><div class="qcard result"><h2>${isWdh ? "Nichts fällig" : "Fehlerkiste ist leer"}</h2><p class="muted">${isWdh ? "Gerade ist keine Wiederholung fällig. Schau morgen wieder rein." : "Super – keine offenen Fehler."}</p></div>`); return; }
  const total = list.length; let queue = list.slice(), first = 0, miss = new Set(), n = 0;
- const backHref = m ? "#modul-" + id : "#start", tab = m ? "lernen" : "start";
+ const backHref = m ? "#modul-" + id : (isWdh || isErr) ? "#lernen" : "#start", tab = m || isWdh || isErr ? "lernen" : "start";
  next();
  function next() {
   if (!queue.length) return done();
   const q = queue.shift(); n++;
   const { html } = quizCard(q, miss.has(q) ? "Wiederholung" : `${Math.min(n, total)} / ${total}`);
   page(tab, `<a class="back" href="${backHref}">${ic("x")} Beenden</a><div class="bar dark" style="margin:0 0 16px"><i style="width:${(1 - (queue.length + 1) / (total + miss.size)) * 100}%"></i></div>${html}`);
-  const rate = ok => { if (ok) { S.q[q.key] = true; if (!miss.has(q)) first++; } else { S.q[q.key] = false; miss.add(q); queue.push(q); } save(); };
+  const rate = ok => { grade(q.key, ok); if (ok) { if (!miss.has(q)) first++; } else { miss.add(q); queue.push(q); } save(); };
   const weiter = () => { $(".fbx").insertAdjacentHTML("beforeend", `<button class="btn block" style="margin-top:14px" id="nx">Weiter ${ic("right")}</button>`); $("#nx").onclick = next; $("#nx").focus(); };
   if (q.t === "frei") {
    $(".fbx").innerHTML = `<button class="btn ghost block" style="margin-top:12px" id="show">Musterlösung anzeigen</button>`;
@@ -295,7 +356,7 @@ function viewTest() {
     ${wrong.length ? `<div class="sec-h"><h2>Multiple Choice nacharbeiten</h2></div>${wrong.map(x => `<div class="card">${chip(x.q)}<p style="font-weight:700;margin-top:10px">${esc(x.q.q)}</p><p class="small" style="color:var(--bad)">Deine Antwort: ${x.a === undefined ? "keine" : esc(x.q.a[x.a])}</p><p class="small" style="color:var(--ok)">Richtig: ${esc(x.q.a[x.q.c])}</p><div class="fb ok" style="margin-top:8px">${esc(x.q.e)}</div></div>`).join("")}` : ""}`);
     $$("[data-v]").forEach(b => b.onclick = () => { const y = scrollY; rated[b.dataset.k] = +b.dataset.v; draw(); scrollTo(0, y); });
     $("#again")?.addEventListener("click", viewTest);
-    if (allRated && !draw.saved) { draw.saved = true; list.forEach((q, k) => S.q[q.key] = q.t === "frei" ? rated[k] === 1 : ans[k] === q.c); S.tests.push(pct); save(); }
+    if (allRated && !draw.saved) { draw.saved = true; list.forEach((q, k) => grade(q.key, q.t === "frei" ? rated[k] === 1 : ans[k] === q.c)); S.tests.push(pct); save(); }
    }
   }
  };
@@ -472,3 +533,84 @@ function nag() {
  document.body.appendChild(el); document.body.classList.add("nagged");
 }
 installGate();
+
+/* ---------- Glossar & Formeln ---------- */
+function viewGlossar(tab = "begriffe", qy = "") {
+ const norm = t => t.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "");
+ const items = GLOSSAR.filter(g => !qy || norm(g.w + " " + g.d).includes(norm(qy))).sort((a, b) => a.w.localeCompare(b.w, "de"));
+ const fs = FORMELN.filter(f => !qy || norm(f.n + " " + f.f).includes(norm(qy)));
+ page("lernen", `<a class="back" href="#lernen">${ic("left")} Lernen</a><h1 style="margin-bottom:12px">Glossar & Formeln</h1>
+ <div class="searchbox">${ic("search")}<input type="search" id="gq" placeholder="Begriff suchen …" value="${esc(qy)}" aria-label="Begriff suchen"></div>
+ <div class="seg" role="tablist"><button role="tab" data-t="begriffe" aria-selected="${tab === "begriffe"}" class="${tab === "begriffe" ? "on" : ""}">Begriffe (${items.length})</button><button role="tab" data-t="formeln" aria-selected="${tab === "formeln"}" class="${tab === "formeln" ? "on" : ""}">Formeln (${fs.length})</button></div>
+ <div id="glist">${tab === "begriffe"
+  ? (items.length ? items.map(g => { const m = modById(g.m); return `<div class="gl" style="--m:${m.farbe}"><b>${esc(g.w)}</b><p>${esc(g.d)}</p><span class="small muted">${m.kurz}</span></div>`; }).join("") : `<p class="muted">Kein Begriff gefunden.</p>`)
+  : (fs.length ? fs.map(f => `<div class="card formel"><b>${esc(f.n)}</b><div class="eq">${esc(f.f)}</div><p class="small"><b>Beispiel:</b> ${esc(f.b)}</p>${f.h ? `<p class="small muted">${esc(f.h)}</p>` : ""}</div>`).join("") : `<p class="muted">Keine Formel gefunden.</p>`)}</div>`);
+ const inp = $("#gq");
+ inp.oninput = () => { const v = inp.value, pos = inp.selectionStart; viewGlossar(tab, v); const n = $("#gq"); n.focus(); n.setSelectionRange(pos, pos); };
+ $$(".seg button").forEach(b => b.onclick = () => viewGlossar(b.dataset.t, inp.value));
+}
+
+/* ---------- Einstellungen & Datensicherung ---------- */
+function exportBackup() {
+ S.lastBackup = Date.now(); save();
+ const blob = new Blob([JSON.stringify({ app: "smm-coach", v: 1, date: new Date().toISOString(), data: S }, null, 1)], { type: "application/json" });
+ const name = `smm-coach-sicherung-${new Date().toISOString().slice(0, 10)}.json`;
+ const file = new File([blob], name, { type: "application/json" });
+ if (navigator.canShare?.({ files: [file] }) && platform().os !== "desktop") { navigator.share({ files: [file], title: "SMM Coach Sicherung" }).catch(() => {}); return; }
+ const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = name; document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 1000);
+ toast("Sicherung erstellt");
+}
+function importBackup(file) {
+ const r = new FileReader();
+ r.onload = () => {
+  try {
+   const x = JSON.parse(r.result);
+   if (x.app !== "smm-coach" || !x.data) throw new Error();
+   S = Object.assign(DEF(), x.data); save(); applySettings(); toast("Lernstand wiederhergestellt"); viewEinstellungen();
+  } catch (e) { toast("Das ist keine gültige SMM-Coach-Sicherung"); }
+ };
+ r.readAsText(file);
+}
+function viewEinstellungen(confirmReset = false) {
+ const seg = (key, opts) => `<div class="seg">${opts.map(([v, t]) => `<button data-${key}="${v}" class="${(S.set[key] || "") === v ? "on" : ""}">${t}</button>`).join("")}</div>`;
+ const lb = S.lastBackup ? new Date(S.lastBackup).toLocaleDateString("de-DE") : "noch nie";
+ page("start", `<a class="back" href="#start">${ic("left")} Start</a><h1 style="margin-bottom:16px">Einstellungen</h1>
+ <div class="card"><h3>Schriftgröße</h3><p class="small muted" style="margin:2px 0 10px">Gilt für die ganze App.</p>${seg("size", [["s", "Klein"], ["m", "Normal"], ["l", "Groß"], ["xl", "Sehr groß"]])}</div>
+ <div class="card"><h3>Design</h3><p class="small muted" style="margin:2px 0 10px">„Automatisch“ folgt der Einstellung deines Geräts.</p>${seg("theme", [["auto", "Automatisch"], ["light", "Hell"], ["dark", "Dunkel"]])}</div>
+ <div class="card"><h3>Lernstand sichern</h3><p class="small muted" style="margin:2px 0 12px">Dein Fortschritt liegt nur auf diesem Gerät. Mit einer Sicherungsdatei kannst du ihn wiederherstellen oder auf ein anderes Gerät mitnehmen. Letzte Sicherung: ${lb}.</p>
+  <div class="row"><button class="btn" id="exp">${ic("download")} Sicherung erstellen</button><label class="btn ghost" for="imp">${ic("upload")} Wiederherstellen</label><input type="file" id="imp" accept="application/json,.json" hidden></div>
+  <p class="small muted" style="margin-top:10px" id="storeinfo"></p></div>
+ <div class="card"><h3>App</h3><div class="row" style="margin-top:8px"><button class="btn ghost" id="inst">Als App installieren</button><a class="btn ghost" href="#lehrgang">Prüfungstermin</a></div></div>
+ <div class="card"><h3>Fortschritt löschen</h3><p class="small muted" style="margin:2px 0 12px">Löscht Lektionen, Fragen, Wiederholungen und Testergebnisse auf diesem Gerät.</p>
+  ${confirmReset ? `<div class="tip">${ic("warn", 'style="color:var(--bad)"')}<span>Wirklich alles löschen? Das lässt sich nur mit einer Sicherungsdatei rückgängig machen.</span></div><div class="row"><button class="btn ghost" id="rno">Abbrechen</button><button class="btn danger" id="ryes">${ic("trash")} Endgültig löschen</button></div>` : `<button class="btn ghost" id="reset">${ic("trash")} Fortschritt löschen</button>`}</div>
+ <p class="small muted" style="text-align:center;margin-top:20px">SMM Coach · Version ${VERSION}<br>Unabhängiges Lernangebot, kein offizielles Angebot der IHK oder der HSB Akademie.</p>`);
+ $$("[data-size]").forEach(b => b.onclick = () => { S.set.size = b.dataset.size; save(); applySettings(); viewEinstellungen(); });
+ $$("[data-theme]").forEach(b => b.onclick = () => { S.set.theme = b.dataset.theme; save(); applySettings(); viewEinstellungen(); });
+ $("#exp").onclick = exportBackup;
+ $("#imp").onchange = e => e.target.files[0] && importBackup(e.target.files[0]);
+ $("#inst").onclick = () => { const p = platform(); if (p.standalone) toast("Die App ist bereits installiert"); else if (p.os === "desktop") toast("Am Computer: Installieren-Symbol in der Adresszeile"); else installGate(true); };
+ $("#reset")?.addEventListener("click", () => viewEinstellungen(true));
+ $("#rno")?.addEventListener("click", () => viewEinstellungen());
+ $("#ryes")?.addEventListener("click", () => { const keep = { set: S.set, lastBackup: S.lastBackup }; S = Object.assign(DEF(), keep); save(); toast("Fortschritt gelöscht"); location.hash = "start"; });
+ (async () => { try { const p = await navigator.storage?.persisted?.(); $("#storeinfo").textContent = `${IDB.db ? "✓ Doppelte Speicherung aktiv" : "Nur einfache Speicherung"} · ${p ? "✓ Dauerhafter Speicher vom Browser bestätigt" : "Dauerhafter Speicher nicht bestätigt – am sichersten: App installieren und ab und zu sichern."}`; } catch (e) {} })();
+}
+
+/* ---------- Updates: neue Version anbieten ---------- */
+function updateBanner(worker) {
+ if ($("#upd")) return;
+ const el = document.createElement("div"); el.id = "upd"; el.className = "upd"; el.setAttribute("role", "status");
+ el.innerHTML = `<span><b>Neue Version verfügbar</b><span class="small">Mit neuen Inhalten und Verbesserungen.</span></span><button class="btn white">Jetzt laden</button>`;
+ el.querySelector("button").onclick = () => { worker.postMessage({ type: "SKIP_WAITING" }); el.querySelector("button").textContent = "Lädt …"; };
+ document.body.appendChild(el);
+}
+if ("serviceWorker" in navigator && location.protocol === "https:") {
+ navigator.serviceWorker.getRegistration().then(reg => {
+  if (!reg) return;
+  if (reg.waiting && navigator.serviceWorker.controller) updateBanner(reg.waiting);
+  reg.addEventListener("updatefound", () => { const w = reg.installing; w?.addEventListener("statechange", () => { if (w.state === "installed" && navigator.serviceWorker.controller) updateBanner(w); }); });
+  setInterval(() => reg.update().catch(() => {}), 60 * 60000);
+ }).catch(() => {});
+ let reloaded = false;
+ navigator.serviceWorker.addEventListener("controllerchange", () => { if (!reloaded && $("#upd")) { reloaded = true; location.reload(); } });
+}
+storageInit();

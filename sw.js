@@ -1,10 +1,15 @@
 // Service Worker: alles für die Offline-Nutzung vorhalten.
 // Bei jeder Inhaltsänderung CACHE hochzählen, damit Geräte die neue Version laden.
-const CACHE = 'smm-v0.4.0';
-const ASSETS = ['./', 'index.html', 'app.css', 'app.js', 'data/kurs.js', 'manifest.webmanifest',
+const CACHE = 'smm-v0.5.0';
+const ASSETS = ['./', 'index.html', 'app.css', 'app.js', 'data/kurs.js', 'data/glossar.js', 'data/bilder.js', 'manifest.webmanifest',
   'icons/icon.svg', 'icons/icon-192.png', 'icons/icon-512.png', 'icons/maskable-512.png',
   'fonts/Poppins-Medium.woff', 'fonts/Poppins-Bold.woff'];
-self.addEventListener('install', e => { e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS))); self.skipWaiting(); });
+self.addEventListener('install', e => {
+  e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS)));
+  // Erstbesuch: sofort aktiv. Update: wartet, bis der Nutzer „Jetzt laden“ tippt.
+  if (!self.registration.active) self.skipWaiting();
+});
+self.addEventListener('message', e => { if (e.data?.type === 'SKIP_WAITING') self.skipWaiting(); });
 self.addEventListener('activate', e => {
   e.waitUntil(caches.keys().then(k => Promise.all(k.filter(x => x !== CACHE).map(x => caches.delete(x)))).then(() => self.clients.claim()));
 });

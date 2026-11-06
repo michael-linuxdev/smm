@@ -316,6 +316,17 @@ export const MODULE = [
    lektionen: [L("grund", "strategie"), L("grund", "ziele"), L("grund", "persona"), L("content", "content-strategie"), L("content", "redaktion"), L("ads", "ads-basis"), L("ads", "budget")] }
 ];
 L("ads", "ads-kpi").titel = "Kennzahlen bei Anzeigen & Tests";
+// Schaubilder einfügen (Folientyp „bild“, Grafiken in data/bilder.js)
+const LX = id => MODULE.flatMap(m => m.lektionen).find(l => l.id === id);
+const bild = (id, nach, svg, h, b) => LX(id).folien.splice(nach, 0, { k: "bild", svg, h, b });
+LX("strategie").folien = LX("strategie").folien.filter(f => f.h !== "Social-Media-Guidelines"); // steht jetzt in „Organisation“
+bild("strategie", 2, "prozess", "Ein Kreislauf, kein Einmal-Projekt", "Nach der Messung beginnt die Analyse von vorn – die Strategie wird laufend verbessert.");
+bild("strategie", 4, "ope", "Owned, Paid, Earned", "Die drei Medienarten greifen ineinander: Bezahlte Reichweite bringt Menschen auf eigene Kanäle, gute Inhalte erzeugen Earned Media.");
+bild("einbettung", 1, "pyramide", "Die Ziel-Pyramide", "Von oben nach unten wird abgeleitet: Jedes Social-Media-Ziel zahlt auf ein Unternehmensziel ein.");
+bild("organisation", 1, "orga", "Drei Modelle im Vergleich", "Zentral = einheitlich, dezentral = nah an den Fachabteilungen, Hub-and-Spoke = Kompromiss aus beidem.");
+bild("ads-basis", 1, "funnel", "Der Funnel", "Je Stufe passen andere Inhalte, Kampagnenziele und Kennzahlen.");
+bild("kennzahlen", 2, "reichweite", "Reichweite vs. Impressionen", "Reichweite zählt Personen, Impressionen zählen Anzeigen.");
+
 
 // Alte Quizfragen den neuen Modulen zuordnen
 const UMZUG = { grund: "plan", content: "plan", ads: "plan", platt: "platt", kpi: "kpi", recht: "recht" };
