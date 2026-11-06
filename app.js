@@ -55,12 +55,13 @@ const I = {
  copy: '<rect x="8" y="8" width="12" height="12" rx="2"/><path d="M4 16V5a1 1 0 011-1h11"/>',
  shuffle: '<path d="M3 6h4l10 12h4M3 18h4l3-3.5M14 9.5L17 6h4M18 3l3 3-3 3M18 15l3 3-3 3"/>'
 };
+const LET = "ABCDEFGH";
 const ic = (n, extra = "") => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ${extra}>${I[n]}</svg>`;
 
 /* ---------- Speicher ----------
    Doppelt: localStorage (schnell) + IndexedDB (robuster). Beim Start gewinnt der neuere Stand (Zeitstempel).
    Fragen und Lektionen haben stabile Schlüssel (unabhängig vom Modul), alte Schlüssel werden migriert. */
-const KEY = "smm-coach", VERSION = "0.15.1";
+const KEY = "smm-coach", VERSION = "0.16.1";
 const DEF = () => ({ lek: {}, q: {}, srs: {}, last: null, tests: [], pruefung: "", day: null, seen: 0, set: { size: "m", theme: "auto", goal: "15", vibe: true, step: true, mig1: 1 }, lastBackup: 0, created: Date.now(), updated: 0, run: null, lastRun: null });
 let S = DEF();
 try { const x = JSON.parse(localStorage.getItem(KEY) || "null"); if (x) S = Object.assign(DEF(), x); } catch (e) {}
@@ -305,6 +306,19 @@ function terminInfo() {
  const n = naechsterTermin(); if (!n) return TERMINE.some(([k]) => terminWert(k)) ? "Alle eingetragenen Termine liegen in der Vergangenheit." : "Trag deine Termine ein, sobald du sie kennst.";
  return n.d === 0 ? `Heute: ${n.t}${n.k === "pruefung" ? " – viel Erfolg!" : ""}` : `Als Nächstes: ${n.t} in ${n.d} Tag${n.d === 1 ? "" : "en"}.`;
 }
+// Nächste Online-Vorlesung für DICH: montags 18:30, frühestens ab deinem Kursbeginn.
+// Vor dem Beginn zählt der Vorlesungsplan (Foto des laufenden Kurses) nicht – da startest du ja erst.
+function naechsteOnline() {
+ const heuteD = dayLocal(), jetzt = new Date(), ab = S.kursStart && S.kursStart > heuteD ? S.kursStart : heuteD;
+ const laeuft = d => d > heuteD || (d === heuteD && jetzt.getHours() * 60 + jetzt.getMinutes() < 20 * 60);
+ const v = VORLESUNGEN.find(x => x.datum >= ab && laeuft(x.datum));
+ if (v) return v;
+ if (!S.kursStart) return null;
+ // Nach dem bekannten Plan: einfach den nächsten Montag ab Beginn nehmen
+ const d = new Date(ab + "T12:00"); while (d.getDay() !== 1) d.setDate(d.getDate() + 1);
+ const iso = d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0");
+ return laeuft(iso) ? { datum: iso, titel: "Online-Vorlesung" } : null;
+}
 // Countdown auf Start: Prüfung + nächster Termin (Beginn, Workshop, Online-Vorlesung)
 function countdowns() {
  const heuteD = dayLocal(), jetzt = new Date(), out = [];
@@ -312,9 +326,11 @@ function countdowns() {
  const evs = [];
  if (S.kursStart && S.kursStart >= heuteD) evs.push({ t: "Beginn", d: S.kursStart, i: "play" });
  (S.workshops || []).forEach((w, k) => { if (w && w >= heuteD) evs.push({ t: `Workshop ${k + 1}`, d: w, i: "pen" }); });
- const v = VORLESUNGEN.find(x => x.datum > heuteD || (x.datum === heuteD && jetzt.getHours() * 60 + jetzt.getMinutes() < 20 * 60));
- if (v) evs.push({ t: /sprechstunde/i.test(v.titel) ? "Sprechstunde" : "Online-Vorlesung", d: v.datum, i: "clock", zeit: "18:30" });
+ const v = naechsteOnline();
+ if (v) evs.push({ t: /sprechstunde/i.test(v.titel || "") ? "Sprechstunde" : "Online-Vorlesung", d: v.datum, i: "clock", zeit: "18:30" });
  evs.sort((a, b) => a.d.localeCompare(b.d));
+ // Beginn und erste Vorlesung am selben Tag zusammenfassen
+ if (evs[0] && evs[1] && evs[0].d === evs[1].d && evs[0].t === "Beginn") { evs[0] = { ...evs[1], t: "Beginn + Vorlesung" }; }
  if (S.pruefung && S.pruefung >= heuteD) out.push({ t: "Prüfung", d: S.pruefung, i: "exam", haupt: true });
  if (evs[0]) out.push(evs[0]);
  return out.map(e => ({ ...e, n: tage(e.d) }));
@@ -322,15 +338,16 @@ function countdowns() {
 function countdownHtml() {
  const c = countdowns(); if (!c.length) return "";
  const wann = e => e.n === 0 ? (e.zeit ? `heute ${e.zeit}` : "heute") : e.n === 1 ? (e.zeit ? `morgen ${e.zeit}` : "morgen") : `in ${e.n} Tagen`;
- return `<div class="countdown">${c.map(e => `<a href="#lehrgang" class="cd ${e.haupt ? "haupt" : ""}">${ic(e.i)}<span><b>${e.n > 1 ? e.n : wann(e)}</b>${e.n > 1 ? `<small>Tage · ${esc(e.t)}</small>` : `<small>${esc(e.t)}</small>`}</span></a>`).join("")}</div>`;
+ const dat = e => new Date(e.d + "T12:00").toLocaleDateString("de-DE", { weekday: "short", day: "2-digit", month: "2-digit" }) + (e.zeit ? `, ${e.zeit}` : "");
+ return `<div class="countdown">${c.map(e => `<a href="#lehrgang" class="cd ${e.haupt ? "haupt" : ""}" aria-label="${esc(e.t)} ${esc(dat(e))}, ${esc(wann(e))}">${ic(e.i)}<span><b>${e.n > 1 ? `${e.n} Tage` : wann(e)}</b><small>${esc(e.t)}</small><small>${esc(dat(e))}</small></span></a>`).join("")}</div>`;
 }
 function daysLeft() { if (!S.pruefung) return null; const d = Math.ceil((new Date(S.pruefung + "T09:00") - Date.now()) / 86400000); return isNaN(d) ? null : d; }
 // Hauptseiten sollen ohne Scrollen passen: notfalls die unwichtigsten Hinweiskarten ausblenden
 /* ---------- Vorlesungsplan (laut Foto des Teilnehmers, nicht offiziell) ---------- */
 const LEK = id => { for (const m of MODULE) { const l = m.lektionen.find(x => x.id === id); if (l) return { m, l }; } return null; };
-const datumDE = d => new Date(d + "T12:00").toLocaleDateString("de-DE", { weekday: "short", day: "2-digit", month: "2-digit" });
+const datumDE = d => new Date(d + "T12:00").toLocaleDateString("de-DE", { day: "2-digit", month: "2-digit" });
 // nächste Vorlesung mit Inhalt (ab heute; Montag gilt noch bis zum Ende des Tages)
-function naechsteVorlesung() { const heuteD = dayLocal(); return VORLESUNGEN.find(v => v.datum >= heuteD && v.lektionen.length) || null; }
+function naechsteVorlesung() { const heuteD = dayLocal(), ab = S.kursStart && S.kursStart > heuteD ? S.kursStart : heuteD; return VORLESUNGEN.find(v => v.datum >= ab && v.lektionen.length) || null; }
 function fitMain() {
  const tb = $(".tabbar"); if (!tb) return;
  const limit = () => tb.getBoundingClientRect().top - 6;
@@ -343,24 +360,25 @@ function viewStart() {
  const best = S.tests.length ? Math.max(...S.tests) : null;
  const kern = KERN(), kernAll = kern.reduce((a, m) => a + m.lektionen.length, 0), kernDone = kern.reduce((a, m) => a + lekDone(m), 0);
  const offen = kernAll - kernDone, lernTage = dl > 3 ? dl - 3 : Math.max(1, dl), proTag = dl > 0 && offen > 0 ? Math.ceil(offen / lernTage) : 0;
- const planText = !(dl > 0) ? "" : offen === 0 ? "Alle Lektionen geschafft. Jetzt täglich „Üben“ und pro Woche zwei Probetests." : dl <= 3 ? "Endspurt: keine neuen Lektionen mehr – nur noch „Üben“, Kompakt-Wiederholung und ein Probetest." : `Vorschlag: ${proTag} Lektion${proTag === 1 ? "" : "en"} pro Tag, danach „Üben“. Die letzten 3 Tage bleiben für Wiederholung und Probetests.`;
- const endspurt = dl !== null && dl >= 0 && dl <= 21;
+ const planText = !(dl > 0) ? "" : offen === 0 ? "Alle Lektionen geschafft. Jetzt täglich „Üben“ und pro Woche zwei Probetests." : dl <= 3 ? "Endspurt: keine neuen Lektionen mehr – nur noch „Üben“, Kompakt-Wiederholung und ein Probetest." : proTag > 3 ? `Alles schaffst du nicht mehr – setz Schwerpunkte: täglich „Üben“, dann das schwächste Modul kompakt. Etwa ${Math.min(offen, lernTage * 3)} Lektionen gehen noch gut.` : `Vorschlag: ${proTag} Lektion${proTag === 1 ? "" : "en"} pro Tag, danach „Üben“. Die letzten 3 Tage bleiben für Wiederholung und Probetests.`;
+ const endspurt = dl !== null && dl >= 0 && dl <= 14;
  page("start", `${head()}
- <div class="fx"><h2 class="sr-only">Deine Module</h2>
+ <div><h2 class="sr-only">Deine Module</h2>
  ${ringsHtml()}</div>
  <section class="hero">
   <div class="kicker">${PAUSE_TAGE >= 3 && hasProgress(S) ? "Schön, dass du wieder da bist" : dl === 0 ? "Heute ist Prüfung – viel Erfolg!" : p > 0 ? "Weiter so" : "Willkommen"}</div>
   ${countdownHtml()}
   <h1>${p > 0 ? `${Math.round(p * 100)} % insgesamt geschafft` : "Werde Social Media Manager"}</h1>
-  ${(() => { const h = heute(), g = goal(), ok = h >= g; return `<div class="hgoal ${ok ? "ok" : ""}"><div class="row" style="justify-content:space-between;align-items:center"><b>${ok ? "Tagesziel geschafft ✓" : "Heute"}</b><span>${Math.min(h, g)} von ${g} Antworten</span></div><div class="hbar" aria-hidden="true"><i style="width:${Math.min(1, h / g) * 100}%"></i></div></div>`; })()}
+  ${(() => { const h = heute(), g = goal(), ok = h >= g; return `<div class="hgoal ${ok ? "ok" : ""}"><div class="row" style="justify-content:space-between;align-items:center"><b>${ok ? "Tagesziel geschafft ✓" : "Heute"}</b><span>${Math.min(h, g)} von ${g} Fragen</span></div><div class="hbar" aria-hidden="true"><i style="width:${Math.min(1, h / g) * 100}%"></i></div></div>`; })()}
   <p style="opacity:.92;max-width:460px">${p > 0 ? planText : "Lektionen, Quiz und Probetest für deinen IHK-Abschlusstest."}</p>
-  <div class="hero-stat fx"><div><b>${lessonsDone}/${lessonsAll}</b><span>Lektionen</span></div><div><b>${POOL.filter(q => q.key in S.q).length}/${POOL.length}</b><span>Fragen bearbeitet</span></div><div><b>${best === null ? "–" : best + " %"}</b><span>Bester Test</span></div></div>
+  <div class="hero-stat fx"><div><b>${kernDone}/${kernAll}</b><span>Lektionen</span></div><div><b>${POOL.filter(q => q.key in S.q).length}/${POOL.length}</b><span>Fragen bearbeitet</span></div><div><b>${best === null ? "–" : best + " %"}</b><span>Bester Test</span></div></div>
   <div class="row"><a class="btn white" href="${endspurt ? "#endspurt" : "#mini"}">${ic("play")} ${endspurt ? "Endspurt heute" : p > 0 ? "Weiterlernen" : "Loslegen"}</a></div>
  </section>
  ${[(S.run ? `<a class="cont" href="#test" style="margin-bottom:10px"><div class="thumb" style="background:var(--grad-strong)">${ic("clock")}</div><div><b style="font-size:1rem">Probetest läuft</b><div class="small muted">Weitermachen, wo du aufgehört hast</div></div><span class="chev" style="margin-left:auto">${ic("right")}</span></a>` : ""), ((() => { const n = naechsterTermin(); if (!n || n.k === "pruefung" || n.d > 7) return ""; return `<a class="cont" href="#lehrgang"><div class="thumb" style="background:linear-gradient(135deg,#2b8a3e,#1864ab)">${ic("cal")}</div><div><b style="font-size:1rem">${esc(n.t)} ${n.d === 0 ? "heute" : n.d === 1 ? "morgen" : `in ${n.d} Tagen`}</b><div class="small muted">${n.k === "beginn" ? "Am besten vorher den Grundwortschatz lernen" : "Termin im Lehrgang ansehen"}</div></div><span class="chev" style="margin-left:auto">${ic("right")}</span></a>`; })()), (() => { const v = naechsteVorlesung(); if (!v) return ""; const offen = v.lektionen.map(LEK).filter(x => x && !S.lek[x.l.id]); if (!offen.length) return ""; const t = (new Date(v.datum + "T12:00") - Date.now()) / 86400000; if (t > 8) return ""; return `<a class="cont" href="#lektion-${offen[0].m.id}-${offen[0].l.id}"><div class="thumb" style="background:linear-gradient(135deg,#2b8a3e,#1864ab)">${ic("cal")}</div><div><b style="font-size:1rem">Vorlesung ${datumDE(v.datum)}: ${esc(v.titel)}</b><div class="small muted">${offen.length} passende Lektion${offen.length === 1 ? "" : "en"} vorab lernen</div></div><span class="chev" style="margin-left:auto">${ic("right")}</span></a>`; })(), ((() => { const d = uebenN(); return d ? `<a class="cont" href="#quiz-ueben" style="margin-bottom:10px"><div class="thumb" style="background:linear-gradient(135deg,#1864ab,#6741d9)">${ic("repeat")}</div><div><b style="font-size:1rem">Üben: ${Math.min(d, 10)} Frage${d === 1 ? "" : "n"}</b><div class="small muted">Fehler und fällige Wiederholungen – damit es bis zur Prüfung sitzt.</div></div><span class="chev" style="margin-left:auto">${ic("right")}</span></a>` : ""; })()), (S.lek.grundwortschatz && !S.set?.hilfeGefragt ? `<a class="cont" href="#einstellungen" data-hilfe style="margin-bottom:10px"><div class="thumb" style="background:linear-gradient(135deg,#2b8a3e,#1864ab)">${ic("focus")}</div><div><b style="font-size:1rem">Lernhilfen einstellen</b><div class="small muted">Fokusmodus, Pausen, ruhige Darstellung – z. B. bei ADHS</div></div><span class="chev" style="margin-left:auto">${ic("right")}</span></a>` : ""), (hasProgress(S) && Date.now() - (S.lastBackup || S.created || 0) > (S.lastBackup ? 14 : 7) * 86400000 /* erste Erinnerung nach 7 Tagen, danach alle 14 */ ? `<a class="cont" href="#einstellungen" style="margin-bottom:10px"><div class="thumb" style="background:linear-gradient(135deg,#495057,#212529)">${ic("download")}</div><div><b style="font-size:1rem">Lernstand sichern</b><div class="small muted">Lade eine Sicherungsdatei herunter – falls der Browser Daten löscht.</div></div><span class="chev" style="margin-left:auto;color:var(--ink-3)">${ic("right")}</span></a>` : ""), (platform().standalone && !hasProgress(S) && !S.set?.restoreGesehen && !S.day && Date.now() - (S.created || 0) < 3 * 86400000 ? `<a class="cont" href="#einstellungen" data-restore style="margin-bottom:10px"><div class="thumb" style="background:linear-gradient(135deg,#495057,#212529)">${ic("upload")}</div><div><b style="font-size:1rem">Kommst du aus dem Browser?</b><div class="small muted">Dort gesicherten Lernstand in den Einstellungen wiederherstellen.</div></div><span class="chev" style="margin-left:auto">${ic("right")}</span></a>` : ""), (S.pruefung ? "" : `<a class="cont" href="#lehrgang" style="margin-bottom:6px"><div class="thumb" style="background:var(--grad-strong)">${ic("cal")}</div><div><b style="font-size:1rem">Termine eintragen</b><div class="small muted">Beginn, Workshops und Prüfung – für deinen Lernplan.</div></div><span class="chev" style="margin-left:auto;color:var(--ink-3)">${ic("right")}</span></a>`)].filter(Boolean).slice(0, 2).join("")}
  <a class="cont" href="#glossar" style="margin-bottom:10px"><div class="thumb" style="background:linear-gradient(135deg,#2b8a3e,#1864ab)">${ic("abc")}</div><div><b style="font-size:1rem">Glossar & Formeln</b><div class="small muted">${GLOSSAR.length} Begriffe und ${FORMELN.length} Formeln nachschlagen</div></div><span class="chev" style="margin-left:auto">${ic("right")}</span></a>
 `, { compact: true });
  fitMain();
+ const rg = $(".rings"); if (rg) { const upd = () => rg.classList.toggle("end", rg.scrollLeft + rg.clientWidth >= rg.scrollWidth - 4); rg.addEventListener("scroll", upd, { passive: true }); upd(); }
 }
 
 /* ---------- Lernen ---------- */
@@ -385,7 +403,7 @@ function viewModul(id) {
  <section class="mod-head" style="--m:${m.farbe}"><div class="ic">${ic(m.id)}</div><h1>${m.name}</h1><p>${m.text}</p><div class="bar"><i style="width:${modProgress(m) * 100}%"></i></div></section>
  <a class="cont" href="#kompakt-${m.id}" style="margin-bottom:14px"><div class="thumb" style="background:${modGrad(m)}">${ic("book")}</div><div><b style="font-size:1rem">Das Wichtigste auf einen Blick</b><div class="small muted">Alle Merksätze und Übersichten des Moduls</div></div><span class="chev" style="margin-left:auto">${ic("right")}</span></a>
  <ol class="steps">${m.lektionen.map((l, i) => { const ok = S.lek[l.id]; return `${l.abschnitt ? `<li class="abschnitt" aria-hidden="true"><span>${esc(l.abschnitt)}</span></li>` : ""}<li><div class="dot ${ok ? "ok" : ""}" style="${ok ? `background:${shade(m.farbe, .6)}` : ""}">${ok ? ic("check", 'stroke-width="3"') : i + 1}</div><a class="item" href="#lektion-${m.id}-${l.id}" style="display:flex;align-items:center;gap:10px;width:100%;text-decoration:none;background:var(--surface);border-radius:18px;padding:14px 16px;box-shadow:var(--shadow)"><div><b>${l.titel}</b><span class="small muted">${l.folien.length} Karten · ${l.min} Min.${ok ? " · erledigt" : ""}</span></div><span class="chev">${ic("right")}</span></a></li>`; }).join("")}
- <li><div class="dot" style="${all ? "background:var(--grad);color:#fff" : ""}">${ic(all ? "bolt" : "lock")}</div><a class="item" href="#quiz-${m.id}" style="display:flex;align-items:center;gap:10px;width:100%;text-decoration:none;background:var(--surface);border-radius:18px;padding:14px 16px;box-shadow:var(--shadow)"><div><b>Modul-Quiz</b><span class="small muted">${modPool(m.id).length} Fragen · ${qDone(m.id)} sicher${all ? "" : " · empfohlen nach den Lektionen"}</span></div><span class="chev">${ic("right")}</span></a></li></ol>`);
+ <li><div class="dot" style="${all ? "background:var(--grad);color:#fff" : ""}">${ic(all ? "bolt" : "focus")}</div><a class="item" href="#quiz-${m.id}" style="display:flex;align-items:center;gap:10px;width:100%;text-decoration:none;background:var(--surface);border-radius:18px;padding:14px 16px;box-shadow:var(--shadow)"><div><b>Modul-Quiz</b><span class="small muted">${modPool(m.id).length} Fragen · ${qDone(m.id)} sicher${all ? "" : " · empfohlen nach den Lektionen"}</span></div><span class="chev">${ic("right")}</span></a></li></ol>`);
 }
 
 /* ---------- Praxisprojekte: interaktive Fallgeschichten ---------- */
@@ -420,7 +438,7 @@ function openProjekt(id) {
   else if (f.k === "daten") body += `<ul class="daten">${f.l.map(x => `<li>${md(x)}</li>`).join("")}</ul>`;
   else if (f.k === "wahl") {
    const a = st.wahl[i]; f._o = f._o || shuf(f.o.map((_, k) => k));
-   body += `${f.b ? `<div class="body small-body">${md(f.b)}</div>` : ""}${f._o.map((k, n) => { const o = f.o[k]; let cl = ""; if (a !== undefined) cl = k === a ? (o.p === 2 ? "ok" : o.p === 1 ? "mid" : "bad") : o.p === 2 ? "ok-hint" : "dim"; return `<button type="button" class="opt ${cl}" data-k="${k}" ${a !== undefined ? "disabled" : ""}><span class="l">${"ABCD"[n]}</span><span class="ot">${esc(o.t)}</span></button>`; }).join("")}
+   body += `${f.b ? `<div class="body small-body">${md(f.b)}</div>` : ""}${f._o.map((k, n) => { const o = f.o[k]; let cl = ""; if (a !== undefined) cl = k === a ? (o.p === 2 ? "ok" : o.p === 1 ? "mid" : "bad") : o.p === 2 ? "ok-hint" : "dim"; return `<button type="button" class="opt ${cl}" data-k="${k}" ${a !== undefined ? "disabled" : ""}><span class="l">${LET[n]}</span><span class="ot">${esc(o.t)}</span></button>`; }).join("")}
    ${a !== undefined ? `<div role="status" class="fb ${f.o[a].p === 2 ? "ok" : f.o[a].p === 1 ? "mid" : "bad"}"><b>${f.o[a].p === 2 ? "Starke Entscheidung" : f.o[a].p === 1 ? "Vertretbar – aber es geht besser" : "Das geht schief"}</b>${esc(f.o[a].fb)}${f.o[a].p < 2 ? `<br><span class="small">Beste Wahl: ${esc(f.o.find(o => o.p === 2).t)}</span>` : ""}</div>` : ""}`;
   } else if (f.k === "frei") {
    const done = i in st.pts, txt = st.frei[i] || "";
@@ -503,18 +521,18 @@ function openStory(mid, lid) {
   else if (f.k === "check") {
    const order = f._o || (f._o = shuf(f.a.map((t, k) => k)));
    const a = answered[i];
-   body = `<span class="kind">${kindName}</span><h2 style="font-size:1.3em">${md(f.q)}</h2>${order.map((k, n) => { let cl = ""; if (a !== undefined) cl = k === f.c ? "ok" : k === a ? "bad" : "dim"; return `<button type="button" class="opt ${cl}" data-k="${k}" ${a !== undefined ? "disabled" : ""}><span class="l">${"ABCD"[n]}</span><span class="ot">${esc(f.a[k])}</span><span class="mark" aria-hidden="true">${cl === "ok" ? "✓" : cl === "bad" ? "✗" : ""}</span></button>`; }).join("")}<div role="status" aria-live="polite">${a !== undefined ? `<div class="fb ${a === f.c ? "ok" : "bad"}"><b>${a === f.c ? "Richtig!" : "Nicht ganz."}</b>${esc(f.e)}</div>` : ""}</div>`;
+   body = `<span class="kind">${kindName}</span><h2 style="font-size:1.3em">${md(f.q)}</h2>${order.map((k, n) => { let cl = ""; if (a !== undefined) cl = k === f.c ? "ok" : k === a ? "bad" : "dim"; return `<button type="button" class="opt ${cl}" data-k="${k}" ${a !== undefined ? "disabled" : ""}><span class="l">${LET[n]}</span><span class="ot">${esc(f.a[k])}</span><span class="mark" aria-hidden="true">${cl === "ok" ? "✓" : cl === "bad" ? "✗" : ""}</span></button>`; }).join("")}<div role="status" aria-live="polite">${a !== undefined ? `<div class="fb ${a === f.c ? "ok" : "bad"}"><b>${a === f.c ? "Richtig!" : "Nicht ganz."}</b>${esc(f.e)}</div>` : ""}</div>`;
   }
   else if (f.k === "bild") body = `<span class="kind">${kindName}</span><h2>${md(f.h)}</h2><div class="dg">${BILDER[f.svg] || ""}</div>${f.b ? `<div class="body small-body">${md(f.b)}</div>` : ""}`;
-  else if (last) body = `<div style="text-align:center"><div class="confetti">🎉</div><span class="kind">Geschafft</span><h2>${esc(l.titel)}</h2><div class="body">${(() => { const mk = l.folien.find(f => f.k === "merke"); return mk ? `<b>Das nimmst du mit:</b> ${md(mk.b)}<br><br>` : ""; })()}${nextIn(m, l) ? "Weiter mit der nächsten Lektion – oder kurz Pause machen." : "Jetzt im Modul-Quiz festigen."}</div></div>`;
+  else if (last) body = `<div style="text-align:center"><div class="confetti">🎉</div><span class="kind">Geschafft</span><h2>${esc(l.titel)}</h2><div class="body">${(() => { const mk = l.folien.find(f => f.k === "merke"); return mk ? `<b>Das nimmst du mit:</b> ${md(mk.b)}<br><br>` : ""; })()}${nextIn(m, l) ? "Weiter mit der nächsten Lektion – oder kurz Pause machen." : "Jetzt im Modul-Quiz festigen."}<p class="small muted" style="margin-top:.6em">${lekDone(m) + (S.lek[l.id] ? 0 : 1)} von ${m.lektionen.length} Lektionen in ${esc(m.kurz)}</p></div></div>`;
   else body = `<span class="kind">${kindName}</span><h2>${md(f.h)}</h2><div class="body">${saetze(f.b)}</div>`;
   const nx = nextIn(m, l);
   storyEl.innerHTML = `<p class="sr-only" aria-live="polite">${last ? "Lektion geschafft" : `Karte ${i + 1} von ${F.length - 1}`}</p><div class="segs" aria-hidden="true">${F.slice(0, -1).map((_, n) => `<i class="${n < i || last ? "on" : ""}"><b style="${n === i ? "width:100%" : ""}"></b></i>`).join("")}</div>
   <div class="shead"><div class="av">${ic(m.id)}</div><div class="n">${esc(l.titel)}<small>${esc(m.name)}</small></div>${sayBtn()}<button class="x" aria-label="Schließen">${ic("x")}</button></div>
   <div class="stage">${f.k !== "check" && !last ? '<div class="tapzone l"></div><div class="tapzone r"></div>' : ""}<div class="slide ${f.k === "beispiel" || f.k === "merke" ? "note" : ""}">${body}</div></div>
-  <div class="snav">${i > 0 ? `<button class="btn prev" aria-label="Zurück">${ic("left")}</button>` : ""}${last ? (nx ? `<a class="btn" data-rep href="#lektion-${m.id}-${nx.id}">Nächste Lektion ${ic("right")}</a>` : `<a class="btn" data-rep href="#quiz-${m.id}">Zum Modul-Quiz ${ic("right")}</a>`) : `<button class="btn next">Weiter ${ic("right")}</button>`}</div>`;
+  <div class="snav">${i > 0 ? `<button class="btn prev" aria-label="Zurück">${ic("left")}</button>` : ""}${last ? (nx ? `<a class="btn" data-rep href="#lektion-${m.id}-${nx.id}">Nächste Lektion ${ic("right")}</a>` : `<a class="btn" data-rep href="#quiz-${m.id}">Zum Modul-Quiz ${ic("right")}</a>`) : (f.k === "check" && !(i in answered) ? `<button class="btn next" aria-disabled="true">Antwort wählen</button>` : `<button class="btn next">Weiter ${ic("right")}</button>`)}</div>`;
   if (last && !S.lek[l.id]) { S.lek[l.id] = true; save(); buzz([20, 40, 20]); }
-  const mehr = () => { const rest = $$(".rv.h", storyEl).length, nb = $(".next", storyEl); if (nb) nb.innerHTML = rest ? `Mehr <span class="small">(${rest})</span>` : `Weiter ${ic("right")}`; }; mehr(); draw.mehr = mehr;
+  const mehr = () => { const rest = $$(".rv.h", storyEl).length, nb = $(".next", storyEl); if (nb && nb.getAttribute("aria-disabled")) return; if (nb) nb.innerHTML = rest ? `Weiter lesen <span class="dots" aria-hidden="true">${"●".repeat(rest)}</span>` : `Weiter ${ic("right")}`; }; mehr(); draw.mehr = mehr;
   $(".x", storyEl).onclick = closeS;
   $(".next", storyEl)?.addEventListener("click", () => go(1));
   $(".prev", storyEl)?.addEventListener("click", () => go(-1));
@@ -523,7 +541,7 @@ function openStory(mid, lid) {
   $(".tapzone.r", storyEl)?.addEventListener("click", e => viaTerm(e) || go(1));
   linkTerms($(".slide", storyEl), seenDe);
   fitSlide(); requestAnimationFrame(fitSlide); if (draw.first !== false) watchFit();
-  if (draw.first !== false) { draw.first = false; $(".x", storyEl).focus({ preventScroll: true }); } else if (!storyEl.contains(document.activeElement)) ($(".next", storyEl) || $(".x", storyEl)).focus({ preventScroll: true });
+  if (draw.first !== false) { draw.first = false; const sl = $(".slide", storyEl); sl.tabIndex = -1; sl.focus({ preventScroll: true }); } else if (!storyEl.contains(document.activeElement)) ($(".next", storyEl) || $(".x", storyEl)).focus({ preventScroll: true });
   $$(".opt", storyEl).forEach(b => b.onclick = () => { if (i in answered) return; answered[i] = +b.dataset.k; const p = POOL.find(p => p.q === f.q); if (p) grade(p.key, answered[i] === f.c); save(); draw(); });
  }
  draw();
@@ -584,8 +602,8 @@ function linkTerms(root, seenDe) {
    const g = GLOSSAR[i];
    const kurz = g.de && g.de.length <= 32 && !/[()]/.test(g.de) ? g.de : g.de?.split(/\s[–(]/)[0];
    const after = (node.parentElement.tagName === "STRONG" && m.index + m[0].length >= txt.length ? node.parentElement.nextSibling?.textContent : txt.slice(m.index + m[0].length)) || "";
-   const schonErklaert = /^\s*(\(|ist\b|heißt\b|sind\b|bedeutet\b|:|–)/i.test(after);
-   const gleicheWurzel = kurz && kurz.toLowerCase().includes(m[0].toLowerCase().slice(0, 7));
+   const schonErklaert = /^(-|\s*(\(|ist\b|heißt\b|sind\b|bedeutet\b|:|–))/i.test(after) || !!node.parentElement.closest("h1,h2,h3");
+   const gleicheWurzel = kurz && (kurz.toLowerCase().includes(m[0].toLowerCase().slice(0, 7)) || kurz.toLowerCase().startsWith(m[0].toLowerCase().split(/[- ]/)[0]));
    if (kurz && !schonErklaert && !gleicheWurzel && kurz.length <= 32 && seenDe && !seenDe.has(i) && kurz.toLowerCase() !== m[0].toLowerCase() && !txt.toLowerCase().includes(kurz.toLowerCase())) { seenDe.add(i); const d = document.createElement("span"); d.className = "de"; d.textContent = ` (${kurz})`; frag.append(d); }
    last = m.index + m[0].length;
   }
@@ -604,6 +622,10 @@ function termSheet(i) {
  $("#ts-ok", el).onclick = close; $("#ts-ok", el).focus({ preventScroll: true });
  $("[data-say]", el)?.addEventListener("click", e => { e.stopPropagation(); say(g.w + ". " + (g.de ? g.de + ". " : "") + g.d); }, true);
  el.addEventListener("keydown", e => { if (e.key === "Escape") { e.stopPropagation(); close(); } });
+ let y0 = null; const box = $(".ts-in", el);
+ box.addEventListener("touchstart", e => { y0 = e.touches[0].clientY; e.stopPropagation(); }, { passive: true });
+ box.addEventListener("touchmove", e => { if (y0 === null) return; const dy = Math.max(0, e.touches[0].clientY - y0); box.style.transform = `translateY(${dy}px)`; e.stopPropagation(); }, { passive: true });
+ box.addEventListener("touchend", e => { const dy = e.changedTouches[0].clientY - (y0 ?? 0); y0 = null; e.stopPropagation(); if (dy > 80) close(); else box.style.transform = ""; });
 }
 document.addEventListener("click", e => { if (e.target.closest("[data-hilfe]")) { S.set.hilfeGefragt = 1; save(); } if (e.target.closest("[data-restore]")) { S.set.restoreGesehen = 1; save(); } });
 document.addEventListener("keydown", e => { const t = e.target.closest?.(".term"); if (t && (e.key === "Enter" || e.key === " ")) { e.preventDefault(); termSheet(+t.dataset.g); } });
@@ -631,25 +653,25 @@ document.addEventListener("click", e => {
  const src = box?.classList.contains("story") ? $(".slide", box) : box;
  if (!src) return;
  const c = src.cloneNode(true); c.querySelectorAll(".rv.h").forEach(x => x.remove()); c.querySelectorAll(".chip,.kind,[data-say],.l,.mark,.small,textarea,.fbx,.sr-only").forEach(x => x.remove());
- c.querySelectorAll(".opt").forEach((o, n) => o.prepend("Antwort " + "ABCD"[n] + ": ")); c.querySelectorAll("li,.opt,h2,p").forEach(x => x.append(/[.!?:]\s*$/.test(x.textContent) ? " " : ". "));
+ c.querySelectorAll(".opt").forEach((o, n) => o.prepend("Antwort " + LET[n] + ": ")); c.querySelectorAll("li,.opt,h2,p").forEach(x => x.append(/[.!?:]\s*$/.test(x.textContent) ? " " : ". "));
  say(c.textContent);
 });
 addEventListener("hashchange", () => canSay && speechSynthesis.cancel());
 function quizCard(q, meta) {
  if (q.t === "frei") return { html: `<div class="qcard"><div class="qtop">${chip(q)}<span class="small muted">${meta}</span>${sayBtn()}</div><p class="qtext" id="qt">${esc(q.q)}</p><label class="sr-only" for="ftxt">Deine Antwort</label><textarea id="ftxt" placeholder="Deine Antwort in Stichpunkten …" style="min-height:140px"></textarea><div class="fbx" role="status" aria-live="polite"></div></div>` };
  const order = shuf(q.a.map((_, k) => k));
- return { order, html: `<div class="qcard"><div class="qtop">${chip(q)}<span class="small muted">${meta}</span>${sayBtn()}</div><p class="qtext" id="qt">${esc(q.q)}</p>${isMulti(q) ? MULTI_HINT : ""}<div role="group" aria-labelledby="qt">${order.map((k, n) => `<button type="button" class="opt" data-k="${k}" ${isMulti(q) ? 'aria-pressed="false"' : ""}><span class="l">${"ABCD"[n]}</span><span class="ot">${esc(q.a[k])}</span><span class="mark" aria-hidden="true"></span></button>`).join("")}</div>${isMulti(q) ? `<button type="button" class="btn block" id="chk" style="margin-top:6px" disabled>Antwort prüfen</button>` : ""}<div class="fbx" role="status" aria-live="polite"></div></div>` };
+ return { order, html: `<div class="qcard"><div class="qtop">${chip(q)}<span class="small muted">${meta}</span>${sayBtn()}</div><p class="qtext" id="qt">${esc(q.q)}</p>${isMulti(q) ? MULTI_HINT : ""}<div role="group" aria-labelledby="qt">${order.map((k, n) => `<button type="button" class="opt" data-k="${k}" ${isMulti(q) ? 'aria-pressed="false"' : ""}><span class="l">${LET[n]}</span><span class="ot">${esc(q.a[k])}</span><span class="mark" aria-hidden="true"></span></button>`).join("")}</div>${isMulti(q) ? `<button type="button" class="btn block" id="chk" style="margin-top:6px" disabled>Antwort prüfen</button>` : ""}<div class="fbx" role="status" aria-live="polite"></div></div>` };
 }
 function musterHtml(q, txt) {
  const hit = freiMatch(q, txt || ""), n = hit.filter(Boolean).length;
- return `<div class="fb ${n >= q.min ? "ok" : "bad"}" style="margin-top:12px"><b>Musterlösung</b><span class="small">Gefordert: mindestens ${q.min} Punkt${q.min > 1 ? "e" : ""}. ${txt ? `In deiner Antwort erkannt: ${n}.` : ""}</span><ul class="muster">${q.muster.map(([t], i) => `<li class="${hit[i] ? "hit" : ""}">${ic(hit[i] ? "check" : "right", 'stroke-width="3"')}<span>${esc(t)}</span></li>`).join("")}</ul>${q.bsp ? `<details class="bsp"><summary>Beispiel für eine volle Antwort</summary><p class="small" style="white-space:pre-line;margin:6px 0 0">${esc(q.bsp)}</p></details>` : ""}<span class="small muted">Die Erkennung ist nur eine Hilfe – entscheide selbst, ob deine Antwort passt.</span></div>`;
+ return `<div class="fb muster-box" style="margin-top:12px"><b>Musterlösung</b><span class="small">Gefordert: mindestens ${q.min} Punkt${q.min > 1 ? "e" : ""}. ${txt ? `In deiner Antwort erkannt: ${n}.` : ""}</span><ul class="muster">${q.muster.map(([t], i) => `<li class="${hit[i] ? "hit" : ""}">${ic(hit[i] ? "check" : "right", 'stroke-width="3"')}<span>${esc(t)}</span></li>`).join("")}</ul>${q.bsp ? `<details class="bsp"><summary>Beispiel für eine volle Antwort</summary><p class="small" style="white-space:pre-line;margin:6px 0 0">${esc(q.bsp)}</p></details>` : ""}<span class="small muted">Die Erkennung ist nur eine Hilfe – entscheide selbst, ob deine Antwort passt.</span></div>`;
 }
 function viewQuiz(id) {
  const m = modById(id), isMini = id === "mini", isMix = id === "mix" || isMini, isFrei = id === "frei", isWdh = id === "ueben" || id === "wdh" || id === "fehler", isErr = false; // isErr: Altlast, Fehlerkiste ist in „Üben“ aufgegangen
  const byKeys = ks => shuf(POOL.filter(q => ks.includes(q.key)));
  let list = isMini ? [...byKeys(dueKeys()).filter(q => q.t !== "frei"), ...shuf(MC_POOL().filter(q => !(q.key in S.q))), ...shuf(MC_POOL())].filter((q, i, a) => a.indexOf(q) === i).slice(0, 5) : isWdh ? [...byKeys(errorKeys()), ...byKeys(dueKeys())].filter((q, i, a) => a.indexOf(q) === i).slice(0, 10) : isErr ? byKeys(errorKeys()) : isMix ? shuf(MC_POOL()).slice(0, 10) : isFrei ? shuf(FREI_POOL()).sort((a, b) => (S.q[a.key] ? 1 : 0) - (S.q[b.key] ? 1 : 0)).slice(0, 8) : shuf(modPool(id)).sort((a, b) => (S.q[a.key] ? 1 : 0) - (S.q[b.key] ? 1 : 0));
  if (!m && !isMix && !isFrei && !isWdh && !isErr) return viewStart();
- if (!list.length) { page("start", `<a class="back" href="#start">${ic("left")} Start</a><div class="qcard result"><h2>Gerade nichts zu üben</h2><p class="muted">Keine offenen Fehler und keine fälligen Wiederholungen. Lern mit der nächsten Lektion weiter oder mach ein Schnell-Quiz.</p><div class="row" style="justify-content:center;margin-top:16px"><a class="btn" href="#mini">${ic("play")} Weiterlernen</a><a class="btn ghost" href="#quiz-mix">Schnell-Quiz</a></div></div>`); return; }
+ if (!list.length) { page("start", `<a class="back" href="#start">${ic("left")} Start</a><div class="qcard result"><h2>Gerade nichts zu üben</h2><p class="muted">Keine offenen Fehler und keine fälligen Wiederholungen. Lerne mit der nächsten Lektion weiter oder mach ein Schnell-Quiz.</p><div class="row" style="justify-content:center;margin-top:16px"><a class="btn" href="#mini">${ic("play")} Weiterlernen</a><a class="btn ghost" href="#quiz-mix">Schnell-Quiz</a></div></div>`); return; }
  const total = list.length; let queue = list.slice(), first = 0, miss = new Set(), n = 0;
  const backHref = m ? "#modul-" + id : isWdh || isMini ? "#start" : "#pruefung", tab = m || isWdh || isMini ? "start" : "pruefung";
  next();
@@ -657,7 +679,7 @@ function viewQuiz(id) {
   if (!queue.length) return done();
   const q = queue.shift(); n++;
   const { html } = quizCard(q, miss.has(q) ? "Wiederholung" : `${Math.min(n, total)} / ${total}`);
-  page(tab, `<h1 class="sr-only">${isFrei ? "Freitext üben" : isWdh ? "Üben" : m ? m.name + " – Quiz" : "Schnell-Quiz"}</h1><a class="back" href="${backHref}">${ic("x")} Beenden</a>${isFrei ? `<details class="card tippbox" style="margin:0 0 14px"><summary><b>So schreibst du Freitext-Antworten</b></summary><ol class="small" style="margin:8px 0 0;padding-left:20px"><li><b>Benennen:</b> Problem oder Fachbegriff nennen (z. B. „Vanity Metrics“, „Recht am eigenen Bild“).</li><li><b>Begründen:</b> immer das Warum – „weil die Zielgruppe …“.</li><li><b>Konkret werden:</b> wie du es umsetzt, mit Beispiel.</li></ol><p class="small" style="margin:8px 0 0">Stichpunkte statt langer Fließtexte. Genau so viele Punkte nennen, wie gefragt. Bei Unsicherheit das Prinzip beschreiben – dafür gibt es oft Teilpunkte.</p></details>` : ""}<div class="bar dark" style="margin:0 0 16px" aria-hidden="true"><i style="width:${(1 - (queue.length + 1) / (total + miss.size)) * 100}%"></i></div>${html}`);
+  page(tab, `<h1 class="sr-only">${isFrei ? "Freitext üben" : isWdh ? "Üben" : m ? m.name + " – Quiz" : "Schnell-Quiz"}</h1><div class="row qhead"><a class="back" href="${backHref}" style="margin:0">${ic("x")} Beenden</a><span class="chip">${isFrei ? "Freitext üben" : isWdh ? "Üben · Fehler & Wiederholung" : m ? "Modul-Quiz" : isMini ? "Kurz-Quiz" : "Schnell-Quiz"}</span></div>${isFrei ? `<details class="card tippbox" style="margin:0 0 14px"><summary><b>So schreibst du Freitext-Antworten</b></summary><ol class="small" style="margin:8px 0 0;padding-left:20px"><li><b>Benennen:</b> Problem oder Fachbegriff nennen (z. B. „Vanity Metrics“, „Recht am eigenen Bild“).</li><li><b>Begründen:</b> immer das Warum – „weil die Zielgruppe …“.</li><li><b>Konkret werden:</b> wie du es umsetzt, mit Beispiel.</li></ol><p class="small" style="margin:8px 0 0">Stichpunkte statt langer Fließtexte. Genau so viele Punkte nennen, wie gefragt. Bei Unsicherheit das Prinzip beschreiben – dafür gibt es oft Teilpunkte. Im Test wirst du gesiezt – hier üben wir genau so.</p></details>` : ""}<div class="bar dark" style="margin:0 0 16px" aria-hidden="true"><i style="width:${(1 - (queue.length + 1) / (total + miss.size)) * 100}%"></i></div>${html}`);
   linkTerms($(".qtext")); { const qt = $("#qt"); if (qt && n > 1) { qt.tabIndex = -1; qt.focus({ preventScroll: true }); } }
   const rate = (ok, requeue = !ok) => { grade(q.key, ok); if (ok) { if (!miss.has(q)) first++; } else if (requeue && !miss.has(q)) { miss.add(q); queue.push(q); } else miss.add(q); save(); };
   const weiter = () => { $(".fbx").insertAdjacentHTML("afterend", `<button type="button" class="btn block" style="margin-top:14px" id="nx">Weiter ${ic("right")}</button>`); $("#nx").onclick = next; const calm = matchMedia("(prefers-reduced-motion: reduce)").matches || S.set?.calm; $(".fbx").scrollIntoView({ block: "start", behavior: calm ? "auto" : "smooth" }); $("#nx").focus({ preventScroll: true }); };
@@ -680,7 +702,7 @@ function viewQuiz(id) {
    $$(".opt").forEach(b => b.onclick = () => { if ($(".fbx").innerHTML) return; const k = +b.dataset.k; sel.has(k) ? sel.delete(k) : sel.add(k); b.classList.toggle("sel", sel.has(k)); b.setAttribute("aria-pressed", sel.has(k)); $("#chk").disabled = !sel.size; });
    $("#chk").onclick = () => {
     if ($(".fbx").innerHTML) return; const ans = [...sel], ok = istRichtig(q, ans);
-    $$(".opt").forEach(x => { const k = +x.dataset.k, soll = q.c.includes(k), ist = sel.has(k); x.classList.remove("sel"); markOpt(x, soll ? "ok" : ist ? "bad" : "dim"); if (soll && !ist) x.classList.add("missed"); });
+    $$(".opt").forEach(x => { x.removeAttribute("aria-pressed"); const k = +x.dataset.k, soll = q.c.includes(k), ist = sel.has(k); x.classList.remove("sel"); markOpt(x, soll ? "ok" : ist ? "bad" : "dim"); if (soll && !ist) x.classList.add("missed"); });
     $("#chk").remove(); rate(ok);
     $(".fbx").innerHTML = `<div class="fb ${ok ? "ok" : "bad"}"><b>${ok ? "Richtig – alle gefunden!" : "Nicht ganz – grün sind alle richtigen Antworten."}</b>${esc(q.e)}</div>`;
     weiter();
@@ -698,7 +720,7 @@ function viewQuiz(id) {
  }
  function done() {
   const p = first / total;
-  page(tab, `<div class="qcard result"><div class="big-ring">${ringSvg(p, 150, 12, "var(--surface-2)")}<b>${Math.round(p * 100)}%</b></div><h2>${p >= .8 ? "Stark!" : p >= .5 ? "Gut gemacht!" : "Dranbleiben!"}</h2><p class="muted">${first} von ${total} Fragen beim ersten Versuch richtig.</p><div class="row" style="justify-content:center;margin-top:18px"><a class="btn ghost" data-back href="${backHref}">Zurück</a><button class="btn" id="again">Nochmal</button></div></div>`);
+  page(tab, `<div class="qcard result"><div class="big-ring">${ringSvg(p, 150, 12, "var(--surface-2)")}<b>${Math.round(p * 100)}%</b></div><h2>${p >= .8 ? "Stark!" : p >= .5 ? "Gut gemacht!" : "Dranbleiben!"}</h2><p class="muted">${first} von ${total} Fragen beim ersten Versuch richtig.</p><div class="row" style="justify-content:center;margin-top:18px"><button class="btn ghost-w" id="again">Nochmal</button><a class="btn" href="#mini">${ic("play")} Weiterlernen</a></div>${miss.size ? `<a class="btn ghost-w block" href="#quiz-ueben" style="margin-top:10px">${ic("repeat")} ${miss.size} Fehler gleich üben</a>` : ""}</div>`);
   $("#again").onclick = () => viewQuiz(id);
  }
 }
@@ -778,8 +800,8 @@ function runTest(confirmMode) {
   <div class="bar dark" style="margin:0 0 16px" aria-hidden="true"><i style="width:${qs.filter((_, i) => answered(i)).length / qs.length * 100}%"></i></div>
   <div class="qcard"><div class="qtop">${chip(q)}<span class="small muted">Frage ${p + 1} / ${qs.length}${r.mark[p] ? " · markiert" : ""}</span></div><p class="qtext" id="qt">${esc(q.q)}</p>
   ${q.t === "frei" ? `<label class="sr-only" for="ftxt">Deine Antwort</label><textarea id="ftxt" placeholder="Deine Antwort in Stichpunkten …" style="min-height:160px">${esc(r.ans[p] || "")}</textarea>`
-   : isMulti(q) ? `${MULTI_HINT}<div role="group" aria-labelledby="qt">${order.map((k, n) => { const on = (r.ans[p] || []).includes(k); return `<button type="button" role="checkbox" aria-checked="${on}" class="opt ${on ? "sel" : ""}" data-k="${k}"><span class="l">${"ABCDE"[n]}</span><span>${esc(q.a[k])}</span></button>`; }).join("")}</div>`
-   : `<div role="radiogroup" aria-labelledby="qt">${order.map((k, n) => `<button type="button" role="radio" aria-checked="${r.ans[p] === k}" class="opt ${r.ans[p] === k ? "sel" : ""}" data-k="${k}"><span class="l">${"ABCD"[n]}</span><span>${esc(q.a[k])}</span></button>`).join("")}</div>`}
+   : isMulti(q) ? `${MULTI_HINT}<div role="group" aria-labelledby="qt">${order.map((k, n) => { const on = (r.ans[p] || []).includes(k); return `<button type="button" role="checkbox" aria-checked="${on}" class="opt ${on ? "sel" : ""}" data-k="${k}"><span class="l">${LET[n]}</span><span>${esc(q.a[k])}</span></button>`; }).join("")}</div>`
+   : `<div role="radiogroup" aria-labelledby="qt">${order.map((k, n) => `<button type="button" role="radio" aria-checked="${r.ans[p] === k}" class="opt ${r.ans[p] === k ? "sel" : ""}" data-k="${k}"><span class="l">${LET[n]}</span><span>${esc(q.a[k])}</span></button>`).join("")}</div>`}
   </div>
   <div class="row testnav"><button class="btn ghost" id="prev" ${p === 0 ? "disabled" : ""} aria-label="Vorherige Frage">${ic("left")}</button><button class="btn ghost" id="mark" aria-pressed="${!!r.mark[p]}">${r.mark[p] ? "Markiert" : "Markieren"}</button>${p < qs.length - 1 ? `<button class="btn" id="next" style="flex:1">Weiter ${ic("right")}</button>` : `<button class="btn" id="fin" style="flex:1">Abgeben</button>`}</div>`);
  const go = np => { r.p = Math.max(0, Math.min(qs.length - 1, np)); save(); runTest(); };
@@ -797,9 +819,9 @@ function runTest(confirmMode) {
   page("pruefung", `<div class="row testbar"><button class="back" id="back" style="margin:0">${ic("left")} Zur Frage ${r.p + 1}</button>${r.end ? `<span class="timer ${S.set?.clock === "genau" ? "" : "calm"}" id="timer">${S.set?.clock === "genau" ? fmt(left()) : calmClock(left(), r)}</span>` : ""}</div>
    <h1 style="margin:6px 0 4px">Übersicht</h1><p class="muted small">${qs.length - open.length} von ${qs.length} beantwortet${Object.keys(r.mark).length ? ` · ${Object.keys(r.mark).length} markiert` : ""}</p>
    <div class="ovgrid">${qs.map((x, i) => `<button type="button" data-i="${i}" class="${answered(i) ? "done" : ""} ${r.mark[i] ? "mk" : ""}" aria-label="Frage ${i + 1}${answered(i) ? ", beantwortet" : ", offen"}${r.mark[i] ? ", markiert" : ""}">${i + 1}${x.t === "frei" ? "<small>T</small>" : ""}</button>`).join("")}</div>
-   <p class="small muted">T = Freitext · Rahmen = markiert</p>
-   ${sure && open.length ? `<div class="tip" role="alert">${ic("warn", 'style="color:var(--bad)"')}<span>${open.length} Frage${open.length === 1 ? " ist" : "n sind"} noch offen. Trotzdem abgeben?</span></div>` : ""}
-   <button class="btn block" id="submit">${sure && open.length ? "Trotzdem abgeben" : "Test abgeben"}</button>`);
+   <p class="small muted">Gestrichelt = offen · ⚑ = markiert · T = Freitext</p>
+   ${sure && open.length ? `<div class="tip" role="alert">${ic("warn", 'style="color:var(--bad)"')}<span>${open.length} Frage${open.length === 1 ? " ist" : "n sind"} noch offen.</span></div><button class="btn block" id="toopen">Zur ersten offenen Frage (${open[0] + 1})</button><button class="btn ghost-w block" id="submit" style="margin-top:8px">Trotzdem abgeben</button>` : `<button class="btn block" id="submit">Test abgeben</button>`}`);
+  $("#toopen")?.addEventListener("click", () => { r.view = null; r.p = open[0]; save(); runTest(); });
   $$(".ovgrid button").forEach(b => b.onclick = () => { r.view = null; r.p = +b.dataset.i; save(); runTest(); });
   $("#back").onclick = () => { r.view = null; save(); runTest(); };
   $("#submit").onclick = () => { if (open.length && !sure) return runTest(true); finishTest(false); };
@@ -821,15 +843,20 @@ function viewAuswertung() {
  const fr = qs.map((q, i) => ({ q, i })).filter(x => x.q.t === "frei");
  const wrong = qs.map((q, i) => ({ q, a: r.ans[i] })).filter(x => x.q.t !== "frei" && !istRichtig(x.q, x.a));
  page("pruefung", `<h1 class="sr-only">Auswertung Probetest</h1><div class="qcard result"><div class="big-ring" aria-hidden="true">${ringSvg(sc.allRated ? sc.pct / 100 : sc.mc / Math.max(1, sc.mcN), 150, 12, "var(--surface-2)", !sc.allRated ? "var(--ink-3)" : sc.pct >= PASS ? null : "var(--bad)")}${sc.allRated ? `<b>${sc.pct}%</b>` : `<b style="font-size:1.1rem">MC ${sc.mc}/${sc.mcN}</b>`}</div>
-  <h2 aria-live="polite">${!sc.allRated ? "Fast fertig – bewerte deine Freitexte" : sc.pct >= ZIEL ? `Ziel erreicht (${sc.pct} %)` : sc.pct >= PASS ? `Über der angenommenen Grenze (${sc.pct} %)` : `Noch unter der angenommenen Grenze (${sc.pct} %)`}</h2>
+  <h2 aria-live="polite">${!sc.allRated ? "Fast fertig – bewerte deine Freitexte" : sc.pct >= ZIEL ? "Ziel erreicht" : sc.pct >= PASS ? `Bestanden – weiter Richtung ${ZIEL} %` : "Noch nicht bestanden – das holst du auf"}</h2>
   <p class="muted">Multiple Choice: ${sc.mc} von ${sc.mcN} richtig${sc.frMax ? ` · Freitext: ${sc.allRated ? String(sc.fr * FR_W).replace(".", ",") + " von " + sc.frMax * FR_W + " Punkten" : "noch nicht bewertet"}` : ""}${sc.allRated ? ` · gesamt ${String(sc.pts).replace(".", ",")} von ${sc.max} Punkten` : ""}${r.timeout ? " · Zeit abgelaufen" : ""}</p><p class="small muted">Bestanden ab ${PASS} % (üblich, nicht offiziell bestätigt) · Übungsziel ${ZIEL} %</p></div>
   ${fr.length ? `<div class="sec-h"><h2>Freitext selbst bewerten</h2></div><p class="small muted" style="margin:-4px 0 10px">Im echten Test korrigieren Fachdozent und IHK-Bildungszentrum. Sei streng: Teilpunkte nur, wenn wirklich Teile der Musterlösung drinstehen.</p>${fr.map(({ q, i }) => `<div class="card">${chip(q)}<p style="font-weight:700;margin:10px 0 6px">${esc(q.q)}</p><div class="answer">${r.ans[i] ? esc(r.ans[i]) : "<i>Keine Antwort</i>"}</div>${musterHtml(q, r.ans[i])}<div class="row" role="group" aria-label="Bewertung" style="margin-top:12px">${[[0, "0 Punkte"], [.5, "1 Punkt"], [1, "2 Punkte"]].map(([v, t]) => `<button type="button" class="btn ${r.rated[i] === v ? "" : "ghost"}" aria-pressed="${r.rated[i] === v}" data-i="${i}" data-v="${v}" style="flex:1">${t}</button>`).join("")}</div></div>`).join("")}` : ""}
-  ${sc.allRated ? (() => { const pm = KERN().map(m => { const ix = qs.map((_, i) => i).filter(i => qs[i].m === m.id); const ok = ix.filter(i => qs[i].t === "frei" ? (r.rated[i] ?? 0) >= .5 : istRichtig(qs[i], r.ans[i])).length; return { m, ok, n: ix.length, p: ix.length ? ok / ix.length : 1 }; }).filter(x => x.n).sort((a, b) => a.p - b.p); return pm.length ? `<div class="card"><h2 class="h3" style="margin-top:0">Nach Themen</h2>${pm.map(x => `<div class="row" style="justify-content:space-between;padding:4px 0"><span>${esc(x.m.kurz)}</span><b>${x.ok} von ${x.n}</b></div>`).join("")}<p class="small" style="margin:8px 0 0">Am meisten bringt jetzt: <a href="#kompakt-${pm[0].m.id}" style="text-decoration:underline">${esc(pm[0].m.kurz)} kompakt wiederholen</a> und das <a href="#quiz-${pm[0].m.id}" style="text-decoration:underline">Modul-Quiz</a>.</p></div>` : ""; })() : ""}
-  ${sc.allRated && !r.saved ? `<button class="btn block" id="commit" style="margin:8px 0 20px">Ergebnis speichern</button>` : ""}
-  ${r.saved ? `<div class="row" style="justify-content:center;margin:8px 0 20px"><a class="btn ghost" href="#pruefung">Zurück</a><button class="btn" id="again">Neuer Test</button></div>` : ""}
+  ${sc.allRated ? (() => { const pm = KERN().map(m => { const ix = qs.map((_, i) => i).filter(i => qs[i].m === m.id); const ok = ix.filter(i => qs[i].t === "frei" ? (r.rated[i] ?? 0) >= .5 : istRichtig(qs[i], r.ans[i])).length; return { m, ok, n: ix.length, p: ix.length ? ok / ix.length : 1 }; }).filter(x => x.n).sort((a, b) => a.p - b.p); return pm.length ? `<div class="card"><h2 class="h3" style="margin-top:0">Nach Themen</h2>${pm.map(x => `<div style="padding:5px 0"><div class="row" style="justify-content:space-between"><span>${esc(x.m.kurz)}</span><b>${x.ok}/${x.n}</b></div><div class="bar2"><i style="width:${x.p * 100}%;background:${x.m.farbe}"></i></div></div>`).join("")}<p class="small" style="margin:8px 0 0">Am meisten bringt jetzt: <a href="#kompakt-${pm[0].m.id}" style="text-decoration:underline">${esc(pm[0].m.kurz)} kompakt wiederholen</a> und das <a href="#quiz-${pm[0].m.id}" style="text-decoration:underline">Modul-Quiz</a>.</p></div>` : ""; })() : ""}
+  
+  ${r.saved ? `<div class="row" style="justify-content:center;margin:8px 0 20px"><a class="btn ghost-w" href="#quiz-ueben">${ic("repeat")} Fehler üben</a><button class="btn" id="again">Neuer Test</button></div>` : ""}
   ${wrong.length ? `<div class="sec-h"><h2>Multiple Choice nacharbeiten</h2></div>${wrong.map(x => `<div class="card">${chip(x.q)}<p style="font-weight:700;margin-top:10px">${esc(x.q.q)}</p><p class="small bad-t">✗ Deine Antwort: ${x.a === undefined || (Array.isArray(x.a) && !x.a.length) ? "keine" : esc(Array.isArray(x.a) ? x.a.map(k => x.q.a[k]).join(" · ") : x.q.a[x.a])}</p><p class="small ok-t">✓ Richtig: ${esc(richtigText(x.q))}</p><div class="fb ok" style="margin-top:8px">${esc(x.q.e)}</div></div>`).join("")}` : ""}`, { keep: !!viewAuswertung.keep });
  viewAuswertung.keep = false;
- $$("[data-v]").forEach(b => b.onclick = () => { if (r.saved) return toast("Dieser Test ist schon gewertet"); r.rated[b.dataset.i] = +b.dataset.v; save(); viewAuswertung.keep = true; viewAuswertung(); });
+ $$("[data-v]").forEach(b => b.onclick = () => {
+  r.rated[b.dataset.i] = +b.dataset.v;
+  const sc2 = testScore(r);
+  if (r.saved && r.tIdx !== undefined) S.tests[r.tIdx] = sc2.pct; // Korrektur nach dem Speichern: Ergebnis anpassen
+  else if (sc2.allRated && !r.saved) { r.saved = true; r.tIdx = S.tests.length; qs.forEach((q, i) => grade(q.key, q.t === "frei" ? r.rated[i] === 1 : istRichtig(q, r.ans[i]), false)); S.tests.push(sc2.pct); toast("Ergebnis gespeichert – Bewertung bleibt änderbar"); }
+  save(); viewAuswertung.keep = true; viewAuswertung(); });
  $("#again")?.addEventListener("click", () => { location.hash = "test"; });
  $("#commit")?.addEventListener("click", () => { r.saved = true; qs.forEach((q, i) => grade(q.key, q.t === "frei" ? r.rated[i] === 1 : istRichtig(q, r.ans[i]), false)); S.tests.push(testScore(r).pct); save(); toast("Ergebnis gespeichert"); viewAuswertung(); });
 }
@@ -875,8 +902,8 @@ function viewLehrgang() {
  </div>
 
  <div class="sec-h"><h2>Vorlesungsplan</h2></div>
- <div class="card"><p class="small muted" style="margin:0 0 8px">Laut deinem Vorlesungsplan (nicht offiziell bestätigt). Live montags 18:30–20:00 Uhr, mit Aufzeichnung. Tippe auf ein Thema für die passenden Lektionen.</p>
-  <ol class="vplan">${VORLESUNGEN.map(v => { const ls = v.lektionen.map(LEK).filter(Boolean), done = ls.filter(x => S.lek[x.l.id]).length, nv = naechsteVorlesung() === v; return `<li class="${v.datum < dayLocal() ? "vorbei" : ""} ${nv ? "naechste" : ""}">${ls.length ? `<details><summary><span class="kw">${datumDE(v.datum)}</span><span>${esc(v.titel)}${nv ? " · <b>nächste</b>" : ""}</span><span class="small muted">${done}/${ls.length}</span></summary><ul>${ls.map(x => `<li><a href="#lektion-${x.m.id}-${x.l.id}">${S.lek[x.l.id] ? "✓ " : ""}${esc(x.l.titel)}</a></li>`).join("")}</ul></details>` : `<div class="vrow"><span class="kw">${datumDE(v.datum)}</span><span>${esc(v.titel)}</span></div>`}</li>`; }).join("")}</ol></div>
+ <div class="card"><p class="small muted" style="margin:0 0 8px">Laut Vorlesungsplan des laufenden Kurses (nicht offiziell bestätigt). Live montags 18:30–20:00 Uhr, mit Aufzeichnung. Die Themen wiederholen sich – Termine vor deinem Beginn sind blass. Tippe auf ein Thema für die passenden Lektionen.</p>
+  <ol class="vplan">${VORLESUNGEN.map(v => { const ls = v.lektionen.map(LEK).filter(Boolean), done = ls.filter(x => S.lek[x.l.id]).length, nv = naechsteOnline() === v; return `<li class="${v.datum < dayLocal() || (S.kursStart && v.datum < S.kursStart) ? "vorbei" : ""} ${nv ? "naechste" : ""}">${ls.length ? `<details><summary><span class="kw">${datumDE(v.datum)}</span><span>${esc(v.titel)}${nv ? " · <b>nächste</b>" : ""}</span><span class="small muted">${done}/${ls.length}</span></summary><ul>${ls.map(x => `<li><a href="#lektion-${x.m.id}-${x.l.id}">${S.lek[x.l.id] ? "✓ " : ""}${esc(x.l.titel)}</a></li>`).join("")}</ul></details>` : `<div class="vrow"><span class="kw">${datumDE(v.datum)}</span><span>${esc(v.titel)}</span></div>`}</li>`; }).join("")}</ol></div>
 
  <div class="sec-h"><h2>Der Lehrgang auf einen Blick</h2></div>
  <div class="card"><dl class="facts">
@@ -1070,14 +1097,14 @@ function viewGlossar() {
  page("start", `<a class="back" href="#start">${ic("left")} Start</a><h1 style="margin-bottom:12px">Glossar & Formeln</h1>
  <div class="searchbox">${ic("search")}<input type="search" id="gq" placeholder="Begriff suchen …" aria-label="Begriff suchen" autocomplete="off"></div>
  <div class="seg" role="tablist" aria-label="Ansicht"><button type="button" role="tab" data-t="begriffe" aria-selected="true" class="on">Begriffe</button><button type="button" role="tab" data-t="formeln" aria-selected="false">Formeln</button><button type="button" role="tab" data-t="karten" aria-selected="false">Lernkarten</button></div>
- <p class="sr-only" id="gcount" aria-live="polite"></p><div id="glist"></div>`);
+ <p class="small muted" id="gcount" aria-live="polite" style="margin:-6px 0 8px"></p><div id="glist"></div>`);
  const norm = t => t.toLowerCase().replace(/ä/g, "ae").replace(/ö/g, "oe").replace(/ü/g, "ue").replace(/ß/g, "ss").normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/[-\s_/]+/g, "");
  const score = (g, qy) => { const w = norm(g.w + " " + (g.syn || []).join(" ")), q = norm(qy); return w.startsWith(q) ? 0 : w.includes(q) ? 1 : 2; };
  const draw = () => {
   const qy = $("#gq").value;
   const items = GLOSSAR.filter(g => !qy || norm(g.w + " " + (g.syn || []).join(" ") + " " + (g.de || "") + " " + g.d).includes(norm(qy))).sort((a, b) => (qy ? score(a, qy) - score(b, qy) : 0) || a.w.localeCompare(b.w, "de"));
   const fs = FORMELN.filter(f => !qy || norm(f.n + " " + f.f).includes(norm(qy)));
-  $$(".seg button").forEach(b => { const on = b.dataset.t === tab; b.classList.toggle("on", on); b.setAttribute("aria-selected", on); b.textContent = b.dataset.t === "karten" ? "Lernkarten" : (b.dataset.t === "begriffe" ? "Begriffe" : "Formeln") + ` (${b.dataset.t === "begriffe" ? items.length : fs.length})`; });
+  $$(".seg button").forEach(b => { const on = b.dataset.t === tab; b.classList.toggle("on", on); b.setAttribute("aria-selected", on); b.textContent = { karten: "Lernkarten", begriffe: "Begriffe", formeln: "Formeln" }[b.dataset.t]; });
   $(".searchbox").hidden = tab === "karten";
   if (tab === "karten") return karte();
   $("#gcount").textContent = tab === "begriffe" ? `${items.length} Begriffe` : `${fs.length} Formeln`;
@@ -1153,7 +1180,7 @@ function viewEinstellungen(o = {}) {
  $$("button[data-size]").forEach(b => b.onclick = () => { S.set.size = b.dataset.size; save(); applySettings(); refocus(`button[data-size="${b.dataset.size}"]`); });
  $$("button[data-theme]").forEach(b => b.onclick = () => { S.set.theme = b.dataset.theme; save(); applySettings(); refocus(`button[data-theme="${b.dataset.theme}"]`); });
  ["goal", "pomo", "clock"].forEach(k => $$(`button[data-${k}]`).forEach(b => b.onclick = () => { S.set[k] = b.dataset[k]; if (k === "pomo") pomo0 = 0; save(); refocus(`button[data-${k}="${b.dataset[k]}"]`); }));
- $$("[data-opt]").forEach(c => c.onchange = () => { S.set[c.dataset.opt] = c.checked; save(); applySettings(); if (c.dataset.opt === "vibe" && c.checked) buzz(30); toast(c.checked ? "Eingeschaltet" : "Ausgeschaltet"); });
+ $$("[data-opt]").forEach(c => c.onchange = () => { S.set[c.dataset.opt] = c.checked; save(); applySettings(); if (c.dataset.opt === "vibe" && c.checked) buzz(30); toast(`${{ focus: "Fokusmodus", step: "Schritt für Schritt", calm: "Ruhige Darstellung", vibe: "Vibration" }[c.dataset.opt]} ${c.checked ? "an" : "aus"}`); });
  $("#impno")?.addEventListener("click", () => viewEinstellungen({ keep: true }));
  $("#impyes")?.addEventListener("click", () => { S = Object.assign(DEF(), pend.data); normalizeState(); save(); applySettings(); toast("Lernstand wiederhergestellt"); viewEinstellungen({ keep: true }); });
  $("#exp").onclick = exportBackup;

@@ -557,3 +557,66 @@ input, textarea, select{box-sizing:border-box}
 .countdown .cd.haupt svg{color:var(--c1,#d6336c)}
 .countdown{flex-wrap:nowrap} .countdown .cd{flex:1 1 0;min-width:0} .countdown .cd small{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .tcell{justify-content:flex-end}
+/* ---------- 0.16: UI/UX-Review ---------- */
+/* Farben: „falsch“ = Ziegelrot statt Marken-Pink */
+:root{--bad:#b42318;--bad-soft:#fdecea}
+:root[data-theme=dark]{--bad:#ff8a7a;--bad-soft:#3a1d1a}
+@media (prefers-color-scheme:dark){:root:not([data-theme=light]){--bad:#ff8a7a;--bad-soft:#3a1d1a}}
+.fb.muster-box{background:var(--surface-2);border-color:var(--line-strong)}
+.opt.bad{border-color:var(--bad)!important;background:var(--bad-soft)!important}
+.opt.ok{border-color:var(--ok)!important;background:var(--ok-soft)!important}
+/* Werkzeug-Kacheln einheitlich und ruhig; Farbe nur für Module */
+.cont .thumb{background:color-mix(in srgb,var(--c3,#6741d9) 12%,var(--surface))!important;color:color-mix(in srgb,var(--c3,#6741d9) 70%,var(--ink))}
+.mod-head ~ .cont .thumb{background:color-mix(in srgb,var(--m,#6741d9) 16%,var(--surface))!important;color:color-mix(in srgb,var(--m,#6741d9) 70%,var(--ink))}
+/* Toasts: volle Breite, über Hauptknöpfen */
+#toast{width:max-content;max-width:calc(100vw - 32px);text-align:center;line-height:1.35}
+body:has(.qcard:not(.result)) #toast, body.no-scroll #toast{bottom:calc(156px + var(--safe-b))}
+/* Kurz-Check: gesperrter Weiter-Knopf sichtbar zurückgenommen */
+.story .btn[aria-disabled=true]{background:var(--surface-2);color:var(--ink-3);box-shadow:none}
+.story .btn .dots{font-size:.6em;letter-spacing:.15em;opacity:.8}
+/* Probetest-Übersicht: offen gestrichelt, beantwortet gefüllt; keine Reiterleiste */
+.ovgrid button{border:2px dashed var(--line-strong);background:var(--surface)}
+.ovgrid button.done{border:2px solid transparent;background:color-mix(in srgb,var(--c3,#6741d9) 16%,var(--surface));color:var(--ink)}
+.ovgrid button.mk{box-shadow:inset 0 0 0 2px var(--c1,#d6336c)} .ovgrid button.mk::after{color:var(--c1,#d6336c)}
+.ovgrid button small{bottom:1px;right:3px;font-size:.55rem}
+body:has(.ovgrid) .tabbar, body:has(.testbar) .tabbar{display:none}
+/* Zweit-Knöpfe auf Karten sichtbar */
+.card .btn.ghost,.qcard .btn.ghost{background:var(--surface);border:2px solid var(--line-strong);box-shadow:none}
+.rate-row{flex-wrap:nowrap} .rate-row .btn,[aria-label=Bewertung] .btn{padding:12px 8px;white-space:nowrap;min-width:0}
+.rate-row .btn.sel::after{content:"Vorschlag";display:block;font-size:.68rem;font-weight:600;color:var(--ink-3)}
+.rate-row .btn.sel{flex-direction:column;gap:0;background:var(--surface)}
+/* Dunkelmodus: dunkle Schrift auf hellen Modultönen */
+[data-theme=dark] .story .shead .av,[data-theme=dark] .dg text.w{color:#110e16;fill:#110e16}
+@media (prefers-color-scheme:dark){:root:not([data-theme=light]) .story .shead .av,:root:not([data-theme=light]) .dg text.w{color:#110e16;fill:#110e16}}
+.story strong:has(> .term){background:none;padding:0;margin:0}
+/* Segmente ohne Umbruch */
+.seg button{white-space:nowrap;padding:9px 6px;font-size:.88rem}
+/* Mehrfachauswahl: Kästchen statt Buchstaben */
+.opt[aria-pressed] .l,.opt[role=checkbox] .l{border-radius:7px;border:2px solid var(--line-strong);background:var(--surface);color:transparent;position:relative}
+.opt[aria-pressed=true] .l,.opt[role=checkbox][aria-checked=true] .l{background:var(--c3,#6741d9);border-color:var(--c3,#6741d9)}
+.opt[aria-pressed=true] .l::after,.opt[role=checkbox][aria-checked=true] .l::after{content:"✓";color:#fff;position:absolute;inset:0;display:grid;place-items:center;font-weight:800}
+.multi-hint{display:inline-block;background:color-mix(in srgb,var(--c3,#6741d9) 12%,var(--surface));color:color-mix(in srgb,var(--c3,#6741d9) 75%,var(--ink));padding:3px 10px;border-radius:99px;font-size:.82rem}
+/* Lektion: nicht gewählte Antworten nur abschwächen (bei großer Schrift ausblenden) */
+.story .opt.dim{display:flex;opacity:.35;transform:scale(.97)}
+:root[data-size=l] .story .opt.dim,:root[data-size=xl] .story .opt.dim{display:none}
+/* Quiz-Kopf */
+.qhead{justify-content:space-between;align-items:center;margin-bottom:10px;gap:8px} .qhead .chip{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bar.dark i{min-width:4%}
+/* Probetest-Leiste kompakt */
+.testbar{flex-wrap:nowrap} #prev[disabled]{visibility:hidden}
+/* Update-Banner, Hinweisbalken, Suche, Schalter */
+.nag{background:var(--surface-2)!important;color:var(--ink)!important;border-bottom:1px solid var(--line)}
+:root[data-theme=dark] .upd{background:var(--surface-2);color:var(--ink);border:1px solid var(--line)}
+.searchbox input::-webkit-search-cancel-button{filter:grayscale(1);opacity:.6}
+label.check.sw input{appearance:none;-webkit-appearance:none;width:46px;height:28px;border-radius:99px;background:var(--line-strong);position:relative;transition:background .2s;flex:none;margin-top:0;cursor:pointer}
+label.check.sw input::after{content:"";position:absolute;top:3px;left:3px;width:22px;height:22px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.3);transition:transform .2s}
+label.check.sw input:checked{background:var(--ok)} label.check.sw input:checked::after{transform:translateX(18px)}
+/* Ruhige Darstellung durchgängig */
+:root[data-calm]{--brand:#5c5470} :root[data-calm] .hero .kicker{color:var(--ink-2)} :root[data-calm] .story{--m:#7a7290}
+/* Fokusmodus: Ringe ruhiger */
+:root[data-focus] .ring .ic{filter:saturate(.4)} :root[data-focus] .ring svg.prog{opacity:.5}
+/* Modul-Ringe 15 % kleiner, Hinweis auf Weiterwischen */
+.compact .ring{width:75px} .compact .ring .r{width:65px;height:65px;margin-bottom:3px} .compact .ring .ic{inset:7px} .compact .ring .ic svg{width:25px;height:25px}
+.compact .ring .lbl{font-size:.72rem} .compact .ring .done-badge{width:21px;height:21px}
+.compact .rings{gap:8px;-webkit-mask-image:linear-gradient(90deg,#000 88%,transparent);mask-image:linear-gradient(90deg,#000 88%,transparent)}
+.compact .rings.end{-webkit-mask-image:none;mask-image:none}
