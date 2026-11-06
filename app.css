@@ -428,3 +428,38 @@ details.fold > .card{box-shadow:none;padding-left:0;padding-right:0;background:t
 details.fold > :last-child{margin-bottom:14px}
 details.fold > .road, details.fold > .src{margin-top:0}
 [tabindex="-1"]:focus{outline:none}
+/* ---------- 0.13: Hauptseiten passen ohne Scrollen auf einen Bildschirm ---------- */
+.tabbar{padding:5px;gap:2px;bottom:calc(8px + var(--safe-b))}
+.tabbar a{min-width:0;padding:10px 22px;gap:0}
+.tabbar a svg{width:24px;height:24px}
+@media (min-width:700px){.tabbar a{padding:10px 26px}}
+.wrap.compact{padding-top:max(10px,env(safe-area-inset-top));padding-bottom:calc(76px + var(--safe-b))}
+.compact .top{margin:0 0 10px} .compact .top .t{font-size:1.1rem} .compact .top .iconbtn{width:38px;height:38px}
+.compact .rings{gap:10px;padding-bottom:6px}
+.compact .ring{width:62px} .compact .ring .r{width:58px;height:58px;margin-bottom:3px} .compact .ring .ic{inset:6px} .compact .ring .ic svg{width:22px;height:22px}
+.compact .ring .lbl{font-size:.72rem}
+.compact .ring .done-badge{width:20px;height:20px;border-width:2px}
+.compact .hero{padding:16px 18px;margin-bottom:12px;border-radius:22px}
+.compact .hero h1{font-size:clamp(20px,5vw,26px);margin:4px 0 6px}
+.compact .hero p{font-size:.95rem;margin:0 0 6px}
+.compact .hero .kicker{font-size:.72rem}
+.compact .hgoal{margin:8px 0 2px} .compact .hgoal .hbar{height:6px;margin-top:6px}
+.compact .hero-stat{margin-top:10px;gap:18px} .compact .hero-stat b{font-size:1.3rem} .compact .hero-stat span{font-size:.75rem}
+.compact .hero .row{margin-top:12px} .compact .hero .btn{padding:11px 20px}
+.compact .cont{padding:10px 12px;gap:12px;margin-bottom:8px!important;border-radius:18px}
+.compact .cont .thumb{width:42px;height:42px;border-radius:13px} .compact .cont .thumb svg{width:21px;height:21px}
+.compact .cont b{font-size:.98rem!important}
+.compact .cont .small{font-size:.8rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:62vw}
+.compact .cont > div:nth-child(2){min-width:0}
+.compact .welcome{padding:10px 14px;margin-bottom:8px}
+.compact details.fold{margin-bottom:8px;border-radius:16px}
+.compact details.fold > summary{padding:12px 0}
+.compact details.fold > summary h2{font-size:1rem}
+.compact .card.termin{padding:12px 14px;margin-bottom:10px}
+.compact .card.termin input[type=date]{padding:7px 10px}
+.compact .card.termin .btn{padding:8px 10px}
+.compact .nofold{margin-top:10px!important;font-size:.72rem}
+.compact .card.small{font-size:.88rem}
+@media (max-height:700px){.compact .hero-stat{display:none}}
+.compact .ring{width:68px} .compact .ring svg.prog{width:100%;height:100%} .compact .ring .lbl{font-size:.68rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+@media (max-height:680px){.compact .hero p{display:none} .compact .cont .small{display:none} .compact .cont{padding:8px 12px} .compact .cont .thumb{width:36px;height:36px}}

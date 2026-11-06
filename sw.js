@@ -1,6 +1,6 @@
 // Service Worker: alles für die Offline-Nutzung vorhalten.
 // Bei jeder Inhaltsänderung CACHE hochzählen, damit Geräte die neue Version laden.
-const CACHE = 'smm-v0.12.4';
+const CACHE = 'smm-v0.13.0';
 const ASSETS = ['./', 'index.html', 'app.css', 'app.js', 'data/kurs.js', 'data/fragen2.js', 'data/glossar.js', 'data/bilder.js', 'data/lektionen3.js', 'data/glossar2.js', 'data/grundwortschatz.js', 'data/begriffsfragen.js', 'data/mehrfach.js', 'manifest.webmanifest',
   'icons/icon.svg', 'icons/icon-192.png', 'icons/icon-512.png', 'icons/maskable-512.png',
   'fonts/Poppins-Medium.woff', 'fonts/Poppins-Bold.woff'];

@@ -56,7 +56,7 @@ const ic = (n, extra = "") => `<svg viewBox="0 0 24 24" fill="none" stroke="curr
 /* ---------- Speicher ----------
    Doppelt: localStorage (schnell) + IndexedDB (robuster). Beim Start gewinnt der neuere Stand (Zeitstempel).
    Fragen und Lektionen haben stabile Schlüssel (unabhängig vom Modul), alte Schlüssel werden migriert. */
-const KEY = "smm-coach", VERSION = "0.12.4";
+const KEY = "smm-coach", VERSION = "0.13.0";
 const DEF = () => ({ lek: {}, q: {}, srs: {}, last: null, tests: [], pruefung: "", day: null, seen: 0, set: { size: "m", theme: "auto", goal: "15", vibe: true, step: true, mig1: 1 }, lastBackup: 0, created: Date.now(), updated: 0, run: null, lastRun: null });
 let S = DEF();
 try { const x = JSON.parse(localStorage.getItem(KEY) || "null"); if (x) S = Object.assign(DEF(), x); } catch (e) {}
@@ -171,11 +171,11 @@ function ringSvg(p, size = 76, w = 4, track = "var(--line)", color = null) {
 /* ---------- Router ---------- */
 const TABS = [["start", "Start", "home"], ["pruefung", "Prüfung", "exam"], ["lehrgang", "Lehrgang", "info"]];
 function tabbar(active) {
- return `<nav class="tabbar" aria-label="Navigation">${TABS.map(([h, t, i]) => `<a href="#${h}" class="${active === h ? "on" : ""}"${active === h ? ' aria-current="page"' : ""}>${ic(i)}<span>${t}</span></a>`).join("")}</nav>`;
+ return `<nav class="tabbar" aria-label="Navigation">${TABS.map(([h, t, i]) => `<a href="#${h}" aria-label="${t}" title="${t}" class="${active === h ? "on" : ""}"${active === h ? ' aria-current="page"' : ""}>${ic(i)}<span class="sr-only">${t}</span></a>`).join("")}</nav>`;
 }
 function page(active, html, o = {}) {
  const y = scrollY;
- app.innerHTML = `<div class="wrap">${html}</div>${tabbar(active)}`;
+ app.innerHTML = `<div class="wrap${o.compact ? " compact" : ""}">${html}</div>${tabbar(active)}`;
  const h1 = $("h1", app);
  document.title = (h1 ? h1.textContent.trim() + " – " : "") + "SMM Coach";
  if (o.keep) { scrollTo(0, y); return; }
@@ -184,7 +184,7 @@ function page(active, html, o = {}) {
  if (h1 && page.n++) { h1.setAttribute("tabindex", "-1"); h1.focus({ preventScroll: true }); }
 }
 page.n = 0;
-function head() { return `<div class="top"><div class="t">Social Media Manager (IHK)</div><a class="iconbtn" href="#einstellungen" aria-label="Einstellungen">${ic("gear")}</a></div>`; }
+function head(t = "Social Media Manager (IHK)") { return `<div class="top"><div class="t">${t}</div><a class="iconbtn" href="#einstellungen" aria-label="Einstellungen">${ic("gear")}</a></div>`; }
 
 /* ---------- Navigation: „Zurück“ führt dorthin, wo man herkam ----------
    Tab-Wurzeln setzen den Verlauf zurück, damit Zurück nie in einen anderen Reiter springt. */
@@ -272,7 +272,7 @@ function viewStart() {
   <div class="kicker">${dl !== null && dl >= 0 ? (dl === 0 ? "Heute ist Prüfung – viel Erfolg!" : `Noch ${dl} Tag${dl === 1 ? "" : "e"} bis zur Prüfung`) : p > 0 ? "Weiter so" : "Willkommen"}</div>
   <h1>${p > 0 ? `${Math.round(p * 100)} % insgesamt geschafft` : "Werde Social Media Manager"}</h1>
   ${(() => { const h = heute(), g = goal(), ok = h >= g; return `<div class="hgoal ${ok ? "ok" : ""}"><div class="row" style="justify-content:space-between;align-items:center"><b>${ok ? "Tagesziel geschafft ✓" : "Heute"}</b><span>${Math.min(h, g)} von ${g} Fragen</span></div><div class="hbar" aria-hidden="true"><i style="width:${Math.min(1, h / g) * 100}%"></i></div></div>`; })()}
-  <p style="opacity:.92;max-width:460px">${p > 0 ? (perWeek ? `Plan: etwa ${perWeek} Lektion${perWeek === 1 ? "" : "en"} pro Woche, dann passt es bis zur Prüfung.` : "") : "Begleiter zum Lehrgang mit Abschlusstest beim IHK-Bildungszentrum Dresden: kurze Lektionen, Quiz, Freitext-Training und ein Probetest im bekannten Format."}</p>
+  <p style="opacity:.92;max-width:460px">${p > 0 ? (perWeek ? `Plan: etwa ${perWeek} Lektion${perWeek === 1 ? "" : "en"} pro Woche, dann passt es bis zur Prüfung.` : "") : "Lektionen, Quiz und Probetest für deinen IHK-Abschlusstest."}</p>
   <div class="hero-stat fx"><div><b>${lessonsDone}/${lessonsAll}</b><span>Lektionen</span></div><div><b>${POOL.filter(q => q.key in S.q).length}/${POOL.length}</b><span>Fragen bearbeitet</span></div><div><b>${best === null ? "–" : best + " %"}</b><span>Bester Test</span></div></div>
   <div class="row"><a class="btn white" href="#mini">${ic("play")} ${p > 0 ? "Weiterlernen" : "Loslegen"}</a></div>
  </section>
@@ -283,7 +283,7 @@ function viewStart() {
  ${platform().standalone && !hasProgress(S) ? `<a class="cont" href="#einstellungen" style="margin-bottom:10px"><div class="thumb" style="background:linear-gradient(135deg,#495057,#212529)">${ic("upload")}</div><div><b style="font-size:1rem">Kommst du aus dem Browser?</b><div class="small muted">Dort gesicherten Lernstand in den Einstellungen wiederherstellen.</div></div><span class="chev" style="margin-left:auto">${ic("right")}</span></a>` : ""}
  ${S.run ? `<a class="cont" href="#test" style="margin-bottom:10px"><div class="thumb" style="background:var(--grad-strong)">${ic("clock")}</div><div><b style="font-size:1rem">Probetest läuft</b><div class="small muted">Weitermachen, wo du aufgehört hast</div></div><span class="chev" style="margin-left:auto">${ic("right")}</span></a>` : ""}
  ${S.pruefung ? "" : `<a class="cont" href="#lehrgang" style="margin-bottom:6px"><div class="thumb" style="background:var(--grad-strong)">${ic("cal")}</div><div><b style="font-size:1rem">Prüfungstermin eintragen</b><div class="small muted">Dann zeigt dir die App, wie viel du pro Woche lernen solltest.</div></div><span class="chev" style="margin-left:auto;color:var(--ink-3)">${ic("right")}</span></a>`}
-`);
+`, { compact: true });
 }
 
 /* ---------- Lernen ---------- */
@@ -561,7 +561,7 @@ function testScore(r) {
 function viewPruefung() {
  const best = S.tests.length ? Math.max(...S.tests) : null, last = S.tests.length ? S.tests[S.tests.length - 1] : null;
  const open = S.lastRun && !S.lastRun.saved;
- page("pruefung", `${head()}<h1 style="margin-bottom:14px">Prüfung</h1>
+ page("pruefung", `${head("Prüfung")}<h1 class="sr-only">Prüfung</h1>
  ${S.run ? `<a class="cont" href="#test" style="margin-bottom:12px"><div class="thumb" style="background:var(--grad-strong)">${ic("clock")}</div><div><b style="font-size:1rem">Probetest fortsetzen</b><div class="small muted">${Object.keys(S.run.ans).length} von ${S.run.ids.length} beantwortet${S.run.end ? ` · noch ${Math.max(0, Math.ceil((S.run.end - Date.now()) / 60000))} Min.` : ""}</div></div><span class="chev" style="margin-left:auto">${ic("right")}</span></a>` : ""}
  ${open ? `<a class="cont" href="#auswertung" style="margin-bottom:12px"><div class="thumb" style="background:linear-gradient(135deg,#a61e4d,#6741d9)">${ic("pen")}</div><div><b style="font-size:1rem">Auswertung abschließen</b><div class="small muted">Freitexte deines letzten Probetests bewerten</div></div><span class="chev" style="margin-left:auto">${ic("right")}</span></a>` : ""}
  <section class="hero">
@@ -575,7 +575,7 @@ function viewPruefung() {
  <a class="cont" href="#quiz-mix" style="margin-bottom:10px"><div class="thumb" style="background:linear-gradient(135deg,#c2410c,#c92a2a)">${ic("shuffle")}</div><div><b style="font-size:1rem">Schnell-Quiz</b><div class="small muted">10 gemischte Fragen</div></div><span class="chev" style="margin-left:auto">${ic("right")}</span></a>
  ${S.tests.length > 1 ? `<div class="sec-h"><h2>Verlauf deiner Probetests</h2></div><div class="card"><div class="row" style="align-items:flex-end;gap:8px;height:130px" role="img" aria-label="Ergebnisse der letzten Probetests: ${S.tests.slice(-10).join(", ")} Prozent">${S.tests.slice(-10).map(t => `<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px"><span class="small muted">${t}</span><div style="width:100%;max-width:36px;height:${Math.max(6, t)}px;border-radius:8px;background:${t >= PASS ? "var(--grad-strong)" : "var(--bad-soft)"}"></div></div>`).join("")}</div></div>` : ""}
  <div class="sec-h"><h2>Was ist sicher, was angenommen?</h2></div>
- <div class="card small"><p style="margin:0 0 6px"><b>Sicher:</b> 30 Fragen, Multiple Choice und Freitext, 60 Minuten, online beim IHK-Bildungszentrum Dresden.</p><p style="margin:0"><b>Angenommen:</b> bestanden ab ${PASS} % (bei IHK-Zertifikatstests üblich), 5 Freitext-Fragen mit doppeltem Gewicht, teils mehrere richtige Antworten. Deine eigene Freitext-Bewertung fällt meist milder aus als die der Prüfer – deshalb das Ziel ${ZIEL} %. <a href="#lehrgang" style="text-decoration:underline">Mehr unter Lehrgang</a></p></div>`);
+ <div class="card small"><p style="margin:0 0 6px"><b>Sicher:</b> 30 Fragen, Multiple Choice und Freitext, 60 Minuten, online beim IHK-Bildungszentrum Dresden.</p><p style="margin:0"><b>Angenommen:</b> bestanden ab ${PASS} % (bei IHK-Zertifikatstests üblich), 5 Freitext-Fragen mit doppeltem Gewicht, teils mehrere richtige Antworten. Deine eigene Freitext-Bewertung fällt meist milder aus als die der Prüfer – deshalb das Ziel ${ZIEL} %. <a href="#lehrgang" style="text-decoration:underline">Mehr unter Lehrgang</a></p></div>`, { compact: true });
  foldSections($("#app"));
 }
 let testTimer = null;
@@ -698,12 +698,10 @@ const SRC = {
 const src = (...k) => `<p class="small muted src">Quelle: ${k.map(x => `<a href="${SRC[x][1]}" target="_blank" rel="noopener">${SRC[x][0]}</a>`).join(" · ")}</p>`;
 function viewLehrgang() {
  const dl = daysLeft();
- page("lehrgang", `${head()}<h1 style="margin-bottom:6px">Lehrgang & Karriere</h1><p class="muted" style="margin-bottom:18px">Social Media Manager/-in (IHK) mit Abschlusstest beim IHK-Bildungszentrum Dresden.</p>
+ page("lehrgang", `${head("Lehrgang & Karriere")}<h1 class="sr-only">Lehrgang & Karriere</h1>
 
- <div class="card"><h2 style="margin-bottom:8px">${ic("cal", 'style="width:22px;height:22px;vertical-align:-4px"')} Dein Prüfungstermin</h2>
-  <p class="small muted">Der Termin wird individuell mit dem IHK-Bildungszentrum abgestimmt. Trag ihn ein, sobald du ihn kennst.</p>
-  <div class="row" style="margin-top:10px"><label class="sr-only" for="pdate">Prüfungstermin</label><input type="date" id="pdate" value="${esc(S.pruefung || "")}" style="flex:1;min-width:180px"><button class="btn ghost" id="pdel" ${S.pruefung ? "" : "hidden"}>Löschen</button></div>
-  <p style="margin-top:10px;font-weight:700" id="pinfo" aria-live="polite">${dl === null ? "" : dl > 0 ? `Noch ${dl} Tag${dl === 1 ? "" : "e"}.` : dl === 0 ? "Heute ist Prüfung – viel Erfolg!" : "Der Termin liegt in der Vergangenheit."}</p>
+ <div class="card termin"><div class="row" style="align-items:center;gap:10px">${ic("cal", 'style="width:24px;height:24px;flex:none"')}<label for="pdate" style="font-weight:700;flex:none">Prüfungstermin</label><input type="date" id="pdate" value="${esc(S.pruefung || "")}" style="flex:1;min-width:0"><button class="btn ghost" id="pdel" aria-label="Termin löschen" ${S.pruefung ? "" : "hidden"}>${ic("x")}</button></div>
+  <p class="small" style="margin:8px 0 0;font-weight:700" id="pinfo" aria-live="polite">${dl === null ? "" : dl > 0 ? `Noch ${dl} Tag${dl === 1 ? "" : "e"}.` : dl === 0 ? "Heute ist Prüfung – viel Erfolg!" : "Der Termin liegt in der Vergangenheit."}</p>
  </div>
 
  <div class="sec-h"><h2>Der Lehrgang auf einen Blick</h2></div>
@@ -777,7 +775,7 @@ function viewLehrgang() {
   <p class="small" style="margin-top:8px">Aufbauend bietet die HSB Akademie weitere IHK-Zertifikate an, z. B. Social Advertising Manager, Online Marketing Manager, Content Marketing Manager oder KI Marketing Manager.</p>${src("hsb")}</div>
  <div class="tip good">${ic("check", 'style="color:var(--ok)" stroke-width="3"')}<span><b>Tipp für Bewerbungen:</b> Zeig ein kleines Portfolio – z. B. eine Beispielstrategie, einen Redaktionsplan und ein Reporting. Das Zertifikat gehört ins LinkedIn-Profil.</span></div>
 
- <p class="small muted nofold" style="margin:24px 0 0">SMM Coach ist ein unabhängiges Lernangebot und kein offizielles Angebot der IHK Dresden, des IHK-Bildungszentrums Dresden oder der HSB Akademie. Alle Angaben ohne Gewähr, Stand November 2026. Verbindlich sind die Informationen des Anbieters.</p>`);
+ <p class="small muted nofold" style="margin:24px 0 0">SMM Coach ist ein unabhängiges Lernangebot und kein offizielles Angebot der IHK Dresden, des IHK-Bildungszentrums Dresden oder der HSB Akademie. Alle Angaben ohne Gewähr, Stand November 2026. Verbindlich sind die Informationen des Anbieters.</p>`, { compact: true });
  foldSections($("#app"));
  $("#pdate").onchange = e => { S.pruefung = e.target.value; save(); toast(S.pruefung ? "Prüfungstermin gespeichert" : "Termin gelöscht"); const dl = daysLeft(), el = $("#pinfo"); if (el) el.textContent = dl === null ? "" : dl > 0 ? `Noch ${dl} Tag${dl === 1 ? "" : "e"}.` : dl === 0 ? "Heute ist Prüfung – viel Erfolg!" : "Der Termin liegt in der Vergangenheit."; $("#pdel").hidden = !S.pruefung; };
  $("#pdel").onclick = () => { S.pruefung = ""; save(); $("#pdate").value = ""; $("#pinfo").textContent = ""; $("#pdel").hidden = true; };
