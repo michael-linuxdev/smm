@@ -524,3 +524,8 @@ body:has(.qcard:not(.result)) .wrap{padding-bottom:calc(32px + var(--safe-b))}
 .story textarea{min-height:6.5em;font-size:max(16px,.9em)}
 .story .answer{background:var(--surface-2);border-radius:.6em;padding:.5em .7em;white-space:pre-line;margin-bottom:.5em}
 .story .btn.next[aria-disabled=true]{opacity:.5}
+/* Modul-Ringe auf Start ~33 % größer */
+.compact .ring{width:88px} .compact .ring .r{width:77px;height:77px;margin-bottom:4px} .compact .ring .ic{inset:8px} .compact .ring .ic svg{width:29px;height:29px}
+.compact .ring .lbl{font-size:.78rem} .compact .ring .done-badge{width:24px;height:24px}
+.compact .rings{gap:12px}
+.compact .top{margin-bottom:6px} .compact .hero{margin-bottom:10px}
