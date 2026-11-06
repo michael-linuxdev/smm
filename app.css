@@ -364,3 +364,37 @@ h2.h3{font-size:1.1rem;margin:20px 0 8px}
 /* iOS: kein Link-Vorschau-Menü beim langen Drücken (App-Gefühl statt Safari-Vorschau) */
 a, img, button, .cont, .tile, .tabbar a { -webkit-touch-callout: none; -webkit-user-select: none; user-select: none; -webkit-tap-highlight-color: transparent }
 a[href], img { -webkit-user-drag: none }
+/* ---------- 0.10: Lernhilfen (ADHS-freundlich) ---------- */
+.btn.ghost-w{background:rgba(255,255,255,.16);color:#fff;border:1.5px solid rgba(255,255,255,.55)}
+.welcome{border-left:5px solid var(--ok)}
+.daygoal{padding:14px 16px} .daygoal .bar2{margin-top:8px} .daygoal.ok{background:var(--ok-soft)} .daygoal.ok b{color:var(--ok)}
+.qtop .say{margin-left:8px;width:36px;height:36px;flex:none}
+.story .shead .say{margin-left:auto;margin-right:8px}
+.story .shead .say + .x{margin-left:0}
+.rv{transition:opacity .25s ease} .rv.h{visibility:hidden;opacity:0}
+label.check.sw{align-items:flex-start;border-top:1px solid var(--line);padding:12px 0}
+label.check.sw > span{display:flex;flex-direction:column;gap:2px}
+label.check.sw input{margin-top:2px;flex:none}
+.pomo{position:fixed;left:12px;right:12px;bottom:calc(90px + var(--safe-b,0px));z-index:70;max-width:520px;margin:0 auto;background:var(--surface);color:var(--ink);border-radius:20px;padding:16px;box-shadow:0 18px 50px -14px rgba(0,0,0,.45);border:1px solid var(--line)}
+.pomo b{display:block;font-size:1.05rem} .pomo span{font-size:.92rem;color:var(--ink-2)} .pomo .row{margin-top:12px;gap:8px} .pomo .row .btn{flex:1}
+.timer.calm{display:inline-flex;align-items:center;gap:8px;font-family:var(--font);font-weight:600;font-size:.9rem}
+.timer.calm .tb{display:block;width:70px;height:6px;border-radius:9px;background:var(--surface-2);overflow:hidden}
+.timer.calm .tb b{display:block;height:100%;background:var(--ink-3);border-radius:9px;transition:width 1s linear}
+.timer.calm.low .tb b{background:var(--bad)}
+.tstrat{margin:12px 0;background:rgba(255,255,255,.14);border-radius:14px;padding:10px 14px}
+.tstrat summary{cursor:pointer;font-weight:700} .tstrat ol{margin:8px 0 0;padding-left:20px;font-size:.95rem}
+/* Fokusmodus: nur das Nötigste */
+:root[data-focus] .tabbar, :root[data-focus] .fx, :root[data-focus] .nag{display:none!important}
+:root[data-focus] .wrap{padding-bottom:32px}
+/* Ruhige Darstellung */
+:root[data-calm]{--font:Verdana,"Atkinson Hyperlegible",-apple-system,"Segoe UI",sans-serif;--display:var(--font);--grad-strong:linear-gradient(135deg,#5c5470,#423a56)}
+:root[data-calm] body{line-height:1.7;letter-spacing:.01em}
+:root[data-calm] *, :root[data-calm] *::before, :root[data-calm] *::after{animation:none!important;transition:none!important}
+:root[data-calm] .thumb, :root[data-calm] .ti, :root[data-calm] .ring .ic, :root[data-calm] .hero, :root[data-calm] .btn:not(.ghost), :root[data-calm] .logo, :root[data-calm] .story .av{filter:saturate(.35)}
+:root[data-calm] .story .slide{border-top-width:3px}
+:root[data-calm] .confetti{display:none}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}}
+.say{border:0;background:var(--surface);box-shadow:var(--shadow);border-radius:50%;display:grid;place-items:center;color:var(--ink-2);padding:0;cursor:pointer}
+.say svg{width:20px;height:20px}
+.story .shead .say{width:40px;height:40px;flex:none}
+.qtop .say{background:var(--surface-2);box-shadow:none}

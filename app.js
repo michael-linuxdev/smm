@@ -44,6 +44,8 @@ const I = {
  right: '<path d="M9 5l7 7-7 7"/>',
  lock: '<rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 018 0v3"/>',
  ads: '<path d="M3 11v2a1 1 0 001 1h2l5 4V6L6 10H4a1 1 0 00-1 1zM15 9a3 3 0 010 6M18 6a7 7 0 010 12"/>',
+ speaker: '<path d="M4 9v6h4l5 4V5L8 9H4zM16.5 8.5a5 5 0 010 7M19 6a8.5 8.5 0 010 12"/>',
+ focus: '<circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3"/>',
  bolt: '<path d="M13 2L4 14h7l-1 8 9-12h-7z"/>',
  warn: '<path d="M12 3l10 18H2zM12 10v5M12 18v.5"/>',
  copy: '<rect x="8" y="8" width="12" height="12" rx="2"/><path d="M4 16V5a1 1 0 011-1h11"/>',
@@ -54,8 +56,8 @@ const ic = (n, extra = "") => `<svg viewBox="0 0 24 24" fill="none" stroke="curr
 /* ---------- Speicher ----------
    Doppelt: localStorage (schnell) + IndexedDB (robuster). Beim Start gewinnt der neuere Stand (Zeitstempel).
    Fragen und Lektionen haben stabile Schlüssel (unabhängig vom Modul), alte Schlüssel werden migriert. */
-const KEY = "smm-coach", VERSION = "0.9.4";
-const DEF = () => ({ lek: {}, q: {}, srs: {}, last: null, tests: [], pruefung: "", set: { size: "m", theme: "auto" }, lastBackup: 0, created: Date.now(), updated: 0, run: null, lastRun: null });
+const KEY = "smm-coach", VERSION = "0.10.0";
+const DEF = () => ({ lek: {}, q: {}, srs: {}, last: null, tests: [], pruefung: "", day: null, seen: 0, set: { size: "m", theme: "auto", goal: "10", vibe: true }, lastBackup: 0, created: Date.now(), updated: 0, run: null, lastRun: null });
 let S = DEF();
 try { const x = JSON.parse(localStorage.getItem(KEY) || "null"); if (x) S = Object.assign(DEF(), x); } catch (e) {}
 const IDB = { db: null };
@@ -93,12 +95,32 @@ function applySettings() {
  const r = document.documentElement;
  r.dataset.size = S.set?.size || "m";
  if (S.set?.theme && S.set.theme !== "auto") r.dataset.theme = S.set.theme; else delete r.dataset.theme;
+ r.toggleAttribute("data-focus", !!S.set?.focus);
+ r.toggleAttribute("data-calm", !!S.set?.calm);
 }
 applySettings();
+// Wiedereinstieg: Wer länger weg war, bekommt eine freundliche Begrüßung statt Rückstands-Zahlen
+const PAUSE_TAGE = S.seen ? Math.floor((Date.now() - S.seen) / 86400000) : 0;
+S.seen = Date.now();
 
 /* Wiederholen mit System (Leitner): Fach 0–5, Abstand in Tagen */
 const BOX_DAYS = [0, 1, 3, 7, 14, 30];
-function grade(key, ok) {
+/* ---------- Lernhilfen: Tagesziel, Serien, Vibration ---------- */
+const dayLocal = () => { const d = new Date(); return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0"); };
+const goal = () => +(S.set?.goal || 10);
+const heute = () => (S.day && S.day.d === dayLocal() ? S.day.n : 0);
+function buzz(p) { if (S.set?.vibe !== false && navigator.vibrate) try { navigator.vibrate(p); } catch (e) {} }
+let serie = 0;
+function lernZaehler(ok) {
+ if (!S.day || S.day.d !== dayLocal()) S.day = { d: dayLocal(), n: 0 };
+ S.day.n++;
+ buzz(ok ? 18 : [40, 50, 40]);
+ serie = ok ? serie + 1 : 0;
+ if (S.day.n === goal()) { setTimeout(() => toast(`Tagesziel geschafft: ${goal()} Fragen ✓`), 400); buzz([30, 60, 30, 60, 60]); }
+ else if (ok && [3, 5, 10, 15, 20].includes(serie)) setTimeout(() => toast(`${serie} richtig in Folge!`), 400);
+}
+function grade(key, ok, zaehlen = true) {
+ if (zaehlen) lernZaehler(ok);
  const e = S.srs[key] || { b: 0, w: 0 };
  if (ok) e.b = Math.min(5, e.b + 1); else { e.b = 0; e.w = (e.w || 0) + 1; }
  e.due = Date.now() + (ok ? BOX_DAYS[e.b] * 86400000 : 10 * 60000);
@@ -119,7 +141,7 @@ const POOL_KEYS = new Set(POOL.map(p => p.key));
 const LEGACY_MODS = ["einf", "platt", "unt", "recht", "kpi", "plan", "grund", "content", "ads"];
 // Alte Schlüssel (Modul + 40 Zeichen) und alte Lektionsschlüssel (Modul/Lektion) übernehmen, verwaiste entfernen
 function normalizeState() {
- S.q = S.q || {}; S.srs = S.srs || {}; S.lek = S.lek || {};
+ S.q = S.q || {}; S.srs = S.srs || {}; S.lek = S.lek || {}; S.set = Object.assign({ size: "m", theme: "auto", goal: "10", vibe: true }, S.set || {});
  for (const p of POOL) for (const mid of LEGACY_MODS) {
   const old = mid + ":" + p.q.slice(0, 40);
   if (old in S.q && !(p.key in S.q)) S.q[p.key] = S.q[old];
@@ -168,6 +190,7 @@ function route() {
  const [a, b, ...rest] = h.split("-");
  if (a === "lektion" && b) return openStory(b, rest.join("-"));
  if (a === "modul" && b) return viewModul(b);
+ if (h === "mini") { const d = dueKeys().length, n = nextLesson(); return location.replace(d || !n ? "#quiz-mini" : `#lektion-${n.m.id}-${n.l.id}`); }
  if (a === "quiz") return viewQuiz(b || "mix");
  if (h === "lernen") return viewLernen();
  if (h === "pruefung") return viewPruefung();
@@ -179,6 +202,24 @@ function route() {
  return viewStart();
 }
 addEventListener("hashchange", route);
+
+/* ---------- Pausen-Timer: sanfter Hinweis nach 10 oder 25 Minuten Lernen ---------- */
+let pomo0 = 0, hiddenAt = 0;
+function pomoCheck() {
+ const min = +(S.set?.pomo || 0), h = location.hash.slice(1);
+ const lernt = /^(lektion|quiz|modul)/.test(h);
+ if (!min || !lernt || $("#pomo")) return;
+ if (!pomo0) { pomo0 = Date.now(); return; }
+ if (Date.now() - pomo0 < min * 60000) return;
+ buzz([60, 80, 60]);
+ const el = document.createElement("div"); el.id = "pomo"; el.className = "pomo"; el.setAttribute("role", "status");
+ el.innerHTML = `<div><b>${min} Minuten geschafft.</b><span>Zeit für eine kurze Pause – aufstehen, trinken, durchatmen.</span></div><div class="row"><button class="btn ghost" data-p="weiter">Noch 5 Min.</button><button class="btn" data-p="pause">Pause machen</button></div>`;
+ document.body.appendChild(el);
+ el.onclick = e => { const b = e.target.closest("[data-p]"); if (!b) return; el.remove(); if (b.dataset.p === "weiter") pomo0 = Date.now() - (min - 5) * 60000; else { pomo0 = 0; location.hash = "start"; toast("Gute Pause! Die App merkt sich, wo du warst."); } };
+}
+setInterval(pomoCheck, 20000);
+addEventListener("hashchange", pomoCheck);
+document.addEventListener("visibilitychange", () => { if (document.hidden) hiddenAt = Date.now(); else if (hiddenAt && Date.now() - hiddenAt > 10 * 60000) pomo0 = 0; });
 
 /* ---------- Start ---------- */
 function nextLesson() {
@@ -204,21 +245,23 @@ function viewStart() {
   <div class="kicker">${dl !== null && dl >= 0 ? (dl === 0 ? "Heute ist Prüfung – viel Erfolg!" : `Noch ${dl} Tag${dl === 1 ? "" : "e"} bis zur Prüfung`) : p > 0 ? "Weiter so" : "Willkommen"}</div>
   <h1>${p > 0 ? `${Math.round(p * 100)} % geschafft` : "Werde Social Media Manager"}</h1>
   <p style="opacity:.92;max-width:460px">${p > 0 ? (perWeek ? `Plan: etwa ${perWeek} Lektion${perWeek === 1 ? "" : "en"} pro Woche, dann passt es bis zur Prüfung.` : "Kurze Lektionen, dann Quiz – so bleibt das Wissen hängen.") : "Begleiter zum Lehrgang mit Abschlusstest beim IHK-Bildungszentrum Dresden: kurze Lektionen, Quiz, Freitext-Training und ein Probetest im bekannten Format."}</p>
-  <div class="hero-stat"><div><b>${lessonsDone}/${lessonsAll}</b><span>Lektionen</span></div><div><b>${POOL.filter(q => q.key in S.q).length}/${POOL.length}</b><span>Fragen bearbeitet</span></div><div><b>${best === null ? "–" : best + " %"}</b><span>Bester Test</span></div></div>
-  ${n ? `<div class="row"><a class="btn white" href="#lektion-${n.m.id}-${n.l.id}">${ic("play")} ${p > 0 ? "Weiterlernen" : "Erste Lektion starten"}</a></div>` : ""}
+  <div class="hero-stat fx"><div><b>${lessonsDone}/${lessonsAll}</b><span>Lektionen</span></div><div><b>${POOL.filter(q => q.key in S.q).length}/${POOL.length}</b><span>Fragen bearbeitet</span></div><div><b>${best === null ? "–" : best + " %"}</b><span>Bester Test</span></div></div>
+  <div class="row"><a class="btn white" href="#mini">${ic("clock")} 5 Minuten lernen</a>${n ? `<a class="btn ghost-w fx" href="#lektion-${n.m.id}-${n.l.id}">${ic("play")} ${p > 0 ? "Weiterlernen" : "Erste Lektion"}</a>` : ""}</div>
  </section>
- ${(() => { const done = POOL.filter(q => q.key in S.q).length, sure = POOL.filter(q => S.q[q.key]).length; return `<div class="card qprog"><div class="row" style="justify-content:space-between"><b>Fragen</b><span class="small muted">${done} von ${POOL.length} bearbeitet · ${sure} sicher</span></div><div class="bar2"><i class="d" style="width:${done / POOL.length * 100}%"></i><i class="s" style="width:${sure / POOL.length * 100}%"></i></div></div>`; })()}
- ${(() => { const d = dueKeys().length; return d ? `<a class="cont" href="#quiz-wdh" style="margin-bottom:10px"><div class="thumb" style="background:linear-gradient(135deg,#1864ab,#6741d9)">${ic("repeat")}</div><div><b style="font-size:1rem">${d} Wiederholung${d === 1 ? "" : "en"} fällig</b><div class="small muted">Kurz auffrischen, damit es bis zur Prüfung sitzt.</div></div><span class="chev" style="margin-left:auto;color:var(--ink-3)">${ic("right")}</span></a>` : ""; })()}
+ ${PAUSE_TAGE >= 3 && hasProgress(S) ? `<div class="card welcome"><b>Schön, dass du wieder da bist!</b><p class="small" style="margin:4px 0 0">Kein Stress wegen der Pause. Fang einfach mit 5 Minuten an – der Rest kommt von allein.</p></div>` : ""}
+ ${(() => { const h = heute(), g = goal(), ok = h >= g; return `<div class="card daygoal ${ok ? "ok" : ""}"><div class="row" style="justify-content:space-between;align-items:center"><b>${ok ? "Tagesziel geschafft ✓" : "Heute"}</b><span class="small muted">${Math.min(h, g)} von ${g} Fragen</span></div><div class="bar2" aria-hidden="true"><i style="width:${Math.min(1, h / g) * 100}%"></i></div></div>`; })()}
+ ${(() => { const done = POOL.filter(q => q.key in S.q).length, sure = POOL.filter(q => S.q[q.key]).length; return `<div class="card qprog fx"><div class="row" style="justify-content:space-between"><b>Fragen</b><span class="small muted">${done} von ${POOL.length} bearbeitet · ${sure} sicher</span></div><div class="bar2"><i class="d" style="width:${done / POOL.length * 100}%"></i><i class="s" style="width:${sure / POOL.length * 100}%"></i></div></div>`; })()}
+ ${(() => { const d = dueKeys().length; return d ? `<a class="cont" href="#quiz-wdh" style="margin-bottom:10px"><div class="thumb" style="background:linear-gradient(135deg,#1864ab,#6741d9)">${ic("repeat")}</div><div><b style="font-size:1rem">${d > 10 ? "Kurz auffrischen: 10 Fragen" : `${d} Wiederholung${d === 1 ? "" : "en"} bereit`}</b><div class="small muted">Kurz auffrischen, damit es bis zur Prüfung sitzt.</div></div><span class="chev" style="margin-left:auto;color:var(--ink-3)">${ic("right")}</span></a>` : ""; })()}
  ${hasProgress(S) && Date.now() - (S.lastBackup || S.created || 0) > 14 * 86400000 ? `<a class="cont" href="#einstellungen" style="margin-bottom:10px"><div class="thumb" style="background:linear-gradient(135deg,#495057,#212529)">${ic("download")}</div><div><b style="font-size:1rem">Lernstand sichern</b><div class="small muted">Lade eine Sicherungsdatei herunter – falls der Browser Daten löscht.</div></div><span class="chev" style="margin-left:auto;color:var(--ink-3)">${ic("right")}</span></a>` : ""}
  ${platform().standalone && !hasProgress(S) ? `<a class="cont" href="#einstellungen" style="margin-bottom:10px"><div class="thumb" style="background:linear-gradient(135deg,#495057,#212529)">${ic("upload")}</div><div><b style="font-size:1rem">Kommst du aus dem Browser?</b><div class="small muted">Dort gesicherten Lernstand in den Einstellungen wiederherstellen.</div></div><span class="chev" style="margin-left:auto">${ic("right")}</span></a>` : ""}
  ${S.run ? `<a class="cont" href="#test" style="margin-bottom:10px"><div class="thumb" style="background:var(--grad-strong)">${ic("clock")}</div><div><b style="font-size:1rem">Probetest läuft</b><div class="small muted">Weitermachen, wo du aufgehört hast</div></div><span class="chev" style="margin-left:auto">${ic("right")}</span></a>` : ""}
  ${S.pruefung ? "" : `<a class="cont" href="#lehrgang" style="margin-bottom:6px"><div class="thumb" style="background:var(--grad-strong)">${ic("cal")}</div><div><b style="font-size:1rem">Prüfungstermin eintragen</b><div class="small muted">Dann zeigt dir die App, wie viel du pro Woche lernen solltest.</div></div><span class="chev" style="margin-left:auto;color:var(--ink-3)">${ic("right")}</span></a>`}
- <div class="sec-h"><h2>Deine Module</h2><a class="small muted" href="#lernen">Alle anzeigen</a></div>
- ${ringsHtml()}
+ <div class="fx"><div class="sec-h"><h2>Deine Module</h2><a class="small muted" href="#lernen">Alle anzeigen</a></div>
+ ${ringsHtml()}</div>
  ${n ? `<div class="sec-h"><h2>Als Nächstes</h2></div>
  <a class="cont" href="#lektion-${n.m.id}-${n.l.id}"><div class="thumb" style="background:${modGrad(n.m)}">${ic(n.m.id)}</div><div><div class="small muted">${n.m.name} · ${n.l.min} Min.</div><b style="font-size:1.062rem">${n.l.titel}</b></div><div class="play">${ic("play", 'style="color:#fff"')}</div></a>` : ""}
- <div class="sec-h"><h2>Trainieren</h2></div>
- <div class="tiles">
+ <div class="sec-h fx"><h2>Trainieren</h2></div>
+ <div class="tiles fx">
   <a class="tile" href="#quiz-mix"><div class="ti" style="background:linear-gradient(135deg,#c2410c,#c92a2a)">${ic("shuffle")}</div><b>Schnell-Quiz</b><span>10 gemischte Fragen aus allen Modulen</span></a>
   <a class="tile" href="#quiz-frei"><div class="ti" style="background:linear-gradient(135deg,#a61e4d,#6741d9)">${ic("pen")}</div><b>Freitext üben</b><span>${FREI_POOL().length} offene Fragen mit Musterlösung</span></a>
   <a class="tile" href="#test"><div class="ti" style="background:var(--grad-strong)">${ic("exam")}</div><b>Probetest</b><span>30 Fragen, 60 Minuten, Multiple Choice und Freitext</span></a>
@@ -252,7 +295,7 @@ function viewModul(id) {
 
 /* ---------- Story-Player (Erstvermittlung) ---------- */
 let storyEl = null, storyKey = null;
-function closeStory() { if (storyEl) { storyEl.remove(); storyEl = null; if (!document.getElementById("gate")) document.body.classList.remove("no-scroll"); removeEventListener("keydown", storyKey); } }
+function closeStory() { if (canSay) speechSynthesis.cancel(); if (storyEl) { storyEl.remove(); storyEl = null; if (!document.getElementById("gate")) document.body.classList.remove("no-scroll"); removeEventListener("keydown", storyKey); } }
 function openStory(mid, lid) {
  const m = modById(mid), l = m && m.lektionen.find(x => x.id === lid);
  if (!l) return viewLernen();
@@ -264,7 +307,16 @@ function openStory(mid, lid) {
  storyEl.className = "story"; storyEl.style.setProperty("--m", m.farbe);
  storyEl.setAttribute("role", "dialog"); storyEl.setAttribute("aria-modal", "true"); storyEl.setAttribute("aria-label", "Lektion: " + l.titel);
  document.body.appendChild(storyEl); document.body.classList.add("no-scroll");
- const go = d => { const f = F[i]; if (d > 0 && f.k === "check" && !(i in answered)) return toast("Wähle zuerst eine Antwort"); i = Math.max(0, Math.min(F.length - 1, i + d)); draw(); };
+ let rev = 1; // Schritt für Schritt: wie viele Teile der Karte sichtbar sind
+ const go = d => {
+  const f = F[i]; if (d > 0 && f.k === "check" && !(i in answered)) return toast("Wähle zuerst eine Antwort");
+  const parts = $$(".rv", storyEl);
+  if (d > 0 && parts.length && rev < parts.length) { parts[rev].classList.remove("h"); rev++; buzz(8); return; }
+  if (canSay) speechSynthesis.cancel();
+  i = Math.max(0, Math.min(F.length - 1, i + d)); rev = 1; draw();
+ };
+ const rv = (html, n) => S.set?.step ? `<span class="rv ${n > 0 ? "h" : ""}">${html}</span>` : html;
+ const saetze = t => S.set?.step ? t.split(/(?<=[.!?:])\s+(?=[A-ZÄÖÜ„*(])/).map((x, n) => rv(md(x), n)).join(" ") : md(t);
  const closeS = () => location.replace("#modul-" + mid);
  storyKey = e => {
   if (e.key === "ArrowRight") go(1); if (e.key === "ArrowLeft") go(-1); if (e.key === "Escape") closeS();
@@ -291,8 +343,8 @@ function openStory(mid, lid) {
   const f = F[i], last = f.k === "ende";
   const kindName = { intro: "Lektion", text: "Wissen", liste: "Überblick", beispiel: "Beispiel", merke: "Merke", check: "Kurz-Check", bild: "Schaubild" }[f.k] || "";
   let body = "";
-  if (f.k === "liste") body = `<span class="kind">${kindName}</span><h2>${md(f.h)}</h2><ul>${f.l.map((x, n) => `<li style="animation-delay:${n * 60}ms">${md(x)}</li>`).join("")}</ul>`;
-  else if (f.k === "beispiel" || f.k === "merke") body = `<span class="kind">${kindName}</span><h2>${md(f.h)}</h2><div class="body">${md(f.b)}</div>`;
+  if (f.k === "liste") body = `<span class="kind">${kindName}</span><h2>${md(f.h)}</h2><ul>${f.l.map((x, n) => `<li class="${S.set?.step ? "rv" + (n ? " h" : "") : ""}" style="animation-delay:${n * 60}ms">${md(x)}</li>`).join("")}</ul>`;
+  else if (f.k === "beispiel" || f.k === "merke") body = `<span class="kind">${kindName}</span><h2>${md(f.h)}</h2><div class="body">${saetze(f.b)}</div>`;
   else if (f.k === "check") {
    const order = f._o || (f._o = shuf(f.a.map((t, k) => k)));
    const a = answered[i];
@@ -300,13 +352,14 @@ function openStory(mid, lid) {
   }
   else if (f.k === "bild") body = `<span class="kind">${kindName}</span><h2>${md(f.h)}</h2><div class="dg">${BILDER[f.svg] || ""}</div>${f.b ? `<div class="body small-body">${md(f.b)}</div>` : ""}`;
   else if (last) body = `<div style="text-align:center"><div class="confetti">🎉</div><span class="kind">Geschafft</span><h2>${esc(l.titel)}</h2><div class="body">Lektion abgeschlossen. ${nextIn(m, l) ? "Weiter mit der nächsten Lektion?" : "Jetzt im Modul-Quiz festigen!"}</div></div>`;
-  else body = `<span class="kind">${kindName}</span><h2>${md(f.h)}</h2><div class="body">${md(f.b)}</div>`;
+  else body = `<span class="kind">${kindName}</span><h2>${md(f.h)}</h2><div class="body">${saetze(f.b)}</div>`;
   const nx = nextIn(m, l);
   storyEl.innerHTML = `<p class="sr-only" aria-live="polite">${last ? "Lektion geschafft" : `Karte ${i + 1} von ${F.length - 1}`}</p><div class="segs" aria-hidden="true">${F.slice(0, -1).map((_, n) => `<i class="${n < i || last ? "on" : ""}"><b style="${n === i ? "width:100%" : ""}"></b></i>`).join("")}</div>
-  <div class="shead"><div class="av">${ic(m.id)}</div><div class="n">${esc(l.titel)}<small>${esc(m.name)}</small></div><button class="x" aria-label="Schließen">${ic("x")}</button></div>
+  <div class="shead"><div class="av">${ic(m.id)}</div><div class="n">${esc(l.titel)}<small>${esc(m.name)}</small></div>${sayBtn()}<button class="x" aria-label="Schließen">${ic("x")}</button></div>
   <div class="stage">${f.k !== "check" && !last ? '<div class="tapzone l"></div><div class="tapzone r"></div>' : ""}<div class="slide ${f.k === "beispiel" || f.k === "merke" ? "note" : ""}">${body}</div></div>
   <div class="snav">${i > 0 ? `<button class="btn prev" aria-label="Zurück">${ic("left")}</button>` : ""}${last ? (nx ? `<a class="btn" href="#lektion-${m.id}-${nx.id}">Nächste Lektion ${ic("right")}</a>` : `<a class="btn" href="#quiz-${m.id}">Zum Modul-Quiz ${ic("right")}</a>`) : `<button class="btn next">Weiter ${ic("right")}</button>`}</div>`;
-  if (last) { S.lek[l.id] = true; save(); }
+  if (last && !S.lek[l.id]) { S.lek[l.id] = true; save(); buzz([20, 40, 20]); }
+  if ($(".rv.h", storyEl)) { const nb = $(".next", storyEl); if (nb) nb.innerHTML = `Weiter ${ic("right")}`; }
   $(".x", storyEl).onclick = closeS;
   $(".next", storyEl)?.addEventListener("click", () => go(1));
   $(".prev", storyEl)?.addEventListener("click", () => go(-1));
@@ -348,19 +401,39 @@ const isZusatz = q => !!modById(q.m)?.zusatz;
 const MC_POOL = () => POOL.filter(q => q.t !== "frei" && !isZusatz(q));
 const freiMatch = (q, txt) => q.muster.map(([, kw]) => { try { return new RegExp(kw, "i").test(txt); } catch (e) { return false; } });
 function chip(q) { const m = modById(q.m); return `<span class="chip mchip" style="--m:${m.farbe}">${m.kurz}${q.t === "frei" ? " · Freitext" : ""}</span>`; }
+/* ---------- Vorlesen (Sprachausgabe des Geräts) ---------- */
+const canSay = "speechSynthesis" in window;
+function sayBtn() { return canSay ? `<button type="button" class="iconbtn say" data-say aria-label="Vorlesen" title="Vorlesen">${ic("speaker")}</button>` : ""; }
+function say(text) {
+ if (!canSay) return; const ss = speechSynthesis;
+ if (ss.speaking) { ss.cancel(); return; }
+ const u = new SpeechSynthesisUtterance(text.replace(/\s+/g, " ").trim()); u.lang = "de-DE"; u.rate = .95;
+ const v = ss.getVoices().find(v => v.lang?.startsWith("de")); if (v) u.voice = v;
+ ss.speak(u);
+}
+document.addEventListener("click", e => {
+ const b = e.target.closest("[data-say]"); if (!b) return;
+ const box = b.closest(".qcard") || b.closest(".story");
+ const src = box?.classList.contains("story") ? $(".slide", box) : box;
+ if (!src) return;
+ const c = src.cloneNode(true); c.querySelectorAll(".chip,.kind,[data-say],.l,.mark,.small,textarea,.fbx,.sr-only").forEach(x => x.remove());
+ c.querySelectorAll(".opt").forEach((o, n) => o.prepend("Antwort " + "ABCD"[n] + ": ")); c.querySelectorAll("li,.opt,h2,p").forEach(x => x.append(". "));
+ say(c.textContent);
+});
+addEventListener("hashchange", () => canSay && speechSynthesis.cancel());
 function quizCard(q, meta) {
- if (q.t === "frei") return { html: `<div class="qcard"><div class="qtop">${chip(q)}<span class="small muted">${meta}</span></div><p class="qtext" id="qt">${esc(q.q)}</p><label class="sr-only" for="ftxt">Deine Antwort</label><textarea id="ftxt" placeholder="Deine Antwort in Stichpunkten …" style="min-height:140px"></textarea><div class="fbx" role="status" aria-live="polite"></div></div>` };
+ if (q.t === "frei") return { html: `<div class="qcard"><div class="qtop">${chip(q)}<span class="small muted">${meta}</span>${sayBtn()}</div><p class="qtext" id="qt">${esc(q.q)}</p><label class="sr-only" for="ftxt">Deine Antwort</label><textarea id="ftxt" placeholder="Deine Antwort in Stichpunkten …" style="min-height:140px"></textarea><div class="fbx" role="status" aria-live="polite"></div></div>` };
  const order = shuf(q.a.map((_, k) => k));
- return { order, html: `<div class="qcard"><div class="qtop">${chip(q)}<span class="small muted">${meta}</span></div><p class="qtext" id="qt">${esc(q.q)}</p><div role="group" aria-labelledby="qt">${order.map((k, n) => `<button type="button" class="opt" data-k="${k}"><span class="l">${"ABCD"[n]}</span><span class="ot">${esc(q.a[k])}</span><span class="mark" aria-hidden="true"></span></button>`).join("")}</div><div class="fbx" role="status" aria-live="polite"></div></div>` };
+ return { order, html: `<div class="qcard"><div class="qtop">${chip(q)}<span class="small muted">${meta}</span>${sayBtn()}</div><p class="qtext" id="qt">${esc(q.q)}</p><div role="group" aria-labelledby="qt">${order.map((k, n) => `<button type="button" class="opt" data-k="${k}"><span class="l">${"ABCD"[n]}</span><span class="ot">${esc(q.a[k])}</span><span class="mark" aria-hidden="true"></span></button>`).join("")}</div><div class="fbx" role="status" aria-live="polite"></div></div>` };
 }
 function musterHtml(q, txt) {
  const hit = freiMatch(q, txt || ""), n = hit.filter(Boolean).length;
  return `<div class="fb ${n >= q.min ? "ok" : "bad"}" style="margin-top:12px"><b>Musterlösung</b><span class="small">Gefordert: mindestens ${q.min} Punkt${q.min > 1 ? "e" : ""}. ${txt ? `In deiner Antwort erkannt: ${n}.` : ""}</span><ul class="muster">${q.muster.map(([t], i) => `<li class="${hit[i] ? "hit" : ""}">${ic(hit[i] ? "check" : "right", 'stroke-width="3"')}<span>${esc(t)}</span></li>`).join("")}</ul><span class="small muted">Die Erkennung ist nur eine Hilfe – entscheide selbst, ob deine Antwort passt.</span></div>`;
 }
 function viewQuiz(id) {
- const m = modById(id), isMix = id === "mix", isFrei = id === "frei", isWdh = id === "wdh", isErr = id === "fehler";
+ const m = modById(id), isMini = id === "mini", isMix = id === "mix" || isMini, isFrei = id === "frei", isWdh = id === "wdh", isErr = id === "fehler";
  const byKeys = ks => shuf(POOL.filter(q => ks.includes(q.key)));
- let list = isWdh ? byKeys(dueKeys()).slice(0, 20) : isErr ? byKeys(errorKeys()) : isMix ? shuf(MC_POOL()).slice(0, 10) : isFrei ? shuf(FREI_POOL()).sort((a, b) => (S.q[a.key] ? 1 : 0) - (S.q[b.key] ? 1 : 0)).slice(0, 8) : shuf(modPool(id)).sort((a, b) => (S.q[a.key] ? 1 : 0) - (S.q[b.key] ? 1 : 0));
+ let list = isMini ? [...byKeys(dueKeys()).filter(q => q.t !== "frei"), ...shuf(MC_POOL().filter(q => !(q.key in S.q))), ...shuf(MC_POOL())].filter((q, i, a) => a.indexOf(q) === i).slice(0, 5) : isWdh ? byKeys(dueKeys()).slice(0, 10) : isErr ? byKeys(errorKeys()) : isMix ? shuf(MC_POOL()).slice(0, 10) : isFrei ? shuf(FREI_POOL()).sort((a, b) => (S.q[a.key] ? 1 : 0) - (S.q[b.key] ? 1 : 0)).slice(0, 8) : shuf(modPool(id)).sort((a, b) => (S.q[a.key] ? 1 : 0) - (S.q[b.key] ? 1 : 0));
  if (!m && !isMix && !isFrei && !isWdh && !isErr) return viewLernen();
  if (!list.length) { page("lernen", `<a class="back" href="#lernen">${ic("left")} Lernen</a><div class="qcard result"><h2>${isWdh ? "Nichts fällig" : "Fehlerkiste ist leer"}</h2><p class="muted">${isWdh ? "Gerade ist keine Wiederholung fällig. Schau morgen wieder rein." : "Super – keine offenen Fehler."}</p></div>`); return; }
  const total = list.length; let queue = list.slice(), first = 0, miss = new Set(), n = 0;
@@ -433,6 +506,7 @@ function viewTest() {
  if (S.run) return runTest();
  const nFr = Math.min(TEST_FR, FREI_POOL().filter(q => !modById(q.m)?.zusatz).length), nMC = TEST_N - nFr;
  page("pruefung", `<a class="back" href="#pruefung">${ic("left")} Prüfung</a><section class="hero"><div class="kicker">Probetest</div><h1>${TEST_N} Fragen · ${TEST_MIN} Minuten</h1><p>Aufgebaut wie der bekannte Abschlusstest: Multiple Choice und Freitext aus allen sechs Themen. Wie viele Freitext-Fragen der echte Test hat, ist nicht veröffentlicht – die App nimmt ${nFr} an. Du kannst vor- und zurückblättern, Fragen markieren und Antworten ändern. Bestanden ab ${PASS} % (Annahme).</p>
+  <details class="tstrat"><summary>So gehst du vor</summary><ol><li>Erst alles beantworten, was du sicher weißt.</li><li>Schwierige Fragen <b>markieren</b> und überspringen – später zurückkommen.</li><li>Freitext in Stichpunkten: benennen, begründen, konkret werden.</li><li>Pro Frage grob 2 Minuten. Bei Halbzeit sollten etwa 15 Fragen geschafft sein.</li><li>Zum Schluss die <b>Übersicht</b> prüfen: Ist noch etwas offen?</li></ol></details>
   <label class="check"><input type="checkbox" id="notime"> Ohne Zeitlimit üben</label>
   <div class="row"><button class="btn white" id="go">${ic("clock")} Test starten</button></div></section>`);
  $("#go").onclick = () => {
@@ -442,6 +516,8 @@ function viewTest() {
   save(); runTest();
  };
 }
+// Ruhige Zeitanzeige: Balken + gerundete Minuten statt tickender Sekunden
+function calmClock(ms, r) { const tot = r.end - r.start, m = Math.ceil(ms / 60000); return `<i class="tb" aria-hidden="true"><b style="width:${Math.max(0, ms / tot * 100)}%"></b></i><span>${m > 1 ? `noch ca. ${m} Min.` : "letzte Minute"}</span>`; }
 function runTest(confirmMode) {
  const r = S.run; if (!r) return viewTest();
  clearInterval(testTimer);
@@ -449,14 +525,14 @@ function runTest(confirmMode) {
  const left = () => r.end ? Math.max(0, r.end - Date.now()) : null;
  const fmt = ms => `${Math.floor(ms / 60000)}:${String(Math.floor(ms / 1000) % 60).padStart(2, "0")}`;
  if (r.end && left() <= 0) return finishTest(true);
- const tick = () => { const ms = left(), el = $("#timer"); if (ms === null || !el) return; el.textContent = fmt(ms); el.classList.toggle("low", ms < 5 * 60000); if (ms <= 0) { clearInterval(testTimer); finishTest(true); } };
+ const tick = () => { const ms = left(), el = $("#timer"); if (ms === null || !el) return; if (S.set?.clock === "genau") el.textContent = fmt(ms); else { el.innerHTML = calmClock(ms, r); } el.classList.toggle("low", ms < 5 * 60000); if (ms <= 0) { clearInterval(testTimer); finishTest(true); } };
  if (r.end) testTimer = setInterval(tick, 1000);
  const answered = i => (i in r.ans) && (qs[i].t !== "frei" || String(r.ans[i]).trim() !== "");
  if (r.view === "overview" || confirmMode) return overview(confirmMode);
  const p = r.p, q = qs[p];
  const order = q.t === "frei" ? null : (r.order = r.order || {}, r.order[p] = r.order[p] || shuf(q.a.map((_, k) => k)));
  page("pruefung", `<h1 class="sr-only">Probetest, Frage ${p + 1} von ${qs.length}</h1>
-  <div class="row testbar"><button class="back" id="abort" style="margin:0">${ic("x")} Abbrechen</button><button class="back" id="ov" style="margin:0">Übersicht</button>${r.end ? `<span class="timer" id="timer" role="timer" aria-label="Verbleibende Zeit">${fmt(left())}</span>` : `<span class="chip">ohne Zeitlimit</span>`}</div>
+  <div class="row testbar"><button class="back" id="abort" style="margin:0">${ic("x")} Abbrechen</button><button class="back" id="ov" style="margin:0">Übersicht</button>${r.end ? `<span class="timer ${S.set?.clock === "genau" ? "" : "calm"}" id="timer" role="timer" aria-label="Verbleibende Zeit">${S.set?.clock === "genau" ? fmt(left()) : calmClock(left(), r)}</span>` : `<span class="chip">ohne Zeitlimit</span>`}</div>
   <div class="bar dark" style="margin:0 0 16px" aria-hidden="true"><i style="width:${Object.keys(r.ans).length / qs.length * 100}%"></i></div>
   <div class="qcard"><div class="qtop">${chip(q)}<span class="small muted">Frage ${p + 1} / ${qs.length}${r.mark[p] ? " · markiert" : ""}</span></div><p class="qtext" id="qt">${esc(q.q)}</p>
   ${q.t === "frei" ? `<label class="sr-only" for="ftxt">Deine Antwort</label><textarea id="ftxt" placeholder="Deine Antwort in Stichpunkten …" style="min-height:160px">${esc(r.ans[p] || "")}</textarea>`
@@ -474,7 +550,7 @@ function runTest(confirmMode) {
  $("#abort").onclick = () => confirmBox("Probetest abbrechen?", "Deine Antworten werden verworfen.", "Test abbrechen", () => { S.run = null; save(); clearInterval(testTimer); location.replace("#pruefung"); });
  function overview(sure) {
   const open = qs.map((_, i) => i).filter(i => !answered(i));
-  page("pruefung", `<div class="row testbar"><button class="back" id="back" style="margin:0">${ic("left")} Zur Frage ${r.p + 1}</button>${r.end ? `<span class="timer" id="timer">${fmt(left())}</span>` : ""}</div>
+  page("pruefung", `<div class="row testbar"><button class="back" id="back" style="margin:0">${ic("left")} Zur Frage ${r.p + 1}</button>${r.end ? `<span class="timer ${S.set?.clock === "genau" ? "" : "calm"}" id="timer">${S.set?.clock === "genau" ? fmt(left()) : calmClock(left(), r)}</span>` : ""}</div>
    <h1 style="margin:6px 0 4px">Übersicht</h1><p class="muted small">${qs.length - open.length} von ${qs.length} beantwortet${Object.keys(r.mark).length ? ` · ${Object.keys(r.mark).length} markiert` : ""}</p>
    <div class="ovgrid">${qs.map((x, i) => `<button type="button" data-i="${i}" class="${answered(i) ? "done" : ""} ${r.mark[i] ? "mk" : ""}" aria-label="Frage ${i + 1}${answered(i) ? ", beantwortet" : ", offen"}${r.mark[i] ? ", markiert" : ""}">${i + 1}${x.t === "frei" ? "<small>T</small>" : ""}</button>`).join("")}</div>
    <p class="small muted">T = Freitext · Rahmen = markiert</p>
@@ -497,7 +573,7 @@ function viewAuswertung() {
  const r = S.lastRun; if (!r) return viewPruefung();
  const qs = r.ids.map(k => byKey.get(k)).filter(Boolean);
  const sc = testScore(r);
- if (sc.allRated && !r.saved) { r.saved = true; qs.forEach((q, i) => grade(q.key, q.t === "frei" ? r.rated[i] === 1 : r.ans[i] === q.c)); S.tests.push(sc.pct); save(); }
+ if (sc.allRated && !r.saved) { r.saved = true; qs.forEach((q, i) => grade(q.key, q.t === "frei" ? r.rated[i] === 1 : r.ans[i] === q.c, false)); S.tests.push(sc.pct); save(); }
  const fr = qs.map((q, i) => ({ q, i })).filter(x => x.q.t === "frei");
  const wrong = qs.map((q, i) => ({ q, a: r.ans[i] })).filter(x => x.q.t !== "frei" && x.a !== x.q.c);
  page("pruefung", `<h1 class="sr-only">Auswertung Probetest</h1><div class="qcard result"><div class="big-ring" aria-hidden="true">${ringSvg(sc.pct / 100, 150, 12, "var(--surface-2)", sc.pct >= PASS ? null : "var(--bad)")}<b>${sc.pct}%</b></div>
@@ -779,6 +855,12 @@ function viewEinstellungen(o = {}) {
  page("start", `<a class="back" href="#start">${ic("left")} Start</a><h1 style="margin-bottom:16px" tabindex="-1">Einstellungen</h1>
  <div class="card"><h2 class="h3">Schriftgröße</h2><p class="small muted" style="margin:2px 0 10px">Gilt für die ganze App.</p>${seg("size", [["s", "Klein"], ["m", "Normal"], ["l", "Groß"], ["xl", "Sehr groß"]], "Schriftgröße")}</div>
  <div class="card"><h2 class="h3">Design</h2><p class="small muted" style="margin:2px 0 10px">„Automatisch“ folgt der Einstellung deines Geräts.</p>${seg("theme", [["auto", "Automatisch"], ["light", "Hell"], ["dark", "Dunkel"]], "Design")}</div>
+ <div class="card" id="lernhilfen"><h2 class="h3">Lernhilfen</h2><p class="small muted" style="margin:2px 0 6px">Für mehr Fokus und weniger Überforderung – zum Beispiel bei ADHS.</p>
+  ${[["focus", "Fokusmodus", "Blendet Menüleiste, Statistiken und Extras aus."], ["step", "Schritt für Schritt", "Lektionskarten zeigen Satz für Satz bzw. Punkt für Punkt – weiter mit Tippen."], ["calm", "Ruhige Darstellung", "Keine Animationen, gedämpfte Farben, gut lesbare Schrift mit mehr Abstand."], ["vibe", "Vibration bei Antworten", "Kurzes Feedback bei richtig und falsch (nicht auf iPhone)."]].map(([k, t, d]) => `<label class="check sw"><input type="checkbox" data-opt="${k}" ${(k === "vibe" ? S.set.vibe !== false : !!S.set[k]) ? "checked" : ""}><span><b>${t}</b><span class="small muted">${d}</span></span></label>`).join("")}
+  <h3 class="small" style="margin:14px 0 6px">Tagesziel</h3>${seg("goal", [["5", "5 Fragen"], ["10", "10 Fragen"], ["20", "20 Fragen"]], "Tagesziel")}
+  <h3 class="small" style="margin:14px 0 6px">Pausen-Erinnerung</h3>${seg("pomo", [["", "Aus"], ["10", "Nach 10 Min."], ["25", "Nach 25 Min."]], "Pausen-Erinnerung")}
+  <h3 class="small" style="margin:14px 0 6px">Zeit im Probetest</h3>${seg("clock", [["", "Ruhig (Balken)"], ["genau", "Genau (Sekunden)"]], "Zeitanzeige im Probetest")}
+  <p class="small muted" style="margin-top:12px">Vorlesen: Tippe in Lektionen und Fragen auf ${ic("speaker", 'style="width:16px;height:16px;vertical-align:-3px"')}.</p></div>
  <div class="card" id="sicherung"><h2 class="h3">Lernstand sichern</h2><p class="small muted" style="margin:2px 0 12px">Dein Fortschritt liegt nur auf diesem Gerät. Mit einer Sicherungsdatei kannst du ihn wiederherstellen oder auf ein anderes Gerät mitnehmen. Letzte Sicherung: ${lb}.</p>
   <div class="row"><button class="btn" id="exp">${ic("download")} Sicherung erstellen</button><label class="btn ghost" for="imp">${ic("upload")} Wiederherstellen</label><input type="file" id="imp" accept="application/json,.json" hidden></div>
   ${pend ? `<div class="tip" role="alert" style="margin-top:12px">${ic("warn", 'style="color:var(--bad)"')}<span><b>Lernstand ersetzen?</b><br>Sicherung vom ${esc(new Date(pend.date || 0).toLocaleDateString("de-DE"))}: ${summary(pend.data)}.<br>Aktuell auf diesem Gerät: ${summary(S)}.</span></div><div class="row"><button class="btn ghost" id="impno">Abbrechen</button><button class="btn" id="impyes">Ersetzen</button></div>` : ""}
@@ -787,8 +869,10 @@ function viewEinstellungen(o = {}) {
  <div class="card" id="loeschen"><h2 class="h3">Fortschritt löschen</h2><p class="small muted" style="margin:2px 0 12px">Löscht Lektionen, Fragen, Wiederholungen und Testergebnisse auf diesem Gerät.</p>
   ${confirmReset ? `<div class="tip">${ic("warn", 'style="color:var(--bad)"')}<span>Wirklich alles löschen? Das lässt sich nur mit einer Sicherungsdatei rückgängig machen.</span></div><div class="row"><button class="btn ghost" id="rno">Abbrechen</button><button class="btn danger" id="ryes">${ic("trash")} Endgültig löschen</button></div>` : `<button class="btn ghost" id="reset">${ic("trash")} Fortschritt löschen</button>`}</div>
  <p class="small muted" style="text-align:center;margin-top:20px">SMM Coach · Version ${VERSION}<br>Unabhängiges Lernangebot, kein offizielles Angebot der IHK oder der HSB Akademie.</p>`, { keep: o.keep });
- $$("[data-size]").forEach(b => b.onclick = () => { S.set.size = b.dataset.size; save(); applySettings(); viewEinstellungen({ keep: true }); });
- $$("[data-theme]").forEach(b => b.onclick = () => { S.set.theme = b.dataset.theme; save(); applySettings(); viewEinstellungen({ keep: true }); });
+ $$("button[data-size]").forEach(b => b.onclick = () => { S.set.size = b.dataset.size; save(); applySettings(); viewEinstellungen({ keep: true }); });
+ $$("button[data-theme]").forEach(b => b.onclick = () => { S.set.theme = b.dataset.theme; save(); applySettings(); viewEinstellungen({ keep: true }); });
+ ["goal", "pomo", "clock"].forEach(k => $$(`button[data-${k}]`).forEach(b => b.onclick = () => { S.set[k] = b.dataset[k]; if (k === "pomo") pomo0 = 0; save(); viewEinstellungen({ keep: true }); }));
+ $$("[data-opt]").forEach(c => c.onchange = () => { S.set[c.dataset.opt] = c.checked; save(); applySettings(); if (c.dataset.opt === "vibe" && c.checked) buzz(30); toast(c.checked ? "Eingeschaltet" : "Ausgeschaltet"); });
  $("#impno")?.addEventListener("click", () => viewEinstellungen({ keep: true }));
  $("#impyes")?.addEventListener("click", () => { S = Object.assign(DEF(), pend.data); normalizeState(); save(); applySettings(); toast("Lernstand wiederhergestellt"); viewEinstellungen({ keep: true }); });
  $("#exp").onclick = exportBackup;
