@@ -1,4 +1,5 @@
 import { NEUE } from "./fragen2.js";
+import { LEKTIONEN_NEU, FRAGEN_NEU } from "./lektionen3.js";
 // Lerninhalte SMM Coach. Aufbau je Modul: Lektionen (Story-Folien) → Quiz.
 // Folientypen: intro, text, liste, beispiel, merke, check (Verständnisfrage, Index c = richtige Antwort).
 // **fett** ist erlaubt. Rechtliche Inhalte: Stand 11/2026, vor Veröffentlichung fachlich prüfen lassen.
@@ -380,7 +381,7 @@ const FREI = [
 {m:"plan",t:"frei",q:"Welche Kostenblöcke gehören in ein Social-Media-Budget?",muster:[["Werbebudget (Ads)","werb|ads|anzeig"],["Produktion (Foto, Video, Grafik)","produkt|foto|video|grafik"],["Personal / interne Arbeitszeit","personal|zeit|stunden|mitarbeit"],["Tools / Software","tool|software|lizenz"],["Externe Dienstleister","agentur|extern|dienstleist|freelanc"]],min:3}
 ];
 
-export const FRAGEN = [...ALT_Q, ...NEU_Q, ...FREI, ...NEUE.mc, ...NEUE.frei];
+export const FRAGEN = [...ALT_Q, ...NEU_Q, ...FREI, ...NEUE.mc, ...NEUE.frei, ...FRAGEN_NEU.map(q => ({ ...q, neu3: true }))];
 
 /* =====================================================================
    Ergänzungen nach der Fachprüfung (06.11.2026): Lücken schließen
@@ -435,7 +436,15 @@ LX("content-strategie").folien.splice(LX("content-strategie").folien.length - 1,
    Social Ads stehen nicht im Lehrplan → eigenes Modul „Zusatzwissen“, nicht im Probetest.
    ===================================================================== */
 {
- const alle = Object.fromEntries(MODULE.flatMap(m => m.lektionen).map(l => [l.id, l]));
+ const KRISE = { id: "krise", titel: "Kritik- & Krisenmanagement", min: 4, folien: [
+  { k: "intro", h: "Vorbereitet sein", b: "Ob aus Kritik eine Krise wird, entscheidet sich oft in den **ersten Stunden**. Wer dann erst Zuständigkeiten klärt, verliert Zeit und Vertrauen." },
+  { k: "liste", h: "Die Phasen", l: ["**Prävention:** Krisenplan, Zuständigkeiten, Vorlagen, Dark Site", "**Früherkennung:** Monitoring, Warnsignale ernst nehmen", "**Bewältigung:** schnell, ehrlich, auf einem Kanal bündeln", "**Nachbereitung:** auswerten, Prozesse verbessern"] },
+  { k: "text", h: "Wie ernst ist es?", b: "Eine **Shitstorm-Skala** stuft die Lage ab – von vereinzelter Kritik bis zur Welle, über die klassische Medien berichten. Eine **Eskalationsmatrix** legt fest, wer bei welcher Stufe übernimmt, z. B. Rechtsabteilung oder Geschäftsführung." },
+  { k: "liste", h: "Werkzeuge im Ernstfall", l: ["**Holding Statement:** Fall bekannt, wird geprüft, Infos folgen", "**Dark Site:** vorbereitete Krisenseite, im Ernstfall freigeschaltet", "**Q&A-Liste** mit abgestimmten Antworten für das Team", "Regelmäßige Updates statt Funkstille"] },
+  { k: "merke", h: "Merke", b: "Nicht löschen und nicht juristisch unterdrücken, nur weil Kritik unangenehm ist – das verstärkt die Welle oft erst (**Streisand-Effekt**). Fehler offen zugeben und zeigen, was man ändert." },
+  { k: "check", q: "Was gehört in die Phase der Prävention?", a: ["Einen Krisenplan mit Zuständigkeiten und Vorlagen erstellen", "Kritische Kommentare vorsorglich löschen lassen", "Erst im Ernstfall klären, wer das Statement freigibt", "Die Kommentarfunktion auf allen Kanälen abschalten"], c: 0, e: "Prävention heißt: Bevor etwas passiert, sind Zuständigkeiten, Abläufe und Vorlagen geklärt." }
+ ]};
+ const alle = Object.fromEntries([...MODULE.flatMap(m => m.lektionen), ...Object.values(LEKTIONEN_NEU).flat(), KRISE].map(l => [l.id, l]));
  const nimm = ids => ids.filter(id => alle[id]).map(id => alle[id]);
  const M = Object.fromEntries(MODULE.map(m => [m.id, m]));
  Object.assign(M.einf, { name: "Routenplaner Web 2.0", kurz: "Web 2.0",
@@ -451,13 +460,11 @@ LX("content-strategie").folien.splice(LX("content-strategie").folien.length - 1,
  Object.assign(M.plan, { name: "Planung & Umsetzung", kurz: "Umsetzung",
   text: "Themen- und Redaktionsplanung, Customer Journey, Content- und Community-Management, Produktion, Streuung sowie Kritik- und Krisenmanagement." });
  M.einf.lektionen = nimm(["web20", "rolle", "chancen", "einsatz", "fehler"]);
- M.platt.lektionen = nimm(["blogs-communitys", "linkedin", "insta-tiktok", "kanalwahl", "tools", "automatisierung"]);
- M.unt.lektionen = nimm(["strategie", "analyse", "einbettung", "ziele", "persona", "kanalauswahl", "budget", "organisation", "content-strategie", "influencer", "recruiting", "governance"]);
- M.recht.lektionen = nimm(["impressum", "bildrechte", "datenschutz", "dsgvo", "plattformregeln", "ugc", "richtlinien"]);
- M.kpi.lektionen = nimm(["kennzahlen", "datenerhebung", "monitoring", "benchmarking", "report", "erfolg", "monitoring-tools"]);
- M.plan.lektionen = nimm(["umsetzung", "redaktion", "customer-journey", "produktion", "community", "krise"]);
- alle["kanalwahl"].titel = "YouTube & Facebook";
- alle["strategie"].titel = "Konzeption: Die Strategie im Überblick";
+ M.platt.lektionen = nimm(["blogs-communitys", "linkedin", "insta-tiktok", "kanalwahl", "x-xing-facebook", "tools", "automatisierung"]);
+ M.unt.lektionen = nimm(["konzeption", "strategie", "analyse", "einbettung", "ziele", "persona", "ressourcen", "budget", "organisation", "governance", "governance-zugaenge", "content-strategie", "influencer", "recruiting"]);
+ M.recht.lektionen = nimm(["rechtsgebiete", "impressum", "bildrechte", "ugc-recht", "datenschutz", "dsgvo"]);
+ M.kpi.lektionen = nimm(["kennzahlen", "kennzahlenmodelle", "balanced-scorecard", "daten", "monitoring", "monitoring-tools", "benchmarking", "report", "erfolg"]);
+ M.plan.lektionen = nimm(["umsetzung", "redaktion", "content-journey", "produktion-streuung", "community", "krise"]);
  alle["budget"].titel = "Ressourcen & Budget planen";
  MODULE.push({ id: "ads", name: "Social Ads", kurz: "Social Ads", farbe: "#c2410c", zusatz: true,
   text: "Nicht Teil des Lehrplans und nicht im Probetest – aber in der Praxis gefragt: Anzeigen, Targeting, Funnel und Anzeigen-Kennzahlen.",
@@ -472,5 +479,5 @@ LX("content-strategie").folien.splice(LX("content-strategie").folien.length - 1,
   [/A\/B-Test/, "kpi"],
   [/Redaktionsplan|User Generated|Shitstorm|Kommentar|Netiquette|Storytelling|Heldenreise|Eskalationsmatrix|Troll|Krise|peinliches Video|Dark Site|Holding Statement|Bestellnummer|AIDA|See – Think|Funnel|Touchpoint|Customer Journey|Evergreen|Community Management/, "plan"]
  ];
- FRAGEN.forEach(q => { if (q.m !== "plan" && q.m !== "unt") return; const r = REGELN.find(([re]) => re.test(q.q)); q.m = r ? r[1] : "unt"; });
+ FRAGEN.forEach(q => { if (q.neu3 || (q.m !== "plan" && q.m !== "unt")) return; const r = REGELN.find(([re]) => re.test(q.q)); q.m = r ? r[1] : "unt"; });
 }

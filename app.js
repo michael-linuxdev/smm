@@ -54,7 +54,7 @@ const ic = (n, extra = "") => `<svg viewBox="0 0 24 24" fill="none" stroke="curr
 /* ---------- Speicher ----------
    Doppelt: localStorage (schnell) + IndexedDB (robuster). Beim Start gewinnt der neuere Stand (Zeitstempel).
    Fragen und Lektionen haben stabile Schlüssel (unabhängig vom Modul), alte Schlüssel werden migriert. */
-const KEY = "smm-coach", VERSION = "0.9.0";
+const KEY = "smm-coach", VERSION = "0.9.1";
 const DEF = () => ({ lek: {}, q: {}, srs: {}, last: null, tests: [], pruefung: "", set: { size: "m", theme: "auto" }, lastBackup: 0, created: Date.now(), updated: 0, run: null, lastRun: null });
 let S = DEF();
 try { const x = JSON.parse(localStorage.getItem(KEY) || "null"); if (x) S = Object.assign(DEF(), x); } catch (e) {}
@@ -191,7 +191,8 @@ function ringsHtml() {
   return `<a class="ring" href="#modul-${m.id}" style="text-decoration:none"><div class="r">${ringSvg(p)}<div class="ic" style="background:${modGrad(m)}">${ic(m.id)}</div>${p >= .999 ? `<div class="done-badge">${ic("check", 'stroke="#fff" stroke-width="3"')}</div>` : ""}</div><div class="lbl">${m.kurz}</div></a>`;
  }).join("")}</div>`;
 }
-const PASS = 80; // Bestehensgrenze: Annahme (Hinweis des Nutzers), nicht offiziell bestätigt
+const PASS = 50; // Bestehensgrenze: bei IHK-Zertifikatstests üblich 50 %, für Dresden nicht offiziell bestätigt
+const ZIEL = 80; // Übungsziel mit Sicherheitspuffer (Selbstbewertung der Freitexte ist meist zu milde)
 function daysLeft() { if (!S.pruefung) return null; const d = Math.ceil((new Date(S.pruefung + "T09:00") - Date.now()) / 86400000); return isNaN(d) ? null : d; }
 function viewStart() {
  const p = allProgress(), n = nextLesson(), dl = daysLeft();
@@ -406,11 +407,11 @@ function viewPruefung() {
  ${S.run ? `<a class="cont" href="#test" style="margin-bottom:12px"><div class="thumb" style="background:var(--grad-strong)">${ic("clock")}</div><div><b style="font-size:1rem">Laufenden Probetest fortsetzen</b><div class="small muted">${Object.keys(S.run.ans).length} von ${S.run.ids.length} beantwortet${S.run.end ? ` · noch ${Math.max(0, Math.ceil((S.run.end - Date.now()) / 60000))} Min.` : ""}</div></div><span class="chev" style="margin-left:auto">${ic("right")}</span></a>` : ""}
  ${open ? `<a class="cont" href="#auswertung" style="margin-bottom:12px"><div class="thumb" style="background:linear-gradient(135deg,#a61e4d,#6741d9)">${ic("pen")}</div><div><b style="font-size:1rem">Auswertung abschließen</b><div class="small muted">Freitext-Antworten deines letzten Probetests bewerten</div></div><span class="chev" style="margin-left:auto">${ic("right")}</span></a>` : ""}
  <div class="tiles">
-  <a class="tile" href="#test"><div class="ti" style="background:var(--grad-strong)">${ic("exam")}</div><b>Probetest</b><span>30 Fragen · 60 Min. · Bestehen ab ${PASS} %*${best !== null ? ` · Bestwert ${best} %` : ""}</span></a>
+  <a class="tile" href="#test"><div class="ti" style="background:var(--grad-strong)">${ic("exam")}</div><b>Probetest</b><span>30 Fragen · 60 Min. · Bestehen ab ${PASS} %* · Ziel ${ZIEL} %${best !== null ? ` · Bestwert ${best} %` : ""}</span></a>
   <a class="tile" href="#quiz-frei"><div class="ti" style="background:linear-gradient(135deg,#a61e4d,#6741d9)">${ic("pen")}</div><b>Freitext üben</b><span>Runden mit 8 offenen Fragen, Musterlösung und Selbstcheck</span></a>
   <a class="tile" href="#quiz-mix"><div class="ti" style="background:linear-gradient(135deg,#c2410c,#c92a2a)">${ic("shuffle")}</div><b>Schnell-Quiz</b><span>10 Multiple-Choice-Fragen</span></a>
  </div>
- <p class="small muted" style="margin-top:12px">* Die Bestehensgrenze ist nicht veröffentlicht. Die App rechnet mit ${PASS} % – eine Annahme, bis die HSB Akademie sie bestätigt.</p>
+ <p class="small muted" style="margin-top:12px">* Bei IHK-Zertifikatstests gilt meist: bestanden ab 50 % der Punkte. Für den Test in Dresden ist das nicht offiziell veröffentlicht. Übe auf ${ZIEL} % – deine eigene Bewertung der Freitexte fällt meist milder aus als die der Prüfer.</p>
  ${S.tests.length ? `<div class="sec-h"><h2>Deine Probetests</h2></div><div class="card"><div class="row" style="align-items:flex-end;gap:8px;height:130px" role="img" aria-label="Ergebnisse der letzten Probetests: ${S.tests.slice(-10).join(", ")} Prozent">${S.tests.slice(-10).map(t => `<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px"><span class="small muted">${t}</span><div style="width:100%;max-width:36px;height:${Math.max(6, t)}px;border-radius:8px;background:${t >= PASS ? "var(--grad-strong)" : "var(--bad-soft)"}"></div></div>`).join("")}</div></div>` : ""}`);
 }
 let testTimer = null;
@@ -487,8 +488,8 @@ function viewAuswertung() {
  const fr = qs.map((q, i) => ({ q, i })).filter(x => x.q.t === "frei");
  const wrong = qs.map((q, i) => ({ q, a: r.ans[i] })).filter(x => x.q.t !== "frei" && x.a !== x.q.c);
  page("pruefung", `<h1 class="sr-only">Auswertung Probetest</h1><div class="qcard result"><div class="big-ring" aria-hidden="true">${ringSvg(sc.pct / 100, 150, 12, "var(--surface-2)", sc.pct >= PASS ? null : "var(--bad)")}<b>${sc.pct}%</b></div>
-  <h2 aria-live="polite">${!sc.allRated ? "Fast fertig – bewerte deine Freitexte" : sc.pct >= PASS ? `Bestanden (${sc.pct} %)` : `Noch nicht bestanden (${sc.pct} %)`}</h2>
-  <p class="muted">Multiple Choice: ${sc.mc} von ${sc.mcN} richtig${sc.frMax ? ` · Freitext: ${sc.allRated ? String(sc.fr).replace(".", ",") + " von " + sc.frMax + " Punkten" : "noch nicht bewertet"}` : ""}${r.timeout ? " · Zeit abgelaufen" : ""}</p><p class="small muted">Bestehensgrenze ${PASS} % (Annahme)</p></div>
+  <h2 aria-live="polite">${!sc.allRated ? "Fast fertig – bewerte deine Freitexte" : sc.pct >= ZIEL ? `Sicher bestanden (${sc.pct} %)` : sc.pct >= PASS ? `Knapp bestanden (${sc.pct} %)` : `Noch nicht bestanden (${sc.pct} %)`}</h2>
+  <p class="muted">Multiple Choice: ${sc.mc} von ${sc.mcN} richtig${sc.frMax ? ` · Freitext: ${sc.allRated ? String(sc.fr).replace(".", ",") + " von " + sc.frMax + " Punkten" : "noch nicht bewertet"}` : ""}${r.timeout ? " · Zeit abgelaufen" : ""}</p><p class="small muted">Bestanden ab ${PASS} % (üblich, nicht offiziell bestätigt) · Übungsziel ${ZIEL} %</p></div>
   ${fr.length ? `<div class="sec-h"><h2>Freitext selbst bewerten</h2></div><p class="small muted" style="margin:-4px 0 10px">Im echten Test korrigieren Fachdozent und IHK-Bildungszentrum. Sei streng: Teilpunkte nur, wenn wirklich Teile der Musterlösung drinstehen.</p>${fr.map(({ q, i }) => `<div class="card">${chip(q)}<p style="font-weight:700;margin:10px 0 6px">${esc(q.q)}</p><div class="answer">${r.ans[i] ? esc(r.ans[i]) : "<i>Keine Antwort</i>"}</div>${musterHtml(q, r.ans[i])}<div class="row" role="group" aria-label="Bewertung" style="margin-top:12px">${[[0, "0 Punkte"], [.5, "½ Punkt"], [1, "1 Punkt"]].map(([v, t]) => `<button type="button" class="btn ${r.rated[i] === v ? "" : "ghost"}" aria-pressed="${r.rated[i] === v}" data-i="${i}" data-v="${v}" style="flex:1">${t}</button>`).join("")}</div></div>`).join("")}` : ""}
   ${sc.allRated ? `<div class="row" style="justify-content:center;margin:8px 0 20px"><a class="btn ghost" href="#pruefung">Zurück</a><button class="btn" id="again">Neuer Test</button></div>` : ""}
   ${wrong.length ? `<div class="sec-h"><h2>Multiple Choice nacharbeiten</h2></div>${wrong.map(x => `<div class="card">${chip(x.q)}<p style="font-weight:700;margin-top:10px">${esc(x.q.q)}</p><p class="small bad-t">✗ Deine Antwort: ${x.a === undefined ? "keine" : esc(x.q.a[x.a])}</p><p class="small ok-t">✓ Richtig: ${esc(x.q.a[x.q.c])}</p><div class="fb ok" style="margin-top:8px">${esc(x.q.e)}</div></div>`).join("")}` : ""}`, { keep: !!viewAuswertung.keep });
@@ -563,13 +564,13 @@ function viewLehrgang() {
   <dt>Form</dt><dd>Online-Test von zu Hause, personalisiert</dd>
   <dt>Umfang</dt><dd>30 Fragen, Multiple Choice und Freitext</dd>
   <dt>Dauer</dt><dd>60 Minuten</dd>
-  <dt>Korrektur</dt><dd>Fachdozent und IHK-Bildungszentrum Dresden</dd>
+  <dt>Korrektur</dt><dd>Fachdozent und IHK-Bildungszentrum Dresden. Freitexte werden von Hand bewertet, Teilpunkte sind möglich – das Ergebnis kommt deshalb nicht sofort.</dd>
   <dt>Prüfende Stelle</dt><dd>IHK-Bildungszentrum Dresden gGmbH</dd>
   <dt>Testgebühr</dt><dd>205 €, in der Kursgebühr enthalten</dd>
  </dl>
  <h3 style="margin:14px 0 6px">Nicht veröffentlicht – in der App angenommen</h3>
  <ul class="ticks small">
-  <li>Bestehensgrenze: die App rechnet mit ${PASS} %</li>
+  <li>Bestehensgrenze: die App rechnet mit ${PASS} % der Punkte, wie bei IHK-Zertifikatstests üblich – und empfiehlt ${ZIEL} % als Übungsziel</li>
   <li>Anteil Freitext: die App nimmt 8 von 30 Fragen an</li>
   <li>Je Multiple-Choice-Frage genau eine richtige Antwort</li>
   <li>Vor- und Zurückspringen im Test erlaubt</li>
