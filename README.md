@@ -1,17 +1,18 @@
-# SMM Coach – Social Media Manager (IHK)
+# SMM Coach
 
-Lern-App (PWA) für den Zertifikatslehrgang **Social Media Manager (IHK)**: Live unter https://smm.micana.de
+Lern-App (PWA) zum Zertifikatslehrgang **Social Media Manager/-in (IHK)** – ausgerichtet auf den Fernlehrgang der HSB Akademie mit Abschlusstest beim IHK-Bildungszentrum Dresden.
 
-- **Lernen:** 6 Module, 19 Story-Lektionen (Erstvermittlung) mit Kurz-Checks, danach Modul-Quiz
-- **Prüfung:** Probetest (20 Fragen), Fachgespräch-Training mit Antwort-Leitfaden
-- **Projekt-Coach:** Strategie Schritt für Schritt aufbauen, Lücken-Check, Gliederung kopieren
+- **Lernen:** sechs Module nach der Gliederung der HSB-Kursinformation, Story-Lektionen mit Wissens-Checks, Zusatzwissen Social Ads (nicht im Probetest)
+- **Üben:** Quiz pro Modul, Schnell-Quiz, Freitext in Runden à 8 mit Musterlösung und Selbstbewertung, Wiederholung (Leitner-System), Fehlerkiste, Glossar & Formeln
+- **Prüfung:** Probetest mit 30 Fragen (Multiple Choice + Freitext), 60 Minuten oder ohne Zeitlimit, Vor/Zurück, Markieren, Übersicht, Teilpunkte beim Freitext
+- **Lehrgang:** Ablauf, Kosten, Termine, Karriere
 
-Statische Seite ohne Build-Schritt und ohne Server, gehostet über GitHub Pages (`CNAME`). Fortschritt bleibt im Browser (localStorage), offline über `sw.js`.
+**Annahmen** (nicht offiziell bestätigt): Bestehensgrenze 80 %, Anteil Freitext 8 von 30, nur eine richtige Antwort je Multiple-Choice-Frage. Die App kennzeichnet das.
 
-## Inhalte bearbeiten
-Alle Lektionen, Quizfragen und Fachgespräch-Karten stehen in `data/kurs.js`. Nach jeder Änderung `CACHE` in `sw.js` hochzählen.
+## Technik
 
-Rechtliche Inhalte: Stand 11/2026 – vor kommerzieller Nutzung fachlich prüfen lassen.
+Statische Dateien ohne Build: `index.html`, `app.css`, `app.js`, Inhalte in `data/`. Lernstand liegt nur im Browser (localStorage + IndexedDB), Export/Import als Datei in den Einstellungen.
 
-## Lizenzen
-Schrift Poppins (Indian Type Foundry), SIL Open Font License 1.1, als Untermenge eingebettet.
+Nach jeder Änderung `VERSION` in `app.js` und `CACHE` in `sw.js` hochzählen – dann erscheint in der App „Jetzt aktualisieren“.
+
+Hosting: GitHub Pages mit `CNAME` → smm.micana.de.

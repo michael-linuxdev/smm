@@ -17,12 +17,7 @@ export const NEUE = {
 {
 "m": "einf",
 "q": "Was versteht man unter einem „Prosumer“?",
-"a": [
-"Eine Person, die Inhalte nicht nur konsumiert, sondern auch selbst produziert",
-"Einen besonders kaufkräftigen Stammkunden",
-"Einen professionellen Werbetexter",
-"Ein Tool zur Planung von Beiträgen"
-],
+"a": ["Eine Person, die Inhalte nicht nur konsumiert, sondern selbst produziert", "Einen besonders kaufkräftigen Stammkunden mit hoher Markentreue", "Einen professionellen Werbetexter, der Inhalte für Marken produziert", "Ein Tool zur Planung und Veröffentlichung eigener Beiträge"],
 "c": 0,
 "e": "Prosumer = Producer + Consumer. Im Web 2.0 sind Nutzer zugleich Leser und Autoren.",
 "quelle": ""
@@ -30,12 +25,7 @@ export const NEUE = {
 {
 "m": "einf",
 "q": "Was bedeutet „Viralität“ in Social Media?",
-"a": [
-"Ein Inhalt verbreitet sich durch Teilen der Nutzer sehr schnell und weit",
-"Ein Beitrag enthält Schadsoftware",
-"Ein Profil wurde gesperrt",
-"Eine Anzeige läuft mit sehr hohem Budget"
-],
+"a": ["Ein Inhalt verbreitet sich durch Teilen der Nutzer sehr schnell und weit", "Ein Beitrag enthält Schadsoftware, die sich über Links verbreitet", "Eine Anzeige erreicht durch ein sehr hohes Budget viele Menschen", "Ein Beitrag wird dauerhaft oben im Profil angepinnt und so oft gesehen"],
 "c": 0,
 "e": "Virale Inhalte werden von Nutzer zu Nutzer weitergegeben – ähnlich wie ein Virus, nur ohne bezahlte Verbreitung.",
 "quelle": ""
@@ -43,12 +33,7 @@ export const NEUE = {
 {
 "m": "einf",
 "q": "Was beschreibt der Netzwerkeffekt?",
-"a": [
-"Der Nutzen einer Plattform steigt, je mehr Menschen sie nutzen",
-"Das WLAN wird bei vielen Nutzern langsamer",
-"Netzwerke verlieren mit der Zeit an Bedeutung",
-"Jeder Nutzer darf nur einem Netzwerk beitreten"
-],
+"a": ["Der Nutzen einer Plattform steigt, je mehr Menschen sie nutzen", "Die Ladezeit einer Plattform steigt, je mehr Menschen sie nutzen", "Netzwerke verlieren mit wachsender Nutzerzahl an Bedeutung", "Inhalte verbreiten sich nur innerhalb des eigenen Netzwerks"],
 "c": 0,
 "e": "Je mehr Kontakte und Inhalte auf einer Plattform sind, desto attraktiver wird sie für weitere Nutzer.",
 "quelle": ""
@@ -56,12 +41,7 @@ export const NEUE = {
 {
 "m": "einf",
 "q": "Was ist mit einer „Filterblase“ gemeint?",
-"a": [
-"Algorithmen zeigen vor allem Inhalte, die zu den bisherigen Interessen passen, andere Sichtweisen seltener",
-"Ein Bildfilter für Fotos auf Instagram",
-"Ein Spam-Filter im E-Mail-Postfach",
-"Eine geschlossene Gruppe mit Passwort"
-],
+"a": ["Algorithmen zeigen vor allem Passendes zu bisherigen Interessen, andere Sichtweisen seltener", "Ein Bildfilter, der Fotos auf Instagram weichzeichnet und Farben verstärkt", "Ein Spam-Filter, der unerwünschte Nachrichten im E-Mail-Postfach automatisch aussortiert", "Eine geschlossene Gruppe, in die nur Mitglieder mit Passwort und Einladung gelangen"],
 "c": 0,
 "e": "Personalisierte Feeds können dazu führen, dass Nutzer überwiegend Bestätigendes sehen.",
 "quelle": ""
@@ -69,12 +49,7 @@ export const NEUE = {
 {
 "m": "einf",
 "q": "Was regelt der Algorithmus einer Social-Media-Plattform vor allem?",
-"a": [
-"Welche Inhalte wem in welcher Reihenfolge angezeigt werden",
-"Wie hoch die Steuern des Unternehmens sind",
-"Welche Farbe das Logo hat",
-"Wie viele Mitarbeitende ein Profil betreuen dürfen"
-],
+"a": ["Welche Inhalte wem in welcher Reihenfolge angezeigt werden", "Wie viele Mitarbeitende ein Unternehmensprofil betreuen dürfen", "Welche Pflichtangaben im Impressum eines Profils stehen müssen", "Wie oft ein Unternehmen pro Tag maximal posten darf"],
 "c": 0,
 "e": "Der Algorithmus sortiert und gewichtet Inhalte, z. B. nach Interesse, Interaktion und Aktualität.",
 "quelle": ""
@@ -82,12 +57,7 @@ export const NEUE = {
 {
 "m": "einf",
 "q": "Was versteht man unter „Social Commerce“?",
-"a": [
-"Produkte direkt innerhalb sozialer Netzwerke verkaufen und kaufen",
-"Den Handel mit Follower-Konten",
-"Spenden für soziale Projekte",
-"Die Gehaltsabrechnung im Social-Media-Team"
-],
+"a": ["Produkte direkt innerhalb sozialer Netzwerke verkaufen und kaufen", "Der Handel mit Follower-Konten und Profilen auf Marktplätzen", "Das Sammeln von Spenden für soziale Projekte über Plattformen", "Werbung, die Nutzer von sozialen Netzwerken in Ladengeschäfte lockt"],
 "c": 0,
 "e": "Beispiele sind Shop-Funktionen und Produktmarkierungen, über die direkt gekauft werden kann.",
 "quelle": ""
@@ -95,12 +65,7 @@ export const NEUE = {
 {
 "m": "einf",
 "q": "Was bedeutet „Social Selling“?",
-"a": [
-"Vertriebsmitarbeitende bauen über soziale Netzwerke Beziehungen auf, um Verkaufschancen zu schaffen",
-"Ein Rabatt für soziale Einrichtungen",
-"Der Verkauf von Social-Media-Profilen",
-"Kostenlose Werbung auf allen Plattformen"
-],
+"a": ["Vertrieb baut über soziale Netzwerke Beziehungen auf, um Verkaufschancen zu schaffen", "Unternehmen verkaufen ihre Social-Media-Profile mitsamt Followern an Dritte", "Soziale Einrichtungen erhalten auf Plattformen vergünstigte Werbeanzeigen", "Produkte werden ohne Beratung ausschließlich über bezahlte Anzeigen im Feed verkauft"],
 "c": 0,
 "e": "Social Selling nutzt z. B. LinkedIn, um Kontakte zu pflegen, Expertise zu zeigen und Gespräche anzubahnen.",
 "quelle": ""
@@ -121,12 +86,7 @@ export const NEUE = {
 {
 "m": "einf",
 "q": "Ein Unternehmen startet eine Hashtag-Aktion – Nutzer verwenden den Hashtag jedoch vor allem für Kritik. Welches Risiko zeigt sich?",
-"a": [
-"Kontrollverlust: Die Community bestimmt mit, wie über die Marke gesprochen wird",
-"Zu geringe Messbarkeit",
-"Fehlende Impressumspflicht",
-"Zu hohe Werbekosten"
-],
+"a": ["Kontrollverlust: Die Community bestimmt mit, wie über die Marke gesprochen wird", "Fehlende Messbarkeit: Die Nutzung eines Hashtags lässt sich gar nicht auswerten", "Abmahnrisiko: Eigene Hashtags müssen vorher als Marke eingetragen werden", "Kostenrisiko: Für jede Nutzung des Hashtags fallen Werbekosten an"],
 "c": 0,
 "e": "In Social Media reden andere mit. Aktionen sollten vorab auf mögliche Kritik geprüft werden.",
 "quelle": ""
@@ -134,12 +94,7 @@ export const NEUE = {
 {
 "m": "einf",
 "q": "Warum ist das Kaufen von Followern ein Fehler?",
-"a": [
-"Gekaufte Follower interagieren nicht echt, verfälschen Kennzahlen und gefährden die Glaubwürdigkeit",
-"Weil es technisch unmöglich ist",
-"Weil Follower nur mit Werbebudget wachsen dürfen",
-"Weil es die organische Reichweite garantiert erhöht"
-],
+"a": ["Weil sie nicht echt interagieren, Kennzahlen verfälschen und die Glaubwürdigkeit gefährden", "Weil es technisch unmöglich ist und Plattformen es immer sofort erkennen", "Weil Follower laut Plattformregeln nur über Werbebudget wachsen dürfen", "Weil gekaufte Follower nach geltendem Recht immer eine Strafanzeige nach sich ziehen"],
 "c": 0,
 "e": "Fake-Follower senken z. B. die Engagement-Rate und können bei Entdeckung dem Image schaden.",
 "quelle": ""
@@ -147,12 +102,7 @@ export const NEUE = {
 {
 "m": "einf",
 "q": "Ein Modehändler postet nach einer Naturkatastrophe einen Rabattcode mit Bezug auf das Unglück. Welcher typische Fehler liegt vor?",
-"a": [
-"Fehlendes Gespür für Kontext und Tonalität",
-"Zu seltene Beiträge",
-"Fehlende Hashtags",
-"Zu lange Videos"
-],
+"a": ["Fehlendes Gespür für Kontext und Tonalität", "Zu seltene Beiträge in der Krisenzeit", "Fehlende Hashtags zum aktuellen Ereignis", "Zu kurze Laufzeit des Rabattcodes im Beitrag"],
 "c": 0,
 "e": "Wer sensible Ereignisse für Werbung nutzt, riskiert Empörung und einen Shitstorm.",
 "quelle": ""
@@ -160,12 +110,7 @@ export const NEUE = {
 {
 "m": "einf",
 "q": "Welches Ziel passt zum Einsatzgebiet Produktentwicklung?",
-"a": [
-"Feedback und Ideen von Kunden für neue Produkte sammeln",
-"Mehr Bewerbungen für Ausbildungsplätze erhalten",
-"Pressevertreter informieren",
-"Reklamationen an die Buchhaltung weiterleiten"
-],
+"a": ["Feedback und Ideen von Kunden für neue Produkte sammeln", "Mehr Bewerbungen für Ausbildungsplätze in der Produktion erhalten", "Pressevertreter über neue Produkte informieren", "Reklamationen an die Buchhaltung weiterleiten"],
 "c": 0,
 "e": "Kommentare, Umfragen und Gespräche liefern Hinweise darauf, was Kunden sich wünschen.",
 "quelle": ""
@@ -173,12 +118,7 @@ export const NEUE = {
 {
 "m": "einf",
 "q": "Ein Getränkehersteller lässt seine Community über die nächste Sorte abstimmen und Vorschläge einreichen. Wie nennt man das?",
-"a": [
-"Crowdsourcing",
-"Retargeting",
-"Astroturfing",
-"Geotargeting"
-],
+"a": ["Crowdsourcing", "Social Listening", "Astroturfing", "Geotargeting"],
 "c": 0,
 "e": "Beim Crowdsourcing werden Ideen oder Leistungen der Community in Unternehmensprozesse eingebunden.",
 "quelle": ""
@@ -186,12 +126,7 @@ export const NEUE = {
 {
 "m": "einf",
 "q": "Was zeichnet einen Influencer aus?",
-"a": [
-"Reichweite und Glaubwürdigkeit in einer Community, mit der er Meinungen und Entscheidungen beeinflusst",
-"Ein verifiziertes Profil mit blauem Haken",
-"Eine Ausbildung als Werbekaufmann",
-"Mindestens eine Million Follower"
-],
+"a": ["Reichweite und Glaubwürdigkeit in einer Community, mit der er Meinungen beeinflusst", "Ein verifiziertes Profil mit blauem Haken und offiziellem Influencer-Status", "Eine abgeschlossene Ausbildung als Werbekaufmann oder Mediengestalter", "Mindestens eine Million Follower auf einer großen Plattform, unabhängig vom Engagement"],
 "c": 0,
 "e": "Entscheidend sind Vertrauen und Einfluss in einer Zielgruppe – nicht eine bestimmte Follower-Zahl.",
 "quelle": ""
@@ -212,12 +147,7 @@ export const NEUE = {
 {
 "m": "einf",
 "q": "Ein Start-up bringt ein völlig unbekanntes Produkt auf den Markt. Welches Social-Media-Ziel steht meist am Anfang?",
-"a": [
-"Bekanntheit (Awareness) aufbauen",
-"Bestandskunden binden",
-"Servicekosten senken",
-"Wiederholungskäufe steigern"
-],
+"a": ["Bekanntheit (Awareness) aufbauen", "Bestandskunden langfristig binden", "Servicekosten im Kundendienst senken", "Wiederholungskäufe steigern"],
 "c": 0,
 "e": "Wer ein Produkt nicht kennt, kann es nicht kaufen – zuerst muss Aufmerksamkeit entstehen.",
 "quelle": ""
@@ -225,12 +155,7 @@ export const NEUE = {
 {
 "m": "einf",
 "q": "Zu welcher Art von Plattform gehört Pinterest am ehesten?",
-"a": [
-"Visuelle Such- und Inspirationsplattform",
-"Business-Netzwerk",
-"Microblogging-Dienst",
-"Messenger"
-],
+"a": ["Visuelle Such- und Inspirationsplattform", "Business-Netzwerk für Fach- und Führungskräfte", "Microblogging-Dienst für Echtzeit-Nachrichten", "Messenger für private Gruppenchats"],
 "c": 0,
 "e": "Nutzer suchen auf Pinterest Ideen (z. B. Rezepte, Einrichtung) und speichern Pins, die auf Websites verlinken.",
 "quelle": ""
@@ -238,12 +163,7 @@ export const NEUE = {
 {
 "m": "einf",
 "q": "Was kennzeichnet Microblogging?",
-"a": [
-"Kurze Textbeiträge, die schnell und oft in Echtzeit veröffentlicht werden",
-"Lange Fachartikel mit Inhaltsverzeichnis",
-"Ausschließlich Videos über zehn Minuten",
-"Private Nachrichten zwischen zwei Personen"
-],
+"a": ["Kurze Textbeiträge, die schnell und oft in Echtzeit veröffentlicht werden", "Lange Fachartikel mit Inhaltsverzeichnis, die selten veröffentlicht werden", "Ausschließlich Videos mit über zehn Minuten Länge und eigenen Kapiteln", "Private Nachrichten, die nur zwischen zwei Personen ausgetauscht werden"],
 "c": 0,
 "e": "Typische Microblogging-Dienste sind X, Threads, Bluesky oder Mastodon.",
 "quelle": ""
@@ -251,12 +171,7 @@ export const NEUE = {
 {
 "m": "einf",
 "q": "Die einzige Social-Media-Verantwortliche ist drei Wochen im Urlaub, Kundenanfragen bleiben unbeantwortet. Welche Fehlerquelle liegt vor?",
-"a": [
-"Fehlende Vertretungs- und Ressourcenplanung",
-"Zu viele Themensäulen",
-"Falsches Kampagnenziel",
-"Zu hohe Engagement-Rate"
-],
+"a": ["Fehlende Vertretungs- und Ressourcenplanung", "Zu viele Themensäulen im Redaktionsplan", "Ein falsch gewähltes Ziel für die Kampagne", "Ein zu geringes Werbebudget für Anzeigen"],
 "c": 0,
 "e": "Social Media braucht klare Zuständigkeiten und Vertretungen – die Community wartet nicht.",
 "quelle": ""
@@ -264,12 +179,7 @@ export const NEUE = {
 {
 "m": "platt",
 "q": "Was ist ein Collab-Beitrag auf Instagram?",
-"a": [
-"Ein gemeinsamer Beitrag von zwei oder mehr Konten, der auf allen beteiligten Profilen erscheint",
-"Ein Beitrag, der nur für Mitarbeitende sichtbar ist",
-"Eine bezahlte Anzeige im Explore-Bereich",
-"Ein Story-Highlight mit mehreren Kapiteln"
-],
+"a": ["Ein gemeinsamer Beitrag mehrerer Konten, der auf allen beteiligten Profilen erscheint", "Ein Beitrag, der nur für Mitarbeitende des eigenen Unternehmens sichtbar ist", "Eine bezahlte Anzeige, die im Explore-Bereich zwei Zielgruppen gleichzeitig erreicht", "Ein Story-Highlight, das Beiträge mehrerer Kapitel dauerhaft im Profil sammelt"],
 "c": 0,
 "e": "Collab-Beiträge teilen Reichweite und Interaktionen zwischen den beteiligten Konten – ideal für Partner- und Influencer-Kooperationen.",
 "quelle": ""
@@ -277,12 +187,7 @@ export const NEUE = {
 {
 "m": "platt",
 "q": "Wofür nutzt man einen Broadcast-Kanal auf Instagram?",
-"a": [
-"Um Updates direkt an Follower zu senden, die dem Kanal beigetreten sind",
-"Um Live-Videos mit mehreren Gästen zu streamen",
-"Um Anzeigen automatisch zu optimieren",
-"Um gelöschte Beiträge wiederherzustellen"
-],
+"a": ["Um Updates direkt an Follower zu senden, die dem Kanal beigetreten sind", "Um Live-Videos gemeinsam mit mehreren Gästen gleichzeitig zu streamen", "Um Werbeanzeigen kostenlos und automatisch an alle Follower auszuspielen", "Um gelöschte Beiträge und Stories nachträglich wiederherzustellen"],
 "c": 0,
 "e": "Broadcast-Kanäle sind ein Einweg-Messaging: Der Kanal sendet, Follower können z. B. reagieren oder abstimmen.",
 "quelle": ""
@@ -290,12 +195,7 @@ export const NEUE = {
 {
 "m": "platt",
 "q": "Wofür eignet sich eine Fokusseite (Showcase-Seite) auf LinkedIn?",
-"a": [
-"Für einen eigenen Auftritt eines Geschäftsbereichs, einer Marke oder Initiative unter der Unternehmensseite",
-"Für das private Profil der Geschäftsführung",
-"Für Stellenanzeigen, die nur intern sichtbar sind",
-"Für den Verkauf von Produkten mit Warenkorb"
-],
+"a": ["Für den eigenen Auftritt eines Bereichs, einer Marke oder Initiative unter der Unternehmensseite", "Für das private Profil der Geschäftsführung, getrennt von der Unternehmensseite", "Für Stellenanzeigen, die ausschließlich für bestehende Mitarbeitende sichtbar sind", "Für den direkten Verkauf von Produkten mit Warenkorb und Bezahlfunktion in LinkedIn"],
 "c": 0,
 "e": "Fokusseiten sprechen eine spezifische Zielgruppe an und bleiben mit der Hauptseite verbunden.",
 "quelle": ""
@@ -303,12 +203,7 @@ export const NEUE = {
 {
 "m": "platt",
 "q": "Was ist der Vorteil von Lead-Gen-Formularen in LinkedIn-Anzeigen?",
-"a": [
-"Das Formular ist mit Profildaten vorausgefüllt, Interessenten müssen LinkedIn nicht verlassen",
-"Sie sind immer kostenlos",
-"Sie ersetzen die Datenschutzhinweise",
-"Sie funktionieren nur ohne Zielgruppen-Targeting"
-],
+"a": ["Sie sind mit Profildaten vorausgefüllt, Interessenten müssen LinkedIn nicht verlassen", "Sie sind immer kostenlos, weil sie nicht als Werbeanzeige abgerechnet werden", "Sie ersetzen die Datenschutzhinweise, eine Einwilligung ist nicht nötig", "Sie funktionieren nur ohne Targeting und erreichen alle LinkedIn-Nutzer"],
 "c": 0,
 "e": "Weniger Aufwand für Nutzer bedeutet meist mehr abgeschlossene Formulare und damit mehr Leads.",
 "quelle": ""
@@ -316,12 +211,7 @@ export const NEUE = {
 {
 "m": "platt",
 "q": "Was sind TikTok Spark Ads?",
-"a": [
-"Organische TikTok-Videos – eigene oder mit Erlaubnis die von Creatorn – werden als Anzeige beworben",
-"Anzeigen, die nur nachts ausgespielt werden",
-"Werbung ausschließlich mit Text ohne Video",
-"Kostenlose Anzeigen für neue Konten"
-],
+"a": ["Bestehende organische Videos – eigene oder von Creatorn mit Erlaubnis – werden beworben", "Eigens produzierte Werbespots, die nie organisch auf einem Profil erscheinen", "Werbung ausschließlich mit Text und Bild, ganz ohne Video oder Ton", "Anzeigen, die Videos von Konkurrenten ohne deren Erlaubnis automatisch bewerben"],
 "c": 0,
 "e": "Spark Ads nutzen echte Beiträge samt Interaktionen und wirken dadurch nativer als klassische Anzeigen.",
 "quelle": ""
@@ -329,12 +219,7 @@ export const NEUE = {
 {
 "m": "platt",
 "q": "Was ist ein „Stitch“ auf TikTok?",
-"a": [
-"Ein kurzer Ausschnitt aus dem Video einer anderen Person wird an den Anfang des eigenen Videos gesetzt",
-"Zwei Videos laufen gleichzeitig nebeneinander",
-"Ein Video wird in mehrere Teile geschnitten und als Serie gepostet",
-"Ein Video wird automatisch übersetzt"
-],
+"a": ["Ein kurzer Ausschnitt aus einem fremden Video wird vor das eigene Video gesetzt", "Zwei Videos laufen gleichzeitig nebeneinander im geteilten Bildschirm", "Ein langes Video wird in mehrere Teile geschnitten und als Serie gepostet", "Ein eigenes Video wird automatisch in mehrere Sprachen übersetzt und neu vertont"],
 "c": 0,
 "e": "Beim Stitch reagiert man auf einen Ausschnitt; beim Duett laufen beide Videos nebeneinander.",
 "quelle": ""
@@ -342,12 +227,7 @@ export const NEUE = {
 {
 "m": "platt",
 "q": "Welche Musik sollten Unternehmen laut TikTok für kommerzielle Inhalte verwenden?",
-"a": [
-"Musik aus der Commercial Music Library",
-"Jeden Song aus den aktuellen Trends",
-"Songs, die man als CD gekauft hat",
-"Musik aus beliebigen YouTube-Videos"
-],
+"a": ["Musik aus der Commercial Music Library", "Jeden Song aus den aktuellen TikTok-Trends", "Songs, die man als CD gekauft hat", "Musik aus beliebigen YouTube-Videos"],
 "c": 0,
 "e": "Die Commercial Music Library ist für kommerzielle Zwecke wie Markeninhalte und Anzeigen freigegeben.",
 "quelle": "https://ads.tiktok.com/resources/help/article/commercial-music-library?lang=de"
@@ -368,12 +248,7 @@ export const NEUE = {
 {
 "m": "platt",
 "q": "Welche Funktion hat das Thumbnail eines YouTube-Videos?",
-"a": [
-"Als Vorschaubild beeinflusst es stark, ob ein Video angeklickt wird",
-"Es legt die Videolänge fest",
-"Es ersetzt die Untertitel",
-"Es bestimmt die Altersfreigabe"
-],
+"a": ["Als Vorschaubild beeinflusst es stark, ob ein Video angeklickt wird", "Es legt fest, wie lang das hochgeladene Video maximal sein darf", "Es ersetzt die Untertitel für Menschen mit Hörbeeinträchtigung", "Es bestimmt automatisch die Altersfreigabe und die Kategorie des Videos"],
 "c": 0,
 "e": "Ein klares, ansprechendes Thumbnail erhöht die Klickrate in Suche und Empfehlungen.",
 "quelle": ""
@@ -381,12 +256,7 @@ export const NEUE = {
 {
 "m": "platt",
 "q": "Worin unterscheidet sich eine Facebook-Gruppe von einer Facebook-Seite?",
-"a": [
-"In der Gruppe tauschen sich Mitglieder zu einem Thema aus; die Seite ist der offizielle Auftritt des Unternehmens",
-"Gruppen sind nur für Unternehmen erlaubt",
-"Seiten können keine Beiträge veröffentlichen",
-"Gruppen sind immer kostenpflichtig"
-],
+"a": ["In Gruppen tauschen sich Mitglieder aus; die Seite ist der offizielle Unternehmensauftritt", "Gruppen sind nur für Unternehmen erlaubt, Seiten nur für Privatpersonen", "Seiten können keine Beiträge veröffentlichen, nur Gruppen können posten", "Die Seite ist ein privater Treffpunkt für Mitglieder; die Gruppe ist der offizielle Firmenauftritt"],
 "c": 0,
 "e": "Gruppen eignen sich für Community-Aufbau rund um ein Thema, Seiten für Markenauftritt, Werbung und Statistiken.",
 "quelle": ""
@@ -394,12 +264,7 @@ export const NEUE = {
 {
 "m": "platt",
 "q": "Mit welchem Meta-Tool erstellt und steuert man Anzeigen für Facebook und Instagram im Detail?",
-"a": [
-"Werbeanzeigenmanager (Ads Manager)",
-"Instagram Edits",
-"WhatsApp Business App",
-"Messenger Kids"
-],
+"a": ["Werbeanzeigenmanager (Ads Manager)", "Instagram Edits (Videoeditor)", "WhatsApp Business App (Katalog)", "Meta Verified (Verifizierungs-Abo)"],
 "c": 0,
 "e": "Im Werbeanzeigenmanager legt man Kampagnenziel, Zielgruppe, Budget, Platzierungen und Anzeigen fest.",
 "quelle": ""
@@ -407,12 +272,7 @@ export const NEUE = {
 {
 "m": "platt",
 "q": "Was trifft auf Threads zu?",
-"a": [
-"Eine textbasierte App von Meta, die mit einem Instagram-Konto verknüpft werden kann",
-"Eine Video-Plattform von Google",
-"Ein Business-Netzwerk für Stellenanzeigen",
-"Ein Messenger nur für Gruppenchats"
-],
+"a": ["Eine textbasierte Meta-App, die mit einem Instagram-Konto verknüpft werden kann", "Eine Video-Plattform von Google für kurze Clips, verknüpft mit YouTube", "Ein Business-Netzwerk von Microsoft für Stellenanzeigen und Fachbeiträge", "Ein Messenger von Meta, der nur für verschlüsselte Gruppenchats unter Kontakten dient"],
 "c": 0,
 "e": "Threads ist Metas Microblogging-Dienst; Beiträge können optional auch ins Fediverse geteilt werden. Ein Instagram-Konto ist inzwischen nicht mehr zwingend nötig.",
 "quelle": ""
@@ -420,12 +280,7 @@ export const NEUE = {
 {
 "m": "platt",
 "q": "Was ist das Besondere an Mastodon?",
-"a": [
-"Es ist dezentral: Viele unabhängige Server sind über das Fediverse verbunden",
-"Es gehört zu Meta",
-"Es zeigt nur bezahlte Inhalte",
-"Es ist ausschließlich für Videos gedacht"
-],
+"a": ["Es ist dezentral: Viele unabhängige Server sind über das Fediverse verbunden", "Es gehört zu Meta und lässt sich direkt mit dem Instagram-Konto verknüpfen", "Der Feed zeigt vor allem bezahlte Inhalte, sortiert von einem zentralen Algorithmus", "Es ist ausschließlich für Kurzvideos im Hochformat mit Musik gedacht"],
 "c": 0,
 "e": "Mastodon besteht aus vielen Instanzen, die über das Protokoll ActivityPub miteinander kommunizieren.",
 "quelle": ""
@@ -433,12 +288,7 @@ export const NEUE = {
 {
 "m": "platt",
 "q": "Was sind „Community Notes“ auf X?",
-"a": [
-"Von Nutzern erstellte Hinweise, die irreführenden Beiträgen Kontext hinzufügen",
-"Interne Notizen des Social-Media-Teams",
-"Bezahlte Anzeigen in Textform",
-"Private Nachrichten an Follower"
-],
+"a": ["Von Nutzern erstellte Hinweise, die irreführenden Beiträgen Kontext hinzufügen", "Interne Notizen, die sich das Social-Media-Team zu Kunden anlegen kann", "Bezahlte Anzeigen in Textform, die unter beliebten Beiträgen erscheinen", "Von X-Mitarbeitenden verfasste Faktenchecks, die betroffene Beiträge automatisch löschen"],
 "c": 0,
 "e": "Community Notes werden angezeigt, wenn Nutzer mit unterschiedlichen Sichtweisen sie als hilfreich bewerten.",
 "quelle": ""
@@ -459,12 +309,7 @@ export const NEUE = {
 {
 "m": "platt",
 "q": "Was trifft auf WhatsApp-Kanäle zu?",
-"a": [
-"Admins senden Updates an Follower; Telefonnummern der Follower sind für Admins nicht sichtbar",
-"Follower können sich untereinander anschreiben",
-"Jeder Follower sieht die Nummern aller anderen",
-"Kanäle sind nur für Privatpersonen erlaubt"
-],
+"a": ["Admins senden Updates an Follower, ohne deren Telefonnummern zu sehen", "Follower können sich im Kanal gegenseitig direkt anschreiben und antworten", "Jeder Follower sieht die Telefonnummern aller anderen Follower", "Kanäle sind nur für Privatpersonen, nicht für Unternehmen erlaubt"],
 "c": 0,
 "e": "WhatsApp-Kanäle sind ein Broadcast-Dienst; Nummern von Admins und Followern bleiben privat.",
 "quelle": "https://blog.whatsapp.com/introducing-whatsapp-channels-a-private-way-to-follow-what-matters?lang=de"
@@ -472,12 +317,7 @@ export const NEUE = {
 {
 "m": "platt",
 "q": "Ein Versandhändler möchte Kundenanfragen über WhatsApp mit mehreren Mitarbeitenden und Anbindung an sein CRM bearbeiten. Was passt?",
-"a": [
-"Die WhatsApp Business Plattform (API) über einen Anbieter",
-"Die private WhatsApp-App auf einem Diensthandy",
-"Ein WhatsApp-Status",
-"Eine private WhatsApp-Gruppe"
-],
+"a": ["Die WhatsApp Business Plattform (API) über einen Anbieter", "Die private WhatsApp-App auf einem gemeinsamen Diensthandy", "Die kostenlose WhatsApp Business App auf einem Smartphone", "Eine WhatsApp-Gruppe mit allen Kunden und Mitarbeitenden"],
 "c": 0,
 "e": "Die Business Plattform ist für größere Unternehmen mit mehreren Bearbeitern, Automatisierung und Systemanbindung gedacht.",
 "quelle": ""
@@ -485,12 +325,7 @@ export const NEUE = {
 {
 "m": "platt",
 "q": "Wozu dient ein Alt-Text bei Bildern in Social Media?",
-"a": [
-"Er beschreibt das Bild für Menschen, die Screenreader nutzen",
-"Er legt das Copyright fest",
-"Er verhindert, dass das Bild geteilt wird",
-"Er ersetzt die Bildunterschrift"
-],
+"a": ["Er beschreibt das Bild für Menschen, die Screenreader nutzen", "Er legt das Copyright und den Urheber des Bildes rechtlich fest", "Er verhindert, dass das Bild von anderen geteilt wird", "Er wird anstelle der Bildunterschrift unter dem Beitrag angezeigt"],
 "c": 0,
 "e": "Alt-Texte machen Bilder barrierefreier und helfen sehbehinderten Menschen.",
 "quelle": ""
@@ -511,12 +346,7 @@ export const NEUE = {
 {
 "m": "platt",
 "q": "Was bietet ein gemeinsamer Posteingang (Social Inbox) in einem Social-Media-Tool?",
-"a": [
-"Kommentare und Nachrichten mehrerer Kanäle an einem Ort bearbeiten",
-"Automatisch mehr Follower",
-"Eine rechtssichere Datenschutzerklärung",
-"Kostenlose Stockfotos"
-],
+"a": ["Kommentare und Nachrichten mehrerer Kanäle an einem Ort bearbeiten", "Eine automatisch erstellte, rechtssichere Datenschutzerklärung", "Ein zentrales Postfach für alle Rechnungen der Werbeplattformen", "Eine Mediathek mit kostenlosen, lizenzfreien Stockfotos für Beiträge"],
 "c": 0,
 "e": "So geht keine Anfrage verloren, und das Team sieht, wer was bereits beantwortet hat.",
 "quelle": ""
@@ -524,12 +354,7 @@ export const NEUE = {
 {
 "m": "platt",
 "q": "„Wenn ein Lead-Formular ausgefüllt wird, lege automatisch einen Kontakt im CRM an.“ Was beschreibt diese Regel?",
-"a": [
-"Eine Workflow-Automatisierung zwischen Tools (z. B. mit Zapier oder Make)",
-"Einen A/B-Test",
-"Ein Content-Recycling",
-"Eine Lookalike Audience"
-],
+"a": ["Eine Workflow-Automatisierung zwischen Tools (z. B. mit Zapier oder Make)", "Einen A/B-Test, der zwei Varianten eines Lead-Formulars vergleicht", "Ein Content-Recycling, das Formulare in neue Beiträge verwandelt", "Eine Lookalike Audience, die automatisch aus neuen CRM-Kontakten erstellt wird"],
 "c": 0,
 "e": "Solche Wenn-dann-Verknüpfungen sparen Routinearbeit und Übertragungsfehler.",
 "quelle": ""
@@ -550,12 +375,7 @@ export const NEUE = {
 {
 "m": "unt",
 "q": "Was beschreibt die Mission eines Unternehmens?",
-"a": [
-"Den Zweck und Auftrag: was das Unternehmen heute für wen tut",
-"Das Werbebudget für das nächste Jahr",
-"Die Anzahl der Follower in fünf Jahren",
-"Die Liste aller Social-Media-Kanäle"
-],
+"a": ["Den Zweck und Auftrag: was das Unternehmen heute für wen tut", "Das langfristige Zukunftsbild: wo das Unternehmen in 10 Jahren steht", "Die konkreten Kennzahlen, die bis Jahresende erreicht werden sollen", "Das Werbebudget und die Kanäle für das kommende Geschäftsjahr"],
 "c": 0,
 "e": "Die Vision ist das langfristige Zukunftsbild, die Mission der Auftrag, aus dem sich Ziele ableiten.",
 "quelle": ""
@@ -563,12 +383,7 @@ export const NEUE = {
 {
 "m": "unt",
 "q": "Ein Konzern hat mehrere Marken in verschiedenen Ländern. Welches Organisationsmodell passt meist am besten?",
-"a": [
-"Multiple Hub-and-Spoke: mehrere Hubs (z. B. je Marke/Land), zentral koordiniert",
-"Rein dezentral ohne Abstimmung",
-"Eine einzelne Person für alle Kanäle",
-"Gar keine Organisation, jeder postet frei"
-],
+"a": ["Multiple Hub-and-Spoke: mehrere Hubs (z. B. je Marke/Land), zentral koordiniert", "Rein dezentral: Jede Marke und jedes Land postet ohne jede Abstimmung", "Rein zentral: Eine einzige Person betreut alle Kanäle aller Marken weltweit", "Komplettes Outsourcing: Eine Agentur entscheidet allein über Strategie und Inhalte"],
 "c": 0,
 "e": "Mehrere Zentren steuern ihre Einheiten, eine übergeordnete Stelle sorgt für gemeinsame Standards.",
 "quelle": ""
@@ -576,12 +391,7 @@ export const NEUE = {
 {
 "m": "unt",
 "q": "Welcher Vorteil spricht für eine zentrale Social-Media-Organisation?",
-"a": [
-"Einheitlicher Auftritt und klare Kontrolle über Botschaften",
-"Besonders große Nähe zu allen Fachabteilungen",
-"Jede Abteilung kann ohne Abstimmung posten",
-"Kein Abstimmungsbedarf mit der Geschäftsführung"
-],
+"a": ["Einheitlicher Auftritt und klare Kontrolle über Botschaften", "Besonders große Nähe zu allen Fachabteilungen und ihren Themen", "Jede Abteilung kann jederzeit ohne Abstimmung eigene Inhalte posten", "Kein Abstimmungsbedarf mit der Geschäftsführung bei Inhalten"],
 "c": 0,
 "e": "Zentral heißt einheitlich – der Nachteil ist die größere Distanz zu Fachwissen und Abteilungen.",
 "quelle": ""
@@ -589,12 +399,7 @@ export const NEUE = {
 {
 "m": "unt",
 "q": "Eine Mitarbeiterin lobt auf ihrem privaten Profil ein Produkt ihres Arbeitgebers. Was empfehlen Social-Media-Guidelines typischerweise?",
-"a": [
-"Die Zugehörigkeit zum Unternehmen offenlegen",
-"Den Arbeitgeber auf keinen Fall erwähnen",
-"Den Beitrag nur nachts posten",
-"Ein falsches Profil verwenden"
-],
+"a": ["Die Zugehörigkeit zum Unternehmen offenlegen", "Den Arbeitgeber auf keinen Fall erwähnen", "Das Produkt nur anonym über ein Zweitprofil loben", "Den Beitrag nur für enge Freunde sichtbar machen"],
 "c": 0,
 "e": "Transparenz schützt die Glaubwürdigkeit – und vermeidet den Eindruck verdeckter Werbung.",
 "quelle": ""
@@ -615,12 +420,7 @@ export const NEUE = {
 {
 "m": "unt",
 "q": "Welcher Nutzen wird Enterprise 2.0 typischerweise zugeschrieben?",
-"a": [
-"Wissen wird leichter auffindbar und Abteilungen arbeiten besser zusammen",
-"Kunden erhalten automatisch Rabatte",
-"Die Impressumspflicht entfällt",
-"Externe Werbung wird überflüssig"
-],
+"a": ["Wissen wird leichter auffindbar und Abteilungen arbeiten besser zusammen", "Kunden erhalten über interne Plattformen automatisch persönliche Rabatte", "Die Impressums- und Datenschutzpflichten für Unternehmen entfallen", "Externe Werbung und Social Ads werden vollständig überflüssig"],
 "c": 0,
 "e": "Interne Netzwerke, Wikis und Chats bauen Wissenssilos ab und können E-Mail-Fluten reduzieren.",
 "quelle": ""
@@ -628,12 +428,7 @@ export const NEUE = {
 {
 "m": "unt",
 "q": "Was ist die Employer Value Proposition (EVP)?",
-"a": [
-"Das Nutzenversprechen eines Arbeitgebers: was ihn für Mitarbeitende besonders macht",
-"Der Preis einer Stellenanzeige",
-"Die Bewertung eines Unternehmens an der Börse",
-"Ein Tool zur Gehaltsabrechnung"
-],
+"a": ["Das Nutzenversprechen eines Arbeitgebers: was ihn für Mitarbeitende besonders macht", "Der Preis, den eine Stellenanzeige auf einem Jobportal pro Klick kostet", "Die Bewertung eines Unternehmens an der Börse im Verhältnis zum Umsatz", "Das Leistungsversprechen eines Produkts: was es für Kundinnen und Kunden besonders macht"],
 "c": 0,
 "e": "Die EVP ist der Kern des Employer Brandings und sollte in Social-Media-Inhalten erlebbar werden.",
 "quelle": ""
@@ -641,12 +436,7 @@ export const NEUE = {
 {
 "m": "unt",
 "q": "Was versteht man unter „Candidate Experience“?",
-"a": [
-"Alle Erfahrungen, die Bewerbende mit einem Unternehmen im Bewerbungsprozess machen",
-"Die Berufserfahrung einer Kandidatin",
-"Ein Test für neue Social-Media-Tools",
-"Die Zahl der Bewerbungen pro Monat"
-],
+"a": ["Alle Erfahrungen, die Bewerbende mit einem Unternehmen im Bewerbungsprozess machen", "Die Berufserfahrung, die eine Kandidatin für die Stelle mitbringen muss", "Alle Erfahrungen, die Kunden beim Kauf eines Produkts mit dem Unternehmen machen", "Die Zahl der Bewerbungen, die pro Monat über Social Media und Jobportale eingehen"],
 "c": 0,
 "e": "Schnelle Antworten, Wertschätzung und Transparenz verbessern die Candidate Experience – und das Arbeitgeberimage.",
 "quelle": ""
@@ -654,12 +444,7 @@ export const NEUE = {
 {
 "m": "unt",
 "q": "Was ist eine wichtige Voraussetzung für ein erfolgreiches Corporate-Influencer-Programm?",
-"a": [
-"Freiwillige Teilnahme mit Schulung und klaren Leitlinien",
-"Verpflichtende tägliche Posts aller Mitarbeitenden",
-"Vorgegebene, identische Texte für alle",
-"Verzicht auf jede Abstimmung"
-],
+"a": ["Freiwillige Teilnahme mit Schulung und klaren Leitlinien", "Verpflichtende tägliche Posts aller Mitarbeitenden", "Vorgegebene, identische Texte, die alle unverändert posten", "Völlige Freiheit ohne Leitlinien und ohne jede Abstimmung"],
 "c": 0,
 "e": "Corporate Influencer wirken durch Authentizität – Zwang und Copy-Paste zerstören genau diese.",
 "quelle": ""
@@ -667,12 +452,7 @@ export const NEUE = {
 {
 "m": "unt",
 "q": "Ein Pflegeheim sucht Pflegekräfte im Umkreis von 30 km. Welche Social-Recruiting-Maßnahme passt am besten?",
-"a": [
-"Regional ausgerichtete Anzeigen mit echten Einblicken ins Team",
-"Ein einzelner Post ohne Bild auf X",
-"Werbung ohne Ortsangabe in ganz Deutschland",
-"Eine Stellenanzeige nur im Impressum"
-],
+"a": ["Regional ausgerichtete Anzeigen mit echten Einblicken ins Team", "Ein einzelner Textpost ohne Bild auf dem eigenen X-Profil", "Bundesweite Anzeigen ohne Ortsangabe für maximale Reichweite", "Eine Imagekampagne mit Stockfotos, ganz ohne Stellenbezug"],
 "c": 0,
 "e": "Regionales Targeting und authentische Inhalte erreichen passende Fachkräfte in der Nähe.",
 "quelle": ""
@@ -680,12 +460,7 @@ export const NEUE = {
 {
 "m": "unt",
 "q": "Was bedeutet „Employee Advocacy“?",
-"a": [
-"Mitarbeitende teilen und verbreiten freiwillig Unternehmensinhalte in ihren Netzwerken",
-"Die Rechtsberatung für Mitarbeitende",
-"Die Vertretung im Betriebsrat",
-"Die Kontrolle privater Profile durch den Arbeitgeber"
-],
+"a": ["Mitarbeitende teilen freiwillig Unternehmensinhalte in ihren eigenen Netzwerken", "Die Rechtsberatung, die Mitarbeitende bei Konflikten vom Arbeitgeber erhalten", "Die Interessenvertretung der Belegschaft durch den Betriebsrat im Unternehmen", "Die Kontrolle privater Social-Media-Profile der Mitarbeitenden durch den Arbeitgeber"],
 "c": 0,
 "e": "Mitarbeitende als Botschafter erhöhen Reichweite und Glaubwürdigkeit der Unternehmensinhalte.",
 "quelle": ""
@@ -693,12 +468,7 @@ export const NEUE = {
 {
 "m": "unt",
 "q": "Wozu dient eine Eskalationsmatrix im Community Management?",
-"a": [
-"Sie legt fest, welche Anfragen von wem und wie schnell bearbeitet werden – z. B. Weiterleitung an Rechtsabteilung oder Geschäftsführung",
-"Sie misst die Engagement-Rate",
-"Sie plant die Werbebudgets",
-"Sie sortiert Follower nach Alter"
-],
+"a": ["Sie regelt, wer welche Anfragen wie schnell bearbeitet, z. B. Weiterleitung an die Rechtsabteilung", "Sie misst, wie hoch die Engagement-Rate einzelner Beiträge im Vergleich zum Vormonat ist", "Sie verteilt das Werbebudget je nach Dringlichkeit auf die einzelnen Kanäle und Kampagnen", "Sie sortiert Follower nach Alter und Aktivität, um daraus Zielgruppen für Werbeanzeigen zu bilden"],
 "c": 0,
 "e": "So wissen Community Manager, wann sie selbst antworten und wann sie Fachleute einbinden.",
 "quelle": ""
@@ -706,12 +476,7 @@ export const NEUE = {
 {
 "m": "unt",
 "q": "Ein Nutzer provoziert unter jedem Beitrag mit absichtlich unsachlichen Kommentaren (Troll). Was ist meist richtig?",
-"a": [
-"Nicht auf die Provokation einsteigen und bei Regelverstößen gemäß Netiquette moderieren",
-"Ausführlich mit ihm öffentlich streiten",
-"Die Kommentarfunktion für immer abschalten",
-"Ihm ein Gewinnspiel-Paket schicken"
-],
+"a": ["Nicht auf Provokationen einsteigen, bei Regelverstößen gemäß Netiquette moderieren", "Ausführlich und öffentlich mit ihm diskutieren, bis er seine Meinung ändert", "Die Kommentarfunktion für alle Beiträge dauerhaft und vollständig abschalten", "Ihm per Nachricht ein Gutscheinpaket anbieten, damit er seine Kommentare künftig unterlässt"],
 "c": 0,
 "e": "„Don’t feed the troll“: Aufmerksamkeit ist das Ziel des Trolls. Regelverstöße werden nach der Netiquette behandelt.",
 "quelle": ""
@@ -719,12 +484,7 @@ export const NEUE = {
 {
 "m": "unt",
 "q": "Welche Phase der Krisenkommunikation kommt vor der akuten Krisenbewältigung?",
-"a": [
-"Früherkennung, z. B. durch Monitoring",
-"Nachbereitung",
-"Erfolgsfeier",
-"Budgetabrechnung"
-],
+"a": ["Früherkennung, z. B. durch Monitoring", "Nachbereitung und Auswertung der Krise", "Öffentliche Entschuldigung und Entschädigung", "Abschlussbericht für die Geschäftsführung"],
 "c": 0,
 "e": "Typische Phasen: Prävention, Früherkennung, Bewältigung, Nachbereitung.",
 "quelle": ""
@@ -732,12 +492,7 @@ export const NEUE = {
 {
 "m": "unt",
 "q": "Ein Unternehmen lässt ein peinliches Video juristisch entfernen – dadurch verbreitet es sich erst richtig. Wie nennt man das?",
-"a": [
-"Streisand-Effekt",
-"Netzwerkeffekt",
-"Halo-Effekt",
-"Lock-in-Effekt"
-],
+"a": ["Streisand-Effekt", "Netzwerkeffekt", "Bandwagon-Effekt", "Lock-in-Effekt"],
 "c": 0,
 "e": "Der Versuch, eine Information zu unterdrücken, erzeugt oft erst die große Aufmerksamkeit.",
 "quelle": ""
@@ -745,12 +500,7 @@ export const NEUE = {
 {
 "m": "unt",
 "q": "Was ist eine „Dark Site“ in der Krisenkommunikation?",
-"a": [
-"Eine vorbereitete Krisen-Website, die erst im Ernstfall freigeschaltet wird",
-"Eine gesperrte Unternehmensseite",
-"Ein Bereich des Darknets",
-"Eine Website im dunklen Design"
-],
+"a": ["Eine vorbereitete Krisen-Website, die erst im Ernstfall freigeschaltet wird", "Eine Unternehmensseite, die nach einem Shitstorm von der Plattform gesperrt wurde", "Ein Bereich im Darknet, in dem über das Unternehmen diskutiert wird", "Eine interne Seite, auf der Mitarbeitende anonym Kritik melden können"],
 "c": 0,
 "e": "Vorbereitete Inhalte (Fakten, Ansprechpartner, Updates) sparen im Krisenfall wertvolle Zeit.",
 "quelle": ""
@@ -758,12 +508,7 @@ export const NEUE = {
 {
 "m": "unt",
 "q": "Wozu dient eine Shitstorm-Skala?",
-"a": [
-"Um die Intensität einer Empörungswelle einzuschätzen und angemessen zu reagieren",
-"Um Kommentare automatisch zu löschen",
-"Um Werbebudget zu verteilen",
-"Um Follower zu kaufen"
-],
+"a": ["Um die Intensität einer Empörungswelle einzuschätzen und angemessen zu reagieren", "Um kritische Kommentare ab einer bestimmten Stufe automatisch zu löschen", "Um das Werbebudget nach der Krise neu auf die Kanäle zu verteilen", "Um vorab festzulegen, wie viele negative Kommentare das Unternehmen pro Tag zulässt"],
 "c": 0,
 "e": "Nicht jede Kritik ist ein Shitstorm – eine Skala hilft, Lage und Reaktion abzustufen.",
 "quelle": ""
@@ -771,12 +516,7 @@ export const NEUE = {
 {
 "m": "unt",
 "q": "Was ist ein „Holding Statement“ in einer Krise?",
-"a": [
-"Eine erste kurze Stellungnahme: Wir kennen den Fall, prüfen ihn und informieren bald ausführlich",
-"Die endgültige Pressemitteilung nach der Krise",
-"Ein Beitrag, der die Kritik löscht",
-"Ein Vertrag mit einer Holding-Gesellschaft"
-],
+"a": ["Eine erste kurze Stellungnahme: Fall bekannt, wird geprüft, ausführliche Infos folgen", "Die endgültige, ausführliche Pressemitteilung nach dem vollständigen Abschluss der Krise", "Ein Beitrag, der die Kritik zurückweist und weitere Kommentare sperrt", "Eine Erklärung der Muttergesellschaft (Holding) zur Haftung der Tochterfirma"],
 "c": 0,
 "e": "Es zeigt schnell Reaktion, ohne voreilig Details zu nennen, die sich später als falsch erweisen.",
 "quelle": ""
@@ -784,12 +524,7 @@ export const NEUE = {
 {
 "m": "unt",
 "q": "Ein Kunde postet in einem öffentlichen Kommentar seine Bestellnummer, Adresse und Telefonnummer. Wie reagieren Sie?",
-"a": [
-"Freundlich antworten, in die Direktnachricht wechseln und auf das Entfernen der Daten hinweisen bzw. den Kommentar ausblenden",
-"Die Daten öffentlich bestätigen",
-"Den Kunden blockieren",
-"Die Daten in einem eigenen Beitrag wiederholen"
-],
+"a": ["Freundlich antworten, per Direktnachricht weiterhelfen und den Kommentar ausblenden bzw. löschen lassen", "Öffentlich unter dem Kommentar antworten und die Daten zur Bestätigung noch einmal wiederholen", "Den Kunden sofort blockieren, weil er gegen die Netiquette verstoßen hat, und nicht antworten", "Den Kommentar stehen lassen, da der Kunde seine Daten selbst veröffentlicht hat und haftet"],
 "c": 0,
 "e": "Personenbezogene Daten gehören nicht in öffentliche Kommentare – der Service läuft dann im privaten Kanal weiter.",
 "quelle": ""
@@ -797,12 +532,7 @@ export const NEUE = {
 {
 "m": "recht",
 "q": "Welche Angabe gehört bei einer GmbH ins Impressum nach § 5 DDG?",
-"a": [
-"Handelsregister und Registernummer",
-"Der Umsatz des Vorjahres",
-"Die Privatadressen der Mitarbeitenden",
-"Die Anzahl der Follower"
-],
+"a": ["Handelsregister und Registernummer", "Der Umsatz des Vorjahres", "Die Privatadressen der Mitarbeitenden", "Die Steuernummer beim Finanzamt"],
 "c": 0,
 "e": "Zu den Pflichtangaben gehören u. a. Name, Anschrift, Rechtsform, Vertretungsberechtigte, E-Mail, Register und ggf. USt-IdNr.",
 "quelle": "https://www.gesetze-im-internet.de/ddg/__5.html"
@@ -810,12 +540,7 @@ export const NEUE = {
 {
 "m": "recht",
 "q": "Reicht im Impressum ein Kontaktformular anstelle einer E-Mail-Adresse?",
-"a": [
-"Nein, § 5 DDG verlangt ausdrücklich eine Adresse für die elektronische Post",
-"Ja, ein Formular ist immer ausreichend",
-"Ja, wenn eine Telefonnummer fehlt",
-"Nein, es muss eine Faxnummer angegeben werden"
-],
+"a": ["Nein, § 5 DDG verlangt ausdrücklich eine Adresse für die elektronische Post", "Ja, ein Kontaktformular erfüllt die Vorgaben des § 5 DDG immer vollständig", "Ja, wenn zusätzlich eine Telefonnummer im Impressum angegeben ist", "Nein, statt der E-Mail muss zwingend eine Faxnummer angegeben werden"],
 "c": 0,
 "e": "Gefordert sind Angaben zur schnellen elektronischen Kontaktaufnahme einschließlich E-Mail-Adresse.",
 "quelle": "https://www.gesetze-im-internet.de/ddg/__5.html"
@@ -823,12 +548,7 @@ export const NEUE = {
 {
 "m": "recht",
 "q": "Eine Influencerin bekommt eine Kamera vom Hersteller geschenkt und stellt sie in einem Reel vor. Was gilt?",
-"a": [
-"Das Geschenk ist eine Gegenleistung – der Beitrag muss als Werbung gekennzeichnet werden",
-"Keine Kennzeichnung nötig, weil kein Geld geflossen ist",
-"Kennzeichnung nur bei über 100.000 Followern",
-"Kennzeichnung nur, wenn das Produkt negativ bewertet wird"
-],
+"a": ["Das Geschenk gilt als Gegenleistung – der Beitrag ist als Werbung zu kennzeichnen", "Keine Kennzeichnung nötig, weil kein Geld geflossen ist und sie ehrlich urteilt", "Kennzeichnung nur nötig, wenn sie mehr als 100.000 Follower auf Instagram hat", "Kennzeichnung nur nötig, wenn das Produkt im Reel ausdrücklich positiv bewertet wird"],
 "c": 0,
 "e": "Auch Produkte zählen als „ähnliche Gegenleistung“ nach § 5a Abs. 4 UWG; der Erhalt einer Gegenleistung wird zudem vermutet. (BGH, 13.01.2022, I ZR 35/21: Schon kostenlos überlassene Produkte sind eine Gegenleistung.)",
 "quelle": "https://www.frankfurt-main.ihk.de/recht/uebersicht-alle-rechtsthemen/wettbewerbsrecht/unlauterer-wettbewerb/irrefuehrende-werbung/influencer-marketing-5196192"
@@ -836,12 +556,7 @@ export const NEUE = {
 {
 "m": "recht",
 "q": "Wann muss ein Beitrag über ein fremdes Produkt nach § 5a Abs. 4 UWG nicht als Werbung gekennzeichnet werden?",
-"a": [
-"Wenn kein Entgelt und keine ähnliche Gegenleistung erhalten oder versprochen wurde – das muss die Person glaubhaft machen",
-"Wenn das Profil weniger als 10.000 Follower hat",
-"Wenn das Produkt weniger als 50 € kostet",
-"Wenn die Marke nur im Bild markiert ist"
-],
+"a": ["Wenn weder Entgelt noch ähnliche Gegenleistung erhalten oder versprochen wurde (glaubhaft zu machen)", "Wenn das Profil weniger als 10.000 Follower hat, unabhängig davon, ob Geld oder Produkte geflossen sind", "Wenn das Produkt weniger als 50 € kostet, auch bei kostenloser Zusendung", "Wenn die Marke nur im Bild markiert ist, auch wenn die Person dafür bezahlt wurde"],
 "c": 0,
 "e": "Ohne Gegenleistung fehlt der kommerzielle Zweck. Weil eine Gegenleistung vermutet wird, liegt die Darlegung bei der Influencerin.",
 "quelle": "https://www.frankfurt-main.ihk.de/recht/uebersicht-alle-rechtsthemen/wettbewerbsrecht/unlauterer-wettbewerb/irrefuehrende-werbung/influencer-marketing-5196192"
@@ -862,12 +577,7 @@ export const NEUE = {
 {
 "m": "recht",
 "q": "Ein Café bittet Freunde, positive Google-Bewertungen zu schreiben, obwohl sie nie Gäste waren. Wie ist das einzuordnen?",
-"a": [
-"Unzulässig – gefälschte Bewertungen zur Verkaufsförderung sind unlauter",
-"Zulässig, solange die Bewertungen freundlich sind",
-"Zulässig, wenn höchstens fünf Bewertungen geschrieben werden",
-"Nur verboten, wenn Geld gezahlt wurde"
-],
+"a": ["Unzulässig – gefälschte Bewertungen zur Verkaufsförderung sind unlauter", "Zulässig, solange die Bewertungen freundlich und nicht übertrieben sind", "Zulässig, wenn höchstens fünf solcher Bewertungen geschrieben werden", "Nur unzulässig, wenn die Freunde für ihre Bewertungen Geld erhalten haben"],
 "c": 0,
 "e": "Das UWG verbietet seit 2022 ausdrücklich das Beauftragen oder Übermitteln gefälschter Verbraucherbewertungen (Anhang Nr. 23c).",
 "quelle": "UWG, Anhang zu § 3 Abs. 3, Nr. 23c"
@@ -875,12 +585,7 @@ export const NEUE = {
 {
 "m": "recht",
 "q": "Welche Ausnahme vom Einwilligungserfordernis nennt § 23 KUG?",
-"a": [
-"Bilder, auf denen Personen nur als Beiwerk neben einer Landschaft oder Örtlichkeit erscheinen",
-"Alle Fotos, die mit dem Smartphone aufgenommen wurden",
-"Fotos von Mitarbeitenden während der Arbeitszeit",
-"Bilder, die kleiner als 1 MB sind"
-],
+"a": ["Bilder mit Personen nur als Beiwerk neben einer Landschaft oder Örtlichkeit", "Alle Fotos, die mit dem Smartphone und ohne Blitz aufgenommen wurden", "Fotos von Mitarbeitenden, die während der Arbeitszeit entstanden sind", "Bilder von Personen, die bereits auf einer anderen Website veröffentlicht sind"],
 "c": 0,
 "e": "Weitere Ausnahmen: Personen der Zeitgeschichte, Versammlungen/Umzüge, höheres Kunstinteresse – jeweils mit Grenzen bei berechtigten Interessen.",
 "quelle": "https://lxgesetze.de/kug/23"
@@ -888,12 +593,7 @@ export const NEUE = {
 {
 "m": "recht",
 "q": "Sie möchten das Foto eines Kindes beim Tag der offenen Tür posten. Wessen Einwilligung brauchen Sie?",
-"a": [
-"Die der Sorgeberechtigten – bei einsichtsfähigen Jugendlichen zusätzlich die eigene",
-"Nur die des Kindes",
-"Keine, wenn das Kind lächelt",
-"Nur die der Lehrkraft"
-],
+"a": ["Die der Sorgeberechtigten, bei einsichtsfähigen Jugendlichen auch ihre eigene", "Nur die des Kindes, weil es selbst auf dem Foto zu sehen ist", "Keine, wenn das Foto auf einer öffentlichen Veranstaltung entstanden ist", "Nur die der Einrichtung bzw. der Lehrkraft, die an dem Tag die Aufsicht hatte"],
 "c": 0,
 "e": "Minderjährige können meist nicht allein einwilligen; je nach Reife müssen auch sie selbst zustimmen.",
 "quelle": ""
@@ -901,12 +601,7 @@ export const NEUE = {
 {
 "m": "recht",
 "q": "Wie lange ist ein urheberrechtlich geschütztes Werk in Deutschland in der Regel geschützt?",
-"a": [
-"Bis 70 Jahre nach dem Tod des Urhebers",
-"10 Jahre nach Veröffentlichung",
-"Bis zum Tod des Urhebers",
-"Für immer"
-],
+"a": ["Bis 70 Jahre nach dem Tod des Urhebers", "Bis 50 Jahre nach der ersten Veröffentlichung", "Bis zum Tod des Urhebers, danach ist es frei", "Bis 70 Jahre nach der Entstehung des Werks"],
 "c": 0,
 "e": "§ 64 UrhG: Das Urheberrecht erlischt 70 Jahre nach dem Tod des Urhebers.",
 "quelle": ""
@@ -914,12 +609,7 @@ export const NEUE = {
 {
 "m": "recht",
 "q": "Ist ein Bild, das rein von einer KI ohne prägende menschliche Gestaltung erzeugt wurde, urheberrechtlich geschützt?",
-"a": [
-"In der Regel nicht, weil eine persönliche geistige Schöpfung eines Menschen fehlt",
-"Ja, immer zugunsten des KI-Anbieters",
-"Ja, immer zugunsten der Person, die den Prompt geschrieben hat",
-"Ja, für genau ein Jahr"
-],
+"a": ["In der Regel nicht, weil eine persönliche geistige Schöpfung eines Menschen fehlt", "Ja, immer zugunsten des KI-Anbieters, der das Modell trainiert hat", "Ja, immer zugunsten der Person, die den Prompt formuliert und eingegeben hat", "Ja, sobald das Bild mit dem eigenen Namen auf einer Plattform veröffentlicht wurde"],
 "c": 0,
 "e": "Schutz setzt nach § 2 Abs. 2 UrhG eine menschliche Schöpfung voraus. Rechte Dritter (z. B. an Vorlagen) können trotzdem verletzt sein.",
 "quelle": ""
@@ -927,12 +617,7 @@ export const NEUE = {
 {
 "m": "recht",
 "q": "Ein Foto steht unter der Lizenz CC BY-NC. Darf es auf dem Instagram-Profil eines Unternehmens erscheinen?",
-"a": [
-"Nein, nicht ohne gesonderte Erlaubnis – NC erlaubt keine kommerzielle Nutzung",
-"Ja, Creative Commons ist immer frei",
-"Ja, wenn man den Urheber nicht nennt",
-"Ja, aber nur in Stories"
-],
+"a": ["Nein, nicht ohne gesonderte Erlaubnis – NC erlaubt keine kommerzielle Nutzung", "Ja, Creative-Commons-Bilder sind immer frei für jeden Zweck nutzbar", "Ja, solange der Name des Urhebers und die Lizenz im Beitrag genannt werden", "Ja, aber nur in Stories, weil diese nach 24 Stunden wieder verschwinden"],
 "c": 0,
 "e": "BY = Namensnennung, NC = nicht kommerziell. Ein Unternehmensauftritt ist kommerziell.",
 "quelle": ""
@@ -940,12 +625,7 @@ export const NEUE = {
 {
 "m": "recht",
 "q": "Darf ein Unternehmen ein Foto einer Skulptur posten, die dauerhaft auf einem öffentlichen Platz steht?",
-"a": [
-"Grundsätzlich ja, wenn es aus der Perspektive öffentlicher Wege und Plätze aufgenommen wurde (Panoramafreiheit)",
-"Nein, Kunstwerke dürfen nie fotografiert werden",
-"Nur mit Genehmigung der Stadtverwaltung",
-"Nur, wenn die Skulptur älter als 100 Jahre ist"
-],
+"a": ["Grundsätzlich ja, wenn von öffentlichen Wegen und Plätzen aus aufgenommen (Panoramafreiheit)", "Nein, Kunstwerke im öffentlichen Raum dürfen nie fotografiert und veröffentlicht werden", "Nur mit schriftlicher Genehmigung der Stadtverwaltung, der der öffentliche Platz gehört", "Nur, wenn das Foto ausschließlich privat und keinesfalls für Unternehmenswerbung genutzt wird"],
 "c": 0,
 "e": "§ 59 UrhG (Panoramafreiheit) erlaubt das, auch für kommerzielle Zwecke. Aufnahmen aus einer Perspektive, die der Allgemeinheit nicht zugänglich ist, etwa per Drohne, sind laut BGH nicht gedeckt (BGH, 23.10.2024, I ZR 67/23).",
 "quelle": ""
@@ -953,12 +633,7 @@ export const NEUE = {
 {
 "m": "recht",
 "q": "Sie haben eine CD gekauft. Dürfen Sie einen Song daraus als Hintergrundmusik für ein Werbevideo auf Facebook nutzen?",
-"a": [
-"Nein, der Kauf berechtigt nur zur privaten Nutzung – für die Veröffentlichung braucht es eine Lizenz",
-"Ja, gekauft ist gekauft",
-"Ja, wenn das Video kürzer als 30 Sekunden ist",
-"Ja, wenn man den Interpreten nennt"
-],
+"a": ["Nein, der Kauf erlaubt nur private Nutzung – für die Veröffentlichung braucht es eine Lizenz", "Ja, mit dem Kauf der CD erwirbt man automatisch alle Nutzungsrechte an den Songs", "Ja, wenn das Video kürzer als 30 Sekunden ist, denn kurze Ausschnitte sind immer lizenzfrei", "Ja, sofern Interpret und Songtitel deutlich sichtbar in der Videobeschreibung stehen"],
 "c": 0,
 "e": "Für die öffentliche Nutzung sind Rechte von Urhebern und Leistungsschutzberechtigten zu klären, z. B. über Labels und die GEMA.",
 "quelle": ""
@@ -966,12 +641,7 @@ export const NEUE = {
 {
 "m": "recht",
 "q": "Ein Online-Shop bindet einen Facebook-„Gefällt mir“-Button ein. Was entschied der EuGH (Fashion ID, 2019)?",
-"a": [
-"Der Website-Betreiber ist für Erhebung und Übermittlung der Daten gemeinsam mit Facebook verantwortlich",
-"Nur Facebook ist verantwortlich",
-"Like-Buttons sind in der EU verboten",
-"Für Like-Buttons gilt keine DSGVO"
-],
+"a": ["Website-Betreiber und Facebook sind für Erhebung und Übermittlung gemeinsam verantwortlich", "Nur Facebook ist verantwortlich, da es die Daten über den Button selbst erhebt und nutzt", "Allein der Website-Betreiber haftet, auch für die spätere Verarbeitung durch Facebook", "Für Like-Buttons gilt die DSGVO nicht, da sie als technisch notwendig gelten"],
 "c": 0,
 "e": "Gemeinsame Verantwortlichkeit nach Art. 26 DSGVO – ähnlich wie bei Fanpages.",
 "quelle": ""
@@ -979,12 +649,7 @@ export const NEUE = {
 {
 "m": "recht",
 "q": "Welche Vorschrift verlangt in Deutschland eine Einwilligung, bevor nicht notwendige Cookies oder Tracking-Pixel auf dem Endgerät gespeichert oder ausgelesen werden?",
-"a": [
-"§ 25 TDDDG (früher TTDSG)",
-"§ 5 DDG",
-"§ 22 KUG",
-"§ 3 UWG"
-],
+"a": ["§ 25 TDDDG (früher TTDSG)", "§ 5 DDG (früher § 5 TMG)", "§ 7 UWG (unzumutbare Belästigung)", "§ 22 KUG (Recht am eigenen Bild)"],
 "c": 0,
 "e": "Ausgenommen sind nur technisch unbedingt erforderliche Zugriffe. Das TTDSG heißt seit Mai 2024 TDDDG.",
 "quelle": "https://www.e-recht24.de/datenschutz/12834-tdddg.html"
@@ -992,12 +657,7 @@ export const NEUE = {
 {
 "m": "recht",
 "q": "Ist ein bereits vorausgefülltes Häkchen „Ich willige in Tracking ein“ eine wirksame Einwilligung?",
-"a": [
-"Nein, eine Einwilligung erfordert ein aktives Handeln (EuGH, Planet49)",
-"Ja, wenn der Nutzer es nicht entfernt",
-"Ja, bei Bestandskunden",
-"Ja, wenn die Datenschutzerklärung verlinkt ist"
-],
+"a": ["Nein, eine Einwilligung erfordert ein aktives Handeln (EuGH, Planet49)", "Ja, wenn der Nutzer das Häkchen nicht aktiv entfernt (EuGH, Planet49)", "Ja, bei Bestandskunden gilt ein vorausgefülltes Häkchen als ausreichend", "Ja, wenn die Datenschutzerklärung direkt neben dem Häkchen verlinkt ist"],
 "c": 0,
 "e": "Stillschweigen oder Untätigkeit ist keine Einwilligung – sie muss aktiv und freiwillig erteilt werden.",
 "quelle": ""
@@ -1005,12 +665,7 @@ export const NEUE = {
 {
 "m": "recht",
 "q": "Welche Teilnahmebedingung ist bei einem Gewinnspiel auf einer Facebook-Seite laut Meta-Richtlinien unzulässig?",
-"a": [
-"„Teile den Beitrag in deiner Chronik, um teilzunehmen“",
-"„Kommentiere den Beitrag, um teilzunehmen“",
-"„Like den Beitrag, um teilzunehmen“",
-"„Schreibe uns eine Nachricht, um teilzunehmen“"
-],
+"a": ["„Teile den Beitrag in deiner Chronik, um teilzunehmen“", "„Kommentiere den Beitrag, um teilzunehmen“", "„Like den Beitrag, um teilzunehmen“", "„Schreibe uns eine private Nachricht, um teilzunehmen“"],
 "c": 0,
 "e": "Persönliche Chroniken und Freundesverbindungen dürfen nicht zur Durchführung von Gewinnspielen genutzt werden. Auch „Markiere Freunde, um teilzunehmen“ ist auf Facebook unzulässig, auf Instagram dagegen erlaubt.",
 "quelle": "https://www.it-recht-kanzlei.de/gewinnspiele-facebook-instagram-anleitung.html"
@@ -1018,12 +673,7 @@ export const NEUE = {
 {
 "m": "recht",
 "q": "Wodurch wird ein Gewinnspiel zum genehmigungspflichtigen Glücksspiel?",
-"a": [
-"Wenn für die Teilnahme ein Einsatz (Entgelt) verlangt wird und der Gewinn vom Zufall abhängt",
-"Wenn der Gewinn mehr als 100 € wert ist",
-"Wenn mehr als 1.000 Personen teilnehmen",
-"Wenn das Gewinnspiel auf Instagram stattfindet"
-],
+"a": ["Wenn ein Teilnahmeentgelt (Einsatz) verlangt wird und der Gewinn vom Zufall abhängt", "Wenn der ausgelobte Gewinn mehr als 100 € wert ist, auch bei kostenloser Teilnahme", "Wenn mehr als 1.000 Personen teilnehmen und der Gewinner zufällig gezogen wird", "Wenn es auf Instagram stattfindet, weil dort andere Regeln als auf Facebook gelten"],
 "c": 0,
 "e": "Bei kostenloser Teilnahme liegt kein Glücksspiel im Sinne des Glücksspielstaatsvertrags vor.",
 "quelle": ""
@@ -1044,12 +694,7 @@ export const NEUE = {
 {
 "m": "recht",
 "q": "Was verlangt Art. 4 KI-Verordnung (in der Fassung des Digital-Omnibus) von Unternehmen, die KI-Tools einsetzen?",
-"a": [
-"Eine abgeschwächte Pflicht, die KI-Kompetenz der Mitarbeitenden zu fördern, statt sie „sicherzustellen“",
-"Ein Verbot aller KI-Tools im Marketing",
-"Eine staatliche Prüfung jedes KI-Beitrags",
-"Die Anmeldung jedes Prompts bei einer Behörde"
-],
+"a": ["Eine abgeschwächte Pflicht, KI-Kompetenz der Mitarbeitenden zu fördern statt „sicherzustellen“", "Ein vollständiges Verbot aller generativen KI-Tools in Marketing und Kommunikation", "Eine staatliche Prüfung und Freigabe jedes mit KI erstellten Beitrags vor Veröffentlichung", "Die verschärfte Pflicht, KI-Kompetenz durch zertifizierte Prüfungen aller Mitarbeitenden sicherzustellen"],
 "c": 0,
 "e": "Die frühere Pflicht, KI-Kompetenz „sicherzustellen“, wurde zu einer Pflicht abgeschwächt, sie zu fördern.",
 "quelle": "https://www.ihk.de/ihklw/produkte/beratung-und-service/ecommerce-und-internet/digital-omnibus-verordnung-zur-ki-tritt-in-kraft-7142858"
@@ -1057,12 +702,7 @@ export const NEUE = {
 {
 "m": "recht",
 "q": "Welche Behörde ist in Deutschland zentraler Koordinator für digitale Dienste nach dem Digital Services Act (DSA)?",
-"a": [
-"Die Bundesnetzagentur",
-"Das Bundeskriminalamt",
-"Die GEMA",
-"Das Deutsche Patent- und Markenamt"
-],
+"a": ["Die Bundesnetzagentur", "Das Bundeskriminalamt", "Das Bundesamt für Justiz", "Das Deutsche Patent- und Markenamt"],
 "c": 0,
 "e": "Der DSA gilt als EU-Verordnung unmittelbar. Das Digitale-Dienste-Gesetz (DDG) regelt seine Durchführung in Deutschland und bestimmt die Bundesnetzagentur als zuständige Behörde und Koordinierungsstelle (§ 12 DDG). Für bestimmte Bereiche sind andere Stellen zuständig, z. B. die Bundeszentrale für Kinder- und Jugendmedienschutz.",
 "quelle": ""
@@ -1070,12 +710,7 @@ export const NEUE = {
 {
 "m": "recht",
 "q": "Was verlangt eine wettbewerbsrechtliche Abmahnung typischerweise?",
-"a": [
-"Die Abgabe einer strafbewehrten Unterlassungserklärung",
-"Eine öffentliche Entschuldigung auf allen Kanälen",
-"Die sofortige Löschung des Unternehmens",
-"Eine Spende an einen Verein"
-],
+"a": ["Die Abgabe einer strafbewehrten Unterlassungserklärung", "Eine öffentliche Entschuldigung auf allen Kanälen", "Die Zahlung eines behördlichen Bußgelds an die IHK", "Die Löschung des gesamten Social-Media-Profils"],
 "c": 0,
 "e": "Der Abgemahnte soll sich verpflichten, den Verstoß künftig zu unterlassen – sonst droht eine Vertragsstrafe oder gerichtliches Verfahren.",
 "quelle": ""
@@ -1135,12 +770,7 @@ export const NEUE = {
 {
 "m": "kpi",
 "q": "Mit 2.000 € Werbebudget werden 8.000 € Umsatz erzielt. Wie hoch ist der ROAS?",
-"a": [
-"4 (bzw. 400 %)",
-"0,25",
-"6.000 €",
-"25 %"
-],
+"a": ["4 (bzw. 400 %)", "0,25 (bzw. 25 %)", "3 (bzw. 300 %)", "6.000 €"],
 "c": 0,
 "e": "ROAS = Umsatz ÷ Werbekosten = 8.000 € ÷ 2.000 € = 4. Jeder Werbe-Euro bringt 4 € Umsatz.",
 "quelle": ""
@@ -1161,12 +791,7 @@ export const NEUE = {
 {
 "m": "kpi",
 "q": "Worin unterscheidet sich der ROI vom ROAS?",
-"a": [
-"Der ROI betrachtet den Gewinn im Verhältnis zur Investition, der ROAS nur den Umsatz im Verhältnis zu den Werbekosten",
-"Beide Kennzahlen sind identisch",
-"Der ROAS berücksichtigt alle Personalkosten",
-"Der ROI misst nur die Reichweite"
-],
+"a": ["ROI: Gewinn im Verhältnis zur Investition; ROAS: Umsatz im Verhältnis zu den Werbekosten", "ROI: Umsatz im Verhältnis zu den Werbekosten; ROAS: Gewinn im Verhältnis zur Investition", "Beide Kennzahlen sind identisch, nur der ROAS wird in Prozent statt als Faktor angegeben", "ROI: Reichweite pro investiertem Euro; ROAS: alle Personalkosten im Verhältnis zum Umsatz"],
 "c": 0,
 "e": "Ein hoher ROAS kann trotzdem Verlust bedeuten, wenn Marge und weitere Kosten nicht reichen.",
 "quelle": ""
@@ -1200,12 +825,7 @@ export const NEUE = {
 {
 "m": "kpi",
 "q": "Was versteht man unter „Dark Social“?",
-"a": [
-"Teilen von Inhalten über Messenger oder E-Mail, das kaum messbar ist",
-"Geheime Werbekampagnen der Konkurrenz",
-"Social Media im Darknet",
-"Beiträge im dunklen Design"
-],
+"a": ["Teilen von Inhalten über Messenger oder E-Mail, das kaum messbar ist", "Geheime Werbekampagnen, die nur bestimmten Zielgruppen angezeigt werden", "Soziale Netzwerke im Darknet, die nur über den Tor-Browser erreichbar sind", "Negative Stimmung und Hasskommentare in sozialen Netzwerken"],
 "c": 0,
 "e": "Wird ein Link per WhatsApp geteilt, erscheint der Besuch in der Web-Analyse oft als „direkt“ – die Quelle bleibt im Dunkeln.",
 "quelle": ""
@@ -1213,12 +833,7 @@ export const NEUE = {
 {
 "m": "kpi",
 "q": "Wozu dienen UTM-Parameter an Links in Social-Media-Beiträgen?",
-"a": [
-"Um in der Web-Analyse zu erkennen, aus welcher Quelle, welchem Medium und welcher Kampagne Besucher kommen",
-"Um Links zu verkürzen",
-"Um Links vor Kopieren zu schützen",
-"Um die Ladezeit der Website zu verbessern"
-],
+"a": ["Um in der Web-Analyse Quelle, Medium und Kampagne der Besucher zu erkennen", "Um lange Links für Beiträge automatisch auf wenige Zeichen zu verkürzen", "Um Links vor dem Kopieren und Weiterleiten durch fremde Nutzer zu schützen", "Um die Ladezeit der verlinkten Zielseite auf mobilen Geräten deutlich zu verbessern"],
 "c": 0,
 "e": "Z. B. utm_source=instagram&utm_medium=social&utm_campaign=sommer – so lässt sich der Traffic einer Kampagne zuordnen.",
 "quelle": ""
@@ -1226,12 +841,7 @@ export const NEUE = {
 {
 "m": "kpi",
 "q": "Was bedeutet das Attributionsmodell „Last Click“?",
-"a": [
-"Der gesamte Erfolg wird dem letzten Kontaktpunkt vor der Conversion zugeschrieben",
-"Der Erfolg wird gleichmäßig auf alle Kontaktpunkte verteilt",
-"Nur der erste Kontakt zählt",
-"Klicks werden gar nicht gezählt"
-],
+"a": ["Der gesamte Erfolg wird dem letzten Kontaktpunkt vor der Conversion zugeschrieben", "Der Erfolg wird gleichmäßig auf alle Kontaktpunkte der Customer Journey verteilt", "Der gesamte Erfolg wird dem ersten Kontaktpunkt der Customer Journey zugeschrieben", "Nur der letzte Klick vor dem Verlassen der Website wird überhaupt gezählt"],
 "c": 0,
 "e": "Social Media wirkt oft früh in der Customer Journey – bei Last Click wird dieser Beitrag leicht unterschätzt.",
 "quelle": ""
@@ -1252,12 +862,7 @@ export const NEUE = {
 {
 "m": "kpi",
 "q": "Wann wird aus einer Kennzahl ein KPI?",
-"a": [
-"Wenn sie direkt mit einem Ziel verknüpft ist und den Zielerreichungsgrad zeigt",
-"Wenn sie größer als 1.000 ist",
-"Wenn sie von der Plattform automatisch angezeigt wird",
-"Wenn sie in einem Diagramm dargestellt wird"
-],
+"a": ["Wenn sie direkt mit einem Ziel verknüpft ist und den Zielerreichungsgrad zeigt", "Wenn sie einen Wert von über 1.000 erreicht und regelmäßig gemessen wird", "Wenn sie von der Plattform automatisch in den Statistiken angezeigt wird", "Wenn sie im monatlichen Reporting grafisch in einem Diagramm dargestellt wird"],
 "c": 0,
 "e": "Nicht jede Kennzahl ist ein KPI – nur die, die über den Erfolg eines definierten Ziels Auskunft gibt.",
 "quelle": ""
@@ -1278,12 +883,7 @@ export const NEUE = {
 {
 "m": "kpi",
 "q": "Was gehört in ein gutes Suchprofil für Social Listening?",
-"a": [
-"Markenname mit Schreibvarianten und Tippfehlern, Produktnamen, Hashtags und Wettbewerber",
-"Nur der offizielle Firmenname",
-"Nur die eigenen Hashtags",
-"Die Passwörter der Unternehmenskonten"
-],
+"a": ["Markenname inkl. Varianten und Tippfehlern, Produktnamen, Hashtags und Wettbewerber", "Nur der offizielle Firmenname in exakter Schreibweise, ohne Varianten oder Tippfehler", "Ausschließlich die eigenen Kampagnen-Hashtags der letzten zwölf Monate", "Nur Begriffe mit positiver Bedeutung, damit Kritik nicht im Ergebnis erscheint"],
 "c": 0,
 "e": "Nutzer schreiben Marken oft falsch oder abgekürzt – ein zu enges Suchprofil übersieht viele Erwähnungen.",
 "quelle": ""
@@ -1291,12 +891,7 @@ export const NEUE = {
 {
 "m": "kpi",
 "q": "Ziel: „Besserer Kundenservice über Social Media.“ Welche KPI passt am besten?",
-"a": [
-"Durchschnittliche Reaktionszeit auf Anfragen",
-"Anzahl der Hashtags pro Beitrag",
-"Anzahl der Story-Highlights",
-"Länge der Profilbeschreibung"
-],
+"a": ["Durchschnittliche Reaktionszeit auf Anfragen", "Durchschnittliche Anzahl der Hashtags pro Beitrag", "Anzahl der Story-Highlights im Profil", "Gesamtreichweite aller Beiträge im Monat"],
 "c": 0,
 "e": "Service-Ziele misst man z. B. über Reaktionszeit, Lösungsquote und Zufriedenheit.",
 "quelle": ""
@@ -1317,12 +912,7 @@ export const NEUE = {
 {
 "m": "kpi",
 "q": "Woran erkennt man häufig gekaufte Follower bei einem Influencer?",
-"a": [
-"Sprunghafter Follower-Anstieg ohne passende Zunahme echter Interaktionen",
-"Regelmäßige Beiträge",
-"Ein vollständiges Impressum",
-"Viele beantwortete Kommentare"
-],
+"a": ["Sprunghafter Follower-Anstieg ohne passende Zunahme echter Interaktionen", "Regelmäßige Beiträge zu festen Zeiten und ein einheitlicher Look", "Ein vollständiges Impressum und korrekt als Werbung gekennzeichnete Beiträge", "Viele ausführliche, persönliche Antworten auf Kommentare der Community"],
 "c": 0,
 "e": "Vor Kooperationen lohnt ein Blick auf Follower-Verlauf, Engagement-Rate und Qualität der Kommentare.",
 "quelle": ""
@@ -1382,12 +972,7 @@ export const NEUE = {
 {
 "m": "plan",
 "q": "Was ist ein Social-Media-Audit?",
-"a": [
-"Eine Bestandsaufnahme aller vorhandenen Profile, Inhalte und Kennzahlen",
-"Eine Steuerprüfung des Social-Media-Teams",
-"Ein Gewinnspiel für Follower",
-"Ein Werbeformat auf LinkedIn"
-],
+"a": ["Eine Bestandsaufnahme aller vorhandenen Profile, Inhalte und Kennzahlen", "Eine Steuerprüfung der Ausgaben des Social-Media-Teams durch das Finanzamt", "Eine Prüfung neuer Beiträge auf Rechtschreibung vor der Veröffentlichung", "Eine Umfrage unter den Followern zu ihren liebsten Formaten und Themen"],
 "c": 0,
 "e": "Das Audit ist Teil der Ist-Analyse: Welche Kanäle gibt es, wie aktiv, mit welchem Erfolg, wer ist zuständig?",
 "quelle": ""
@@ -1408,12 +993,7 @@ export const NEUE = {
 {
 "m": "plan",
 "q": "Im Modell See – Think – Do – Care: Was steht bei „Care“ im Mittelpunkt?",
-"a": [
-"Bestehende Kunden betreuen und binden",
-"Erstmals Aufmerksamkeit erzeugen",
-"Produkte vergleichen",
-"Den ersten Kauf auslösen"
-],
+"a": ["Bestehende Kunden betreuen und binden", "Erstmals breite Aufmerksamkeit erzeugen", "Produkte vergleichen und abwägen lassen", "Den ersten Kauf gezielt auslösen"],
 "c": 0,
 "e": "Care richtet sich an Menschen, die schon Kunden sind – z. B. mit Service, Community und Tipps zur Nutzung.",
 "quelle": ""
@@ -1421,12 +1001,7 @@ export const NEUE = {
 {
 "m": "plan",
 "q": "Welcher Inhalt passt am besten in den oberen Teil des Funnels (Awareness)?",
-"a": [
-"Ein unterhaltsames Kurzvideo, das breite Aufmerksamkeit für das Thema weckt",
-"Ein Rabattcode für Warenkorbabbrecher",
-"Eine Bedienungsanleitung für Bestandskunden",
-"Ein Formular für ein Angebot"
-],
+"a": ["Ein unterhaltsames Kurzvideo, das breite Aufmerksamkeit für das Thema weckt", "Ein Rabattcode für Warenkorbabbrecher, der den Kauf direkt abschließen soll", "Eine ausführliche Bedienungsanleitung für bestehende Kundinnen und Kunden", "Ein Formular, mit dem Interessenten ein persönliches Angebot anfordern"],
 "c": 0,
 "e": "Oben im Funnel geht es um Reichweite und Interesse, unten um Abschluss und Bindung.",
 "quelle": ""
@@ -1434,12 +1009,7 @@ export const NEUE = {
 {
 "m": "plan",
 "q": "Was ist ein Touchpoint in der Customer Journey?",
-"a": [
-"Jeder Kontaktpunkt zwischen Kunde und Unternehmen, z. B. Anzeige, Beitrag, Website oder Beratung",
-"Ein Bildschirm mit Touch-Funktion",
-"Der Moment der Rechnungsstellung",
-"Eine Bewertung mit fünf Sternen"
-],
+"a": ["Jeder Kontaktpunkt zwischen Kunde und Unternehmen, z. B. Anzeige, Website oder Beratung", "Ein Bildschirm mit Touch-Funktion, auf dem Kunden im Laden bestellen können", "Der einzelne Moment, in dem die Rechnung an den Kunden verschickt wird", "Ausschließlich der letzte Klick auf eine Anzeige, bevor ein Kunde im Onlineshop kauft"],
 "c": 0,
 "e": "Die Customer Journey ist die Abfolge aller Touchpoints – online wie offline.",
 "quelle": ""
@@ -1447,12 +1017,7 @@ export const NEUE = {
 {
 "m": "plan",
 "q": "Im Hero-Hub-Help-Modell: Was sind „Help“-Inhalte?",
-"a": [
-"Nützliche Inhalte, die konkrete Fragen beantworten und aktiv gesucht werden, z. B. Tutorials",
-"Große, aufwendige Kampagnen-Highlights",
-"Regelmäßige Serien für Stammzuschauer",
-"Inhalte nur für Mitarbeitende"
-],
+"a": ["Nützliche Inhalte, die konkrete Fragen beantworten und gesucht werden, z. B. Tutorials", "Große, aufwendige Kampagnen-Highlights, die einige Male im Jahr erscheinen", "Regelmäßige Serien, die Stammzuschauer immer wieder zum Kanal zurückholen", "Interne Inhalte, mit denen Mitarbeitende bei Problemen mit Tools unterstützt werden"],
 "c": 0,
 "e": "Hero = seltene Highlights, Hub = regelmäßige Formate, Help = dauerhaft gefundene Hilfe-Inhalte.",
 "quelle": ""
@@ -1460,12 +1025,7 @@ export const NEUE = {
 {
 "m": "plan",
 "q": "Was ist „Evergreen Content“?",
-"a": [
-"Inhalte, die lange aktuell und relevant bleiben",
-"Beiträge zu Umweltthemen",
-"Inhalte nur zur Weihnachtszeit",
-"Beiträge mit grünem Hintergrund"
-],
+"a": ["Inhalte, die lange aktuell und relevant bleiben", "Beiträge zu Umwelt- und Nachhaltigkeitsthemen der Marke", "Saisonale Inhalte, z. B. zur Weihnachtszeit", "Inhalte, die nur für kurze Zeit verfügbar sind"],
 "c": 0,
 "e": "Z. B. Anleitungen oder Grundlagenwissen – sie lassen sich immer wieder teilen und bringen dauerhaft Reichweite.",
 "quelle": ""
@@ -1486,12 +1046,7 @@ export const NEUE = {
 {
 "m": "plan",
 "q": "Was ergänzt das PESO-Modell gegenüber Paid, Owned und Earned Media?",
-"a": [
-"Shared Media – Inhalte, die in sozialen Netzwerken geteilt und weiterverbreitet werden",
-"Sponsored Media – ausschließlich Sponsoring",
-"Search Media – nur Suchmaschinenanzeigen",
-"Static Media – Plakate"
-],
+"a": ["Shared Media – Inhalte, die in sozialen Netzwerken geteilt und verbreitet werden", "Sponsored Media – ausschließlich Sponsoring von Veranstaltungen und Vereinen", "Search Media – bezahlte Suchmaschinenanzeigen und SEO-Maßnahmen bei Google", "Static Media – klassische Plakate, Außenwerbung und gedruckte Anzeigen in Zeitungen"],
 "c": 0,
 "e": "PESO = Paid, Earned, Shared, Owned. Shared beschreibt die Verbreitung über Social Media.",
 "quelle": ""
@@ -1499,12 +1054,7 @@ export const NEUE = {
 {
 "m": "plan",
 "q": "Eine Neukunden-Kampagne soll keine bestehenden Kunden erreichen. Was tun Sie im Targeting?",
-"a": [
-"Bestandskunden als Zielgruppe ausschließen (Exclusion)",
-"Eine Lookalike-Zielgruppe der Konkurrenz anlegen",
-"Das Budget verdoppeln",
-"Den Kampagnenzeitraum verkürzen"
-],
+"a": ["Bestandskunden als Zielgruppe ausschließen (Exclusion)", "Die Bestandskunden als Custom Audience gezielt einbeziehen", "Eine Lookalike-Zielgruppe der Konkurrenz anlegen", "Den Kampagnenzeitraum auf wenige Tage verkürzen"],
 "c": 0,
 "e": "Ausschluss-Zielgruppen vermeiden Streuverluste – Bestandskunden würden sonst unnötig Budget verbrauchen.",
 "quelle": ""
@@ -1512,12 +1062,7 @@ export const NEUE = {
 {
 "m": "plan",
 "q": "Eine Anzeige läuft seit Wochen an dieselbe kleine Zielgruppe, die Klickrate sinkt stetig. Was ist die wahrscheinliche Ursache?",
-"a": [
-"Werbemüdigkeit (Ad Fatigue) durch zu hohe Frequenz",
-"Zu wenig Impressionen",
-"Ein fehlendes Impressum",
-"Zu viele neue Creatives"
-],
+"a": ["Werbemüdigkeit (Ad Fatigue) durch zu hohe Frequenz", "Zu wenige Impressionen durch ein zu niedriges Budget", "Ein fehlendes Impressum auf der verlinkten Seite", "Zu häufiger Wechsel der Creatives in der Anzeige"],
 "c": 0,
 "e": "Wer dieselbe Anzeige zu oft sieht, ignoriert sie. Abhilfe: neue Motive, Frequenz begrenzen, Zielgruppe erweitern.",
 "quelle": ""
@@ -1538,12 +1083,7 @@ export const NEUE = {
 {
 "m": "plan",
 "q": "Was ist ein typischer Vorteil von Mikro-Influencern gegenüber sehr großen Influencern?",
-"a": [
-"Hohe Glaubwürdigkeit in einer Nische und oft vergleichsweise starke Interaktion",
-"Garantiert die größte Gesamtreichweite",
-"Keine Kennzeichnungspflicht",
-"Keine Kosten"
-],
+"a": ["Hohe Glaubwürdigkeit in einer Nische und oft vergleichsweise starke Interaktion", "Garantiert die größte Gesamtreichweite aller Influencer-Kategorien", "Keine Kennzeichnungspflicht, da sie unter der gesetzlichen Follower-Grenze liegen", "Keine Kosten, da Mikro-Influencer grundsätzlich unentgeltlich arbeiten"],
 "c": 0,
 "e": "Kleinere Communitys sind oft enger verbunden – für Nischenthemen und regionale Ziele ideal.",
 "quelle": ""
@@ -1551,12 +1091,7 @@ export const NEUE = {
 {
 "m": "plan",
 "q": "Was sollte in einem Vertrag mit einer Influencerin unbedingt geregelt werden?",
-"a": [
-"Werbekennzeichnung und Nutzungsrechte an den erstellten Inhalten",
-"Ihre privaten Urlaubsziele",
-"Die Anzahl ihrer Follower in fünf Jahren",
-"Ein Verbot, jemals andere Marken zu zeigen"
-],
+"a": ["Werbekennzeichnung und Nutzungsrechte an den erstellten Inhalten", "Eine garantierte Mindestzahl an Käufen durch ihre Follower", "Eine verbindlich zugesicherte Follower-Zahl für die nächsten fünf Jahre", "Ein lebenslanges Verbot, jemals Produkte anderer Marken zu zeigen"],
 "c": 0,
 "e": "Dazu kommen Leistungen, Freigabeprozess, Vergütung, Laufzeit und Reporting der Ergebnisse.",
 "quelle": ""
@@ -1564,12 +1099,7 @@ export const NEUE = {
 {
 "m": "plan",
 "q": "Wie geht die Ziel-Aufgaben-Methode bei der Budgetplanung vor?",
-"a": [
-"Das Budget ergibt sich aus den Maßnahmen, die zur Zielerreichung nötig sind",
-"Das Budget ist ein fester Prozentsatz vom Vorjahresumsatz",
-"Man gibt aus, was am Jahresende übrig ist",
-"Man übernimmt das Budget der Konkurrenz"
-],
+"a": ["Das Budget ergibt sich aus den Maßnahmen, die zur Zielerreichung nötig sind", "Das Budget ergibt sich als fester Prozentsatz vom Umsatz des Vorjahres", "Man gibt am Jahresende aus, was nach allen Kosten noch übrig ist", "Das Budget orientiert sich an den geschätzten Werbeausgaben der wichtigsten Konkurrenz"],
 "c": 0,
 "e": "Die Methode verknüpft Ziele, Maßnahmen und Kosten logisch – gut begründbar gegenüber der Geschäftsführung.",
 "quelle": ""

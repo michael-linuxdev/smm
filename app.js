@@ -43,6 +43,7 @@ const I = {
  left: '<path d="M15 5l-7 7 7 7"/>',
  right: '<path d="M9 5l7 7-7 7"/>',
  lock: '<rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 018 0v3"/>',
+ ads: '<path d="M3 11v2a1 1 0 001 1h2l5 4V6L6 10H4a1 1 0 00-1 1zM15 9a3 3 0 010 6M18 6a7 7 0 010 12"/>',
  bolt: '<path d="M13 2L4 14h7l-1 8 9-12h-7z"/>',
  warn: '<path d="M12 3l10 18H2zM12 10v5M12 18v.5"/>',
  copy: '<rect x="8" y="8" width="12" height="12" rx="2"/><path d="M4 16V5a1 1 0 011-1h11"/>',
@@ -51,26 +52,43 @@ const I = {
 const ic = (n, extra = "") => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ${extra}>${I[n]}</svg>`;
 
 /* ---------- Speicher ----------
-   Doppelt: localStorage (schnell) + IndexedDB (robuster). Dazu persistenten Speicher anfragen
-   und regelmäßig an eine Sicherungsdatei erinnern. */
-const KEY = "smm-coach", VERSION = "0.8.0";
-const DEF = () => ({ lek: {}, q: {}, srs: {}, last: null, tests: [], pruefung: "", set: { size: "m", theme: "auto" }, lastBackup: 0, created: Date.now() });
+   Doppelt: localStorage (schnell) + IndexedDB (robuster). Beim Start gewinnt der neuere Stand (Zeitstempel).
+   Fragen und Lektionen haben stabile Schlüssel (unabhängig vom Modul), alte Schlüssel werden migriert. */
+const KEY = "smm-coach", VERSION = "0.9.0";
+const DEF = () => ({ lek: {}, q: {}, srs: {}, last: null, tests: [], pruefung: "", set: { size: "m", theme: "auto" }, lastBackup: 0, created: Date.now(), updated: 0, run: null, lastRun: null });
 let S = DEF();
 try { const x = JSON.parse(localStorage.getItem(KEY) || "null"); if (x) S = Object.assign(DEF(), x); } catch (e) {}
 const IDB = { db: null };
 function idbOpen() { return new Promise(res => { try { const r = indexedDB.open("smm-coach", 1); r.onupgradeneeded = () => r.result.createObjectStore("kv"); r.onsuccess = () => { IDB.db = r.result; res(r.result); }; r.onerror = () => res(null); } catch (e) { res(null); } }); }
 function idbGet() { return new Promise(res => { if (!IDB.db) return res(null); try { const q = IDB.db.transaction("kv").objectStore("kv").get(KEY); q.onsuccess = () => res(q.result || null); q.onerror = () => res(null); } catch (e) { res(null); } }); }
 function idbPut(v) { try { IDB.db?.transaction("kv", "readwrite").objectStore("kv").put(v, KEY); } catch (e) {} }
-const save = () => { const v = JSON.stringify(S); try { localStorage.setItem(KEY, v); } catch (e) {} idbPut(v); };
-const hasProgress = st => st && (Object.keys(st.lek || {}).length || Object.keys(st.q || {}).length || (st.tests || []).length);
+let quotaWarned = false;
+const save = () => {
+ S.updated = Date.now();
+ const v = JSON.stringify(S);
+ try { localStorage.setItem(KEY, v); } catch (e) { if (!quotaWarned) { quotaWarned = true; setTimeout(() => toast("Speichern im Browser fehlgeschlagen – bitte eine Sicherungsdatei erstellen"), 0); } }
+ idbPut(v);
+};
+const hasProgress = st => !!st && !!(Object.keys(st.lek || {}).length || Object.keys(st.q || {}).length || (st.tests || []).length);
+const progressSize = st => st ? Object.keys(st.lek || {}).length + Object.keys(st.q || {}).length + (st.tests || []).length : 0;
 async function storageInit() {
  await idbOpen();
  const v = await idbGet();
- // Hat der Browser localStorage geleert, aber IndexedDB behalten: Lernstand wiederherstellen
- if (v && !hasProgress(S)) { try { const x = JSON.parse(v); if (hasProgress(x)) { S = Object.assign(DEF(), x); save(); applySettings(); route(); toast("Lernstand wiederhergestellt"); } } catch (e) {} }
- else if (hasProgress(S)) save();
- try { if (navigator.storage?.persist && !(await navigator.storage.persisted())) await navigator.storage.persist(); } catch (e) {}
+ // Neueren Stand nehmen (falls der Browser localStorage geleert oder nur teilweise behalten hat)
+ if (v) { try {
+  const x = JSON.parse(v);
+  const xNewer = (x.updated || 0) > (S.updated || 0) || (!S.updated && progressSize(x) > progressSize(S));
+  if (xNewer && hasProgress(x)) { S = Object.assign(DEF(), x); normalizeState(); try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {} applySettings(); route(); if (!hasProgress(JSON.parse(localStorage.getItem(KEY) || "null"))) toast("Lernstand wiederhergestellt"); return persist(); }
+ } catch (e) {} }
+ if (hasProgress(S)) save();
+ persist();
 }
+async function persist() { try { if (navigator.storage?.persist && !(await navigator.storage.persisted())) await navigator.storage.persist(); } catch (e) {} }
+// Mehrere Tabs: Änderungen aus einem anderen Tab übernehmen
+addEventListener("storage", e => {
+ if (e.key !== KEY || !e.newValue) return;
+ try { S = Object.assign(DEF(), JSON.parse(e.newValue)); normalizeState(); applySettings(); if (!S.run || location.hash !== "#test") route(); } catch (x) {}
+});
 function applySettings() {
  const r = document.documentElement;
  r.dataset.size = S.set?.size || "m";
@@ -86,22 +104,40 @@ function grade(key, ok) {
  e.due = Date.now() + (ok ? BOX_DAYS[e.b] * 86400000 : 10 * 60000);
  S.srs[key] = e; S.q[key] = ok;
 }
-const dueKeys = () => Object.entries(S.srs).filter(([, e]) => e.due <= Date.now()).map(([k]) => k);
-const errorKeys = () => Object.entries(S.srs).filter(([, e]) => e.w > 0 && e.b < 3).map(([k]) => k);
+const dueKeys = () => Object.entries(S.srs).filter(([k, e]) => e.due <= Date.now() && POOL_KEYS.has(k)).map(([k]) => k);
+const errorKeys = () => Object.entries(S.srs).filter(([k, e]) => e.w > 0 && e.b < 3 && POOL_KEYS.has(k)).map(([k]) => k);
 function toast(t) { const el = $("#toast"); el.textContent = t; el.classList.add("on"); clearTimeout(toast.t); toast.t = setTimeout(() => el.classList.remove("on"), 2200); }
 
 /* ---------- Fragenpool ---------- */
-// Alle Fragen eines Moduls: Quizfragen + Verständnisfragen aus den Lektionen. Schlüssel stabil über Text.
+// Alle Fragen: Quizfragen + Verständnisfragen aus den Lektionen. Schlüssel = Fragetext (stabil, unabhängig vom Modul).
 const POOL = [];
-MODULE.forEach(m => m.lektionen.forEach(l => l.folien.filter(f => f.k === "check").forEach(f => POOL.push({ m: m.id, q: f.q, a: f.a, c: f.c, e: f.e }))));
+MODULE.forEach(m => m.lektionen.forEach(l => l.folien.filter(f => f.k === "check").forEach(f => POOL.push({ m: m.id, q: f.q, a: f.a, c: f.c, e: f.e, lek: l.id }))));
 FRAGEN.forEach(f => POOL.push(f));
-POOL.forEach((p, i) => p.key = p.m + ":" + p.q.slice(0, 40));
+const qkey = q => "q:" + q.q.trim().slice(0, 60);
+POOL.forEach(p => p.key = qkey(p));
+const POOL_KEYS = new Set(POOL.map(p => p.key));
+const LEGACY_MODS = ["einf", "platt", "unt", "recht", "kpi", "plan", "grund", "content", "ads"];
+// Alte Schlüssel (Modul + 40 Zeichen) und alte Lektionsschlüssel (Modul/Lektion) übernehmen, verwaiste entfernen
+function normalizeState() {
+ S.q = S.q || {}; S.srs = S.srs || {}; S.lek = S.lek || {};
+ for (const p of POOL) for (const mid of LEGACY_MODS) {
+  const old = mid + ":" + p.q.slice(0, 40);
+  if (old in S.q && !(p.key in S.q)) S.q[p.key] = S.q[old];
+  if (S.srs[old] && !S.srs[p.key]) S.srs[p.key] = S.srs[old];
+ }
+ for (const k of Object.keys(S.q)) if (!POOL_KEYS.has(k)) delete S.q[k];
+ for (const k of Object.keys(S.srs)) if (!POOL_KEYS.has(k)) delete S.srs[k];
+ const LIDS = new Set(MODULE.flatMap(m => m.lektionen.map(l => l.id)));
+ for (const k of Object.keys(S.lek)) { const id = k.includes("/") ? k.split("/")[1] : k; if (S.lek[k] && LIDS.has(id)) S.lek[id] = true; if (k !== id || !LIDS.has(id)) delete S.lek[k]; }
+}
+normalizeState();
 
-const lekDone = m => m.lektionen.filter(l => S.lek[m.id + "/" + l.id]).length;
+const lekDone = m => m.lektionen.filter(l => S.lek[l.id]).length;
 const modPool = id => POOL.filter(p => p.m === id);
 const qDone = id => modPool(id).filter(p => S.q[p.key]).length;
 const modProgress = m => { const a = lekDone(m) / m.lektionen.length, b = qDone(m.id) / modPool(m.id).length; return a * .5 + b * .5; };
-const allProgress = () => MODULE.reduce((s, m) => s + modProgress(m), 0) / MODULE.length;
+const KERN = () => MODULE.filter(m => !m.zusatz);
+const allProgress = () => KERN().reduce((s, m) => s + modProgress(m), 0) / KERN().length;
 
 function ringSvg(p, size = 76, w = 4, track = "var(--line)", color = null) {
  const r = (size - w) / 2, c = 2 * Math.PI * r, id = "g" + Math.random().toString(36).slice(2, 7);
@@ -111,9 +147,19 @@ function ringSvg(p, size = 76, w = 4, track = "var(--line)", color = null) {
 /* ---------- Router ---------- */
 const TABS = [["start", "Start", "home"], ["lernen", "Lernen", "book"], ["pruefung", "Prüfung", "exam"], ["lehrgang", "Lehrgang", "info"]];
 function tabbar(active) {
- return `<nav class="tabbar" aria-label="Navigation">${TABS.map(([h, t, i]) => `<a href="#${h}" class="${active === h ? "on" : ""}">${ic(i)}<span>${t}</span></a>`).join("")}</nav>`;
+ return `<nav class="tabbar" aria-label="Navigation">${TABS.map(([h, t, i]) => `<a href="#${h}" class="${active === h ? "on" : ""}"${active === h ? ' aria-current="page"' : ""}>${ic(i)}<span>${t}</span></a>`).join("")}</nav>`;
 }
-function page(active, html) { app.innerHTML = `<div class="wrap">${html}</div>${tabbar(active)}`; window.scrollTo(0, 0); }
+function page(active, html, o = {}) {
+ const y = scrollY;
+ app.innerHTML = `<div class="wrap">${html}</div>${tabbar(active)}`;
+ const h1 = $("h1", app);
+ document.title = (h1 ? h1.textContent.trim() + " – " : "") + "SMM Coach";
+ if (o.keep) { scrollTo(0, y); return; }
+ scrollTo(0, 0);
+ // Fokus auf die Überschrift, damit Screenreader den Seitenwechsel ansagen
+ if (h1 && page.n++) { h1.setAttribute("tabindex", "-1"); h1.focus({ preventScroll: true }); }
+}
+page.n = 0;
 function head() { return `<div class="top"><div class="logo">${ic("bolt", 'stroke="#fff"')}</div><div class="t">SMM Coach<small>Social Media Manager (IHK)</small></div><a class="iconbtn" href="#einstellungen" aria-label="Einstellungen">${ic("gear")}</a></div>`; }
 
 function route() {
@@ -126,6 +172,7 @@ function route() {
  if (h === "lernen") return viewLernen();
  if (h === "pruefung") return viewPruefung();
  if (h === "test") return viewTest();
+ if (h === "auswertung") return viewAuswertung();
  if (h === "lehrgang") return viewLehrgang();
  if (h === "glossar") return viewGlossar();
  if (h === "einstellungen") return viewEinstellungen();
@@ -135,7 +182,7 @@ addEventListener("hashchange", route);
 
 /* ---------- Start ---------- */
 function nextLesson() {
- for (const m of MODULE) for (const l of m.lektionen) if (!S.lek[m.id + "/" + l.id]) return { m, l };
+ for (const m of MODULE) for (const l of m.lektionen) if (!S.lek[l.id]) return { m, l };
  return null;
 }
 function ringsHtml() {
@@ -144,7 +191,7 @@ function ringsHtml() {
   return `<a class="ring" href="#modul-${m.id}" style="text-decoration:none"><div class="r">${ringSvg(p)}<div class="ic" style="background:${modGrad(m)}">${ic(m.id)}</div>${p >= .999 ? `<div class="done-badge">${ic("check", 'stroke="#fff" stroke-width="3"')}</div>` : ""}</div><div class="lbl">${m.kurz}</div></a>`;
  }).join("")}</div>`;
 }
-const PASS = 70; // Bestehensgrenze: Annahme, nicht offiziell bestätigt
+const PASS = 80; // Bestehensgrenze: Annahme (Hinweis des Nutzers), nicht offiziell bestätigt
 function daysLeft() { if (!S.pruefung) return null; const d = Math.ceil((new Date(S.pruefung + "T09:00") - Date.now()) / 86400000); return isNaN(d) ? null : d; }
 function viewStart() {
  const p = allProgress(), n = nextLesson(), dl = daysLeft();
@@ -155,23 +202,25 @@ function viewStart() {
  <section class="hero">
   <div class="kicker">${dl !== null && dl >= 0 ? (dl === 0 ? "Heute ist Prüfung – viel Erfolg!" : `Noch ${dl} Tag${dl === 1 ? "" : "e"} bis zur Prüfung`) : p > 0 ? "Weiter so" : "Willkommen"}</div>
   <h1>${p > 0 ? `${Math.round(p * 100)} % geschafft` : "Werde Social Media Manager"}</h1>
-  <p style="opacity:.92;max-width:460px">${p > 0 ? (perWeek ? `Plan: etwa ${perWeek} Lektion${perWeek === 1 ? "" : "en"} pro Woche, dann passt es bis zur Prüfung.` : "Kurze Lektionen, dann Quiz – so bleibt das Wissen hängen.") : "Vorbereitung auf den Abschlusstest beim IHK-Bildungszentrum Dresden: Story-Lektionen, Quiz, Freitext-Training und Probetest wie im Original."}</p>
+  <p style="opacity:.92;max-width:460px">${p > 0 ? (perWeek ? `Plan: etwa ${perWeek} Lektion${perWeek === 1 ? "" : "en"} pro Woche, dann passt es bis zur Prüfung.` : "Kurze Lektionen, dann Quiz – so bleibt das Wissen hängen.") : "Begleiter zum Lehrgang mit Abschlusstest beim IHK-Bildungszentrum Dresden: kurze Lektionen, Quiz, Freitext-Training und ein Probetest im bekannten Format."}</p>
   <div class="hero-stat"><div><b>${lessonsDone}/${lessonsAll}</b><span>Lektionen</span></div><div><b>${POOL.filter(q => q.key in S.q).length}/${POOL.length}</b><span>Fragen bearbeitet</span></div><div><b>${best === null ? "–" : best + " %"}</b><span>Bester Test</span></div></div>
   ${n ? `<div class="row"><a class="btn white" href="#lektion-${n.m.id}-${n.l.id}">${ic("play")} ${p > 0 ? "Weiterlernen" : "Erste Lektion starten"}</a></div>` : ""}
  </section>
  ${(() => { const done = POOL.filter(q => q.key in S.q).length, sure = POOL.filter(q => S.q[q.key]).length; return `<div class="card qprog"><div class="row" style="justify-content:space-between"><b>Fragen</b><span class="small muted">${done} von ${POOL.length} bearbeitet · ${sure} sicher</span></div><div class="bar2"><i class="d" style="width:${done / POOL.length * 100}%"></i><i class="s" style="width:${sure / POOL.length * 100}%"></i></div></div>`; })()}
- ${(() => { const d = dueKeys().length; return d ? `<a class="cont" href="#quiz-wdh" style="margin-bottom:10px"><div class="thumb" style="background:linear-gradient(135deg,#1864ab,#6741d9)">${ic("repeat")}</div><div><b style="font-size:16px">${d} Wiederholung${d === 1 ? "" : "en"} fällig</b><div class="small muted">Kurz auffrischen, damit es bis zur Prüfung sitzt.</div></div><span class="chev" style="margin-left:auto;color:var(--ink-3)">${ic("right")}</span></a>` : ""; })()}
- ${hasProgress(S) && Date.now() - (S.lastBackup || S.created || 0) > 14 * 86400000 ? `<a class="cont" href="#einstellungen" style="margin-bottom:10px"><div class="thumb" style="background:linear-gradient(135deg,#495057,#212529)">${ic("download")}</div><div><b style="font-size:16px">Lernstand sichern</b><div class="small muted">Lade eine Sicherungsdatei herunter – falls der Browser Daten löscht.</div></div><span class="chev" style="margin-left:auto;color:var(--ink-3)">${ic("right")}</span></a>` : ""}
- ${S.pruefung ? "" : `<a class="cont" href="#lehrgang" style="margin-bottom:6px"><div class="thumb" style="background:var(--grad-strong)">${ic("cal")}</div><div><b style="font-size:16px">Prüfungstermin eintragen</b><div class="small muted">Dann zeigt dir die App, wie viel du pro Woche lernen solltest.</div></div><span class="chev" style="margin-left:auto;color:var(--ink-3)">${ic("right")}</span></a>`}
+ ${(() => { const d = dueKeys().length; return d ? `<a class="cont" href="#quiz-wdh" style="margin-bottom:10px"><div class="thumb" style="background:linear-gradient(135deg,#1864ab,#6741d9)">${ic("repeat")}</div><div><b style="font-size:1rem">${d} Wiederholung${d === 1 ? "" : "en"} fällig</b><div class="small muted">Kurz auffrischen, damit es bis zur Prüfung sitzt.</div></div><span class="chev" style="margin-left:auto;color:var(--ink-3)">${ic("right")}</span></a>` : ""; })()}
+ ${hasProgress(S) && Date.now() - (S.lastBackup || S.created || 0) > 14 * 86400000 ? `<a class="cont" href="#einstellungen" style="margin-bottom:10px"><div class="thumb" style="background:linear-gradient(135deg,#495057,#212529)">${ic("download")}</div><div><b style="font-size:1rem">Lernstand sichern</b><div class="small muted">Lade eine Sicherungsdatei herunter – falls der Browser Daten löscht.</div></div><span class="chev" style="margin-left:auto;color:var(--ink-3)">${ic("right")}</span></a>` : ""}
+ ${platform().standalone && !hasProgress(S) ? `<a class="cont" href="#einstellungen" style="margin-bottom:10px"><div class="thumb" style="background:linear-gradient(135deg,#495057,#212529)">${ic("upload")}</div><div><b style="font-size:1rem">Kommst du aus dem Browser?</b><div class="small muted">Dort gesicherten Lernstand in den Einstellungen wiederherstellen.</div></div><span class="chev" style="margin-left:auto">${ic("right")}</span></a>` : ""}
+ ${S.run ? `<a class="cont" href="#test" style="margin-bottom:10px"><div class="thumb" style="background:var(--grad-strong)">${ic("clock")}</div><div><b style="font-size:1rem">Probetest läuft</b><div class="small muted">Weitermachen, wo du aufgehört hast</div></div><span class="chev" style="margin-left:auto">${ic("right")}</span></a>` : ""}
+ ${S.pruefung ? "" : `<a class="cont" href="#lehrgang" style="margin-bottom:6px"><div class="thumb" style="background:var(--grad-strong)">${ic("cal")}</div><div><b style="font-size:1rem">Prüfungstermin eintragen</b><div class="small muted">Dann zeigt dir die App, wie viel du pro Woche lernen solltest.</div></div><span class="chev" style="margin-left:auto;color:var(--ink-3)">${ic("right")}</span></a>`}
  <div class="sec-h"><h2>Deine Module</h2><a class="small muted" href="#lernen">Alle anzeigen</a></div>
  ${ringsHtml()}
  ${n ? `<div class="sec-h"><h2>Als Nächstes</h2></div>
- <a class="cont" href="#lektion-${n.m.id}-${n.l.id}"><div class="thumb" style="background:${modGrad(n.m)}">${ic(n.m.id)}</div><div><div class="small muted">${n.m.name} · ${n.l.min} Min.</div><b style="font-size:17px">${n.l.titel}</b></div><div class="play">${ic("play", 'style="color:#fff"')}</div></a>` : ""}
+ <a class="cont" href="#lektion-${n.m.id}-${n.l.id}"><div class="thumb" style="background:${modGrad(n.m)}">${ic(n.m.id)}</div><div><div class="small muted">${n.m.name} · ${n.l.min} Min.</div><b style="font-size:1.062rem">${n.l.titel}</b></div><div class="play">${ic("play", 'style="color:#fff"')}</div></a>` : ""}
  <div class="sec-h"><h2>Trainieren</h2></div>
  <div class="tiles">
   <a class="tile" href="#quiz-mix"><div class="ti" style="background:linear-gradient(135deg,#c2410c,#c92a2a)">${ic("shuffle")}</div><b>Schnell-Quiz</b><span>10 gemischte Fragen aus allen Modulen</span></a>
   <a class="tile" href="#quiz-frei"><div class="ti" style="background:linear-gradient(135deg,#a61e4d,#6741d9)">${ic("pen")}</div><b>Freitext üben</b><span>${FREI_POOL().length} offene Fragen mit Musterlösung</span></a>
-  <a class="tile" href="#test"><div class="ti" style="background:var(--grad-strong)">${ic("exam")}</div><b>Probetest</b><span>30 Fragen in 60 Minuten – wie in Dresden</span></a>
+  <a class="tile" href="#test"><div class="ti" style="background:var(--grad-strong)">${ic("exam")}</div><b>Probetest</b><span>30 Fragen, 60 Minuten, Multiple Choice und Freitext</span></a>
   <a class="tile" href="#lehrgang"><div class="ti" style="background:linear-gradient(135deg,#2b8a3e,#1864ab)">${ic("info")}</div><b>Lehrgang & Karriere</b><span>Ablauf, Prüfung, Kosten, Gehalt und Jobs</span></a>
  </div>`);
 }
@@ -186,17 +235,17 @@ function toolTiles() {
  </div>`;
 }
 function viewLernen() {
- page("lernen", `${head()}<h1 style="margin-bottom:6px">Lernen</h1><p class="muted" style="margin-bottom:18px">Sechs Module – jedes mit kurzen Lektionen und einem Quiz.</p>
+ page("lernen", `${head()}<h1 style="margin-bottom:6px">Lernen</h1><p class="muted" style="margin-bottom:18px">Sechs Module nach der Gliederung des Lehrgangs – jedes mit kurzen Lektionen und einem Quiz.</p>
  ${toolTiles()}
  <div class="sec-h"><h2>Module</h2></div>
- ${MODULE.map(m => { const p = modProgress(m); return `<a class="cont" href="#modul-${m.id}" style="text-decoration:none;margin-bottom:12px"><div class="thumb" style="background:${modGrad(m)}">${ic(m.id)}</div><div style="flex:1;min-width:0"><b style="font-size:17px">${m.name}</b><div class="small muted">${lekDone(m)}/${m.lektionen.length} Lektionen · ${qDone(m.id)}/${modPool(m.id).length} Fragen</div><div class="bar dark" style="margin-top:8px"><i style="width:${p * 100}%"></i></div></div></a>`; }).join("")}`);
+ ${MODULE.map(m => { const p = modProgress(m); const zh = m.zusatz ? `<div class="sec-h"><h2>Zusatzwissen</h2></div><p class="small muted" style="margin:-4px 0 10px">Nicht im Lehrplan der HSB Akademie und nicht im Probetest.</p>` : ""; return zh + (() => { return `<a class="cont" href="#modul-${m.id}" style="text-decoration:none;margin-bottom:12px"><div class="thumb" style="background:${modGrad(m)}">${ic(m.id)}</div><div style="flex:1;min-width:0"><b style="font-size:1.062rem">${m.name}</b><div class="small muted">${lekDone(m)}/${m.lektionen.length} Lektionen · ${qDone(m.id)}/${modPool(m.id).length} Fragen</div><div class="bar dark" style="margin-top:8px"><i style="width:${p * 100}%"></i></div></div></a>`; })(); }).join("")}`);
 }
 function viewModul(id) {
  const m = modById(id); if (!m) return viewLernen();
  const d = lekDone(m), all = d === m.lektionen.length;
  page("lernen", `<a class="back" href="#lernen">${ic("left")} Module</a>
  <section class="mod-head" style="--m:${m.farbe}"><div class="ic">${ic(m.id)}</div><h1>${m.name}</h1><p>${m.text}</p><div class="bar"><i style="width:${modProgress(m) * 100}%"></i></div></section>
- <ol class="steps">${m.lektionen.map((l, i) => { const ok = S.lek[m.id + "/" + l.id]; return `<li><div class="dot ${ok ? "ok" : ""}" style="${ok ? `background:${shade(m.farbe, .6)}` : ""}">${ok ? ic("check", 'stroke-width="3"') : i + 1}</div><a class="item" href="#lektion-${m.id}-${l.id}" style="display:flex;align-items:center;gap:10px;width:100%;text-decoration:none;background:var(--surface);border-radius:18px;padding:14px 16px;box-shadow:var(--shadow)"><div><b>${l.titel}</b><span class="small muted">${l.folien.length} Karten · ${l.min} Min.${ok ? " · erledigt" : ""}</span></div><span class="chev">${ic("right")}</span></a></li>`; }).join("")}
+ <ol class="steps">${m.lektionen.map((l, i) => { const ok = S.lek[l.id]; return `<li><div class="dot ${ok ? "ok" : ""}" style="${ok ? `background:${shade(m.farbe, .6)}` : ""}">${ok ? ic("check", 'stroke-width="3"') : i + 1}</div><a class="item" href="#lektion-${m.id}-${l.id}" style="display:flex;align-items:center;gap:10px;width:100%;text-decoration:none;background:var(--surface);border-radius:18px;padding:14px 16px;box-shadow:var(--shadow)"><div><b>${l.titel}</b><span class="small muted">${l.folien.length} Karten · ${l.min} Min.${ok ? " · erledigt" : ""}</span></div><span class="chev">${ic("right")}</span></a></li>`; }).join("")}
  <li><div class="dot" style="${all ? "background:var(--grad);color:#fff" : ""}">${ic(all ? "bolt" : "lock")}</div><a class="item" href="#quiz-${m.id}" style="display:flex;align-items:center;gap:10px;width:100%;text-decoration:none;background:var(--surface);border-radius:18px;padding:14px 16px;box-shadow:var(--shadow)"><div><b>Modul-Quiz</b><span class="small muted">${modPool(m.id).length} Fragen · ${qDone(m.id)} sicher${all ? "" : " · empfohlen nach den Lektionen"}</span></div><span class="chev">${ic("right")}</span></a></li></ol>`);
 }
 
@@ -212,10 +261,14 @@ function openStory(mid, lid) {
  let i = 0, answered = {};
  storyEl = document.createElement("div");
  storyEl.className = "story"; storyEl.style.setProperty("--m", m.farbe);
- storyEl.setAttribute("role", "dialog"); storyEl.setAttribute("aria-label", l.titel);
+ storyEl.setAttribute("role", "dialog"); storyEl.setAttribute("aria-modal", "true"); storyEl.setAttribute("aria-label", "Lektion: " + l.titel);
  document.body.appendChild(storyEl); document.body.classList.add("no-scroll");
  const go = d => { const f = F[i]; if (d > 0 && f.k === "check" && !(i in answered)) return toast("Wähle zuerst eine Antwort"); i = Math.max(0, Math.min(F.length - 1, i + d)); draw(); };
- storyKey = e => { if (e.key === "ArrowRight") go(1); if (e.key === "ArrowLeft") go(-1); if (e.key === "Escape") location.hash = "modul-" + mid; };
+ const closeS = () => location.replace("#modul-" + mid);
+ storyKey = e => {
+  if (e.key === "ArrowRight") go(1); if (e.key === "ArrowLeft") go(-1); if (e.key === "Escape") closeS();
+  if (e.key === "Tab") { const f = $$("button,a[href]", storyEl).filter(x => !x.disabled); if (!f.length) return; const a = f[0], z = f[f.length - 1]; if (e.shiftKey && document.activeElement === a) { e.preventDefault(); z.focus(); } else if (!e.shiftKey && document.activeElement === z) { e.preventDefault(); a.focus(); } }
+ };
  addEventListener("keydown", storyKey);
  // Nach unten wischen schließt die Story (wie bei Instagram)
  let t0 = null;
@@ -229,7 +282,7 @@ function openStory(mid, lid) {
   if (!t0) return; const dy = (e.changedTouches?.[0]?.clientY ?? t0.y) - t0.y, drag = t0.drag; t0 = null;
   if (!drag) return;
   storyEl.style.transition = "transform .22s ease, opacity .22s ease";
-  if (dy > 110) { storyEl.style.transform = "translateY(100%)"; storyEl.style.opacity = "0"; setTimeout(() => { location.hash = "modul-" + mid; }, 200); }
+  if (dy > 110) { storyEl.style.transform = "translateY(100%)"; storyEl.style.opacity = "0"; setTimeout(closeS, 200); }
   else { storyEl.style.transform = ""; storyEl.style.opacity = ""; }
  };
  storyEl.addEventListener("touchend", end); storyEl.addEventListener("touchcancel", end);
@@ -242,23 +295,24 @@ function openStory(mid, lid) {
   else if (f.k === "check") {
    const order = f._o || (f._o = shuf(f.a.map((t, k) => k)));
    const a = answered[i];
-   body = `<span class="kind">${kindName}</span><h2 style="font-size:1.3em">${md(f.q)}</h2>${order.map((k, n) => { let cl = ""; if (a !== undefined) cl = k === f.c ? "ok" : k === a ? "bad" : "dim"; return `<button class="opt ${cl}" data-k="${k}"><span class="l">${"ABCD"[n]}</span><span>${esc(f.a[k])}</span></button>`; }).join("")}${a !== undefined ? `<div class="fb ${a === f.c ? "ok" : "bad"}"><b>${a === f.c ? "Richtig!" : "Nicht ganz."}</b>${esc(f.e)}</div>` : ""}`;
+   body = `<span class="kind">${kindName}</span><h2 style="font-size:1.3em">${md(f.q)}</h2>${order.map((k, n) => { let cl = ""; if (a !== undefined) cl = k === f.c ? "ok" : k === a ? "bad" : "dim"; return `<button type="button" class="opt ${cl}" data-k="${k}" ${a !== undefined ? "disabled" : ""}><span class="l">${"ABCD"[n]}</span><span class="ot">${esc(f.a[k])}</span><span class="mark" aria-hidden="true">${cl === "ok" ? "✓" : cl === "bad" ? "✗" : ""}</span></button>`; }).join("")}<div role="status" aria-live="polite">${a !== undefined ? `<div class="fb ${a === f.c ? "ok" : "bad"}"><b>${a === f.c ? "Richtig!" : "Nicht ganz."}</b>${esc(f.e)}</div>` : ""}</div>`;
   }
   else if (f.k === "bild") body = `<span class="kind">${kindName}</span><h2>${md(f.h)}</h2><div class="dg">${BILDER[f.svg] || ""}</div>${f.b ? `<div class="body small-body">${md(f.b)}</div>` : ""}`;
   else if (last) body = `<div style="text-align:center"><div class="confetti">🎉</div><span class="kind">Geschafft</span><h2>${esc(l.titel)}</h2><div class="body">Lektion abgeschlossen. ${nextIn(m, l) ? "Weiter mit der nächsten Lektion?" : "Jetzt im Modul-Quiz festigen!"}</div></div>`;
   else body = `<span class="kind">${kindName}</span><h2>${md(f.h)}</h2><div class="body">${md(f.b)}</div>`;
   const nx = nextIn(m, l);
-  storyEl.innerHTML = `<div class="segs">${F.slice(0, -1).map((_, n) => `<i class="${n < i || last ? "on" : ""}"><b style="${n === i ? "width:100%" : ""}"></b></i>`).join("")}</div>
+  storyEl.innerHTML = `<p class="sr-only" aria-live="polite">${last ? "Lektion geschafft" : `Karte ${i + 1} von ${F.length - 1}`}</p><div class="segs" aria-hidden="true">${F.slice(0, -1).map((_, n) => `<i class="${n < i || last ? "on" : ""}"><b style="${n === i ? "width:100%" : ""}"></b></i>`).join("")}</div>
   <div class="shead"><div class="av">${ic(m.id)}</div><div class="n">${esc(l.titel)}<small>${esc(m.name)}</small></div><button class="x" aria-label="Schließen">${ic("x")}</button></div>
   <div class="stage">${f.k !== "check" && !last ? '<div class="tapzone l"></div><div class="tapzone r"></div>' : ""}<div class="slide ${f.k === "beispiel" || f.k === "merke" ? "note" : ""}">${body}</div></div>
   <div class="snav">${i > 0 ? `<button class="btn prev" aria-label="Zurück">${ic("left")}</button>` : ""}${last ? (nx ? `<a class="btn" href="#lektion-${m.id}-${nx.id}">Nächste Lektion ${ic("right")}</a>` : `<a class="btn" href="#quiz-${m.id}">Zum Modul-Quiz ${ic("right")}</a>`) : `<button class="btn next">Weiter ${ic("right")}</button>`}</div>`;
-  if (last) { S.lek[m.id + "/" + l.id] = true; save(); }
-  $(".x", storyEl).onclick = () => location.hash = "modul-" + mid;
+  if (last) { S.lek[l.id] = true; save(); }
+  $(".x", storyEl).onclick = closeS;
   $(".next", storyEl)?.addEventListener("click", () => go(1));
   $(".prev", storyEl)?.addEventListener("click", () => go(-1));
   $(".tapzone.l", storyEl)?.addEventListener("click", () => go(-1));
   $(".tapzone.r", storyEl)?.addEventListener("click", () => go(1));
   fitSlide();
+  if (draw.first !== false) { draw.first = false; $(".x", storyEl).focus({ preventScroll: true }); } else if (!storyEl.contains(document.activeElement)) ($(".next", storyEl) || $(".x", storyEl)).focus({ preventScroll: true });
   $$(".opt", storyEl).forEach(b => b.onclick = () => { if (i in answered) return; answered[i] = +b.dataset.k; const p = POOL.find(p => p.q === f.q); if (p) grade(p.key, answered[i] === f.c); save(); draw(); });
  }
  draw();
@@ -273,14 +327,17 @@ addEventListener("resize", () => storyEl && fitSlide());
 function nextIn(m, l) { const k = m.lektionen.indexOf(l); return m.lektionen[k + 1] || null; }
 
 /* ---------- Quiz ---------- */
-const FREI_POOL = () => POOL.filter(q => q.t === "frei");
-const MC_POOL = () => POOL.filter(q => q.t !== "frei");
+// Richtig/falsch nicht nur über Farbe: Symbol + Text für Screenreader
+function markOpt(x, st) { x.classList.add(st); x.disabled = st === "dim"; const m = $(".mark", x); if (m) m.textContent = st === "ok" ? "✓" : st === "bad" ? "✗" : ""; if (st !== "dim") x.setAttribute("aria-label", (st === "ok" ? "Richtige Antwort: " : "Deine Antwort, falsch: ") + $(".ot", x)?.textContent); }
+const FREI_POOL = () => POOL.filter(q => q.t === "frei" && !isZusatz(q));
+const isZusatz = q => !!modById(q.m)?.zusatz;
+const MC_POOL = () => POOL.filter(q => q.t !== "frei" && !isZusatz(q));
 const freiMatch = (q, txt) => q.muster.map(([, kw]) => { try { return new RegExp(kw, "i").test(txt); } catch (e) { return false; } });
-function chip(q) { const m = modById(q.m); return `<span class="chip" style="background:color-mix(in srgb,${m.farbe} 14%,var(--surface));color:color-mix(in srgb,${m.farbe} 58%,#000)">${m.kurz}${q.t === "frei" ? " · Freitext" : ""}</span>`; }
+function chip(q) { const m = modById(q.m); return `<span class="chip mchip" style="--m:${m.farbe}">${m.kurz}${q.t === "frei" ? " · Freitext" : ""}</span>`; }
 function quizCard(q, meta) {
- if (q.t === "frei") return { html: `<div class="qcard"><div class="qtop">${chip(q)}<span class="small muted">${meta}</span></div><div class="qtext">${esc(q.q)}</div><textarea id="ftxt" placeholder="Deine Antwort in Stichpunkten …" style="min-height:140px"></textarea><div class="fbx"></div></div>` };
+ if (q.t === "frei") return { html: `<div class="qcard"><div class="qtop">${chip(q)}<span class="small muted">${meta}</span></div><p class="qtext" id="qt">${esc(q.q)}</p><label class="sr-only" for="ftxt">Deine Antwort</label><textarea id="ftxt" placeholder="Deine Antwort in Stichpunkten …" style="min-height:140px"></textarea><div class="fbx" role="status" aria-live="polite"></div></div>` };
  const order = shuf(q.a.map((_, k) => k));
- return { order, html: `<div class="qcard"><div class="qtop">${chip(q)}<span class="small muted">${meta}</span></div><div class="qtext">${esc(q.q)}</div>${order.map((k, n) => `<button class="opt" data-k="${k}"><span class="l">${"ABCD"[n]}</span><span>${esc(q.a[k])}</span></button>`).join("")}<div class="fbx"></div></div>` };
+ return { order, html: `<div class="qcard"><div class="qtop">${chip(q)}<span class="small muted">${meta}</span></div><p class="qtext" id="qt">${esc(q.q)}</p><div role="group" aria-labelledby="qt">${order.map((k, n) => `<button type="button" class="opt" data-k="${k}"><span class="l">${"ABCD"[n]}</span><span class="ot">${esc(q.a[k])}</span><span class="mark" aria-hidden="true"></span></button>`).join("")}</div><div class="fbx" role="status" aria-live="polite"></div></div>` };
 }
 function musterHtml(q, txt) {
  const hit = freiMatch(q, txt || ""), n = hit.filter(Boolean).length;
@@ -289,7 +346,7 @@ function musterHtml(q, txt) {
 function viewQuiz(id) {
  const m = modById(id), isMix = id === "mix", isFrei = id === "frei", isWdh = id === "wdh", isErr = id === "fehler";
  const byKeys = ks => shuf(POOL.filter(q => ks.includes(q.key)));
- let list = isWdh ? byKeys(dueKeys()).slice(0, 20) : isErr ? byKeys(errorKeys()) : isMix ? shuf(MC_POOL()).slice(0, 10) : isFrei ? shuf(FREI_POOL()) : shuf(modPool(id)).sort((a, b) => (S.q[a.key] ? 1 : 0) - (S.q[b.key] ? 1 : 0));
+ let list = isWdh ? byKeys(dueKeys()).slice(0, 20) : isErr ? byKeys(errorKeys()) : isMix ? shuf(MC_POOL()).slice(0, 10) : isFrei ? shuf(FREI_POOL()).sort((a, b) => (S.q[a.key] ? 1 : 0) - (S.q[b.key] ? 1 : 0)).slice(0, 8) : shuf(modPool(id)).sort((a, b) => (S.q[a.key] ? 1 : 0) - (S.q[b.key] ? 1 : 0));
  if (!m && !isMix && !isFrei && !isWdh && !isErr) return viewLernen();
  if (!list.length) { page("lernen", `<a class="back" href="#lernen">${ic("left")} Lernen</a><div class="qcard result"><h2>${isWdh ? "Nichts fällig" : "Fehlerkiste ist leer"}</h2><p class="muted">${isWdh ? "Gerade ist keine Wiederholung fällig. Schau morgen wieder rein." : "Super – keine offenen Fehler."}</p></div>`); return; }
  const total = list.length; let queue = list.slice(), first = 0, miss = new Set(), n = 0;
@@ -299,23 +356,25 @@ function viewQuiz(id) {
   if (!queue.length) return done();
   const q = queue.shift(); n++;
   const { html } = quizCard(q, miss.has(q) ? "Wiederholung" : `${Math.min(n, total)} / ${total}`);
-  page(tab, `<a class="back" href="${backHref}">${ic("x")} Beenden</a><div class="bar dark" style="margin:0 0 16px"><i style="width:${(1 - (queue.length + 1) / (total + miss.size)) * 100}%"></i></div>${html}`);
-  const rate = ok => { grade(q.key, ok); if (ok) { if (!miss.has(q)) first++; } else { miss.add(q); queue.push(q); } save(); };
-  const weiter = () => { $(".fbx").insertAdjacentHTML("beforeend", `<button class="btn block" style="margin-top:14px" id="nx">Weiter ${ic("right")}</button>`); $("#nx").onclick = next; $("#nx").focus(); };
+  page(tab, `<h1 class="sr-only">${isFrei ? "Freitext üben" : isWdh ? "Wiederholen" : isErr ? "Fehlerkiste" : m ? m.name + " – Quiz" : "Schnell-Quiz"}</h1><a class="back" href="${backHref}">${ic("x")} Beenden</a><div class="bar dark" style="margin:0 0 16px" aria-hidden="true"><i style="width:${(1 - (queue.length + 1) / (total + miss.size)) * 100}%"></i></div>${html}`);
+  const rate = (ok, requeue = !ok) => { grade(q.key, ok); if (ok) { if (!miss.has(q)) first++; } else if (requeue && !miss.has(q)) { miss.add(q); queue.push(q); } else miss.add(q); save(); };
+  const weiter = () => { $(".fbx").insertAdjacentHTML("afterend", `<button type="button" class="btn block" style="margin-top:14px" id="nx">Weiter ${ic("right")}</button>`); $("#nx").onclick = next; $("#nx").focus({ preventScroll: true }); };
   if (q.t === "frei") {
-   $(".fbx").innerHTML = `<button type="button" class="btn ghost block" style="margin-top:12px" id="show">Musterlösung anzeigen</button>`;
-   $("#show").onclick = e => {
-    e.preventDefault(); e.stopPropagation(); document.activeElement?.blur?.();
+   // Knopf bleibt stehen (nicht ersetzen, kein blur) – die Lösung erscheint darunter
+   $(".fbx").insertAdjacentHTML("beforebegin", `<button type="button" class="btn ghost block" style="margin-top:12px" id="show">Musterlösung anzeigen</button>`);
+   $("#show").onclick = () => {
+    const btn = $("#show"); if (btn.disabled) return;
+    btn.disabled = true; btn.textContent = "Musterlösung siehe unten";
     const txt = $("#ftxt").value; $("#ftxt").readOnly = true;
-    $(".fbx").innerHTML = musterHtml(q, txt) + `<p style="font-weight:700;margin:14px 0 8px">Wie gut war deine Antwort?</p><div class="row"><button class="btn ghost" data-r="0" style="flex:1">Daneben</button><button class="btn ghost" data-r="1" style="flex:1">Teilweise</button><button class="btn" data-r="2" style="flex:1">Richtig</button></div>`;
-    $$("[data-r]").forEach(b => b.onclick = e => { e.preventDefault(); e.stopPropagation(); rate(b.dataset.r === "2"); $(".fbx .row").remove(); $(".fbx p:last-of-type")?.remove(); toast(b.dataset.r === "2" ? "Stark!" : "Kommt nochmal dran"); weiter(); });
+    $(".fbx").innerHTML = musterHtml(q, txt) + `<p class="rate-q" style="font-weight:700;margin:14px 0 8px">Wie gut war deine Antwort?</p><div class="row rate-row" role="group" aria-label="Selbstbewertung"><button type="button" class="btn ghost" data-r="0" style="flex:1">Daneben</button><button type="button" class="btn ghost" data-r="1" style="flex:1">Teilweise</button><button type="button" class="btn" data-r="2" style="flex:1">Richtig</button></div>`;
+    $$("[data-r]").forEach(b => b.onclick = () => { const r = b.dataset.r; rate(r === "2", r === "0"); $(".rate-row")?.remove(); $(".rate-q")?.remove(); toast(r === "2" ? "Stark!" : r === "1" ? "Gut – kommt in der Wiederholung wieder" : "Kommt gleich nochmal dran"); weiter(); });
    };
    return;
   }
   $$(".opt").forEach(b => b.onclick = () => {
    if ($(".fbx").innerHTML) return;
    const k = +b.dataset.k, ok = k === q.c;
-   $$(".opt").forEach(x => { const xk = +x.dataset.k; x.classList.add(xk === q.c ? "ok" : xk === k ? "bad" : "dim"); });
+   $$(".opt").forEach(x => markOpt(x, +x.dataset.k === q.c ? "ok" : +x.dataset.k === k ? "bad" : "dim"));
    rate(ok);
    $(".fbx").innerHTML = `<div class="fb ${ok ? "ok" : "bad"}"><b>${ok ? "Richtig!" : "Nicht ganz – die Frage kommt gleich nochmal."}</b>${esc(q.e)}</div>`;
    weiter();
@@ -328,57 +387,133 @@ function viewQuiz(id) {
  }
 }
 
-/* ---------- Prüfung ---------- */
+/* ---------- Prüfung ----------
+   Probetest im bekannten Format (30 Fragen, MC + Freitext, 60 Min.). Unbekannt und daher Annahmen:
+   Verhältnis MC/Freitext, Bestehensgrenze, Navigation. Der Test wird laufend gespeichert (S.run). */
+const TEST_N = 30, TEST_FR = 8, TEST_MIN = 60;
+const byKey = new Map(POOL.map(q => [q.key, q]));
+const examPool = () => POOL.filter(q => !modById(q.m)?.zusatz);
+function testScore(r) {
+ const qs = r.ids.map(k => byKey.get(k)).filter(Boolean);
+ let mc = 0, fr = 0, frMax = 0, frRated = 0;
+ qs.forEach((q, i) => { if (q.t === "frei") { frMax++; if (i in (r.rated || {})) { frRated++; fr += r.rated[i]; } } else if (r.ans[i] === q.c) mc++; });
+ return { n: qs.length, mc, mcN: qs.length - frMax, fr, frMax, allRated: frRated === frMax, pct: Math.round((mc + fr) / Math.max(1, qs.length) * 100) };
+}
 function viewPruefung() {
  const best = S.tests.length ? Math.max(...S.tests) : null;
+ const open = S.lastRun && !S.lastRun.saved;
  page("pruefung", `${head()}<h1 style="margin-bottom:6px">Prüfung</h1><p class="muted" style="margin-bottom:18px">Abschlusstest beim IHK-Bildungszentrum Dresden: 30 Fragen, Multiple Choice und Freitext, 60 Minuten, online von zu Hause. <a href="#lehrgang" style="text-decoration:underline">Mehr zum Ablauf</a></p>
+ ${S.run ? `<a class="cont" href="#test" style="margin-bottom:12px"><div class="thumb" style="background:var(--grad-strong)">${ic("clock")}</div><div><b style="font-size:1rem">Laufenden Probetest fortsetzen</b><div class="small muted">${Object.keys(S.run.ans).length} von ${S.run.ids.length} beantwortet${S.run.end ? ` · noch ${Math.max(0, Math.ceil((S.run.end - Date.now()) / 60000))} Min.` : ""}</div></div><span class="chev" style="margin-left:auto">${ic("right")}</span></a>` : ""}
+ ${open ? `<a class="cont" href="#auswertung" style="margin-bottom:12px"><div class="thumb" style="background:linear-gradient(135deg,#a61e4d,#6741d9)">${ic("pen")}</div><div><b style="font-size:1rem">Auswertung abschließen</b><div class="small muted">Freitext-Antworten deines letzten Probetests bewerten</div></div><span class="chev" style="margin-left:auto">${ic("right")}</span></a>` : ""}
  <div class="tiles">
   <a class="tile" href="#test"><div class="ti" style="background:var(--grad-strong)">${ic("exam")}</div><b>Probetest</b><span>30 Fragen · 60 Min. · Bestehen ab ${PASS} %*${best !== null ? ` · Bestwert ${best} %` : ""}</span></a>
-  <a class="tile" href="#quiz-frei"><div class="ti" style="background:linear-gradient(135deg,#a61e4d,#6741d9)">${ic("pen")}</div><b>Freitext üben</b><span>Offene Fragen mit Musterlösung und Selbstcheck</span></a>
+  <a class="tile" href="#quiz-frei"><div class="ti" style="background:linear-gradient(135deg,#a61e4d,#6741d9)">${ic("pen")}</div><b>Freitext üben</b><span>Runden mit 8 offenen Fragen, Musterlösung und Selbstcheck</span></a>
   <a class="tile" href="#quiz-mix"><div class="ti" style="background:linear-gradient(135deg,#c2410c,#c92a2a)">${ic("shuffle")}</div><b>Schnell-Quiz</b><span>10 Multiple-Choice-Fragen</span></a>
  </div>
- <p class="small muted" style="margin-top:12px">* Die Bestehensgrenze ist nicht veröffentlicht. Die App rechnet vorsichtig mit ${PASS} % – frag bei der HSB Akademie oder dem IHK-Bildungszentrum Dresden nach.</p>
- ${S.tests.length ? `<div class="sec-h"><h2>Deine Probetests</h2></div><div class="card"><div class="row" style="align-items:flex-end;gap:8px;height:130px">${S.tests.slice(-10).map(t => `<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px"><span class="small muted">${t}</span><div style="width:100%;max-width:36px;height:${Math.max(6, t)}px;border-radius:8px;background:${t >= PASS ? "var(--grad-strong)" : "var(--bad-soft)"}"></div></div>`).join("")}</div></div>` : ""}`);
+ <p class="small muted" style="margin-top:12px">* Die Bestehensgrenze ist nicht veröffentlicht. Die App rechnet mit ${PASS} % – eine Annahme, bis die HSB Akademie sie bestätigt.</p>
+ ${S.tests.length ? `<div class="sec-h"><h2>Deine Probetests</h2></div><div class="card"><div class="row" style="align-items:flex-end;gap:8px;height:130px" role="img" aria-label="Ergebnisse der letzten Probetests: ${S.tests.slice(-10).join(", ")} Prozent">${S.tests.slice(-10).map(t => `<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px"><span class="small muted">${t}</span><div style="width:100%;max-width:36px;height:${Math.max(6, t)}px;border-radius:8px;background:${t >= PASS ? "var(--grad-strong)" : "var(--bad-soft)"}"></div></div>`).join("")}</div></div>` : ""}`);
 }
 let testTimer = null;
 function viewTest() {
  clearInterval(testTimer);
- const nMC = Math.min(22, MC_POOL().length), nFr = Math.min(30 - nMC, FREI_POOL().length);
- page("pruefung", `<a class="back" href="#pruefung">${ic("left")} Prüfung</a><section class="hero"><div class="kicker">Probetest wie in Dresden</div><h1>${nMC + nFr} Fragen · 60 Minuten</h1><p style="opacity:.95">${nMC} Multiple-Choice- und ${nFr} Freitext-Fragen aus allen sechs Themen. Kein Feedback zwischendurch. Am Ende bewertest du deine Freitext-Antworten selbst anhand der Musterlösung. Bestanden ab ${PASS} % (Annahme).</p><div class="row"><button class="btn white" id="go">${ic("clock")} Test starten</button></div></section>`);
+ if (S.run) return runTest();
+ const nFr = Math.min(TEST_FR, FREI_POOL().filter(q => !modById(q.m)?.zusatz).length), nMC = TEST_N - nFr;
+ page("pruefung", `<a class="back" href="#pruefung">${ic("left")} Prüfung</a><section class="hero"><div class="kicker">Probetest</div><h1>${TEST_N} Fragen · ${TEST_MIN} Minuten</h1><p>Aufgebaut wie der bekannte Abschlusstest: Multiple Choice und Freitext aus allen sechs Themen. Wie viele Freitext-Fragen der echte Test hat, ist nicht veröffentlicht – die App nimmt ${nFr} an. Du kannst vor- und zurückblättern, Fragen markieren und Antworten ändern. Bestanden ab ${PASS} % (Annahme).</p>
+  <label class="check"><input type="checkbox" id="notime"> Ohne Zeitlimit üben</label>
+  <div class="row"><button class="btn white" id="go">${ic("clock")} Test starten</button></div></section>`);
  $("#go").onclick = () => {
-  const list = shuf([...shuf(MC_POOL()).slice(0, nMC), ...shuf(FREI_POOL()).slice(0, nFr)]), ans = []; let p = 0;
-  const end = Date.now() + 60 * 60000;
-  const tick = () => { const r = Math.max(0, end - Date.now()), el = $("#timer"); if (el) { el.textContent = `${Math.floor(r / 60000)}:${String(Math.floor(r / 1000) % 60).padStart(2, "0")}`; el.classList.toggle("low", r < 5 * 60000); } if (r <= 0) { clearInterval(testTimer); toast("Die Zeit ist um"); result(); } };
-  testTimer = setInterval(tick, 1000);
-  step();
-  function step() {
-   if (p === list.length) { clearInterval(testTimer); return result(); }
-   const q = list[p], { html } = quizCard(q, `Frage ${p + 1} / ${list.length}`);
-   page("pruefung", `<div class="row" style="justify-content:space-between;margin-bottom:12px"><a class="back" href="#pruefung" style="margin:0">${ic("x")} Abbrechen</a><span class="timer" id="timer">60:00</span></div><div class="bar dark" style="margin:0 0 16px"><i style="width:${p / list.length * 100}%"></i></div>${html}`);
-   tick();
-   if (q.t === "frei") { $(".fbx").innerHTML = `<button class="btn block" style="margin-top:12px" id="nx">Weiter ${ic("right")}</button>`; $("#nx").onclick = () => { ans[p] = $("#ftxt").value; p++; step(); }; return; }
-   $$(".opt").forEach(b => b.onclick = () => { b.classList.add("sel"); ans[p] = +b.dataset.k; p++; setTimeout(step, 180); });
-  }
-  function result() {
-   const rated = {};
-   const mcOk = list.filter((q, k) => q.t !== "frei" && ans[k] === q.c).length;
-   const fr = list.map((q, k) => ({ q, k })).filter(x => x.q.t === "frei");
-   draw();
-   function draw() {
-    const frPts = Object.values(rated).reduce((a, b) => a + b, 0), allRated = fr.every(x => x.k in rated);
-    const pct = Math.round((mcOk + frPts) / list.length * 100);
-    const wrong = list.map((q, k) => ({ q, a: ans[k] })).filter(x => x.q.t !== "frei" && x.a !== x.q.c);
-    page("pruefung", `<div class="qcard result"><div class="big-ring">${ringSvg(pct / 100, 150, 12, "var(--surface-2)", pct >= PASS ? null : "var(--bad)")}<b>${pct}%</b></div><h2>${!allRated ? "Fast fertig" : pct >= PASS ? "Bestanden!" : "Noch nicht bestanden"}</h2><p class="muted">Multiple Choice: ${mcOk} von ${list.length - fr.length} richtig${fr.length ? ` · Freitext: ${allRated ? frPts + " von " + fr.length + " Punkten" : "bitte unten selbst bewerten"}` : ""}</p><p class="small muted">Bestehensgrenze ${PASS} % (Annahme)</p></div>
-    ${fr.length ? `<div class="sec-h"><h2>Freitext selbst bewerten</h2></div>${fr.map(({ q, k }) => `<div class="card">${chip(q)}<p style="font-weight:700;margin:10px 0 6px">${esc(q.q)}</p><div class="answer">${ans[k] ? esc(ans[k]) : "<i>Keine Antwort</i>"}</div>${musterHtml(q, ans[k])}<div class="row" style="margin-top:12px">${[[0, "Daneben"], [.5, "Teilweise"], [1, "Richtig"]].map(([v, t]) => `<button class="btn ${rated[k] === v ? "" : "ghost"}" data-k="${k}" data-v="${v}" style="flex:1">${t}</button>`).join("")}</div></div>`).join("")}` : ""}
-    ${allRated ? `<div class="row" style="justify-content:center;margin:8px 0 20px"><a class="btn ghost" href="#pruefung">Zurück</a><button class="btn" id="again">Neuer Test</button></div>` : ""}
-    ${wrong.length ? `<div class="sec-h"><h2>Multiple Choice nacharbeiten</h2></div>${wrong.map(x => `<div class="card">${chip(x.q)}<p style="font-weight:700;margin-top:10px">${esc(x.q.q)}</p><p class="small" style="color:var(--bad)">Deine Antwort: ${x.a === undefined ? "keine" : esc(x.q.a[x.a])}</p><p class="small" style="color:var(--ok)">Richtig: ${esc(x.q.a[x.q.c])}</p><div class="fb ok" style="margin-top:8px">${esc(x.q.e)}</div></div>`).join("")}` : ""}`);
-    $$("[data-v]").forEach(b => b.onclick = () => { const y = scrollY; rated[b.dataset.k] = +b.dataset.v; draw(); scrollTo(0, y); });
-    $("#again")?.addEventListener("click", viewTest);
-    if (allRated && !draw.saved) { draw.saved = true; list.forEach((q, k) => grade(q.key, q.t === "frei" ? rated[k] === 1 : ans[k] === q.c)); S.tests.push(pct); save(); }
-   }
-  }
+  const pool = examPool();
+  const ids = shuf([...shuf(pool.filter(q => q.t !== "frei")).slice(0, nMC), ...shuf(pool.filter(q => q.t === "frei")).slice(0, nFr)]).map(q => q.key);
+  S.run = { ids, ans: {}, mark: {}, p: 0, start: Date.now(), end: $("#notime").checked ? null : Date.now() + TEST_MIN * 60000 };
+  save(); runTest();
  };
 }
+function runTest(confirmMode) {
+ const r = S.run; if (!r) return viewTest();
+ clearInterval(testTimer);
+ const qs = r.ids.map(k => byKey.get(k));
+ const left = () => r.end ? Math.max(0, r.end - Date.now()) : null;
+ const fmt = ms => `${Math.floor(ms / 60000)}:${String(Math.floor(ms / 1000) % 60).padStart(2, "0")}`;
+ if (r.end && left() <= 0) return finishTest(true);
+ const tick = () => { const ms = left(), el = $("#timer"); if (ms === null || !el) return; el.textContent = fmt(ms); el.classList.toggle("low", ms < 5 * 60000); if (ms <= 0) { clearInterval(testTimer); finishTest(true); } };
+ if (r.end) testTimer = setInterval(tick, 1000);
+ const answered = i => (i in r.ans) && (qs[i].t !== "frei" || String(r.ans[i]).trim() !== "");
+ if (r.view === "overview" || confirmMode) return overview(confirmMode);
+ const p = r.p, q = qs[p];
+ const order = q.t === "frei" ? null : (r.order = r.order || {}, r.order[p] = r.order[p] || shuf(q.a.map((_, k) => k)));
+ page("pruefung", `<h1 class="sr-only">Probetest, Frage ${p + 1} von ${qs.length}</h1>
+  <div class="row testbar"><button class="back" id="abort" style="margin:0">${ic("x")} Abbrechen</button><button class="back" id="ov" style="margin:0">Übersicht</button>${r.end ? `<span class="timer" id="timer" role="timer" aria-label="Verbleibende Zeit">${fmt(left())}</span>` : `<span class="chip">ohne Zeitlimit</span>`}</div>
+  <div class="bar dark" style="margin:0 0 16px" aria-hidden="true"><i style="width:${Object.keys(r.ans).length / qs.length * 100}%"></i></div>
+  <div class="qcard"><div class="qtop">${chip(q)}<span class="small muted">Frage ${p + 1} / ${qs.length}${r.mark[p] ? " · markiert" : ""}</span></div><p class="qtext" id="qt">${esc(q.q)}</p>
+  ${q.t === "frei" ? `<label class="sr-only" for="ftxt">Deine Antwort</label><textarea id="ftxt" placeholder="Deine Antwort in Stichpunkten …" style="min-height:160px">${esc(r.ans[p] || "")}</textarea>`
+   : `<div role="radiogroup" aria-labelledby="qt">${order.map((k, n) => `<button type="button" role="radio" aria-checked="${r.ans[p] === k}" class="opt ${r.ans[p] === k ? "sel" : ""}" data-k="${k}"><span class="l">${"ABCD"[n]}</span><span>${esc(q.a[k])}</span></button>`).join("")}</div>`}
+  </div>
+  <div class="row testnav"><button class="btn ghost" id="prev" ${p === 0 ? "disabled" : ""} aria-label="Vorherige Frage">${ic("left")}</button><button class="btn ghost" id="mark" aria-pressed="${!!r.mark[p]}">${r.mark[p] ? "Markiert" : "Markieren"}</button>${p < qs.length - 1 ? `<button class="btn" id="next" style="flex:1">Weiter ${ic("right")}</button>` : `<button class="btn" id="fin" style="flex:1">Abgeben</button>`}</div>`);
+ const go = np => { r.p = Math.max(0, Math.min(qs.length - 1, np)); save(); runTest(); };
+ if (q.t === "frei") { const ta = $("#ftxt"); let t; ta.oninput = () => { r.ans[p] = ta.value; clearTimeout(t); t = setTimeout(save, 400); }; ta.onblur = save; }
+ else $$(".opt").forEach(b => b.onclick = () => { r.ans[p] = +b.dataset.k; save(); $$(".opt").forEach(x => { const on = x === b; x.classList.toggle("sel", on); x.setAttribute("aria-checked", on); }); $(".bar i").style.width = Object.keys(r.ans).length / qs.length * 100 + "%"; });
+ $("#prev").onclick = () => go(p - 1);
+ $("#next")?.addEventListener("click", () => go(p + 1));
+ $("#fin")?.addEventListener("click", () => { r.view = "overview"; save(); runTest(true); });
+ $("#mark").onclick = () => { r.mark[p] = !r.mark[p]; if (!r.mark[p]) delete r.mark[p]; save(); runTest(); };
+ $("#ov").onclick = () => { r.view = "overview"; save(); runTest(); };
+ $("#abort").onclick = () => confirmBox("Probetest abbrechen?", "Deine Antworten werden verworfen.", "Test abbrechen", () => { S.run = null; save(); clearInterval(testTimer); location.replace("#pruefung"); });
+ function overview(sure) {
+  const open = qs.map((_, i) => i).filter(i => !answered(i));
+  page("pruefung", `<div class="row testbar"><button class="back" id="back" style="margin:0">${ic("left")} Zur Frage ${r.p + 1}</button>${r.end ? `<span class="timer" id="timer">${fmt(left())}</span>` : ""}</div>
+   <h1 style="margin:6px 0 4px">Übersicht</h1><p class="muted small">${qs.length - open.length} von ${qs.length} beantwortet${Object.keys(r.mark).length ? ` · ${Object.keys(r.mark).length} markiert` : ""}</p>
+   <div class="ovgrid">${qs.map((x, i) => `<button type="button" data-i="${i}" class="${answered(i) ? "done" : ""} ${r.mark[i] ? "mk" : ""}" aria-label="Frage ${i + 1}${answered(i) ? ", beantwortet" : ", offen"}${r.mark[i] ? ", markiert" : ""}">${i + 1}${x.t === "frei" ? "<small>T</small>" : ""}</button>`).join("")}</div>
+   <p class="small muted">T = Freitext · Rahmen = markiert</p>
+   ${sure && open.length ? `<div class="tip" role="alert">${ic("warn", 'style="color:var(--bad)"')}<span>${open.length} Frage${open.length === 1 ? " ist" : "n sind"} noch offen. Trotzdem abgeben?</span></div>` : ""}
+   <button class="btn block" id="submit">${sure && open.length ? "Trotzdem abgeben" : "Test abgeben"}</button>`);
+  $$(".ovgrid button").forEach(b => b.onclick = () => { r.view = null; r.p = +b.dataset.i; save(); runTest(); });
+  $("#back").onclick = () => { r.view = null; save(); runTest(); };
+  $("#submit").onclick = () => { if (open.length && !sure) return runTest(true); finishTest(false); };
+ }
+}
+function finishTest(timeout) {
+ clearInterval(testTimer);
+ const r = S.run; if (!r) return;
+ S.lastRun = { ids: r.ids, ans: r.ans, rated: {}, at: Date.now(), timeout: !!timeout, saved: false };
+ S.run = null; save();
+ if (timeout) toast("Die Zeit ist um – der Test wurde abgegeben");
+ location.replace("#auswertung"); if (location.hash === "#auswertung") viewAuswertung();
+}
+function viewAuswertung() {
+ const r = S.lastRun; if (!r) return viewPruefung();
+ const qs = r.ids.map(k => byKey.get(k)).filter(Boolean);
+ const sc = testScore(r);
+ if (sc.allRated && !r.saved) { r.saved = true; qs.forEach((q, i) => grade(q.key, q.t === "frei" ? r.rated[i] === 1 : r.ans[i] === q.c)); S.tests.push(sc.pct); save(); }
+ const fr = qs.map((q, i) => ({ q, i })).filter(x => x.q.t === "frei");
+ const wrong = qs.map((q, i) => ({ q, a: r.ans[i] })).filter(x => x.q.t !== "frei" && x.a !== x.q.c);
+ page("pruefung", `<h1 class="sr-only">Auswertung Probetest</h1><div class="qcard result"><div class="big-ring" aria-hidden="true">${ringSvg(sc.pct / 100, 150, 12, "var(--surface-2)", sc.pct >= PASS ? null : "var(--bad)")}<b>${sc.pct}%</b></div>
+  <h2 aria-live="polite">${!sc.allRated ? "Fast fertig – bewerte deine Freitexte" : sc.pct >= PASS ? `Bestanden (${sc.pct} %)` : `Noch nicht bestanden (${sc.pct} %)`}</h2>
+  <p class="muted">Multiple Choice: ${sc.mc} von ${sc.mcN} richtig${sc.frMax ? ` · Freitext: ${sc.allRated ? String(sc.fr).replace(".", ",") + " von " + sc.frMax + " Punkten" : "noch nicht bewertet"}` : ""}${r.timeout ? " · Zeit abgelaufen" : ""}</p><p class="small muted">Bestehensgrenze ${PASS} % (Annahme)</p></div>
+  ${fr.length ? `<div class="sec-h"><h2>Freitext selbst bewerten</h2></div><p class="small muted" style="margin:-4px 0 10px">Im echten Test korrigieren Fachdozent und IHK-Bildungszentrum. Sei streng: Teilpunkte nur, wenn wirklich Teile der Musterlösung drinstehen.</p>${fr.map(({ q, i }) => `<div class="card">${chip(q)}<p style="font-weight:700;margin:10px 0 6px">${esc(q.q)}</p><div class="answer">${r.ans[i] ? esc(r.ans[i]) : "<i>Keine Antwort</i>"}</div>${musterHtml(q, r.ans[i])}<div class="row" role="group" aria-label="Bewertung" style="margin-top:12px">${[[0, "0 Punkte"], [.5, "½ Punkt"], [1, "1 Punkt"]].map(([v, t]) => `<button type="button" class="btn ${r.rated[i] === v ? "" : "ghost"}" aria-pressed="${r.rated[i] === v}" data-i="${i}" data-v="${v}" style="flex:1">${t}</button>`).join("")}</div></div>`).join("")}` : ""}
+  ${sc.allRated ? `<div class="row" style="justify-content:center;margin:8px 0 20px"><a class="btn ghost" href="#pruefung">Zurück</a><button class="btn" id="again">Neuer Test</button></div>` : ""}
+  ${wrong.length ? `<div class="sec-h"><h2>Multiple Choice nacharbeiten</h2></div>${wrong.map(x => `<div class="card">${chip(x.q)}<p style="font-weight:700;margin-top:10px">${esc(x.q.q)}</p><p class="small bad-t">✗ Deine Antwort: ${x.a === undefined ? "keine" : esc(x.q.a[x.a])}</p><p class="small ok-t">✓ Richtig: ${esc(x.q.a[x.q.c])}</p><div class="fb ok" style="margin-top:8px">${esc(x.q.e)}</div></div>`).join("")}` : ""}`, { keep: !!viewAuswertung.keep });
+ viewAuswertung.keep = false;
+ $$("[data-v]").forEach(b => b.onclick = () => { if (r.saved) return toast("Dieser Test ist schon gewertet"); r.rated[b.dataset.i] = +b.dataset.v; save(); viewAuswertung.keep = true; viewAuswertung(); });
+ $("#again")?.addEventListener("click", () => { location.hash = "test"; });
+}
+// Eigene Rückfrage statt confirm() (in installierten Apps teils blockiert)
+function confirmBox(title, text, okLabel, onOk) {
+ $("#cbox")?.remove();
+ const el = document.createElement("div"); el.id = "cbox"; el.className = "cbox"; el.setAttribute("role", "alertdialog"); el.setAttribute("aria-modal", "true"); el.setAttribute("aria-labelledby", "cbox-h");
+ el.innerHTML = `<div class="cbox-in"><h2 id="cbox-h">${esc(title)}</h2><p class="muted">${esc(text)}</p><div class="row"><button class="btn ghost" id="cno" style="flex:1">Zurück</button><button class="btn danger" id="cyes" style="flex:1">${esc(okLabel)}</button></div></div>`;
+ document.body.appendChild(el);
+ const close = () => el.remove();
+ $("#cno", el).onclick = close; el.onclick = e => { if (e.target === el) close(); };
+ $("#cyes", el).onclick = () => { close(); onOk(); };
+ $("#cno", el).focus();
+}
+// Während eines laufenden Tests: Wegnavigieren nur nach Rückfrage
+document.addEventListener("click", e => {
+ const a = e.target.closest("a[href^='#']"); if (!a || !S.run || location.hash !== "#test") return;
+ if (a.getAttribute("href") === "#test") return;
+ e.preventDefault();
+ confirmBox("Test verlassen?", "Dein Test bleibt gespeichert und du kannst ihn unter „Prüfung“ fortsetzen. Die Zeit läuft weiter.", "Verlassen", () => { location.hash = a.getAttribute("href").slice(1); });
+}, true);
 
 /* ---------- Lehrgang & Karriere (IHK Dresden / HSB Akademie) ----------
    Angaben aus öffentlichen Kursbeschreibungen, Stand 11/2026 – ohne Gewähr. */
@@ -386,6 +521,7 @@ const SRC = {
  kurs: ["fernstudi.net – Social Media Manager/-in (IHK), HSB Akademie", "https://www.fernstudi.net/weiterbildung/wirtschaft/public-relations/13937"],
  zfu: ["ZFU – Zulassung Nr. 686514", "https://zfu.de/download-pdf/lehrgangssuche-uebersicht/686514"],
  hsb: ["HSB Akademie", "https://www.hsb-akademie.de"],
+ broschuere: ["HSB Akademie – Kursinformation Social Media Manager/-in (IHK), Stand 2026", "https://www.hsb-akademie.de"],
  step: ["StepStone – Gehalt Social Media Manager/in", "https://www.stepstone.de/gehalt/Social-Media-Manager-in.html"],
  indeed: ["Indeed – Gehalt Social Media Manager", "https://de.indeed.com/salaries/social-media-manager-Salaries,-DE"]
 };
@@ -396,40 +532,60 @@ function viewLehrgang() {
 
  <div class="card"><h2 style="margin-bottom:8px">${ic("cal", 'style="width:22px;height:22px;vertical-align:-4px"')} Dein Prüfungstermin</h2>
   <p class="small muted">Der Termin wird individuell mit dem IHK-Bildungszentrum abgestimmt. Trag ihn ein, sobald du ihn kennst.</p>
-  <div class="row" style="margin-top:10px"><input type="date" id="pdate" value="${esc(S.pruefung || "")}" style="flex:1;min-width:180px"><button class="btn ghost" id="pdel" ${S.pruefung ? "" : "hidden"}>Löschen</button></div>
-  ${dl !== null ? `<p style="margin-top:10px;font-weight:700">${dl > 0 ? `Noch ${dl} Tag${dl === 1 ? "" : "e"}.` : dl === 0 ? "Heute ist Prüfung – viel Erfolg!" : "Der Termin liegt in der Vergangenheit."}</p>` : ""}
+  <div class="row" style="margin-top:10px"><label class="sr-only" for="pdate">Prüfungstermin</label><input type="date" id="pdate" value="${esc(S.pruefung || "")}" style="flex:1;min-width:180px"><button class="btn ghost" id="pdel" ${S.pruefung ? "" : "hidden"}>Löschen</button></div>
+  <p style="margin-top:10px;font-weight:700" id="pinfo" aria-live="polite">${dl === null ? "" : dl > 0 ? `Noch ${dl} Tag${dl === 1 ? "" : "e"}.` : dl === 0 ? "Heute ist Prüfung – viel Erfolg!" : "Der Termin liegt in der Vergangenheit."}</p>
  </div>
+
+ <div class="sec-h"><h2>Der Lehrgang auf einen Blick</h2></div>
+ <div class="card"><dl class="facts">
+  <dt>Anbieter</dt><dd>HSB Akademie, Leipzig – Fernlehrgang, staatlich zugelassen (ZFU-Nr. 686514)</dd>
+  <dt>Start</dt><dd>Jeden Montag möglich</dd>
+  <dt>Dauer</dt><dd>4 Monate, etwa 10 Stunden pro Woche</dd>
+  <dt>Vorlesung</dt><dd>1 Live-Onlinevorlesung pro Woche (montags 18:30–20:00 Uhr), mit Aufzeichnung</dd>
+  <dt>Workshops</dt><dd>2 Workshoptage, online oder vor Ort – freiwillig, aber empfohlen</dd>
+  <dt>Betreuung</dt><dd>Sprechstunden mit den Dozierenden, Studienbetreuung</dd>
+  <dt>Ausprobieren</dt><dd>Kostenlose Schnuppervorlesung</dd>
+ </dl>${src("broschuere", "zfu")}</div>
 
  <div class="sec-h"><h2>So läuft der Lehrgang ab</h2></div>
  <ol class="road">
-  <li><b>Anmeldung bei der HSB Akademie</b><span>Fernlehrgang aus Leipzig, staatlich zugelassen (ZFU-Nr. 686514). Besondere Voraussetzungen gibt es nicht; Grundkenntnisse in Englisch, Marketing und am PC sind hilfreich.</span></li>
-  <li><b>Selbstlernphase online</b><span>Lernmodule auf dem Onlinecampus zu den sechs Themen, die du auch hier in der App findest. Rechne mit etwa 8–10 Stunden pro Woche.</span></li>
-  <li><b>Online-Vorlesungen</b><span>Live-Vorlesungen montags 18:30–20:00 Uhr – je nach Angabe 14 bis 16 Termine.</span></li>
-  <li><b>Zwei Workshops</b><span>Zwei ganztägige Workshops (9–16 Uhr). Die Teilnahme ist freiwillig, aber empfohlen.</span></li>
-  <li><b>Abschlusstest beim IHK-Bildungszentrum Dresden</b><span>Wenn alle Module bearbeitet sind und du nachweist, dass du ausreichend vorbereitet bist, wird der Termin individuell abgestimmt.</span></li>
-  <li><b>IHK-Zertifikat</b><span>Mit bestandenem Test erhältst du das Zertifikat „Social Media Manager/-in (IHK)“. Ohne IHK-Test ist auch ein Abschluss mit HSB-Zertifikat möglich.</span></li>
+  <li><b>Anmeldung bei der HSB Akademie</b><span>Besondere Voraussetzungen gibt es nicht; Grundkenntnisse in Englisch, Marketing und am PC sind hilfreich.</span></li>
+  <li><b>Sechs Themenbereiche</b><span>Routenplaner Web 2.0 · Plattformen & Tools · Einbettung ins Unternehmen · Recht · Monitoring & Controlling · Planung & Umsetzung. Die App folgt genau dieser Gliederung.</span></li>
+  <li><b>Hausaufgabe nach jedem Themenbereich</b><span>Eine praxisbezogene Lernerfolgskontrolle mit individuellem Feedback der Dozierenden.</span></li>
+  <li><b>Zulassung zum Test</b><span>Erst wenn alle Lernerfolgskontrollen eingereicht sind. Den Wunschtermin vereinbarst du mit der Studienbetreuung – auch samstags möglich.</span></li>
+  <li><b>Abschlusstest</b><span>60 Minuten auf einem Online-Portal des IHK-Bildungszentrums Dresden.</span></li>
+  <li><b>IHK-Zertifikat</b><span>Nach bestandenem Test vom IHK-Bildungszentrum Dresden gGmbH: „Social Media Manager/-in (IHK)“. Ohne IHK-Test ist auch ein HSB-Zertifikat möglich.</span></li>
  </ol>
- ${src("kurs", "zfu")}
+ ${src("broschuere", "kurs")}
 
  <div class="sec-h"><h2>Der Abschlusstest</h2></div>
  <div class="card"><dl class="facts">
-  <dt>Form</dt><dd>Online-Test, von zu Hause – kein Prüfungszentrum</dd>
+  <dt>Form</dt><dd>Online-Test von zu Hause, personalisiert</dd>
   <dt>Umfang</dt><dd>30 Fragen, Multiple Choice und Freitext</dd>
   <dt>Dauer</dt><dd>60 Minuten</dd>
+  <dt>Korrektur</dt><dd>Fachdozent und IHK-Bildungszentrum Dresden</dd>
   <dt>Prüfende Stelle</dt><dd>IHK-Bildungszentrum Dresden gGmbH</dd>
-  <dt>Bestehen</dt><dd>Nicht veröffentlicht – die App rechnet mit ${PASS} % (Annahme)</dd>
+  <dt>Testgebühr</dt><dd>205 €, in der Kursgebühr enthalten</dd>
  </dl>
+ <h3 style="margin:14px 0 6px">Nicht veröffentlicht – in der App angenommen</h3>
+ <ul class="ticks small">
+  <li>Bestehensgrenze: die App rechnet mit ${PASS} %</li>
+  <li>Anteil Freitext: die App nimmt 8 von 30 Fragen an</li>
+  <li>Je Multiple-Choice-Frage genau eine richtige Antwort</li>
+  <li>Vor- und Zurückspringen im Test erlaubt</li>
+ </ul>
+ <p class="small muted">Frag am besten deine Studienbetreuung oder Dozierenden.</p>
  <div class="tip good" style="margin-top:12px">${ic("bolt", 'style="color:var(--ok)"')}<span><b>Tipp:</b> Bei Freitext-Fragen in Stichpunkten antworten und genau so viele Punkte nennen, wie gefragt sind. Das trainierst du unter <a href="#quiz-frei" style="text-decoration:underline">Freitext üben</a>.</span></div>
- ${src("kurs")}</div>
+ ${src("broschuere", "kurs")}</div>
 
  <div class="sec-h"><h2>Kosten & Förderung</h2></div>
  <div class="card"><dl class="facts">
-  <dt>Mit IHK-Zertifikat</dt><dd>1.905 € gesamt, inklusive IHK-Testgebühr (umsatzsteuerbefreit)</dd>
+  <dt>Mit IHK-Zertifikat</dt><dd>1.905 € gesamt inklusive 205 € IHK-Testgebühr (umsatzsteuerbefreit)</dd>
+  <dt>Zahlung</dt><dd>Einmalig oder in 4 zinslosen Raten</dd>
   <dt>Nur HSB-Zertifikat</dt><dd>1.700 €</dd>
-  <dt>Zahlung</dt><dd>Zinslose Ratenzahlung möglich</dd>
-  <dt>Förderung</dt><dd>Bildungsgutschein laut Anbieter möglich – vorher bei Agentur für Arbeit oder Jobcenter klären</dd>
+  <dt>Förderung</dt><dd>Laut Anbieter möglich, z. B. Bildungsgutschein – vorher bei Agentur für Arbeit oder Jobcenter klären</dd>
   <dt>Steuer</dt><dd>Berufliche Weiterbildung ist in der Regel als Werbungskosten absetzbar</dd>
- </dl>${src("kurs")}</div>
+ </dl>${src("broschuere", "kurs")}</div>
 
  <div class="sec-h"><h2>Karriere & Gehalt</h2></div>
  <div class="card">
@@ -452,8 +608,8 @@ function viewLehrgang() {
  <div class="tip good">${ic("check", 'style="color:var(--ok)" stroke-width="3"')}<span><b>Tipp für Bewerbungen:</b> Zeig ein kleines Portfolio – z. B. eine Beispielstrategie, einen Redaktionsplan und ein Reporting. Das Zertifikat gehört ins LinkedIn-Profil.</span></div>
 
  <p class="small muted" style="margin:24px 0 0">SMM Coach ist ein unabhängiges Lernangebot und kein offizielles Angebot der IHK Dresden, des IHK-Bildungszentrums Dresden oder der HSB Akademie. Alle Angaben ohne Gewähr, Stand November 2026. Verbindlich sind die Informationen des Anbieters.</p>`);
- $("#pdate").onchange = e => { S.pruefung = e.target.value; save(); toast(S.pruefung ? "Prüfungstermin gespeichert" : "Termin gelöscht"); viewLehrgang(); };
- $("#pdel").onclick = () => { S.pruefung = ""; save(); viewLehrgang(); };
+ $("#pdate").onchange = e => { S.pruefung = e.target.value; save(); toast(S.pruefung ? "Prüfungstermin gespeichert" : "Termin gelöscht"); const dl = daysLeft(), el = $("#pinfo"); if (el) el.textContent = dl === null ? "" : dl > 0 ? `Noch ${dl} Tag${dl === 1 ? "" : "e"}.` : dl === 0 ? "Heute ist Prüfung – viel Erfolg!" : "Der Termin liegt in der Vergangenheit."; $("#pdel").hidden = !S.pruefung; };
+ $("#pdel").onclick = () => { S.pruefung = ""; save(); $("#pdate").value = ""; $("#pinfo").textContent = ""; $("#pdel").hidden = true; };
 }
 
 /* ---------- Start ---------- */
@@ -466,7 +622,7 @@ if ("serviceWorker" in navigator && location.protocol === "https:" && !/claude|c
    Handy/Tablet im Browser: Vollbild-Hinweis „Zuerst installieren“ bei jedem neuen Besuch.
    „Im Browser weiter“ gilt 6 Stunden, danach erscheint der Hinweis wieder. Solange: Balken oben. */
 const APP_URL = "https://smm.micana.de";
-const GATE_KEY = "smm.gateSkip", GATE_HOURS = 6;
+const GATE_KEY = "smm.gateSkip";
 let deferredPrompt = null, appInstalled = false;
 addEventListener("beforeinstallprompt", e => { e.preventDefault(); deferredPrompt = e; $$('[data-act="native-install"]').forEach(b => b.hidden = false); });
 addEventListener("appinstalled", () => { appInstalled = true; toast("App installiert"); if ($("#gate")) installGate(true); });
@@ -511,7 +667,7 @@ const installGuide = p => `<p class="small muted" style="margin:0 0 10px">Erkann
  <button class="btn block" data-act="native-install" ${deferredPrompt ? "" : "hidden"} style="margin-bottom:12px">Jetzt installieren</button>
  <ol class="isteps">${installSteps(p.os, p.browser).map(s => `<li>${esc(s).replace(/\{S\}/g, SHARE)}</li>`).join("")}</ol>`;
 async function nativeInstall() { if (!deferredPrompt) return; deferredPrompt.prompt(); const r = await deferredPrompt.userChoice; deferredPrompt = null; if (r.outcome === "accepted") { appInstalled = true; if ($("#gate")) installGate(true); } }
-const gateSkipped = () => { try { return Date.now() - (+localStorage.getItem(GATE_KEY) || 0) < GATE_HOURS * 3600000; } catch (e) { return false; } };
+const gateSkipped = () => { try { return !!localStorage.getItem(GATE_KEY); } catch (e) { return false; } };
 async function detectInstalled() { try { const a = await navigator.getInstalledRelatedApps?.(); if (a && a.length) appInstalled = true; } catch (e) {} return appInstalled; }
 function installGate(force) {
  const p = platform();
@@ -528,7 +684,9 @@ function installGate(force) {
    : `<h1 id="gate-h" tabindex="-1">Zuerst die App installieren</h1><p class="muted" style="margin:8px 0 16px">Dauert 20 Sekunden – danach lernst du wie in einer richtigen App.</p>
     <div class="card"><h3 style="margin-bottom:10px">So geht's</h3>${installGuide(p)}${p.browser === "inapp" || p.browser === "other" ? `<button class="btn ghost" data-act="copy-url" style="margin-top:6px">Adresse kopieren</button>` : ""}</div>
     <ul class="gate-why"><li>${ic("check", 'stroke-width="3"')}<span><b>Immer auf dem Startbildschirm</b> – ein Tipp, und du lernst weiter.</span></li><li>${ic("check", 'stroke-width="3"')}<span><b>Funktioniert ohne Internet</b> – auch in Bahn und Pause.</span></li><li>${ic("check", 'stroke-width="3"')}<span><b>Dein Lernstand ist sicherer</b> – der Browser löscht ihn nicht so leicht.</span></li></ul>
-    ${p.os === "ios" && p.browser !== "inapp" ? `<div class="tip">${ic("warn", 'style="color:var(--bad)"')}<span>Wichtig auf iPhone und iPad: Was du hier im Browser lernst, wird <b>nicht</b> in die installierte App übernommen. Installiere deshalb jetzt zuerst.</span></div>` : ""}`}
+    ${p.os === "ios" && p.browser !== "inapp" ? (hasProgress(S)
+      ? `<div class="tip">${ic("warn", 'style="color:var(--bad)"')}<span><b>Deinen Lernstand mitnehmen:</b> Auf iPhone und iPad hat die installierte App einen eigenen Speicher. Erstelle jetzt eine Sicherung, installiere die App und tippe dort in den Einstellungen auf „Wiederherstellen“.</span></div><button class="btn block" data-act="backup" style="margin-bottom:8px">${ic("download")} Sicherung erstellen</button>`
+      : `<div class="tip">${ic("warn", 'style="color:var(--bad)"')}<span>Wichtig auf iPhone und iPad: Was du hier im Browser lernst, wird <b>nicht</b> in die installierte App übernommen. Installiere deshalb am besten jetzt.</span></div>`) : ""}`}
    <button class="gate-skip" data-act="gate-skip">${appInstalled ? "Trotzdem im Browser weiter" : "Ohne Installation im Browser weiter"}</button></div>`;
  };
  draw();
@@ -537,6 +695,7 @@ function installGate(force) {
  el.onclick = async e => {
   const t = e.target;
   if (t.closest('[data-act="native-install"]')) return nativeInstall();
+  if (t.closest('[data-act="backup"]')) return exportBackup();
   if (t.closest('[data-act="copy-url"]')) { try { await navigator.clipboard.writeText(APP_URL); toast("Adresse kopiert – im Browser einfügen"); } catch (x) { toast(APP_URL); } return; }
   if (t.closest('[data-act="gate-skip"]')) { try { localStorage.setItem(GATE_KEY, String(Date.now())); } catch (x) {} el.remove(); document.body.classList.remove("no-scroll"); nag(); }
  };
@@ -553,57 +712,71 @@ function nag() {
 installGate();
 
 /* ---------- Glossar & Formeln ---------- */
-function viewGlossar(tab = "begriffe", qy = "") {
- const norm = t => t.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "");
- const items = GLOSSAR.filter(g => !qy || norm(g.w + " " + g.d).includes(norm(qy))).sort((a, b) => a.w.localeCompare(b.w, "de"));
- const fs = FORMELN.filter(f => !qy || norm(f.n + " " + f.f).includes(norm(qy)));
+function viewGlossar() {
+ let tab = "begriffe";
  page("lernen", `<a class="back" href="#lernen">${ic("left")} Lernen</a><h1 style="margin-bottom:12px">Glossar & Formeln</h1>
- <div class="searchbox">${ic("search")}<input type="search" id="gq" placeholder="Begriff suchen …" value="${esc(qy)}" aria-label="Begriff suchen"></div>
- <div class="seg" role="tablist"><button role="tab" data-t="begriffe" aria-selected="${tab === "begriffe"}" class="${tab === "begriffe" ? "on" : ""}">Begriffe (${items.length})</button><button role="tab" data-t="formeln" aria-selected="${tab === "formeln"}" class="${tab === "formeln" ? "on" : ""}">Formeln (${fs.length})</button></div>
- <div id="glist">${tab === "begriffe"
-  ? (items.length ? items.map(g => { const m = modById(g.m); return `<div class="gl" style="--m:${m.farbe}"><b>${esc(g.w)}</b><p>${esc(g.d)}</p><span class="small muted">${m.kurz}</span></div>`; }).join("") : `<p class="muted">Kein Begriff gefunden.</p>`)
-  : (fs.length ? fs.map(f => `<div class="card formel"><b>${esc(f.n)}</b><div class="eq">${esc(f.f)}</div><p class="small"><b>Beispiel:</b> ${esc(f.b)}</p>${f.h ? `<p class="small muted">${esc(f.h)}</p>` : ""}</div>`).join("") : `<p class="muted">Keine Formel gefunden.</p>`)}</div>`);
- const inp = $("#gq");
- inp.oninput = () => { const v = inp.value, pos = inp.selectionStart; viewGlossar(tab, v); const n = $("#gq"); n.focus(); n.setSelectionRange(pos, pos); };
- $$(".seg button").forEach(b => b.onclick = () => viewGlossar(b.dataset.t, inp.value));
+ <div class="searchbox">${ic("search")}<input type="search" id="gq" placeholder="Begriff suchen …" aria-label="Begriff suchen" autocomplete="off"></div>
+ <div class="seg" role="tablist" aria-label="Ansicht"><button type="button" role="tab" data-t="begriffe" aria-selected="true" class="on">Begriffe</button><button type="button" role="tab" data-t="formeln" aria-selected="false">Formeln</button></div>
+ <p class="sr-only" id="gcount" aria-live="polite"></p><div id="glist"></div>`);
+ const norm = t => t.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "");
+ const draw = () => {
+  const qy = $("#gq").value;
+  const items = GLOSSAR.filter(g => !qy || norm(g.w + " " + g.d).includes(norm(qy))).sort((a, b) => a.w.localeCompare(b.w, "de"));
+  const fs = FORMELN.filter(f => !qy || norm(f.n + " " + f.f).includes(norm(qy)));
+  $$(".seg button").forEach(b => { const on = b.dataset.t === tab; b.classList.toggle("on", on); b.setAttribute("aria-selected", on); b.textContent = (b.dataset.t === "begriffe" ? "Begriffe" : "Formeln") + ` (${b.dataset.t === "begriffe" ? items.length : fs.length})`; });
+  $("#gcount").textContent = tab === "begriffe" ? `${items.length} Begriffe` : `${fs.length} Formeln`;
+  $("#glist").innerHTML = tab === "begriffe"
+   ? (items.length ? items.map(g => { const m = modById(g.m) || MODULE[0]; return `<div class="gl" style="--m:${m.farbe}"><h2 class="gw">${esc(g.w)}</h2><p>${esc(g.d)}</p><span class="small muted">${m.kurz}</span></div>`; }).join("") : `<p class="muted">Kein Begriff gefunden.</p>`)
+   : (fs.length ? fs.map(f => `<div class="card formel"><h2 class="gw">${esc(f.n)}</h2><div class="eq">${esc(f.f)}</div><p class="small"><b>Beispiel:</b> ${esc(f.b)}</p>${f.h ? `<p class="small muted">${esc(f.h)}</p>` : ""}</div>`).join("") : `<p class="muted">Keine Formel gefunden.</p>`);
+ };
+ $("#gq").addEventListener("input", draw);
+ $$(".seg button").forEach(b => b.onclick = () => { tab = b.dataset.t; draw(); });
+ draw();
 }
 
 /* ---------- Einstellungen & Datensicherung ---------- */
 function exportBackup() {
- S.lastBackup = Date.now(); save();
  const blob = new Blob([JSON.stringify({ app: "smm-coach", v: 1, date: new Date().toISOString(), data: S }, null, 1)], { type: "application/json" });
  const name = `smm-coach-sicherung-${new Date().toISOString().slice(0, 10)}.json`;
+ const done = () => { S.lastBackup = Date.now(); save(); toast("Sicherung erstellt"); if (location.hash === "#einstellungen") viewEinstellungen({ keep: true }); };
  const file = new File([blob], name, { type: "application/json" });
- if (navigator.canShare?.({ files: [file] }) && platform().os !== "desktop") { navigator.share({ files: [file], title: "SMM Coach Sicherung" }).catch(() => {}); return; }
+ // Erst nach erfolgreichem Teilen/Herunterladen als gesichert merken
+ if (navigator.canShare?.({ files: [file] }) && platform().os !== "desktop") { navigator.share({ files: [file], title: "SMM Coach Sicherung" }).then(done).catch(() => toast("Sicherung nicht abgeschlossen")); return; }
  const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = name; document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 1000);
- toast("Sicherung erstellt");
+ done();
 }
+const summary = st => `${Object.values(st.lek || {}).filter(Boolean).length} Lektionen, ${Object.keys(st.q || {}).length} Fragen bearbeitet, ${(st.tests || []).length} Probetests`;
 function importBackup(file) {
  const r = new FileReader();
  r.onload = () => {
   try {
    const x = JSON.parse(r.result);
-   if (x.app !== "smm-coach" || !x.data) throw new Error();
-   S = Object.assign(DEF(), x.data); save(); applySettings(); toast("Lernstand wiederhergestellt"); viewEinstellungen();
+   const d = x && x.data;
+   if (x.app !== "smm-coach" || !d || typeof d !== "object" || typeof (d.lek || {}) !== "object" || typeof (d.q || {}) !== "object" || !Array.isArray(d.tests || [])) throw new Error();
+   viewEinstellungen({ keep: true, pending: x });
   } catch (e) { toast("Das ist keine gültige SMM-Coach-Sicherung"); }
  };
  r.readAsText(file);
 }
-function viewEinstellungen(confirmReset = false) {
- const seg = (key, opts) => `<div class="seg">${opts.map(([v, t]) => `<button data-${key}="${v}" class="${(S.set[key] || "") === v ? "on" : ""}">${t}</button>`).join("")}</div>`;
+function viewEinstellungen(o = {}) {
+ const confirmReset = !!o.reset, pend = o.pending;
+ const seg = (key, opts, label) => `<div class="seg" role="group" aria-label="${label}">${opts.map(([v, t]) => `<button type="button" data-${key}="${v}" aria-pressed="${(S.set[key] || "") === v}" class="${(S.set[key] || "") === v ? "on" : ""}">${t}</button>`).join("")}</div>`;
  const lb = S.lastBackup ? new Date(S.lastBackup).toLocaleDateString("de-DE") : "noch nie";
- page("start", `<a class="back" href="#start">${ic("left")} Start</a><h1 style="margin-bottom:16px">Einstellungen</h1>
- <div class="card"><h3>Schriftgröße</h3><p class="small muted" style="margin:2px 0 10px">Gilt für die ganze App.</p>${seg("size", [["s", "Klein"], ["m", "Normal"], ["l", "Groß"], ["xl", "Sehr groß"]])}</div>
- <div class="card"><h3>Design</h3><p class="small muted" style="margin:2px 0 10px">„Automatisch“ folgt der Einstellung deines Geräts.</p>${seg("theme", [["auto", "Automatisch"], ["light", "Hell"], ["dark", "Dunkel"]])}</div>
- <div class="card"><h3>Lernstand sichern</h3><p class="small muted" style="margin:2px 0 12px">Dein Fortschritt liegt nur auf diesem Gerät. Mit einer Sicherungsdatei kannst du ihn wiederherstellen oder auf ein anderes Gerät mitnehmen. Letzte Sicherung: ${lb}.</p>
+ page("start", `<a class="back" href="#start">${ic("left")} Start</a><h1 style="margin-bottom:16px" tabindex="-1">Einstellungen</h1>
+ <div class="card"><h2 class="h3">Schriftgröße</h2><p class="small muted" style="margin:2px 0 10px">Gilt für die ganze App.</p>${seg("size", [["s", "Klein"], ["m", "Normal"], ["l", "Groß"], ["xl", "Sehr groß"]], "Schriftgröße")}</div>
+ <div class="card"><h2 class="h3">Design</h2><p class="small muted" style="margin:2px 0 10px">„Automatisch“ folgt der Einstellung deines Geräts.</p>${seg("theme", [["auto", "Automatisch"], ["light", "Hell"], ["dark", "Dunkel"]], "Design")}</div>
+ <div class="card" id="sicherung"><h2 class="h3">Lernstand sichern</h2><p class="small muted" style="margin:2px 0 12px">Dein Fortschritt liegt nur auf diesem Gerät. Mit einer Sicherungsdatei kannst du ihn wiederherstellen oder auf ein anderes Gerät mitnehmen. Letzte Sicherung: ${lb}.</p>
   <div class="row"><button class="btn" id="exp">${ic("download")} Sicherung erstellen</button><label class="btn ghost" for="imp">${ic("upload")} Wiederherstellen</label><input type="file" id="imp" accept="application/json,.json" hidden></div>
+  ${pend ? `<div class="tip" role="alert" style="margin-top:12px">${ic("warn", 'style="color:var(--bad)"')}<span><b>Lernstand ersetzen?</b><br>Sicherung vom ${esc(new Date(pend.date || 0).toLocaleDateString("de-DE"))}: ${summary(pend.data)}.<br>Aktuell auf diesem Gerät: ${summary(S)}.</span></div><div class="row"><button class="btn ghost" id="impno">Abbrechen</button><button class="btn" id="impyes">Ersetzen</button></div>` : ""}
   <p class="small muted" style="margin-top:10px" id="storeinfo"></p></div>
- <div class="card"><h3>App</h3><p class="small muted" style="margin:2px 0 10px">Installierte Version: ${VERSION}</p><div class="row" style="margin-top:8px"><button class="btn" id="upchk">${ic("repeat")} Nach Updates suchen</button><button class="btn ghost" id="inst">Als App installieren</button><a class="btn ghost" href="#lehrgang">Prüfungstermin</a></div></div>
- <div class="card"><h3>Fortschritt löschen</h3><p class="small muted" style="margin:2px 0 12px">Löscht Lektionen, Fragen, Wiederholungen und Testergebnisse auf diesem Gerät.</p>
+ <div class="card"><h2 class="h3">App</h2><p class="small muted" style="margin:2px 0 10px">Installierte Version: ${VERSION}</p><div class="row" style="margin-top:8px"><button class="btn" id="upchk">${ic("repeat")} Nach Updates suchen</button><button class="btn ghost" id="inst">Als App installieren</button><a class="btn ghost" href="#lehrgang">Prüfungstermin</a></div></div>
+ <div class="card" id="loeschen"><h2 class="h3">Fortschritt löschen</h2><p class="small muted" style="margin:2px 0 12px">Löscht Lektionen, Fragen, Wiederholungen und Testergebnisse auf diesem Gerät.</p>
   ${confirmReset ? `<div class="tip">${ic("warn", 'style="color:var(--bad)"')}<span>Wirklich alles löschen? Das lässt sich nur mit einer Sicherungsdatei rückgängig machen.</span></div><div class="row"><button class="btn ghost" id="rno">Abbrechen</button><button class="btn danger" id="ryes">${ic("trash")} Endgültig löschen</button></div>` : `<button class="btn ghost" id="reset">${ic("trash")} Fortschritt löschen</button>`}</div>
- <p class="small muted" style="text-align:center;margin-top:20px">SMM Coach · Version ${VERSION}<br>Unabhängiges Lernangebot, kein offizielles Angebot der IHK oder der HSB Akademie.</p>`);
- $$("[data-size]").forEach(b => b.onclick = () => { S.set.size = b.dataset.size; save(); applySettings(); viewEinstellungen(); });
- $$("[data-theme]").forEach(b => b.onclick = () => { S.set.theme = b.dataset.theme; save(); applySettings(); viewEinstellungen(); });
+ <p class="small muted" style="text-align:center;margin-top:20px">SMM Coach · Version ${VERSION}<br>Unabhängiges Lernangebot, kein offizielles Angebot der IHK oder der HSB Akademie.</p>`, { keep: o.keep });
+ $$("[data-size]").forEach(b => b.onclick = () => { S.set.size = b.dataset.size; save(); applySettings(); viewEinstellungen({ keep: true }); });
+ $$("[data-theme]").forEach(b => b.onclick = () => { S.set.theme = b.dataset.theme; save(); applySettings(); viewEinstellungen({ keep: true }); });
+ $("#impno")?.addEventListener("click", () => viewEinstellungen({ keep: true }));
+ $("#impyes")?.addEventListener("click", () => { S = Object.assign(DEF(), pend.data); normalizeState(); save(); applySettings(); toast("Lernstand wiederhergestellt"); viewEinstellungen({ keep: true }); });
  $("#exp").onclick = exportBackup;
  $("#upchk").onclick = async () => {
   const b = $("#upchk"); b.disabled = true; b.textContent = "Suche …";
@@ -620,9 +793,11 @@ function viewEinstellungen(confirmReset = false) {
  };
  $("#imp").onchange = e => e.target.files[0] && importBackup(e.target.files[0]);
  $("#inst").onclick = () => { const p = platform(); if (p.standalone) toast("Die App ist bereits installiert"); else if (p.os === "desktop") toast("Am Computer: Installieren-Symbol in der Adresszeile"); else installGate(true); };
- $("#reset")?.addEventListener("click", () => viewEinstellungen(true));
- $("#rno")?.addEventListener("click", () => viewEinstellungen());
- $("#ryes")?.addEventListener("click", () => { const keep = { set: S.set, lastBackup: S.lastBackup }; S = Object.assign(DEF(), keep); save(); toast("Fortschritt gelöscht"); location.hash = "start"; });
+ $("#reset")?.addEventListener("click", () => viewEinstellungen({ keep: true, reset: true }));
+ $("#rno")?.addEventListener("click", () => viewEinstellungen({ keep: true }));
+ if (confirmReset) $("#ryes")?.focus({ preventScroll: false });
+ if (pend) $("#impyes")?.scrollIntoView({ block: "center" });
+ $("#ryes")?.addEventListener("click", () => { const keep = { set: S.set, lastBackup: S.lastBackup }; S = Object.assign(DEF(), keep); save(); toast("Fortschritt gelöscht"); location.replace("#start"); });
  (async () => { try { const p = await navigator.storage?.persisted?.(); $("#storeinfo").textContent = `${IDB.db ? "✓ Doppelte Speicherung aktiv" : "Nur einfache Speicherung"} · ${p ? "✓ Dauerhafter Speicher vom Browser bestätigt" : "Dauerhafter Speicher nicht bestätigt – am sichersten: App installieren und ab und zu sichern."}`; } catch (e) {} })();
 }
 
@@ -640,6 +815,7 @@ if ("serviceWorker" in navigator && location.protocol === "https:") {
   if (reg.waiting && navigator.serviceWorker.controller) updateBanner(reg.waiting);
   reg.addEventListener("updatefound", () => { const w = reg.installing; w?.addEventListener("statechange", () => { if (w.state === "installed" && navigator.serviceWorker.controller) updateBanner(w); }); });
   setInterval(() => reg.update().catch(() => {}), 60 * 60000);
+  document.addEventListener("visibilitychange", () => { if (document.visibilityState === "visible") reg.update().catch(() => {}); });
  }).catch(() => {});
  let reloaded = false;
  navigator.serviceWorker.addEventListener("controllerchange", () => { if (!reloaded && $("#upd")) { reloaded = true; location.reload(); } });
