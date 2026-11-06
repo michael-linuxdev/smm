@@ -19,7 +19,7 @@ export const GRUNDWORTSCHATZ = { id: "grundwortschatz", titel: "Grundwortschatz 
  { k: "liste", h: "Woran messen wir Erfolg?", l: [
   "**KPI:** Kennzahl, die zeigt, ob ein Ziel erreicht ist",
   "**Conversion-Rate:** Anteil der Klickenden, die wirklich bestellen",
-  "**ROI:** Was hat die Werbung im Verhältnis zu den Kosten gebracht?",
+  "**ROI:** Wie viel Gewinn hat die Werbung im Verhältnis zu den Kosten gebracht?",
   "**Vanity Metrics:** schöne Zahlen wie Likes, die wenig über Umsatz sagen"
  ] },
  { k: "check", q: "Bei der Dinkelbrot-Kampagne bestellen 10 Personen wirklich. Wie heißt diese gewünschte Handlung im Marketing?", a: [

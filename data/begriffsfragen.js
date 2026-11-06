@@ -55,7 +55,7 @@ export const BEGRIFFSFRAGEN = [
  { m: "platt", q: "Was beschreibt „organische Reichweite“?", a: [
   "Reichweite, die ohne bezahlte Anzeigen entsteht",
   "Reichweite bei Menschen, die sich für Bio-Produkte interessieren",
-  "Reichweite, die durch gekaufte Follower erzielt wird",
+  "Reichweite, die nur innerhalb der eigenen Stadt entsteht",
   "Reichweite, die ausschließlich über Anzeigen eingekauft wird"
  ], c: 0, e: "„Organisch“ heißt hier: natürlich gewachsen, unbezahlt. Bezahlte Reichweite entsteht über Anzeigen (Paid)." },
  { m: "platt", q: "Was ist ein „Prompt“ bei der Arbeit mit KI-Tools?", a: [
@@ -147,11 +147,11 @@ export const BEGRIFFSFRAGEN = [
   "Das Schweigen einer Person, wenn sie einem Foto nicht widerspricht"
  ], c: 0, e: "Schweigen oder ein vorangekreuztes Kästchen reichen nicht. Eine Einwilligung kann jederzeit für die Zukunft widerrufen werden (Art. 7 DSGVO)." },
  { m: "recht", q: "Was ist ein „Nutzungsrecht“ an einem Foto?", a: [
-  "Die Erlaubnis des Urhebers, das Foto auf eine bestimmte Weise zu nutzen",
+  "Die Erlaubnis des Urhebers oder Rechteinhabers, das Foto auf eine bestimmte Weise zu nutzen",
   "Das Recht, jedes öffentlich auffindbare Foto mit Quellenangabe zu posten",
   "Das Eigentum an der Kamera, mit der das Foto gemacht wurde",
   "Die Pflicht, abgebildete Personen im Beitrag zu markieren"
- ], c: 0, e: "Wer ein fremdes Foto nutzen will, braucht eine Lizenz. Eine Quellenangabe allein ersetzt die Erlaubnis nicht." },
+ ], c: 0, e: "Wer ein fremdes Foto nutzen will, braucht eine Lizenz – vom Urheber selbst oder z. B. von einer Bildagentur. Eine Quellenangabe allein ersetzt die Erlaubnis nicht." },
  { m: "recht", q: "Was ist ein „Tracking-Pixel“?", a: [
   "Unsichtbarer Code, der Website-Besuche an eine Plattform meldet",
   "Der kleinste Bildpunkt eines Fotos in einem Beitrag",
@@ -209,17 +209,17 @@ export const BEGRIFFSFRAGEN = [
   "Klicks pro Anzeige und Tag"
  ], c: 0, e: "CPA = Cost per Action/Acquisition: Kosten ÷ Conversions. Kosten pro 1.000 Impressionen ist der CPM, Kosten pro Klick der CPC." },
  { m: "kpi", q: "Was zeigt die Engagement-Rate?", a: [
-  "Wie viele der Erreichten mit einem Beitrag interagieren",
+  "Wie stark die Erreichten mit einem Beitrag interagieren – Interaktionen im Verhältnis zur Reichweite",
   "Wie viele Mitarbeitende Beiträge des Unternehmens teilen",
   "Wie viele neue Follower ein Profil pro Monat gewinnt",
   "Wie lange ein Video im Durchschnitt angesehen wird"
  ], c: 0, e: "Engagement-Rate = Interaktionen ÷ Reichweite × 100. Im Bericht immer angeben, worauf sie bezogen ist (Reichweite, Follower oder Impressionen)." },
  { m: "kpi", q: "Was beschreibt die „Bounce Rate“ (Absprungrate) einer Website?", a: [
   "Den Anteil der Besucher, die ohne weitere Aktion wieder gehen",
-  "Den Anteil der E-Mails, die nicht zugestellt werden konnten",
+  "Den Anteil der Besucher, die über eine Anzeige auf die Seite kommen",
   "Den Anteil der Follower, die ein Profil wieder entfolgen",
   "Den Anteil der Anzeigen, die von der Plattform abgelehnt werden"
- ], c: 0, e: "Eine hohe Absprungrate nach einem Anzeigenklick deutet oft darauf hin, dass Anzeige und Zielseite nicht zusammenpassen." },
+ ], c: 0, e: "Eine hohe Absprungrate nach einem Anzeigenklick deutet oft darauf hin, dass Anzeige und Zielseite nicht zusammenpassen. Im E-Mail-Marketing heißt „Bounce“ übrigens etwas anderes: eine unzustellbare Mail." },
  { m: "kpi", q: "Was beschreibt der „Share of Voice“?", a: [
   "Den Anteil der eigenen Marke an allen Erwähnungen im Markt",
   "Den Anteil der Beiträge, die als Sprachnachricht erscheinen",
