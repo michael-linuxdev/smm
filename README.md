@@ -7,7 +7,7 @@ Lern-App (PWA) zum Zertifikatslehrgang **Social Media Manager/-in (IHK)** – au
 - **Prüfung:** Probetest mit 30 Fragen (Multiple Choice + Freitext), 60 Minuten oder ohne Zeitlimit, Vor/Zurück, Markieren, Übersicht, Teilpunkte beim Freitext
 - **Lehrgang:** Ablauf, Kosten, Termine, Karriere
 
-**Annahmen** (nicht offiziell bestätigt): Bestehensgrenze 50 % (bei IHK-Zertifikatstests üblich; Übungsziel 80 %), Anteil Freitext 8 von 30, nur eine richtige Antwort je Multiple-Choice-Frage. Die App kennzeichnet das.
+**Annahmen** (nicht offiziell bestätigt): Bestehensgrenze 50 % (bei IHK-Zertifikatstests üblich; Übungsziel 70 %), Anteil Freitext 8 von 30, nur eine richtige Antwort je Multiple-Choice-Frage. Die App kennzeichnet das.
 
 ## Technik
 

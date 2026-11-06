@@ -54,7 +54,7 @@ const ic = (n, extra = "") => `<svg viewBox="0 0 24 24" fill="none" stroke="curr
 /* ---------- Speicher ----------
    Doppelt: localStorage (schnell) + IndexedDB (robuster). Beim Start gewinnt der neuere Stand (Zeitstempel).
    Fragen und Lektionen haben stabile Schlüssel (unabhängig vom Modul), alte Schlüssel werden migriert. */
-const KEY = "smm-coach", VERSION = "0.9.2";
+const KEY = "smm-coach", VERSION = "0.9.3";
 const DEF = () => ({ lek: {}, q: {}, srs: {}, last: null, tests: [], pruefung: "", set: { size: "m", theme: "auto" }, lastBackup: 0, created: Date.now(), updated: 0, run: null, lastRun: null });
 let S = DEF();
 try { const x = JSON.parse(localStorage.getItem(KEY) || "null"); if (x) S = Object.assign(DEF(), x); } catch (e) {}
@@ -192,7 +192,7 @@ function ringsHtml() {
  }).join("")}</div>`;
 }
 const PASS = 50; // Bestehensgrenze: bei IHK-Zertifikatstests üblich 50 %, für Dresden nicht offiziell bestätigt
-const ZIEL = 80; // Übungsziel mit Sicherheitspuffer (Selbstbewertung der Freitexte ist meist zu milde)
+const ZIEL = 70; // Übungsziel mit Sicherheitspuffer (Selbstbewertung der Freitexte ist meist zu milde)
 function daysLeft() { if (!S.pruefung) return null; const d = Math.ceil((new Date(S.pruefung + "T09:00") - Date.now()) / 86400000); return isNaN(d) ? null : d; }
 function viewStart() {
  const p = allProgress(), n = nextLesson(), dl = daysLeft();
