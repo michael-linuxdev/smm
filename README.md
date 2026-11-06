@@ -9,6 +9,10 @@ Lern-App (PWA) zum Zertifikatslehrgang **Social Media Manager/-in (IHK)** – au
 
 **Annahmen** (nicht offiziell bestätigt): Bestehensgrenze 50 % (bei IHK-Zertifikatstests üblich; Übungsziel 70 %), Anteil Freitext 5 von 30 à 2 Punkte, Multiple Choice teils mit mehreren richtigen Antworten (Punkt nur bei allen richtigen). Die App kennzeichnet das.
 
+## Inhaltliche Grenze
+
+**Höchstens 400 Fragen** (Quizfragen + Kurz-Checks in Lektionen). Neue Fragen nur im Tausch gegen bestehende. Gestrichene stehen in `data/gestrichen.js`. Prüfung: `node tests/check-data.mjs` (bricht bei mehr als 400 ab).
+
 ## Technik
 
 Statische Dateien ohne Build: `index.html`, `app.css`, `app.js`, Inhalte in `data/`. Lernstand liegt nur im Browser (localStorage + IndexedDB), Export/Import als Datei in den Einstellungen.

@@ -4,6 +4,7 @@ import { GRUNDWORTSCHATZ } from "./grundwortschatz.js";
 import { BEGRIFFSFRAGEN } from "./begriffsfragen.js";
 import { MEHRFACH } from "./mehrfach.js";
 import { LEKTIONEN_R4, FRAGEN_R4 } from "./lektionen4.js";
+import { GESTRICHEN } from "./gestrichen.js";
 // Lerninhalte SMM Coach. Aufbau je Modul: Lektionen (Story-Folien) → Quiz.
 // Folientypen: intro, text, liste, beispiel, merke, check (Verständnisfrage, Index c = richtige Antwort).
 // **fett** ist erlaubt. Rechtliche Inhalte: Stand 11/2026, vor Veröffentlichung fachlich prüfen lassen.
@@ -509,3 +510,6 @@ LX("content-strategie").folien.splice(LX("content-strategie").folien.length - 1,
  ];
  FRAGEN.forEach(q => { if (q.neu3 || (q.m !== "plan" && q.m !== "unt")) return; const r = REGELN.find(([re]) => re.test(q.q)); q.m = r ? r[1] : "unt"; });
 }
+
+// Limit 400 Fragen: gestrichene Fragen herausnehmen (Liste in data/gestrichen.js)
+{ const weg = new Set(GESTRICHEN); for (let i = FRAGEN.length - 1; i >= 0; i--) if (weg.has(FRAGEN[i].q)) FRAGEN.splice(i, 1); }
