@@ -2,6 +2,8 @@ import { MODULE, FRAGEN } from "./data/kurs.js";
 import { GLOSSAR, FORMELN } from "./data/glossar.js";
 import { BILDER } from "./data/bilder.js";
 import { VORLESUNGEN } from "./data/vorlesungen.js";
+import { PROJEKTE } from "./data/projekte.js";
+import { PROJEKTBILDER } from "./data/projektbilder.js";
 
 /* ---------- Hilfen ---------- */
 const $ = (s, el = document) => el.querySelector(s);
@@ -47,6 +49,7 @@ const I = {
  ads: '<path d="M3 11v2a1 1 0 001 1h2l5 4V6L6 10H4a1 1 0 00-1 1zM15 9a3 3 0 010 6M18 6a7 7 0 010 12"/>',
  speaker: '<path d="M4 9v6h4l5 4V5L8 9H4zM16.5 8.5a5 5 0 010 7M19 6a8.5 8.5 0 010 12"/>',
  focus: '<circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3"/>',
+ praxis: '<rect x="3" y="7" width="18" height="13" rx="2"/><path d="M9 7V5a2 2 0 012-2h2a2 2 0 012 2v2M3 13h18M11 13v2h2v-2"/>',
  bolt: '<path d="M13 2L4 14h7l-1 8 9-12h-7z"/>',
  warn: '<path d="M12 3l10 18H2zM12 10v5M12 18v.5"/>',
  copy: '<rect x="8" y="8" width="12" height="12" rx="2"/><path d="M4 16V5a1 1 0 011-1h11"/>',
@@ -57,7 +60,7 @@ const ic = (n, extra = "") => `<svg viewBox="0 0 24 24" fill="none" stroke="curr
 /* ---------- Speicher ----------
    Doppelt: localStorage (schnell) + IndexedDB (robuster). Beim Start gewinnt der neuere Stand (Zeitstempel).
    Fragen und Lektionen haben stabile Schlüssel (unabhängig vom Modul), alte Schlüssel werden migriert. */
-const KEY = "smm-coach", VERSION = "0.14.2";
+const KEY = "smm-coach", VERSION = "0.14.3";
 const DEF = () => ({ lek: {}, q: {}, srs: {}, last: null, tests: [], pruefung: "", day: null, seen: 0, set: { size: "m", theme: "auto", goal: "15", vibe: true, step: true, mig1: 1 }, lastBackup: 0, created: Date.now(), updated: 0, run: null, lastRun: null });
 let S = DEF();
 try { const x = JSON.parse(localStorage.getItem(KEY) || "null"); if (x) S = Object.assign(DEF(), x); } catch (e) {}
@@ -184,9 +187,9 @@ function ringSvg(p, size = 76, w = 4, track = "var(--line)", color = null) {
 }
 
 /* ---------- Router ---------- */
-const TABS = [["start", "Start", "home"], ["pruefung", "Prüfung", "exam"], ["lehrgang", "Lehrgang", "info"]];
+const TABS = [["start", "Start", "home"], ["praxis", "Praxis", "praxis"], ["pruefung", "Prüfung", "exam"], ["lehrgang", "Lehrgang", "info"]];
 function tabbar(active) {
- return `<nav class="tabbar" aria-label="Navigation">${TABS.map(([h, t, i]) => `<a href="#${h}" data-tab aria-label="${t}" title="${t}" class="${active === h ? "on" : ""}"${active === h ? ' aria-current="page"' : ""}>${ic(i)}<span class="sr-only">${t}</span></a>`).join("")}</nav>`;
+ return `<nav class="tabbar" aria-label="Navigation">${TABS.filter(([h]) => h !== "praxis" || PROJEKTE.length).map(([h, t, i]) => `<a href="#${h}" data-tab aria-label="${t}" title="${t}" class="${active === h ? "on" : ""}"${active === h ? ' aria-current="page"' : ""}>${ic(i)}<span class="sr-only">${t}</span></a>`).join("")}</nav>`;
 }
 function page(active, html, o = {}) {
  const y = scrollY;
@@ -203,7 +206,7 @@ function head(t = "Social Media Manager (IHK)") { return `<div class="top"><div 
 
 /* ---------- Navigation: „Zurück“ führt dorthin, wo man herkam ----------
    Tab-Wurzeln setzen den Verlauf zurück, damit Zurück nie in einen anderen Reiter springt. */
-const TAB_ROOTS = ["#start", "#pruefung", "#lehrgang"];
+const TAB_ROOTS = ["#start", "#praxis", "#pruefung", "#lehrgang"];
 const NAV = { st: (() => { try { return JSON.parse(sessionStorage.getItem("nav")) || []; } catch (e) { return []; } })(), rep: false };
 function navTrack() {
  const h = location.hash || "#start", st = NAV.st;
@@ -251,6 +254,8 @@ function route() {
  if (h === "auswertung") return viewAuswertung();
  if (h === "lehrgang") return viewLehrgang();
  if (h === "glossar") return viewGlossar();
+ if (h === "praxis") return viewPraxis();
+ if (a === "projekt" && b) return openProjekt([b, ...rest].join("-"));
  if (h === "einstellungen") return viewEinstellungen();
  return viewStart();
 }
@@ -319,7 +324,7 @@ function viewStart() {
   <div class="hero-stat fx"><div><b>${lessonsDone}/${lessonsAll}</b><span>Lektionen</span></div><div><b>${POOL.filter(q => q.key in S.q).length}/${POOL.length}</b><span>Fragen bearbeitet</span></div><div><b>${best === null ? "–" : best + " %"}</b><span>Bester Test</span></div></div>
   <div class="row"><a class="btn white" href="${endspurt ? "#endspurt" : "#mini"}">${ic("play")} ${endspurt ? "Endspurt heute" : p > 0 ? "Weiterlernen" : "Loslegen"}</a></div>
  </section>
- ${[(S.run ? `<a class="cont" href="#test" style="margin-bottom:10px"><div class="thumb" style="background:var(--grad-strong)">${ic("clock")}</div><div><b style="font-size:1rem">Probetest läuft</b><div class="small muted">Weitermachen, wo du aufgehört hast</div></div><span class="chev" style="margin-left:auto">${ic("right")}</span></a>` : ""), (() => { const v = naechsteVorlesung(); if (!v) return ""; const offen = v.lektionen.map(LEK).filter(x => x && !S.lek[x.l.id]); if (!offen.length) return ""; const t = (new Date(v.datum + "T12:00") - Date.now()) / 86400000; if (t > 8) return ""; return `<a class="cont" href="#lektion-${offen[0].m.id}-${offen[0].l.id}"><div class="thumb" style="background:linear-gradient(135deg,#2b8a3e,#1864ab)">${ic("cal")}</div><div><b style="font-size:1rem">Vorlesung ${datumDE(v.datum)}: ${esc(v.titel)}</b><div class="small muted">${offen.length} passende Lektion${offen.length === 1 ? "" : "en"} vorab lernen</div></div><span class="chev" style="margin-left:auto">${ic("right")}</span></a>`; })(), ((() => { const d = uebenN(); return d ? `<a class="cont" href="#quiz-ueben" style="margin-bottom:10px"><div class="thumb" style="background:linear-gradient(135deg,#1864ab,#6741d9)">${ic("repeat")}</div><div><b style="font-size:1rem">Üben: ${Math.min(d, 10)} Frage${d === 1 ? "" : "n"}</b><div class="small muted">Fehler und fällige Wiederholungen – damit es bis zur Prüfung sitzt.</div></div><span class="chev" style="margin-left:auto">${ic("right")}</span></a>` : ""; })()), (S.lek.grundwortschatz && !S.set?.hilfeGefragt ? `<a class="cont" href="#einstellungen" data-hilfe style="margin-bottom:10px"><div class="thumb" style="background:linear-gradient(135deg,#2b8a3e,#1864ab)">${ic("focus")}</div><div><b style="font-size:1rem">Lernhilfen einstellen</b><div class="small muted">Fokusmodus, Pausen, ruhige Darstellung – z. B. bei ADHS</div></div><span class="chev" style="margin-left:auto">${ic("right")}</span></a>` : ""), (hasProgress(S) && Date.now() - (S.lastBackup || S.created || 0) > (S.lastBackup ? 14 : 7) * 86400000 /* erste Erinnerung nach 7 Tagen, danach alle 14 */ ? `<a class="cont" href="#einstellungen" style="margin-bottom:10px"><div class="thumb" style="background:linear-gradient(135deg,#495057,#212529)">${ic("download")}</div><div><b style="font-size:1rem">Lernstand sichern</b><div class="small muted">Lade eine Sicherungsdatei herunter – falls der Browser Daten löscht.</div></div><span class="chev" style="margin-left:auto;color:var(--ink-3)">${ic("right")}</span></a>` : ""), (platform().standalone && !hasProgress(S) ? `<a class="cont" href="#einstellungen" style="margin-bottom:10px"><div class="thumb" style="background:linear-gradient(135deg,#495057,#212529)">${ic("upload")}</div><div><b style="font-size:1rem">Kommst du aus dem Browser?</b><div class="small muted">Dort gesicherten Lernstand in den Einstellungen wiederherstellen.</div></div><span class="chev" style="margin-left:auto">${ic("right")}</span></a>` : ""), (S.pruefung ? "" : `<a class="cont" href="#lehrgang" style="margin-bottom:6px"><div class="thumb" style="background:var(--grad-strong)">${ic("cal")}</div><div><b style="font-size:1rem">Prüfungstermin eintragen</b><div class="small muted">Dann zeigt dir die App, wie viel du pro Woche lernen solltest.</div></div><span class="chev" style="margin-left:auto;color:var(--ink-3)">${ic("right")}</span></a>`)].filter(Boolean).slice(0, 2).join("")}
+ ${[(S.run ? `<a class="cont" href="#test" style="margin-bottom:10px"><div class="thumb" style="background:var(--grad-strong)">${ic("clock")}</div><div><b style="font-size:1rem">Probetest läuft</b><div class="small muted">Weitermachen, wo du aufgehört hast</div></div><span class="chev" style="margin-left:auto">${ic("right")}</span></a>` : ""), (() => { const v = naechsteVorlesung(); if (!v) return ""; const offen = v.lektionen.map(LEK).filter(x => x && !S.lek[x.l.id]); if (!offen.length) return ""; const t = (new Date(v.datum + "T12:00") - Date.now()) / 86400000; if (t > 8) return ""; return `<a class="cont" href="#lektion-${offen[0].m.id}-${offen[0].l.id}"><div class="thumb" style="background:linear-gradient(135deg,#2b8a3e,#1864ab)">${ic("cal")}</div><div><b style="font-size:1rem">Vorlesung ${datumDE(v.datum)}: ${esc(v.titel)}</b><div class="small muted">${offen.length} passende Lektion${offen.length === 1 ? "" : "en"} vorab lernen</div></div><span class="chev" style="margin-left:auto">${ic("right")}</span></a>`; })(), ((() => { const d = uebenN(); return d ? `<a class="cont" href="#quiz-ueben" style="margin-bottom:10px"><div class="thumb" style="background:linear-gradient(135deg,#1864ab,#6741d9)">${ic("repeat")}</div><div><b style="font-size:1rem">Üben: ${Math.min(d, 10)} Frage${d === 1 ? "" : "n"}</b><div class="small muted">Fehler und fällige Wiederholungen – damit es bis zur Prüfung sitzt.</div></div><span class="chev" style="margin-left:auto">${ic("right")}</span></a>` : ""; })()), (S.lek.grundwortschatz && !S.set?.hilfeGefragt ? `<a class="cont" href="#einstellungen" data-hilfe style="margin-bottom:10px"><div class="thumb" style="background:linear-gradient(135deg,#2b8a3e,#1864ab)">${ic("focus")}</div><div><b style="font-size:1rem">Lernhilfen einstellen</b><div class="small muted">Fokusmodus, Pausen, ruhige Darstellung – z. B. bei ADHS</div></div><span class="chev" style="margin-left:auto">${ic("right")}</span></a>` : ""), (hasProgress(S) && Date.now() - (S.lastBackup || S.created || 0) > (S.lastBackup ? 14 : 7) * 86400000 /* erste Erinnerung nach 7 Tagen, danach alle 14 */ ? `<a class="cont" href="#einstellungen" style="margin-bottom:10px"><div class="thumb" style="background:linear-gradient(135deg,#495057,#212529)">${ic("download")}</div><div><b style="font-size:1rem">Lernstand sichern</b><div class="small muted">Lade eine Sicherungsdatei herunter – falls der Browser Daten löscht.</div></div><span class="chev" style="margin-left:auto;color:var(--ink-3)">${ic("right")}</span></a>` : ""), (platform().standalone && !hasProgress(S) && !S.set?.restoreGesehen && !S.day && Date.now() - (S.created || 0) < 3 * 86400000 ? `<a class="cont" href="#einstellungen" data-restore style="margin-bottom:10px"><div class="thumb" style="background:linear-gradient(135deg,#495057,#212529)">${ic("upload")}</div><div><b style="font-size:1rem">Kommst du aus dem Browser?</b><div class="small muted">Dort gesicherten Lernstand in den Einstellungen wiederherstellen.</div></div><span class="chev" style="margin-left:auto">${ic("right")}</span></a>` : ""), (S.pruefung ? "" : `<a class="cont" href="#lehrgang" style="margin-bottom:6px"><div class="thumb" style="background:var(--grad-strong)">${ic("cal")}</div><div><b style="font-size:1rem">Prüfungstermin eintragen</b><div class="small muted">Dann zeigt dir die App, wie viel du pro Woche lernen solltest.</div></div><span class="chev" style="margin-left:auto;color:var(--ink-3)">${ic("right")}</span></a>`)].filter(Boolean).slice(0, 2).join("")}
  <a class="cont" href="#glossar" style="margin-bottom:10px"><div class="thumb" style="background:linear-gradient(135deg,#2b8a3e,#1864ab)">${ic("abc")}</div><div><b style="font-size:1rem">Glossar & Formeln</b><div class="small muted">${GLOSSAR.length} Begriffe und ${FORMELN.length} Formeln nachschlagen</div></div><span class="chev" style="margin-left:auto">${ic("right")}</span></a>
 `, { compact: true });
  fitMain();
@@ -348,6 +353,65 @@ function viewModul(id) {
  <a class="cont" href="#kompakt-${m.id}" style="margin-bottom:14px"><div class="thumb" style="background:${modGrad(m)}">${ic("book")}</div><div><b style="font-size:1rem">Das Wichtigste auf einen Blick</b><div class="small muted">Alle Merksätze und Übersichten des Moduls</div></div><span class="chev" style="margin-left:auto">${ic("right")}</span></a>
  <ol class="steps">${m.lektionen.map((l, i) => { const ok = S.lek[l.id]; return `${l.abschnitt ? `<li class="abschnitt" aria-hidden="true"><span>${esc(l.abschnitt)}</span></li>` : ""}<li><div class="dot ${ok ? "ok" : ""}" style="${ok ? `background:${shade(m.farbe, .6)}` : ""}">${ok ? ic("check", 'stroke-width="3"') : i + 1}</div><a class="item" href="#lektion-${m.id}-${l.id}" style="display:flex;align-items:center;gap:10px;width:100%;text-decoration:none;background:var(--surface);border-radius:18px;padding:14px 16px;box-shadow:var(--shadow)"><div><b>${l.titel}</b><span class="small muted">${l.folien.length} Karten · ${l.min} Min.${ok ? " · erledigt" : ""}</span></div><span class="chev">${ic("right")}</span></a></li>`; }).join("")}
  <li><div class="dot" style="${all ? "background:var(--grad);color:#fff" : ""}">${ic(all ? "bolt" : "lock")}</div><a class="item" href="#quiz-${m.id}" style="display:flex;align-items:center;gap:10px;width:100%;text-decoration:none;background:var(--surface);border-radius:18px;padding:14px 16px;box-shadow:var(--shadow)"><div><b>Modul-Quiz</b><span class="small muted">${modPool(m.id).length} Fragen · ${qDone(m.id)} sicher${all ? "" : " · empfohlen nach den Lektionen"}</span></div><span class="chev">${ic("right")}</span></a></li></ol>`);
+}
+
+/* ---------- Praxisprojekte: interaktive Fallgeschichten ---------- */
+const projStand = id => (S.proj = S.proj || {}, S.proj[id] = S.proj[id] || { i: 0, wahl: {}, frei: {}, pts: {} });
+const projMax = pr => pr.schritte.reduce((a, f) => a + (f.k === "wahl" || f.k === "frei" ? 2 : 0), 0);
+const projPunkte = st => Object.values(st.pts || {}).reduce((a, b) => a + b, 0);
+function viewPraxis() {
+ page("praxis", `${head("Praxisprojekte")}<h1 class="sr-only">Praxisprojekte</h1>
+ <p class="small muted praxis-intro">Wende dein Wissen in echten Situationen an: Du triffst die Entscheidungen.</p>
+ ${PROJEKTE.length ? `<div class="ptiles">${PROJEKTE.map(pr => { const st = S.proj?.[pr.id], max = projMax(pr), done = st?.done, lauf = st && !done && st.i > 0;
+  return `<a class="ptile" href="#projekt-${pr.id}"><div class="pimg">${PROJEKTBILDER[pr.id] || ""}${done ? `<span class="pbadge ok">✓ ${Math.round((st.best ?? projPunkte(st)) / max * 100)} %</span>` : lauf ? `<span class="pbadge">${st.i + 1}/${pr.schritte.length}</span>` : ""}</div><b>${esc(pr.titel)}</b><span>${esc(pr.firma)} · ${pr.min} Min.</span></a>`; }).join("")}</div>`
+  : `<div class="card"><p>Die Praxisprojekte werden gerade vorbereitet.</p></div>`}`, { compact: true });
+}
+function openProjekt(id) {
+ const pr = PROJEKTE.find(x => x.id === id); if (!pr) return viewPraxis();
+ viewPraxis();
+ const st = projStand(id); if (st.done) { st.i = 0; st.wahl = {}; st.frei = {}; st.pts = {}; st.done = false; } save();
+ const F = pr.schritte, closeP = () => goBack("#praxis");
+ storyEl = document.createElement("div"); storyEl.className = "story projekt"; storyEl.style.setProperty("--m", "#5c6b7a");
+ storyEl.setAttribute("role", "dialog"); storyEl.setAttribute("aria-modal", "true"); storyEl.setAttribute("aria-label", "Praxisprojekt: " + pr.titel);
+ document.body.appendChild(storyEl); document.body.classList.add("no-scroll");
+ const kinds = { szene: "Szene", daten: "Daten", wahl: "Entscheidung", frei: "Anwenden", fazit: "Fazit" };
+ const fertig = i => F[i].k === "wahl" ? i in st.wahl : F[i].k === "frei" ? i in st.pts : true;
+ const go = d => { if (d > 0 && !fertig(st.i)) return toast(F[st.i].k === "wahl" ? "Triff zuerst eine Entscheidung" : "Bearbeite zuerst die Aufgabe"); if (canSay) speechSynthesis.cancel(); st.i = Math.max(0, Math.min(F.length - 1, st.i + d)); save(); draw(); };
+ storyKey = e => { if (e.key === "Escape") closeP(); if (e.target.tagName === "TEXTAREA") return; if (e.key === "ArrowRight") go(1); if (e.key === "ArrowLeft") go(-1); };
+ addEventListener("keydown", storyKey);
+ const seenDe = new Set();
+ function draw() {
+  const i = st.i, f = F[i], last = i === F.length - 1;
+  let body = `<span class="kind">${kinds[f.k] || ""}</span><h2>${md(f.h || "")}</h2>`;
+  if (f.k === "szene") body += f.wer ? `<div class="wer"><span class="av-p">${esc(f.wer.trim()[0] || "?")}</span><span class="small muted">${esc(f.wer)}</span></div><div class="body zitat">${md(f.b)}</div>` : `<div class="body">${md(f.b)}</div>`;
+  else if (f.k === "daten") body += `<ul class="daten">${f.l.map(x => `<li>${md(x)}</li>`).join("")}</ul>`;
+  else if (f.k === "wahl") {
+   const a = st.wahl[i]; f._o = f._o || shuf(f.o.map((_, k) => k));
+   body += `${f.b ? `<div class="body small-body">${md(f.b)}</div>` : ""}${f._o.map((k, n) => { const o = f.o[k]; let cl = ""; if (a !== undefined) cl = k === a ? (o.p === 2 ? "ok" : o.p === 1 ? "mid" : "bad") : o.p === 2 ? "ok-hint" : "dim"; return `<button type="button" class="opt ${cl}" data-k="${k}" ${a !== undefined ? "disabled" : ""}><span class="l">${"ABCD"[n]}</span><span class="ot">${esc(o.t)}</span></button>`; }).join("")}
+   ${a !== undefined ? `<div role="status" class="fb ${f.o[a].p === 2 ? "ok" : f.o[a].p === 1 ? "mid" : "bad"}"><b>${f.o[a].p === 2 ? "Starke Entscheidung" : f.o[a].p === 1 ? "Vertretbar – aber es geht besser" : "Das geht schief"}</b>${esc(f.o[a].fb)}${f.o[a].p < 2 ? `<br><span class="small">Beste Wahl: ${esc(f.o.find(o => o.p === 2).t)}</span>` : ""}</div>` : ""}`;
+  } else if (f.k === "frei") {
+   const done = i in st.pts, txt = st.frei[i] || "";
+   if (!done) body += `<div class="body small-body">${md(f.b)}</div><label class="sr-only" for="ptxt">Deine Antwort</label><textarea id="ptxt" placeholder="${Array.from({ length: f.min }, (_, k) => `${k + 1}. …`).join("&#10;")}">${esc(txt)}</textarea><button type="button" class="btn ghost block" id="pchk" style="margin-top:8px">Mit Musterlösung vergleichen</button>`;
+   else { const hit = freiMatch(f, txt), n = hit.filter(Boolean).length; body += `<div class="answer small">${txt ? esc(txt) : "<i>Keine Antwort</i>"}</div><div class="fb ${st.pts[i] === 2 ? "ok" : st.pts[i] === 1 ? "mid" : "bad"}"><b>Musterlösung · ${n} von ${f.muster.length} Punkten erkannt</b><ul class="muster">${f.muster.map(([t], k) => `<li class="${hit[k] ? "hit" : ""}">${ic(hit[k] ? "check" : "right", 'stroke-width="3"')}<span>${esc(t)}</span></li>`).join("")}</ul>${f.bsp ? `<details class="bsp"><summary>Beispielantwort</summary><p class="small" style="white-space:pre-line;margin:6px 0 0">${esc(f.bsp)}</p></details>` : ""}</div>`; }
+  } else if (f.k === "fazit") {
+   const pts = projPunkte(st), max = projMax(pr), pc = Math.round(pts / max * 100);
+   body += `<div class="presult"><b>${pts} von ${max} Punkten · ${pc} %</b><span>${pc >= 80 ? "Starke Projektleitung!" : pc >= 50 ? "Solide – ein paar Entscheidungen gehen noch besser." : "Lies die Rückmeldungen nach und versuche es noch einmal."}</span></div><ul>${f.l.map(x => `<li>${md(x)}</li>`).join("")}</ul>`;
+  }
+  storyEl.innerHTML = `<div class="segs" aria-hidden="true">${F.map((_, n) => `<i class="${n < i ? "on" : ""}"><b style="${n === i ? "width:100%" : ""}"></b></i>`).join("")}</div>
+  <div class="shead"><div class="av pimg-av">${PROJEKTBILDER[pr.id] || ic("praxis")}</div><div class="n">${esc(pr.titel)}<small>${esc(pr.firma)} · ${i + 1}/${F.length}</small></div>${sayBtn()}<button class="x" aria-label="Schließen">${ic("x")}</button></div>
+  <div class="stage"><div class="slide ${f.k === "szene" && f.wer ? "note" : ""} ${f.k === "fazit" ? "fazit" : ""}">${body}</div></div>
+  <div class="snav">${i > 0 ? `<button class="btn prev" aria-label="Zurück">${ic("left")}</button>` : ""}${last ? `<button class="btn" id="pfin">Projekt abschließen ${ic("check")}</button>` : `<button class="btn next" ${fertig(i) ? "" : "aria-disabled=\"true\""}>Weiter ${ic("right")}</button>`}</div>`;
+  $(".x", storyEl).onclick = closeP;
+  $(".next", storyEl)?.addEventListener("click", () => go(1));
+  $(".prev", storyEl)?.addEventListener("click", () => go(-1));
+  $("#pfin", storyEl)?.addEventListener("click", () => { st.done = true; st.best = Math.max(st.best || 0, projPunkte(st)); save(); buzz([20, 40, 20]); toast("Projekt abgeschlossen"); closeP(); });
+  $$(".opt", storyEl).forEach(b => b.onclick = () => { if (i in st.wahl) return; const k = +b.dataset.k, p = f.o[k].p; st.wahl[i] = k; st.pts[i] = p; lernZaehler(p === 2); save(); draw(); });
+  const ta = $("#ptxt", storyEl);
+  if (ta) { ta.oninput = () => { st.frei[i] = ta.value; save(); }; $("#pchk", storyEl).onclick = () => { const txt = ta.value; st.frei[i] = txt; const n = freiMatch(f, txt).filter(Boolean).length; st.pts[i] = !txt.trim() ? 0 : n >= f.min ? 2 : n >= Math.ceil(f.min / 2) ? 1 : 0; lernZaehler(st.pts[i] === 2); save(); draw(); }; }
+  linkTerms($(".slide", storyEl), seenDe);
+  fitSlide(); requestAnimationFrame(fitSlide); if (draw.first !== false) { watchFit(); draw.first = false; $(".x", storyEl).focus({ preventScroll: true }); }
+ }
+ draw();
 }
 
 /* ---------- Story-Player (Erstvermittlung) ---------- */
@@ -508,7 +572,7 @@ function termSheet(i) {
  $("[data-say]", el)?.addEventListener("click", e => { e.stopPropagation(); say(g.w + ". " + (g.de ? g.de + ". " : "") + g.d); }, true);
  el.addEventListener("keydown", e => { if (e.key === "Escape") { e.stopPropagation(); close(); } });
 }
-document.addEventListener("click", e => { if (e.target.closest("[data-hilfe]")) { S.set.hilfeGefragt = 1; save(); } });
+document.addEventListener("click", e => { if (e.target.closest("[data-hilfe]")) { S.set.hilfeGefragt = 1; save(); } if (e.target.closest("[data-restore]")) { S.set.restoreGesehen = 1; save(); } });
 document.addEventListener("keydown", e => { const t = e.target.closest?.(".term"); if (t && (e.key === "Enter" || e.key === " ")) { e.preventDefault(); termSheet(+t.dataset.g); } });
 document.addEventListener("click", e => { const t = e.target.closest(".term"); if (!t) return; e.stopPropagation(); termSheet(+t.dataset.g); }, true);
 
@@ -1035,7 +1099,7 @@ function viewEinstellungen(o = {}) {
  const confirmReset = !!o.reset, pend = o.pending;
  const seg = (key, opts, label) => `<div class="seg" role="group" aria-label="${label}">${opts.map(([v, t]) => `<button type="button" data-${key}="${v}" aria-pressed="${(S.set[key] || "") === v}" class="${(S.set[key] || "") === v ? "on" : ""}">${t}</button>`).join("")}</div>`;
  const lb = S.lastBackup ? new Date(S.lastBackup).toLocaleDateString("de-DE") : "noch nie";
- const fromTab = (NAV.st[0] || "#start").slice(1), fromName = { start: "Start", pruefung: "Prüfung", lehrgang: "Lehrgang" }[fromTab] || "Start";
+ const fromTab = (NAV.st[0] || "#start").slice(1), fromName = { start: "Start", praxis: "Praxis", pruefung: "Prüfung", lehrgang: "Lehrgang" }[fromTab] || "Start";
  page(fromName === "Start" && fromTab !== "start" ? "start" : fromTab, `<a class="back" href="#${fromTab}">${ic("left")} ${fromName}</a><h1 style="margin-bottom:16px" tabindex="-1">Einstellungen</h1>
  <div class="card"><h2 class="h3">Schriftgröße</h2><p class="small muted" style="margin:2px 0 10px">Gilt für die ganze App.</p>${seg("size", [["s", "Klein"], ["m", "Normal"], ["l", "Groß"], ["xl", "Sehr groß"]], "Schriftgröße")}</div>
  <div class="card"><h2 class="h3">Design</h2><p class="small muted" style="margin:2px 0 10px">„Automatisch“ folgt der Einstellung deines Geräts.</p>${seg("theme", [["auto", "Automatisch"], ["light", "Hell"], ["dark", "Dunkel"]], "Design")}</div>
