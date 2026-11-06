@@ -417,3 +417,14 @@ strong .term, .term strong{font-weight:inherit}
 .hgoal .hbar{height:8px;border-radius:9px;margin-top:8px;background:color-mix(in srgb,currentColor 16%,transparent);overflow:hidden}
 .hgoal .hbar i{display:block;height:100%;border-radius:9px;background:var(--grad-strong);min-width:0}
 .hgoal.ok .hbar i{background:var(--ok)}
+/* Einklappbare Abschnitte */
+details.fold{background:var(--surface);border-radius:20px;box-shadow:var(--shadow);margin:0 0 12px;padding:0 16px}
+details.fold > summary{list-style:none;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:10px;padding:16px 0;font-family:var(--display);font-weight:700}
+details.fold > summary::-webkit-details-marker{display:none}
+details.fold > summary h2{font-size:1.08rem;margin:0}
+details.fold > summary::after{content:"";flex:none;width:10px;height:10px;border-right:2.5px solid var(--ink-3);border-bottom:2.5px solid var(--ink-3);transform:rotate(45deg);margin:-4px 4px 0 0;transition:transform .2s}
+details.fold[open] > summary::after{transform:rotate(-135deg);margin-top:4px}
+details.fold > .card{box-shadow:none;padding-left:0;padding-right:0;background:transparent;margin-top:0}
+details.fold > :last-child{margin-bottom:14px}
+details.fold > .road, details.fold > .src{margin-top:0}
+[tabindex="-1"]:focus{outline:none}
