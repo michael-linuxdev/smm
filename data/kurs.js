@@ -1,5 +1,8 @@
 import { NEUE } from "./fragen2.js";
 import { LEKTIONEN_NEU, FRAGEN_NEU } from "./lektionen3.js";
+import { GRUNDWORTSCHATZ } from "./grundwortschatz.js";
+import { BEGRIFFSFRAGEN } from "./begriffsfragen.js";
+import { MEHRFACH } from "./mehrfach.js";
 // Lerninhalte SMM Coach. Aufbau je Modul: Lektionen (Story-Folien) → Quiz.
 // Folientypen: intro, text, liste, beispiel, merke, check (Verständnisfrage, Index c = richtige Antwort).
 // **fett** ist erlaubt. Rechtliche Inhalte: Stand 11/2026, vor Veröffentlichung fachlich prüfen lassen.
@@ -388,7 +391,7 @@ const FAELLE = [
 {m:"plan",t:"frei",q:"Fall: Unter einem Facebook-Beitrag kritisiert ein Kunde Ihr neues Produkt scharf, aber sachlich. Wie reagieren Sie? Beschreiben Sie Ihre Schritte und begründen Sie sie.",muster:[["Nicht löschen – sachliche Kritik bleibt stehen (sonst Eskalation, Streisand-Effekt)","nicht lösch|stehen lass|nicht entfern|nicht verberg|streisand"],["Schnell reagieren, für das Feedback danken","schnell|zeitnah|zügig|dank"],["Sachverhalt intern klären, Fachabteilung einbinden","intern|prüf|klär|fachabteil|rücksprache|eskalat"],["Sachlich, freundlich und öffentlich antworten, Verständnis zeigen","sachlich|freundlich|höflich|öffentlich|verständnis|empath"],["Lösung anbieten, Details per Direktnachricht","lösung|angebot|direktnachricht|privatnachricht|dm|kontakt"],["Nachfassen und dokumentieren / Feedback weitergeben","nachfass|dokument|weitergeb|follow|verbesser"]],min:4},
 {m:"unt",t:"frei",q:"Fall: Ein B2B-Hersteller von Spezialmaschinen will jüngere Fachkräfte gewinnen. Welche zwei Kanäle empfehlen Sie? Begründen Sie die Wahl und nennen Sie je eine passende Content-Idee.",muster:[["LinkedIn: berufliches Netzwerk, Fachkräfte und Employer Branding","linkedin|xing"],["Instagram oder TikTok: jüngere Zielgruppe, Einblicke hinter die Kulissen","instagram|tiktok"],["(Alternativ) YouTube: Erklär- und Einblicksvideos, lange auffindbar","youtube"],["Begründung über Zielgruppe / Persona und Ziel","weil|da |zielgruppe|persona|ziel"],["Konkrete Content-Idee, z. B. Azubis oder Mitarbeitende zeigen ihren Alltag","azubi|mitarbeit|alltag|einblick|hinter den kulissen|behind|team|corporate influencer|video"]],min:4}
 ];
-export const FRAGEN = [...ALT_Q, ...NEU_Q, ...FREI, ...NEUE.mc, ...NEUE.frei, ...[...FRAGEN_NEU, ...FAELLE].map(q => ({ ...q, neu3: true }))];
+export const FRAGEN = [...ALT_Q, ...NEU_Q, ...FREI, ...NEUE.mc, ...NEUE.frei, ...[...FRAGEN_NEU, ...FAELLE, ...BEGRIFFSFRAGEN, ...MEHRFACH].map(q => ({ ...q, neu3: true }))];
 
 /* =====================================================================
    Ergänzungen nach der Fachprüfung (06.11.2026): Lücken schließen
@@ -451,7 +454,7 @@ LX("content-strategie").folien.splice(LX("content-strategie").folien.length - 1,
   { k: "merke", h: "Merke", b: "Nicht löschen und nicht juristisch unterdrücken, nur weil Kritik unangenehm ist – das verstärkt die Welle oft erst (**Streisand-Effekt**). Fehler offen zugeben und zeigen, was man ändert. Ausnahme: Rechtswidriges wie Beleidigungen, Hetze oder fremde Daten wird nach der Netiquette dokumentiert und entfernt." },
   { k: "check", q: "Was gehört in die Phase der Prävention?", a: ["Einen Krisenplan mit Zuständigkeiten und Vorlagen erstellen", "Kritische Kommentare vorsorglich löschen lassen", "Erst im Ernstfall klären, wer das Statement freigibt", "Die Kommentarfunktion auf allen Kanälen abschalten"], c: 0, e: "Prävention heißt: Bevor etwas passiert, sind Zuständigkeiten, Abläufe und Vorlagen geklärt." }
  ]};
- const alle = Object.fromEntries([...MODULE.flatMap(m => m.lektionen), ...Object.values(LEKTIONEN_NEU).flat(), KRISE].map(l => [l.id, l]));
+ const alle = Object.fromEntries([...MODULE.flatMap(m => m.lektionen), ...Object.values(LEKTIONEN_NEU).flat(), KRISE, GRUNDWORTSCHATZ].map(l => [l.id, l]));
  const nimm = ids => ids.filter(id => alle[id]).map(id => alle[id]);
  const M = Object.fromEntries(MODULE.map(m => [m.id, m]));
  Object.assign(M.einf, { name: "Routenplaner Web 2.0", kurz: "Web 2.0",
@@ -466,7 +469,7 @@ LX("content-strategie").folien.splice(LX("content-strategie").folien.length - 1,
   text: "Erfolgsmessung, KPIs, Datenerhebung, Reporting, Interpretation und Monitoring-Tools." });
  Object.assign(M.plan, { name: "Planung & Umsetzung", kurz: "Umsetzung",
   text: "Themen- und Redaktionsplanung, Customer Journey, Content- und Community-Management, Produktion, Streuung sowie Kritik- und Krisenmanagement." });
- M.einf.lektionen = nimm(["web20", "rolle", "chancen", "einsatz", "fehler"]);
+ M.einf.lektionen = nimm(["grundwortschatz", "web20", "rolle", "chancen", "einsatz", "fehler"]);
  M.platt.lektionen = nimm(["blogs-communitys", "linkedin", "insta-tiktok", "kanalwahl", "x-xing-facebook", "tools", "automatisierung"]);
  M.unt.lektionen = nimm(["konzeption", "strategie", "analyse", "einbettung", "ziele", "persona", "ressourcen", "budget", "organisation", "governance", "governance-zugaenge", "content-strategie", "influencer", "recruiting"]);
  M.recht.lektionen = nimm(["rechtsgebiete", "impressum", "bildrechte", "ugc-recht", "datenschutz", "dsgvo"]);

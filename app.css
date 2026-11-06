@@ -402,3 +402,13 @@ label.check.sw input{margin-top:2px;flex:none}
 .multi-hint{margin:-4px 0 8px;font-size:.92rem;font-weight:700;color:var(--ink-2)}
 .opt[aria-pressed="true"], .opt[role="checkbox"][aria-checked="true"]{border-color:var(--c3,#6741d9);background:color-mix(in srgb,var(--c3,#6741d9) 10%,var(--surface))}
 .opt.ok.missed{border-style:dashed} .opt.ok.missed .mark::after{content:" übersehen";font-size:.75rem;font-weight:600}
+/* Fachbegriffe antippbar */
+.term{all:unset;cursor:pointer;color:inherit;font:inherit;text-decoration:underline dotted color-mix(in srgb,var(--m,var(--c2,#1971c2)) 70%,var(--ink));text-decoration-thickness:2px;text-underline-offset:3px;border-radius:4px;-webkit-touch-callout:none}
+.term:focus-visible{outline:3px solid var(--c2,#1971c2);outline-offset:1px}
+strong .term, .term strong{font-weight:inherit}
+.de{color:var(--ink-3);font-size:.88em;font-weight:500}
+.tsheet{position:fixed;inset:0;z-index:80;background:rgba(17,14,22,.45);display:flex;align-items:flex-end;justify-content:center}
+.ts-in{width:100%;max-width:560px;background:var(--surface);color:var(--ink);border-radius:24px 24px 0 0;padding:14px 22px calc(22px + var(--safe-b));border-top:5px solid var(--m);box-shadow:0 -10px 40px -10px rgba(0,0,0,.35)}
+.ts-grip{width:40px;height:5px;border-radius:9px;background:var(--line-strong);margin:0 auto 12px}
+.ts-in h2{font-size:1.35rem;margin-bottom:4px} .ts-de{color:var(--ink-3);font-weight:600;margin:0 0 8px} .ts-in p{margin:0 0 6px}
+.ts-in .say{width:48px;height:48px;flex:none}

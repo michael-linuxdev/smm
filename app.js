@@ -56,7 +56,7 @@ const ic = (n, extra = "") => `<svg viewBox="0 0 24 24" fill="none" stroke="curr
 /* ---------- Speicher ----------
    Doppelt: localStorage (schnell) + IndexedDB (robuster). Beim Start gewinnt der neuere Stand (Zeitstempel).
    Fragen und Lektionen haben stabile Schlüssel (unabhängig vom Modul), alte Schlüssel werden migriert. */
-const KEY = "smm-coach", VERSION = "0.10.1";
+const KEY = "smm-coach", VERSION = "0.11.0";
 const DEF = () => ({ lek: {}, q: {}, srs: {}, last: null, tests: [], pruefung: "", day: null, seen: 0, set: { size: "m", theme: "auto", goal: "10", vibe: true }, lastBackup: 0, created: Date.now(), updated: 0, run: null, lastRun: null });
 let S = DEF();
 try { const x = JSON.parse(localStorage.getItem(KEY) || "null"); if (x) S = Object.assign(DEF(), x); } catch (e) {}
@@ -190,7 +190,7 @@ function route() {
  const [a, b, ...rest] = h.split("-");
  if (a === "lektion" && b) return openStory(b, rest.join("-"));
  if (a === "modul" && b) return viewModul(b);
- if (h === "mini") { const d = dueKeys().length, n = nextLesson(); return location.replace(d || !n ? "#quiz-mini" : `#lektion-${n.m.id}-${n.l.id}`); }
+ if (h === "mini") { const n = nextLesson(); return location.replace(n ? `#lektion-${n.m.id}-${n.l.id}` : "#quiz-mini"); }
  if (a === "quiz") return viewQuiz(b || "mix");
  if (h === "lernen") return viewLernen();
  if (h === "pruefung") return viewPruefung();
@@ -307,6 +307,7 @@ function openStory(mid, lid) {
  storyEl.className = "story"; storyEl.style.setProperty("--m", m.farbe);
  storyEl.setAttribute("role", "dialog"); storyEl.setAttribute("aria-modal", "true"); storyEl.setAttribute("aria-label", "Lektion: " + l.titel);
  document.body.appendChild(storyEl); document.body.classList.add("no-scroll");
+ const seenDe = new Set(); // Übersetzung nur beim ersten Auftreten in der Lektion
  let rev = 1; // Schritt für Schritt: wie viele Teile der Karte sichtbar sind
  const go = d => {
   const f = F[i]; if (d > 0 && f.k === "check" && !(i in answered)) return toast("Wähle zuerst eine Antwort");
@@ -363,8 +364,10 @@ function openStory(mid, lid) {
   $(".x", storyEl).onclick = closeS;
   $(".next", storyEl)?.addEventListener("click", () => go(1));
   $(".prev", storyEl)?.addEventListener("click", () => go(-1));
-  $(".tapzone.l", storyEl)?.addEventListener("click", () => go(-1));
-  $(".tapzone.r", storyEl)?.addEventListener("click", () => go(1));
+  const viaTerm = e => { e.currentTarget.style.pointerEvents = "none"; const t = document.elementFromPoint(e.clientX, e.clientY); e.currentTarget.style.pointerEvents = ""; const tb = t?.closest(".term"); if (tb) { termSheet(+tb.dataset.g); return true; } };
+  $(".tapzone.l", storyEl)?.addEventListener("click", e => viaTerm(e) || go(-1));
+  $(".tapzone.r", storyEl)?.addEventListener("click", e => viaTerm(e) || go(1));
+  linkTerms($(".slide", storyEl), seenDe);
   fitSlide(); requestAnimationFrame(fitSlide); if (draw.first !== false) watchFit();
   if (draw.first !== false) { draw.first = false; $(".x", storyEl).focus({ preventScroll: true }); } else if (!storyEl.contains(document.activeElement)) ($(".next", storyEl) || $(".x", storyEl)).focus({ preventScroll: true });
   $$(".opt", storyEl).forEach(b => b.onclick = () => { if (i in answered) return; answered[i] = +b.dataset.k; const p = POOL.find(p => p.q === f.q); if (p) grade(p.key, answered[i] === f.c); save(); draw(); });
@@ -401,6 +404,50 @@ const isZusatz = q => !!modById(q.m)?.zusatz;
 const MC_POOL = () => POOL.filter(q => q.t !== "frei" && !isZusatz(q));
 const freiMatch = (q, txt) => q.muster.map(([, kw]) => { try { return new RegExp(kw, "i").test(txt); } catch (e) { return false; } });
 function chip(q) { const m = modById(q.m); return `<span class="chip mchip" style="--m:${m.farbe}">${m.kurz}${q.t === "frei" ? " · Freitext" : ""}</span>`; }
+/* ---------- Fachbegriffe antippbar (Glossar) + Übersetzung beim ersten Auftreten ---------- */
+const TERM_RX = (() => {
+ const v = [];
+ GLOSSAR.forEach((g, i) => [g.w, ...(g.syn || [])].forEach(t => { if (t && t.length >= 2) v.push([t, i]); }));
+ v.sort((a, b) => b[0].length - a[0].length);
+ const map = new Map(v.map(([t, i]) => [t.toLowerCase(), i]));
+ const rx = new RegExp(`(?<![\\p{L}\\p{N}-])(${v.map(([t]) => t.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")).join("|")})(?![\\p{L}\\p{N}])`, "giu");
+ return { rx, map };
+})();
+// Abkürzungen nur in exakter Schreibweise (sonst „pr“ in Wörtern usw.)
+const termIdx = t => { const i = TERM_RX.map.get(t.toLowerCase()); if (i === undefined) return; const g = GLOSSAR[i], all = [g.w, ...(g.syn || [])]; if (t.length <= 4 && !all.includes(t)) return; return i; };
+function linkTerms(root, seenDe) {
+ if (!root) return;
+ const used = new Set(), w = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, { acceptNode: n => n.parentElement.closest("button,a,.term,.kind,.chip,textarea,.mark,.l") ? NodeFilter.FILTER_REJECT : NodeFilter.FILTER_ACCEPT });
+ const nodes = []; while (w.nextNode()) nodes.push(w.currentNode);
+ for (const node of nodes) {
+  const txt = node.nodeValue; TERM_RX.rx.lastIndex = 0; let m, last = 0, frag = null;
+  while ((m = TERM_RX.rx.exec(txt))) {
+   const i = termIdx(m[0]); if (i === undefined || used.has(i)) continue;
+   used.add(i); frag = frag || document.createDocumentFragment();
+   frag.append(txt.slice(last, m.index));
+   const b = document.createElement("button"); b.type = "button"; b.className = "term"; b.dataset.g = i; b.textContent = m[0]; frag.append(b);
+   const g = GLOSSAR[i];
+   const kurz = g.de && g.de.length <= 32 && !/[()]/.test(g.de) ? g.de : g.de?.split(/\s[–(]/)[0];
+   if (kurz && kurz.length <= 32 && seenDe && !seenDe.has(i) && kurz.toLowerCase() !== m[0].toLowerCase() && !txt.toLowerCase().includes(kurz.toLowerCase())) { seenDe.add(i); const d = document.createElement("span"); d.className = "de"; d.textContent = ` (${kurz})`; frag.append(d); }
+   last = m.index + m[0].length;
+  }
+  if (frag) { frag.append(txt.slice(last)); node.replaceWith(frag); }
+ }
+}
+function termSheet(i) {
+ const g = GLOSSAR[i]; if (!g) return; $("#tsheet")?.remove();
+ const m = modById(g.m) || MODULE[0];
+ const el = document.createElement("div"); el.id = "tsheet"; el.className = "tsheet"; el.setAttribute("role", "dialog"); el.setAttribute("aria-modal", "true"); el.setAttribute("aria-labelledby", "ts-h");
+ el.innerHTML = `<div class="ts-in" style="--m:${m.farbe}"><div class="ts-grip" aria-hidden="true"></div><h2 id="ts-h">${esc(g.w)}</h2>${g.de ? `<p class="ts-de">${esc(g.de)}</p>` : ""}<p>${esc(g.d)}</p><div class="row" style="margin-top:14px">${sayBtn()}<button type="button" class="btn" id="ts-ok" style="flex:1">Verstanden</button></div></div>`;
+ document.body.appendChild(el);
+ const close = () => el.remove();
+ el.onclick = e => { if (e.target === el) close(); };
+ $("#ts-ok", el).onclick = close; $("#ts-ok", el).focus({ preventScroll: true });
+ $("[data-say]", el)?.addEventListener("click", e => { e.stopPropagation(); say(g.w + ". " + (g.de ? g.de + ". " : "") + g.d); }, true);
+ el.addEventListener("keydown", e => { if (e.key === "Escape") { e.stopPropagation(); close(); } });
+}
+document.addEventListener("click", e => { const t = e.target.closest(".term"); if (!t) return; e.stopPropagation(); termSheet(+t.dataset.g); }, true);
+
 /* ---------- Mehrfachantworten: c ist dann ein Array ---------- */
 const isMulti = q => Array.isArray(q.c);
 const istRichtig = (q, ans) => isMulti(q) ? Array.isArray(ans) && ans.length === q.c.length && q.c.every(k => ans.includes(k)) : ans === q.c;
@@ -450,6 +497,7 @@ function viewQuiz(id) {
   const q = queue.shift(); n++;
   const { html } = quizCard(q, miss.has(q) ? "Wiederholung" : `${Math.min(n, total)} / ${total}`);
   page(tab, `<h1 class="sr-only">${isFrei ? "Freitext üben" : isWdh ? "Wiederholen" : isErr ? "Fehlerkiste" : m ? m.name + " – Quiz" : "Schnell-Quiz"}</h1><a class="back" href="${backHref}">${ic("x")} Beenden</a>${isFrei ? `<details class="card tippbox" style="margin:0 0 14px"><summary><b>So schreibst du Freitext-Antworten</b></summary><ol class="small" style="margin:8px 0 0;padding-left:20px"><li><b>Benennen:</b> Problem oder Fachbegriff nennen (z. B. „Vanity Metrics“, „Recht am eigenen Bild“).</li><li><b>Begründen:</b> immer das Warum – „weil die Zielgruppe …“.</li><li><b>Konkret werden:</b> wie du es umsetzt, mit Beispiel.</li></ol><p class="small" style="margin:8px 0 0">Stichpunkte statt langer Fließtexte. Genau so viele Punkte nennen, wie gefragt. Bei Unsicherheit das Prinzip beschreiben – dafür gibt es oft Teilpunkte.</p></details>` : ""}<div class="bar dark" style="margin:0 0 16px" aria-hidden="true"><i style="width:${(1 - (queue.length + 1) / (total + miss.size)) * 100}%"></i></div>${html}`);
+  linkTerms($(".qtext"));
   const rate = (ok, requeue = !ok) => { grade(q.key, ok); if (ok) { if (!miss.has(q)) first++; } else if (requeue && !miss.has(q)) { miss.add(q); queue.push(q); } else miss.add(q); save(); };
   const weiter = () => { $(".fbx").insertAdjacentHTML("afterend", `<button type="button" class="btn block" style="margin-top:14px" id="nx">Weiter ${ic("right")}</button>`); $("#nx").onclick = next; $("#nx").focus({ preventScroll: true }); };
   if (q.t === "frei") {
@@ -481,7 +529,7 @@ function viewQuiz(id) {
    const k = +b.dataset.k, ok = k === q.c;
    $$(".opt").forEach(x => markOpt(x, +x.dataset.k === q.c ? "ok" : +x.dataset.k === k ? "bad" : "dim"));
    rate(ok);
-   $(".fbx").innerHTML = `<div class="fb ${ok ? "ok" : "bad"}"><b>${ok ? "Richtig!" : "Nicht ganz – die Frage kommt gleich nochmal."}</b>${esc(q.e)}</div>`;
+   $(".fbx").innerHTML = `<div class="fb ${ok ? "ok" : "bad"}"><b>${ok ? "Richtig!" : "Nicht ganz – die Frage kommt gleich nochmal."}</b>${esc(q.e)}</div>`; linkTerms($(".fbx .fb"));
    weiter();
   });
  }

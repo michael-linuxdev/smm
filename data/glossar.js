@@ -1,3 +1,4 @@
+import { GLOSSAR_NEU, SYN_ALT } from "./glossar2.js";
 // Glossar & Formeln. m = Modul-ID für die Farbe. Stand 11/2026.
 export const GLOSSAR = [
  { w: "Balanced Scorecard", m: "kpi", d: "Kennzahlensystem, das Ziele aus vier Blickwinkeln misst: Finanzen, Kunden, interne Prozesse sowie Lernen und Entwicklung. Im Social-Media-Controlling verbindet sie Kanal-KPIs mit den Unternehmenszielen." },
@@ -71,3 +72,7 @@ export const FORMELN = [
  { n: "ROI (Return on Investment)", f: "(Ertrag − Kosten) ÷ Kosten × 100", b: "1.500 € Ertrag bei 1.000 € Kosten → (1.500 − 1.000) ÷ 1.000 × 100 = 50 %", h: "Ertrag = der der Maßnahme zurechenbare Rohertrag bzw. Deckungsbeitrag, nicht der reine Umsatz." },
  { n: "ROAS (Return on Ad Spend)", f: "Umsatz aus Anzeigen ÷ Werbekosten", b: "2.000 € Umsatz bei 500 € Werbekosten = ROAS 4 (also 4 € Umsatz je 1 €)" }
 ];
+
+// Erweiterung für Quereinsteiger: neue Begriffe + Schreibvarianten/Übersetzungen der vorhandenen
+for (const g of GLOSSAR) { const x = SYN_ALT[g.w]; if (x) Object.assign(g, x); }
+GLOSSAR.push(...GLOSSAR_NEU);
