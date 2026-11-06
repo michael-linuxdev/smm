@@ -53,7 +53,7 @@ const ic = (n, extra = "") => `<svg viewBox="0 0 24 24" fill="none" stroke="curr
 /* ---------- Speicher ----------
    Doppelt: localStorage (schnell) + IndexedDB (robuster). Dazu persistenten Speicher anfragen
    und regelmäßig an eine Sicherungsdatei erinnern. */
-const KEY = "smm-coach", VERSION = "0.6.0";
+const KEY = "smm-coach", VERSION = "0.6.1";
 const DEF = () => ({ lek: {}, q: {}, srs: {}, last: null, tests: [], pruefung: "", set: { size: "m", theme: "auto" }, lastBackup: 0, created: Date.now() });
 let S = DEF();
 try { const x = JSON.parse(localStorage.getItem(KEY) || "null"); if (x) S = Object.assign(DEF(), x); } catch (e) {}
@@ -581,13 +581,26 @@ function viewEinstellungen(confirmReset = false) {
  <div class="card"><h3>Lernstand sichern</h3><p class="small muted" style="margin:2px 0 12px">Dein Fortschritt liegt nur auf diesem Gerät. Mit einer Sicherungsdatei kannst du ihn wiederherstellen oder auf ein anderes Gerät mitnehmen. Letzte Sicherung: ${lb}.</p>
   <div class="row"><button class="btn" id="exp">${ic("download")} Sicherung erstellen</button><label class="btn ghost" for="imp">${ic("upload")} Wiederherstellen</label><input type="file" id="imp" accept="application/json,.json" hidden></div>
   <p class="small muted" style="margin-top:10px" id="storeinfo"></p></div>
- <div class="card"><h3>App</h3><div class="row" style="margin-top:8px"><button class="btn ghost" id="inst">Als App installieren</button><a class="btn ghost" href="#lehrgang">Prüfungstermin</a></div></div>
+ <div class="card"><h3>App</h3><p class="small muted" style="margin:2px 0 10px">Installierte Version: ${VERSION}</p><div class="row" style="margin-top:8px"><button class="btn" id="upchk">${ic("repeat")} Nach Updates suchen</button><button class="btn ghost" id="inst">Als App installieren</button><a class="btn ghost" href="#lehrgang">Prüfungstermin</a></div></div>
  <div class="card"><h3>Fortschritt löschen</h3><p class="small muted" style="margin:2px 0 12px">Löscht Lektionen, Fragen, Wiederholungen und Testergebnisse auf diesem Gerät.</p>
   ${confirmReset ? `<div class="tip">${ic("warn", 'style="color:var(--bad)"')}<span>Wirklich alles löschen? Das lässt sich nur mit einer Sicherungsdatei rückgängig machen.</span></div><div class="row"><button class="btn ghost" id="rno">Abbrechen</button><button class="btn danger" id="ryes">${ic("trash")} Endgültig löschen</button></div>` : `<button class="btn ghost" id="reset">${ic("trash")} Fortschritt löschen</button>`}</div>
  <p class="small muted" style="text-align:center;margin-top:20px">SMM Coach · Version ${VERSION}<br>Unabhängiges Lernangebot, kein offizielles Angebot der IHK oder der HSB Akademie.</p>`);
  $$("[data-size]").forEach(b => b.onclick = () => { S.set.size = b.dataset.size; save(); applySettings(); viewEinstellungen(); });
  $$("[data-theme]").forEach(b => b.onclick = () => { S.set.theme = b.dataset.theme; save(); applySettings(); viewEinstellungen(); });
  $("#exp").onclick = exportBackup;
+ $("#upchk").onclick = async () => {
+  const b = $("#upchk"); b.disabled = true; b.textContent = "Suche …";
+  try {
+   const reg = await navigator.serviceWorker?.getRegistration();
+   if (!reg) { location.reload(); return; }
+   await reg.update();
+   await new Promise(r => setTimeout(r, 1500));
+   const w = reg.waiting || reg.installing;
+   if (w) { updateBanner(w); toast("Neue Version gefunden"); }
+   else toast(`Du hast die aktuelle Version (${VERSION})`);
+  } catch (e) { toast("Keine Verbindung – später nochmal versuchen"); }
+  b.disabled = false; b.innerHTML = `${ic("repeat")} Nach Updates suchen`;
+ };
  $("#imp").onchange = e => e.target.files[0] && importBackup(e.target.files[0]);
  $("#inst").onclick = () => { const p = platform(); if (p.standalone) toast("Die App ist bereits installiert"); else if (p.os === "desktop") toast("Am Computer: Installieren-Symbol in der Adresszeile"); else installGate(true); };
  $("#reset")?.addEventListener("click", () => viewEinstellungen(true));
@@ -600,8 +613,8 @@ function viewEinstellungen(confirmReset = false) {
 function updateBanner(worker) {
  if ($("#upd")) return;
  const el = document.createElement("div"); el.id = "upd"; el.className = "upd"; el.setAttribute("role", "status");
- el.innerHTML = `<span><b>Neue Version verfügbar</b><span class="small">Mit neuen Inhalten und Verbesserungen.</span></span><button class="btn white">Jetzt laden</button>`;
- el.querySelector("button").onclick = () => { worker.postMessage({ type: "SKIP_WAITING" }); el.querySelector("button").textContent = "Lädt …"; };
+ el.innerHTML = `<span><b>Neue Version verfügbar</b><span class="small">Mit neuen Inhalten und Verbesserungen.</span></span><button class="btn white">Jetzt aktualisieren</button>`;
+ el.querySelector("button").onclick = () => { worker.postMessage({ type: "SKIP_WAITING" }); el.querySelector("button").textContent = "Wird aktualisiert …"; setTimeout(() => location.reload(), 2500); };
  document.body.appendChild(el);
 }
 if ("serviceWorker" in navigator && location.protocol === "https:") {
