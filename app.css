@@ -313,3 +313,8 @@ label.btn{cursor:pointer}
 .dg .panel{fill:var(--surface-2)}.dg .l{stroke:var(--m-line);stroke-width:2}.dg .ring{fill:none;stroke:var(--m-line);stroke-width:2;stroke-dasharray:4 4}
 .dg .v1,.dg .v2,.dg .v3{fill:var(--m);fill-opacity:.16;stroke:var(--m-ink);stroke-width:1.5}
 .dg .scr{fill:var(--surface)}.dg .pill{fill:var(--m-ink)}.dg .pill2{fill:var(--m-soft);stroke:var(--m-ink)}
+.qprog{padding:14px 18px}
+.bar2{position:relative;height:10px;border-radius:99px;background:var(--surface-2);overflow:hidden;margin-top:10px}
+.bar2 i{position:absolute;left:0;top:0;bottom:0;border-radius:99px}
+.bar2 .d{background:color-mix(in srgb,var(--c3) 30%,var(--surface))}
+.bar2 .s{background:var(--grad-strong)}
