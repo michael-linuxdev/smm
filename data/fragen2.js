@@ -265,13 +265,13 @@ export const NEUE = {
 "m": "platt",
 "q": "Was ist ein Collab-Beitrag auf Instagram?",
 "a": [
-"Ein gemeinsamer Beitrag zweier Konten, der auf beiden Profilen erscheint",
+"Ein gemeinsamer Beitrag von zwei oder mehr Konten, der auf allen beteiligten Profilen erscheint",
 "Ein Beitrag, der nur für Mitarbeitende sichtbar ist",
 "Eine bezahlte Anzeige im Explore-Bereich",
 "Ein Story-Highlight mit mehreren Kapiteln"
 ],
 "c": 0,
-"e": "Collab-Beiträge teilen Reichweite und Interaktionen zwischen beiden Konten – ideal für Partner- und Influencer-Kooperationen.",
+"e": "Collab-Beiträge teilen Reichweite und Interaktionen zwischen den beteiligten Konten – ideal für Partner- und Influencer-Kooperationen.",
 "quelle": ""
 },
 {
@@ -408,13 +408,13 @@ export const NEUE = {
 "m": "platt",
 "q": "Was trifft auf Threads zu?",
 "a": [
-"Eine textbasierte App von Meta, die mit dem Instagram-Konto verknüpft ist",
+"Eine textbasierte App von Meta, die mit einem Instagram-Konto verknüpft werden kann",
 "Eine Video-Plattform von Google",
 "Ein Business-Netzwerk für Stellenanzeigen",
 "Ein Messenger nur für Gruppenchats"
 ],
 "c": 0,
-"e": "Threads ist Metas Microblogging-Dienst; Beiträge können optional auch ins Fediverse geteilt werden.",
+"e": "Threads ist Metas Microblogging-Dienst; Beiträge können optional auch ins Fediverse geteilt werden. Ein Instagram-Konto ist inzwischen nicht mehr zwingend nötig.",
 "quelle": ""
 },
 {
@@ -830,7 +830,7 @@ export const NEUE = {
 "Kennzeichnung nur, wenn das Produkt negativ bewertet wird"
 ],
 "c": 0,
-"e": "Auch Produkte zählen als „ähnliche Gegenleistung“ nach § 5a Abs. 4 UWG; der Erhalt einer Gegenleistung wird zudem vermutet.",
+"e": "Auch Produkte zählen als „ähnliche Gegenleistung“ nach § 5a Abs. 4 UWG; der Erhalt einer Gegenleistung wird zudem vermutet. (BGH, 13.01.2022, I ZR 35/21: Schon kostenlos überlassene Produkte sind eine Gegenleistung.)",
 "quelle": "https://www.frankfurt-main.ihk.de/recht/uebersicht-alle-rechtsthemen/wettbewerbsrecht/unlauterer-wettbewerb/irrefuehrende-werbung/influencer-marketing-5196192"
 },
 {
@@ -870,7 +870,7 @@ export const NEUE = {
 ],
 "c": 0,
 "e": "Das UWG verbietet seit 2022 ausdrücklich das Beauftragen oder Übermitteln gefälschter Verbraucherbewertungen (Anhang Nr. 23c).",
-"quelle": "https://lexetius.com/UWG/+0"
+"quelle": "UWG, Anhang zu § 3 Abs. 3, Nr. 23c"
 },
 {
 "m": "recht",
@@ -928,7 +928,7 @@ export const NEUE = {
 "m": "recht",
 "q": "Ein Foto steht unter der Lizenz CC BY-NC. Darf es auf dem Instagram-Profil eines Unternehmens erscheinen?",
 "a": [
-"Nein, NC erlaubt keine kommerzielle Nutzung",
+"Nein, nicht ohne gesonderte Erlaubnis – NC erlaubt keine kommerzielle Nutzung",
 "Ja, Creative Commons ist immer frei",
 "Ja, wenn man den Urheber nicht nennt",
 "Ja, aber nur in Stories"
@@ -947,7 +947,7 @@ export const NEUE = {
 "Nur, wenn die Skulptur älter als 100 Jahre ist"
 ],
 "c": 0,
-"e": "§ 59 UrhG erlaubt das – Aufnahmen aus erhöhten Positionen, etwa per Drohne, sind davon nicht ohne Weiteres gedeckt.",
+"e": "§ 59 UrhG (Panoramafreiheit) erlaubt das, auch für kommerzielle Zwecke. Aufnahmen aus einer Perspektive, die der Allgemeinheit nicht zugänglich ist, etwa per Drohne, sind laut BGH nicht gedeckt (BGH, 23.10.2024, I ZR 67/23).",
 "quelle": ""
 },
 {
@@ -1012,8 +1012,8 @@ export const NEUE = {
 "„Schreibe uns eine Nachricht, um teilzunehmen“"
 ],
 "c": 0,
-"e": "Persönliche Chroniken und Freundesverbindungen dürfen nicht zur Durchführung von Gewinnspielen genutzt werden.",
-"quelle": "https://bibliothek.stadt-brandenburg.de/fileadmin/pdf/00/Datenschutz/Meta-Richtlinien_f%C3%BCr_Seiten_Gruppen_und_Veranstalltungen_Facebook_Stand_21.06.2022.pdf"
+"e": "Persönliche Chroniken und Freundesverbindungen dürfen nicht zur Durchführung von Gewinnspielen genutzt werden. Auch „Markiere Freunde, um teilzunehmen“ ist auf Facebook unzulässig, auf Instagram dagegen erlaubt.",
+"quelle": "https://www.it-recht-kanzlei.de/gewinnspiele-facebook-instagram-anleitung.html"
 },
 {
 "m": "recht",
@@ -1045,7 +1045,7 @@ export const NEUE = {
 "m": "recht",
 "q": "Was verlangt Art. 4 KI-Verordnung (in der Fassung des Digital-Omnibus) von Unternehmen, die KI-Tools einsetzen?",
 "a": [
-"Maßnahmen zu ergreifen, um die KI-Kompetenz der Mitarbeitenden zu fördern",
+"Eine abgeschwächte Pflicht, die KI-Kompetenz der Mitarbeitenden zu fördern, statt sie „sicherzustellen“",
 "Ein Verbot aller KI-Tools im Marketing",
 "Eine staatliche Prüfung jedes KI-Beitrags",
 "Die Anmeldung jedes Prompts bei einer Behörde"
@@ -1064,7 +1064,7 @@ export const NEUE = {
 "Das Deutsche Patent- und Markenamt"
 ],
 "c": 0,
-"e": "Das Digitale-Dienste-Gesetz (DDG) setzt den DSA in Deutschland um und benennt die Bundesnetzagentur als Koordinator.",
+"e": "Der DSA gilt als EU-Verordnung unmittelbar. Das Digitale-Dienste-Gesetz (DDG) regelt seine Durchführung in Deutschland und bestimmt die Bundesnetzagentur als zuständige Behörde und Koordinierungsstelle (§ 12 DDG). Für bestimmte Bereiche sind andere Stellen zuständig, z. B. die Bundeszentrale für Kinder- und Jugendmedienschutz.",
 "quelle": ""
 },
 {
@@ -1147,7 +1147,7 @@ export const NEUE = {
 },
 {
 "m": "kpi",
-"q": "Eine Maßnahme kostet 2.000 € und bringt einen Rohgewinn (Deckungsbeitrag) von 5.000 €. Wie hoch ist der ROI?",
+"q": "Eine Maßnahme kostet 2.000 €. Vor Abzug dieser Kosten bringt sie einen Deckungsbeitrag von 5.000 €. Wie hoch ist der ROI?",
 "a": [
 "150 %",
 "250 %",
@@ -1617,7 +1617,7 @@ export const NEUE = {
 ],
 [
 "Personal/HR: Recruiting, Employer Branding",
-"personal|hr\\b|recruit|bewerb|arbeitgeber|employer"
+"\\bhr\\b|personal|recruit|bewerb|arbeitgeber|employer"
 ],
 [
 "Kundenservice: Fragen und Beschwerden beantworten",
@@ -1629,7 +1629,7 @@ export const NEUE = {
 ],
 [
 "Geschäftsführung: Ziele, Freigaben, Budget",
-"geschäftsführ|leitung|chef|inhaber|management|freigab"
+"geschäftsführ|geschäftsleitung|unternehmensleitung|chef|inhaber|management|freigab"
 ]
 ],
 "min": 3,
@@ -1704,7 +1704,7 @@ export const NEUE = {
 "muster": [
 [
 "LinkedIn: berufliche Zielgruppe, Fach- und Führungskräfte, B2B",
-"beruf|b2b|fachkr|führungskr|business"
+"fachwissen|fachbeitr|expert|dokument|karussell|artikel|whitepaper"
 ],
 [
 "LinkedIn-Inhalte: Fachwissen, Einblicke, Texte/Dokumente",
@@ -1753,7 +1753,7 @@ export const NEUE = {
 ],
 [
 "Follower müssen aktiv abonnieren; Reichweite muss aufgebaut werden",
-"abonn|folgen|aufbau|bewerb"
+"abonn|\\bfolgen\\b|follower gewinn|aufbau|bewerb"
 ]
 ],
 "min": 3,
@@ -1782,15 +1782,15 @@ export const NEUE = {
 ],
 [
 "Zeitgesteuertes Veröffentlichen per Publishing-Tool",
-"zeitgesteuert|planen|publish|hootsuite|buffer|business suite|later"
+"zeitgesteuert|vorplan|einplan|publish|hootsuite|buffer|business suite|later"
 ],
 [
 "Gemeinsamer Posteingang / Vertretungsregel",
-"posteingang|inbox|vertret|community"
+"posteingang|inbox|vertret"
 ],
 [
 "Sicherheit: Zwei-Faktor-Anmeldung, keine Passwortweitergabe",
-"zwei.?faktor|2fa|passwort|sicher"
+"zwei.?faktor|2fa|passwort|zugangsdaten"
 ]
 ],
 "min": 4,
@@ -1815,11 +1815,11 @@ export const NEUE = {
 ],
 [
 "Auswertung, Sentiment, Reporting",
-"auswert|analys|sentiment|report|daten"
+"auswert|analys|sentiment|report|statistik"
 ],
 [
 "Chatbots / Antwortvorschläge im Community Management",
-"chatbot|antwort|bot|community"
+"chatbot|\\bbot|antwortvorschl|kommentarantwort|automatisch antwort"
 ],
 [
 "Risiko: Fehler/Halluzinationen, Datenschutz, Urheberrecht, Kennzeichnung",
@@ -1848,7 +1848,7 @@ export const NEUE = {
 ],
 [
 "Messbar / SMART formuliert (Zahl, Termin)",
-"smart|\\d|bis|messbar|termin"
+"smart|messbar|termin|bis (zum|ende|\\d)|\\d+ ?%|\\d{2,}"
 ],
 [
 "Begründung: Ziel zahlt auf übergeordnetes Ziel ein",
@@ -1877,11 +1877,11 @@ export const NEUE = {
 ],
 [
 "Stellenanzeigen / Social Ads mit Targeting",
-"stellen|anzeig|ads|targeting|job"
+"stellenanzeig|stellenangebot|jobanzeig|anzeige|\\bads\\b|targeting|\\bjobs?\\b"
 ],
 [
 "Reaktion auf Arbeitgeberbewertungen / Candidate Experience",
-"bewertung|kununu|candidate|bewerbungsprozess|glassdoor"
+"\\bwerte\\b|unternehmenswert|kultur|mission|benefit"
 ],
 [
 "Werte und Kultur zeigen",
@@ -1943,7 +1943,7 @@ export const NEUE = {
 ],
 [
 "Mögliche Krisenszenarien / Risikoanalyse",
-"szenari|risik|fall|beispiel"
+"szenari|risik|krisenfall|fallbeisp|krisenart"
 ],
 [
 "Vorbereitete Kernbotschaften / Holding Statements / Dark Site",
@@ -1968,19 +1968,19 @@ export const NEUE = {
 "muster": [
 [
 "Klare Kennzeichnung als Werbung/Anzeige, gut sichtbar am Anfang",
-"kennzeichn|werbung|anzeige|#ad"
+"kennzeichn|werbung|anzeige|bezahlte (werbe)?partnerschaft"
 ],
 [
 "Rechtsgrundlagen UWG / Medienstaatsvertrag",
-"uwg|wettbewerb|mstv|medienstaatsvertrag|landesmedien"
+"uwg|wettbewerb|mstv|medienstaatsvertrag|landesmedien|ddg"
 ],
 [
 "Vertragliche Regelung von Nutzungsrechten an den Inhalten",
-"nutzungsrecht|lizenz|rechte an|verwend"
+"nutzungsrecht|lizenz|rechte an|verwendungsrecht|weiterverwend"
 ],
 [
 "Rechte an Musik/Bildern/abgebildeten Personen",
-"musik|bildrecht|urheber|person|einwillig"
+"musik|bildrecht|urheber|abgebildet|eigenen bild|kug|einwillig"
 ],
 [
 "Wahre, nicht irreführende Aussagen (z. B. keine Heilversprechen)",
@@ -2005,7 +2005,7 @@ export const NEUE = {
 ],
 [
 "Datenschutzhinweise für die Seite (Informationspflichten Art. 13)",
-"datenschutzhinweis|datenschutzerklär|information|art\\.? ?13"
+"datenschutzhinweis|datenschutzerklär|informationspflicht|art\\.? ?13"
 ],
 [
 "Vereinbarung mit Meta (Page Insights / Controller Addendum)",
@@ -2046,7 +2046,7 @@ export const NEUE = {
 ],
 [
 "Information in der Datenschutzerklärung",
-"datenschutzerklär|information|transparen"
+"datenschutzerklär|datenschutzhinweis|informationspflicht|transparen"
 ],
 [
 "Datenübermittlung in die USA (Drittland) beachten",
@@ -2071,7 +2071,7 @@ export const NEUE = {
 ],
 [
 "Rein KI-erzeugte Inhalte sind oft nicht urheberrechtlich geschützt",
-"nicht geschützt|kein.{0,15}schutz|schöpfung|urheberrecht"
+"nicht (urheberrechtlich )?geschützt|kein.{0,15}schutz|schöpfung|gemeinfrei"
 ],
 [
 "Rechte Dritter beachten (Urheber-, Marken-, Persönlichkeitsrechte)",
@@ -2100,19 +2100,19 @@ export const NEUE = {
 "muster": [
 [
 "CPM = 1.200 € ÷ 150.000 × 1.000 = 8 €",
-"(cpm|tausend|1\\.?000 impression)[^€]{0,40}?(^|[^\\d,.])8([,.]00?)? ?(€|euro)|cpm\\D{0,15}8(?![\\d.,]?\\d)"
+"(^|[^\\d,.])8([,.]00?)?\\s?(€|euro)|cpm.{0,50}?=\\s*8([,.]00?)?(?![\\d.,]?\\d)|cpm\\D{0,15}8([,.]00?)?(?![\\d.,]?\\d)"
 ],
 [
 "CPC = 1.200 € ÷ 1.500 = 0,80 €",
-"0[,.]8"
+"(^|[^\\d,.])0[,.]80?(?![\\d.,]?\\d)"
 ],
 [
 "CPA = 1.200 € ÷ 30 = 40 €",
-"(cpa|pro (kauf|verkauf|aktion|conversion))[^€]{0,40}?(^|[^\\d,.])40([,.]00?)? ?(€|euro)|cpa\\D{0,15}40(?![\\d.,]?\\d)"
+"(^|[^\\d,.])40([,.]00?)?\\s?(€|euro)|cpa.{0,50}?=\\s*40([,.]00?)?(?![\\d.,]?\\d)|cpa\\D{0,15}40([,.]00?)?(?![\\d.,]?\\d)"
 ],
 [
 "ROAS = 4.800 € ÷ 1.200 € = 4 (400 %)",
-"400 ?%|roas\\D{0,15}4(?![\\d.,]?\\d)|4 ?: ?1|vierfach|faktor 4"
+"400\\s?%|roas.{0,50}?=\\s*4([,.]0+)?(?![\\d.,]?\\d)|roas\\D{0,15}4([,.]0+)?(?![\\d.,]?\\d)|4\\s?:\\s?1|vierfach|faktor\\s?4(?!\\d)"
 ]
 ],
 "min": 3,
@@ -2133,7 +2133,7 @@ export const NEUE = {
 ],
 [
 "Conversion-Tracking/Pixel – mit Einwilligung",
-"pixel|conversion.?tracking|conversions api|einwillig|cookie"
+"conversion|kauf|anfrage|anmeld|lead"
 ],
 [
 "Conversion-Ziele definieren (Kauf, Anfrage, Anmeldung)",
@@ -2145,7 +2145,7 @@ export const NEUE = {
 ],
 [
 "Eigene Rabattcodes oder Landingpages je Kanal",
-"rabatt|code|gutschein|landing"
+"rabattcode|gutschein|landing ?page|eigene[rn]? code"
 ]
 ],
 "min": 3,
@@ -2162,11 +2162,11 @@ export const NEUE = {
 ],
 [
 "Interaktion → Engagement-Rate, Kommentare, Shares",
-"engagement|interaktion|kommentar|shares|likes"
+"engagement|kommentar|shares?|likes|saves?|reaktion"
 ],
 [
 "Traffic → Klicks / CTR",
-"klick|ctr|click|traffic|website.?besuch"
+"klick|ctr|click|website.?besuch|sitzung|landingpage"
 ],
 [
 "Conversion → Conversion-Rate, Leads, Verkäufe, CPA",
@@ -2199,10 +2199,10 @@ export const NEUE = {
 ],
 [
 "Abgeleitete Strategie/Maßnahme",
-"maßnahm|strateg|ableit|daher|deshalb|empfehl"
+"maßnahm|empfehl|daher|deshalb|ableit|abgeleitet"
 ]
 ],
-"min": 4,
+"min": 5,
 "quelle": ""
 },
 {
@@ -2212,11 +2212,11 @@ export const NEUE = {
 "muster": [
 [
 "Bezug zu Zielen und Persona/Zielgruppe",
-"ziel|persona|zielgrupp"
+"zielgrupp|persona|unternehmensziel|ziele\\b"
 ],
 [
 "Themensäulen festlegen",
-"themensäul|säule|themen|pillar"
+"themensäul|säule|pillar|themenfeld|themenbereich"
 ],
 [
 "Formate je Kanal (Reels, Karussell, Text …)",
@@ -2228,11 +2228,11 @@ export const NEUE = {
 ],
 [
 "Tonalität und Corporate Design",
-"tonalität|ton|corporate design|stil|ansprache"
+"tonalität|tonfall|corporate design|ansprache|duzen|siezen|brand voice|markenstimme"
 ],
 [
 "Storytelling / Mehrwert (informieren, unterhalten, helfen)",
-"story|mehrwert|unterhalt|inform|helfen|nutzen"
+"storytelling|mehrwert|unterhalt|informier|hilfreich"
 ],
 [
 "Redaktionsplan und Erfolgsmessung",
@@ -2249,7 +2249,7 @@ export const NEUE = {
 "muster": [
 [
 "Ziel und KPI festlegen (Bewerbungen, CPL)",
-"ziel|kpi|cpl|kosten pro"
+"kpi|cpl|kosten pro|zielwert|messgröße"
 ],
 [
 "Zielgruppe und Targeting (Region, Interessen, Alter)",
@@ -2273,7 +2273,7 @@ export const NEUE = {
 ],
 [
 "A/B-Tests, Auswertung und Optimierung",
-"a/?b|test|optimier|auswert"
+"a\\/b|ab-test|split-test|\\btest|optimier|auswert"
 ]
 ],
 "min": 4,
@@ -2294,7 +2294,7 @@ export const NEUE = {
 ],
 [
 "Kauf/Handlung (Conversion): Angebote, Retargeting, Call-to-Action",
-"kauf|conversion|action|handlung|do\\b|retarget|angebot"
+"kauf|conversion|action|handlung|\\bdo\\b|retarget|angebot"
 ],
 [
 "Bindung (Loyalty/Care): Service, Community, exklusive Inhalte",
@@ -2305,7 +2305,7 @@ export const NEUE = {
 "empfehl|advocacy|ugc|bewertung|weiterempf"
 ]
 ],
-"min": 3,
+"min": 4,
 "quelle": ""
 }
 ]
