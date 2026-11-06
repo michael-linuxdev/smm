@@ -2,7 +2,7 @@
 // Folientypen: intro, text, liste, beispiel, merke, check (Verständnisfrage, Index c = richtige Antwort).
 // **fett** ist erlaubt. Rechtliche Inhalte: Stand 11/2026, vor Veröffentlichung fachlich prüfen lassen.
 
-export const MODULE = [
+const ALT = [
 {
  id: "grund", name: "Grundlagen & Strategie", kurz: "Strategie", farbe: "#ff5a5f",
  text: "Was Social Media Manager tun, wie man Ziele setzt und eine Strategie aufbaut.",
@@ -177,7 +177,7 @@ export const MODULE = [
 ];
 
 // Quizfragen je Modul (zusätzlich zu den Verständnisfragen in den Lektionen). c = Index der richtigen Antwort.
-export const FRAGEN = [
+const FRAGEN_ALT = [
 {m:"grund",q:"Wofür steht das „T“ in SMART?",a:["Terminiert","Teamfähig","Transparent","Technisch"],c:0,e:"Ein SMART-Ziel hat ein klares Enddatum."},
 {m:"grund",q:"Was ist „Owned Media“?",a:["Eigene Kanäle wie Unternehmensprofil, Website, Newsletter","Bezahlte Anzeigen","Erwähnungen durch Kunden","Presseartikel über das Unternehmen"],c:0,e:"Owned = gehört dir. Paid = bezahlt. Earned = verdient."},
 {m:"grund",q:"Was ist der erste Schritt einer Social-Media-Strategie?",a:["Analyse der Ausgangslage","Hashtags auswählen","Anzeigen schalten","Logo neu gestalten"],c:0,e:"Erst Ist-Zustand und Wettbewerb analysieren, dann Ziele setzen."},
@@ -214,15 +214,158 @@ export const FRAGEN = [
 {m:"recht",q:"Was riskiert man bei Rechtsverstößen auf Social Media häufig?",a:["Eine kostenpflichtige Abmahnung","Einen Orden","Mehr Reichweite","Nichts"],c:0,e:"Abmahnungen von Mitbewerbern oder Rechteinhabern sind teuer."}
 ];
 
-export const GESPRAECH = [
-{q:"Warum haben Sie genau diese Kanäle gewählt?",a:["Mit der Zielgruppe begründen: Wo ist sie aktiv?","Welches Ziel erfüllt jeder Kanal?","Warum lassen Sie andere Kanäle weg?","Ressourcen ehrlich nennen: lieber 2 Kanäle gut als 5 halb"]},
-{q:"Wie messen Sie den Erfolg Ihrer Strategie?",a:["Pro Ziel eine KPI mit Ausgangs- und Zielwert","Zeitraum und Reporting-Rhythmus","Tools bzw. Datenquellen nennen","Was passiert bei Abweichung?"]},
-{q:"Was machen Sie bei einem Shitstorm?",a:["Lage einschätzen, Krisenplan aktivieren","Intern abstimmen, schnell erste Reaktion","Sachlich bleiben, Fehler eingestehen","Berechtigte Kritik nicht löschen, hinterher auswerten"]},
-{q:"Wie begründen Sie Ihr Budget?",a:["Aufschlüsseln: Ads, Produktion, Arbeitszeit, Tools","Bezug zum Ziel, z. B. Kosten pro Bewerbung","Mit Testbudget starten","Erfolgreiche Anzeigen skalieren"]},
-{q:"Welche rechtlichen Punkte haben Sie beachtet?",a:["Impressum nach § 5 DDG","Datenschutz, gemeinsame Verantwortlichkeit","Bildrechte und Einwilligungen","Werbekennzeichnung, Gewinnspiele, KI-Kennzeichnung"]},
-{q:"Wer ist Ihre Zielgruppe – und woher wissen Sie das?",a:["Persona vorstellen","Datenquellen nennen: Insights, Kundendaten, Befragungen","Mediennutzung der Persona","Nicht nur Bauchgefühl"]},
-{q:"Wie sorgen Sie für regelmäßige Inhalte?",a:["Redaktionsplan mit Themensäulen","Zuständigkeiten und Freigabeprozess","Content-Vorrat anlegen","Inhalte recyceln"]},
-{q:"Was würden Sie nach drei Monaten anders machen?",a:["Ergebnisse auswerten","Schwache Formate reduzieren, starke ausbauen","A/B-Tests nutzen","Ziele bei Bedarf anpassen"]},
-{q:"Wie binden Sie Mitarbeitende ein?",a:["Social-Media-Guidelines","Corporate Influencer","Schulungen und einfache Freigaben","Einblicke aus dem Arbeitsalltag"]},
-{q:"Wie passt Social Media zur Gesamtkommunikation?",a:["Abgeleitet aus Unternehmens- und Marketingzielen","Einheitliches Design und Tonalität","Verzahnung mit Website, Newsletter, Vertrieb, HR","Gemeinsame Kennzahlen"]}
+
+
+/* =====================================================================
+   Neue Lektionen (Stand 11/2026) – ergänzen die Themen des Lehrgangs
+   „Social Media Manager/-in (IHK)“, wie er für den Abschlusstest beim
+   IHK-Bildungszentrum Dresden beschrieben ist.
+   ===================================================================== */
+const NEU = {
+ web20: { id: "web20", titel: "Was ist Social Media?", min: 3, folien: [
+  { k: "intro", h: "Vom Lesen zum Mitmachen", b: "Im frühen Internet (**Web 1.0**) haben Unternehmen Inhalte veröffentlicht, Nutzer haben nur gelesen. Mit dem **Web 2.0** – der Begriff wurde Mitte der 2000er populär – können alle selbst Inhalte erstellen, teilen und kommentieren." },
+  { k: "text", h: "Was Social Media ausmacht", b: "Social Media sind Plattformen, auf denen Menschen **Inhalte erstellen, teilen und miteinander kommunizieren**. Statt einer Botschaft an viele (One-to-many) reden **viele mit vielen** (Many-to-many)." },
+  { k: "liste", h: "Arten von Social Media", l: ["Soziale Netzwerke (z. B. Facebook)", "Business-Netzwerke (z. B. LinkedIn, XING)", "Foto- und Video-Plattformen (z. B. Instagram, YouTube, TikTok)", "Microblogging (z. B. X, Threads)", "Blogs und Foren", "Messenger-Kanäle und Bewertungsportale"] },
+  { k: "merke", h: "Merke", b: "Kern von Social Media ist der **Dialog**. Wer nur sendet und nicht zuhört, nutzt Social Media wie eine Plakatwand." },
+  { k: "check", q: "Was unterscheidet das Web 2.0 vom Web 1.0?", a: ["Nutzer erstellen und teilen selbst Inhalte", "Es gibt keine Werbung mehr", "Nur Unternehmen dürfen veröffentlichen", "Es funktioniert nur auf dem Smartphone"], c: 0, e: "Das „Mitmach-Web“: Nutzer sind nicht mehr nur Leser, sondern auch Autoren." }
+ ]},
+ chancen: { id: "chancen", titel: "Potenziale, Chancen & Risiken", min: 4, folien: [
+  { k: "intro", h: "Warum Unternehmen Social Media nutzen", b: "Social Media bietet Chancen, die klassische Kommunikation nicht hat – bringt aber auch eigene **Risiken** mit." },
+  { k: "liste", h: "Chancen", l: ["Hohe Reichweite bei geringen Einstiegskosten", "Direkter Dialog mit Kunden", "Markenaufbau und Vertrauen", "Kundenservice in Echtzeit", "Mitarbeitergewinnung", "Feedback und Marktforschung", "Gute Messbarkeit"] },
+  { k: "liste", h: "Risiken", l: ["Kontrollverlust: Andere reden mit", "Shitstorms und Kritik in Echtzeit", "Hoher Zeit- und Personalaufwand", "Rechtliche Fallstricke", "Abhängigkeit von Plattformen und Algorithmen"] },
+  { k: "beispiel", h: "Beispiel Abhängigkeit", b: "Eine Plattform ändert ihren Algorithmus – plötzlich sinkt die organische Reichweite deutlich. Wer **nur** auf einen Kanal setzt, steht dann schlecht da. Deshalb gehören eigene Kanäle wie Website und Newsletter immer dazu." },
+  { k: "check", q: "Was ist ein typisches Risiko von Social Media?", a: ["Abhängigkeit von Regeln und Algorithmen der Plattform", "Zu geringe Reichweite durch Plakate", "Fehlende Möglichkeit zum Dialog", "Keine Messbarkeit"], c: 0, e: "Die Plattform bestimmt, wer Inhalte sieht. Ändert sie ihre Regeln, ändert sich die Reichweite." }
+ ]},
+ fehler: { id: "fehler", titel: "Typische Fehlerquellen", min: 3, folien: [
+  { k: "intro", h: "Aus Fehlern anderer lernen", b: "Viele Social-Media-Auftritte scheitern an denselben Fehlern. Wer sie kennt, kann sie vermeiden – und in der Prüfung benennen." },
+  { k: "liste", h: "Die häufigsten Fehler", l: ["Ohne Ziele und Strategie starten", "Zu viele Kanäle gleichzeitig", "Unregelmäßig posten, verwaiste Profile", "Nur Werbung senden, kein Dialog", "Kritik löschen oder ignorieren", "Überall denselben Beitrag posten", "Erfolg nicht messen", "Recht missachten (Bilder, Impressum)"] },
+  { k: "text", h: "Plattformgerecht statt Copy-Paste", b: "Jede Plattform hat eigene Formate und Gewohnheiten. Ein LinkedIn-Fachbeitrag funktioniert auf TikTok nicht – und umgekehrt. **Inhalte anpassen**, nicht nur kopieren." },
+  { k: "merke", h: "Merke", b: "Ein verwaistes Profil schadet mehr als gar keines. Lieber **weniger Kanäle, die gepflegt werden**." },
+  { k: "check", q: "Welcher Punkt ist eine typische Fehlerquelle?", a: ["Denselben Beitrag unverändert auf allen Plattformen posten", "Regelmäßig auf Kommentare antworten", "Ziele vor dem Start festlegen", "Kennzahlen monatlich auswerten"], c: 0, e: "Plattformen haben unterschiedliche Formate und Zielgruppen – Inhalte sollten angepasst werden." }
+ ]},
+ einsatz: { id: "einsatz", titel: "Ziele & Einsatzgebiete im Unternehmen", min: 3, folien: [
+  { k: "intro", h: "Wo Social Media hilft", b: "Social Media ist nicht nur Marketing. Fast jede Abteilung kann davon profitieren." },
+  { k: "liste", h: "Einsatzgebiete", l: ["**Marketing:** Bekanntheit, Image, Leads", "**Vertrieb:** Kontakte, Anfragen, Social Selling", "**PR:** Pressearbeit, Krisenkommunikation", "**Kundenservice:** Fragen und Beschwerden", "**Personal:** Recruiting, Employer Branding", "**Produktentwicklung:** Feedback, Ideen", "**Interne Kommunikation**"] },
+  { k: "text", h: "Typische Ziele", b: "**Bekanntheit** steigern, **Image** verbessern, **Kunden binden**, **Traffic** auf die Website lenken, **Leads und Umsatz** gewinnen, **Bewerbungen** erhalten, **Servicekosten** senken." },
+  { k: "check", q: "Ein Unternehmen beantwortet Kundenfragen über Instagram-Nachrichten. Welches Einsatzgebiet ist das?", a: ["Kundenservice", "Recruiting", "Produktentwicklung", "Pressearbeit"], c: 0, e: "Social Media als Service-Kanal: schnell, direkt, öffentlich sichtbar." }
+ ]},
+ toolspub: { id: "tools", titel: "Tools für Planung & Zusammenarbeit", min: 4, folien: [
+  { k: "intro", h: "Werkzeuge sparen Zeit", b: "Profis arbeiten nicht direkt in jeder App, sondern mit **Tools** für Planung, Gestaltung und Zusammenarbeit." },
+  { k: "text", h: "Publishing-Tools", b: "Mit Planungs-Tools (z. B. Meta Business Suite, Hootsuite, Buffer) bereitest du Beiträge vor, planst sie für mehrere Kanäle und veröffentlichst sie **zeitgesteuert**. Viele bieten auch Statistiken und einen gemeinsamen Posteingang." },
+  { k: "text", h: "Gestaltung", b: "Design- und Video-Tools (z. B. Canva, CapCut) helfen, Grafiken und Kurzvideos im passenden Format zu erstellen – mit **Vorlagen im Corporate Design**." },
+  { k: "liste", h: "Kollaboration im Team", l: ["Gemeinsamer Redaktionsplan (z. B. Tabelle, Trello, Asana)", "Freigabe-Workflows: wer prüft, wer gibt frei", "Gemeinsame Ablage für Bilder und Logos", "Klare Rollen und Zugriffsrechte"] },
+  { k: "merke", h: "Sicherheit", b: "Zugänge nicht per Passwort weitergeben, sondern **Rollen in den Business-Tools** vergeben – und Zwei-Faktor-Anmeldung aktivieren. Verlässt jemand das Team, Zugriff sofort entziehen." },
+  { k: "check", q: "Wofür nutzt man ein Publishing-Tool vor allem?", a: ["Beiträge für mehrere Kanäle planen und zeitgesteuert veröffentlichen", "Fotos rechtlich lizenzieren", "Das Impressum ersetzen", "Follower kaufen"], c: 0, e: "Planen, veröffentlichen, oft auch auswerten – alles an einem Ort." }
+ ]},
+ toolsauto: { id: "automatisierung", titel: "Automatisierung & KI-Tools", min: 3, folien: [
+  { k: "text", h: "Was sich automatisieren lässt", b: "Zeitgesteuertes Posten, **Benachrichtigungen** bei Erwähnungen, automatische **Antworten** auf häufige Fragen (Chatbots), Berichte, die sich selbst erstellen, oder Verknüpfungen zwischen Tools (z. B. mit Zapier oder Make)." },
+  { k: "text", h: "KI im Social Media Management", b: "KI-Tools helfen bei **Ideen, Texten, Bildern, Untertiteln** und Auswertungen. Sie ersetzen aber nicht das Prüfen: Fakten, Ton und Rechte bleiben in deiner Verantwortung." },
+  { k: "liste", h: "Regeln für KI und Automatisierung", l: ["Ergebnisse immer prüfen, bevor sie veröffentlicht werden", "Keine personenbezogenen oder vertraulichen Daten in KI-Tools eingeben", "Täuschend echte KI-Inhalte kennzeichnen", "Community-Dialog nicht komplett automatisieren"] },
+  { k: "merke", h: "Merke", b: "Automatisiere **Routine**, nicht **Beziehung**. Persönliche Antworten bleiben menschlich." },
+  { k: "check", q: "Was solltest du NICHT in ein öffentliches KI-Tool eingeben?", a: ["Personenbezogene Kundendaten", "Eine Idee für einen Beitrag", "Eine Bitte um Hashtag-Vorschläge", "Einen Entwurf für eine Bildunterschrift"], c: 0, e: "Personenbezogene und vertrauliche Daten gehören aus Datenschutzgründen nicht in externe KI-Tools." }
+ ]},
+ einbettung: { id: "einbettung", titel: "Social Media in der Unternehmensstrategie", min: 4, folien: [
+  { k: "intro", h: "Kein Inseldasein", b: "Social Media wirkt nur, wenn es Teil der **Gesamtstrategie** ist – abgeleitet aus den Zielen des Unternehmens." },
+  { k: "liste", h: "Die Ziel-Pyramide", l: ["Unternehmensziel: z. B. Umsatz im Raum Dresden um 10 % steigern", "Marketingziel: Bekanntheit in der Region erhöhen", "Social-Media-Ziel: Reichweite der Instagram-Beiträge in der Region verdoppeln"] },
+  { k: "text", h: "Was es dafür braucht", b: "**Rückhalt der Geschäftsführung**, klare **Zuständigkeiten**, ausreichend **Zeit und Budget**, abgestimmte **Botschaften** mit Marketing, PR und Vertrieb sowie ein einheitliches **Corporate Design**." },
+  { k: "text", h: "Integrierte Kommunikation", b: "Social Media, Website, Newsletter, Pressearbeit und Werbung sollen **dieselbe Geschichte** erzählen. Kampagnen werden kanalübergreifend geplant." },
+  { k: "check", q: "Woraus sollten Social-Media-Ziele abgeleitet werden?", a: ["Aus den Unternehmens- und Marketingzielen", "Aus den Zielen der Konkurrenz", "Aus aktuellen Trends", "Aus der Anzahl der Mitarbeitenden"], c: 0, e: "Social-Media-Ziele sind der unterste Teil der Ziel-Pyramide – sie zahlen auf die Unternehmensziele ein." }
+ ]},
+ organisation: { id: "organisation", titel: "Organisation, Guidelines & Enterprise 2.0", min: 4, folien: [
+  { k: "text", h: "Wer macht Social Media?", b: "**Zentral:** ein Team steuert alles – einheitlich, aber weit weg von den Fachabteilungen.\n**Dezentral:** jede Abteilung macht selbst – nah dran, aber uneinheitlich.\n**Hub-and-Spoke:** ein zentrales Team koordiniert, Fachabteilungen liefern Inhalte – der häufigste Kompromiss." },
+  { k: "text", h: "Social-Media-Guidelines", b: "Regeln für Mitarbeitende: Was ist vertraulich? Wie mache ich kenntlich, dass ich für das Unternehmen spreche? Wer antwortet auf Kritik? Guidelines geben **Sicherheit statt Verbote**." },
+  { k: "text", h: "Enterprise 2.0", b: "Social-Media-Prinzipien **im Unternehmen**: interne Netzwerke, Wikis, Chats und gemeinsame Dokumente erleichtern Wissensaustausch und Zusammenarbeit." },
+  { k: "merke", h: "Merke", b: "Klare **Rollen, Freigaben und Vertretungen** – Social Media macht keinen Urlaub." },
+  { k: "check", q: "Ein zentrales Team koordiniert, die Fachabteilungen liefern Inhalte zu. Welches Modell ist das?", a: ["Hub-and-Spoke", "Dezentral", "Outsourcing", "Enterprise 2.0"], c: 0, e: "Das Zentrum (Hub) steuert, die Speichen (Spokes) liefern zu." }
+ ]},
+ recruiting: { id: "recruiting", titel: "Social Recruiting & Employer Branding", min: 3, folien: [
+  { k: "text", h: "Employer Branding", b: "Die **Arbeitgebermarke**: Wofür steht das Unternehmen als Arbeitgeber? Social Media zeigt echte Einblicke – Team, Arbeitsalltag, Werte." },
+  { k: "text", h: "Social Recruiting", b: "Personalgewinnung über Social Media: Stellen teilen, gezielte Anzeigen, Mitarbeitende als Botschafter und **Active Sourcing** – passende Kandidaten direkt ansprechen, z. B. auf LinkedIn oder XING." },
+  { k: "beispiel", h: "Beispiel", b: "Ein Handwerksbetrieb zeigt auf Instagram und TikTok kurze Videos seiner Azubis. Ergebnis: mehr Bewerbungen von Schülern – weil sie sehen, wie der Alltag wirklich aussieht." },
+  { k: "check", q: "Was ist Active Sourcing?", a: ["Passende Kandidaten direkt aktiv ansprechen", "Stellenanzeigen nur in der Zeitung schalten", "Bewerbungen automatisch ablehnen", "Follower kaufen"], c: 0, e: "Beim Active Sourcing sucht das Unternehmen selbst aktiv nach Talenten." }
+ ]},
+ benchmarking: { id: "benchmarking", titel: "Benchmarking & Wettbewerbsanalyse", min: 3, folien: [
+  { k: "intro", h: "Wo stehen wir im Vergleich?", b: "**Benchmarking** heißt: eigene Kennzahlen mit Vergleichswerten messen – mit Wettbewerbern, der Branche oder der eigenen Vergangenheit." },
+  { k: "liste", h: "Was man vergleicht", l: ["Follower-Entwicklung", "Beitragsfrequenz und Formate", "Engagement-Rate", "Reaktionszeit auf Anfragen", "Stimmung (Sentiment) und Share of Voice"] },
+  { k: "text", h: "Share of Voice & Sentiment", b: "**Share of Voice** = Anteil der Erwähnungen deiner Marke an allen Erwähnungen im Markt.\n**Sentiment** = Tonalität der Erwähnungen: positiv, neutral oder negativ." },
+  { k: "merke", h: "Merke", b: "Nur **vergleichbare** Werte vergleichen: gleicher Zeitraum, gleiche Plattform, gleiche Berechnung." },
+  { k: "check", q: "Von 1.000 Erwähnungen im Markt betreffen 150 deine Marke. Wie hoch ist der Share of Voice?", a: ["15 %", "1,5 %", "150 %", "85 %"], c: 0, e: "150 ÷ 1.000 × 100 = 15 %." }
+ ]}
+};
+
+// Aufbau nach den 6 Themenschwerpunkten des Lehrgangs
+const L = (mod, id) => ALT.find(m => m.id === mod).lektionen.find(l => l.id === id);
+export const MODULE = [
+ { id: "einf", name: "Einführung in Social Media", kurz: "Einführung", farbe: "#ff5a5f",
+   text: "Was Social Media ist, was Social Media Manager tun, Chancen, Risiken und typische Fehler.",
+   lektionen: [NEU.web20, L("grund", "rolle"), NEU.chancen, NEU.fehler, NEU.einsatz] },
+ { id: "platt", name: "Plattformen & Tools", kurz: "Plattformen", farbe: "#ff9f1c",
+   text: "Instagram, LinkedIn, TikTok, Facebook & Co. – und die Tools für Planung, Zusammenarbeit und Automatisierung.",
+   lektionen: [L("platt", "linkedin"), L("platt", "insta-tiktok"), L("platt", "kanalwahl"), NEU.toolspub, NEU.toolsauto] },
+ { id: "unt", name: "Social Media im Unternehmen", kurz: "Unternehmen", farbe: "#e83e8c",
+   text: "Einbettung in die Unternehmensstrategie, Organisation, Guidelines, Recruiting und Community Management.",
+   lektionen: [NEU.einbettung, NEU.organisation, NEU.recruiting, L("content", "community")] },
+ { id: "recht", name: "Handlungs- & Rechtssicherheit", kurz: "Recht", farbe: "#2f9e44",
+   text: "Impressum, Werbekennzeichnung, Bild- und Urheberrecht, Datenschutz, Gewinnspiele und KI.",
+   lektionen: ALT.find(m => m.id === "recht").lektionen },
+ { id: "kpi", name: "Monitoring & Controlling", kurz: "Controlling", farbe: "#7048e8",
+   text: "Kennzahlen, Social Listening, Benchmarking und Reporting.",
+   lektionen: [L("kpi", "kennzahlen"), L("ads", "ads-kpi"), L("kpi", "monitoring"), NEU.benchmarking, L("kpi", "report")] },
+ { id: "plan", name: "Social-Media-Strategie planen", kurz: "Strategie", farbe: "#1c7ed6",
+   text: "Von der Analyse über Ziele und Zielgruppe bis zu Content, Redaktionsplan, Kampagnen und Budget.",
+   lektionen: [L("grund", "strategie"), L("grund", "ziele"), L("grund", "persona"), L("content", "content-strategie"), L("content", "redaktion"), L("ads", "ads-basis"), L("ads", "budget")] }
 ];
+L("ads", "ads-kpi").titel = "Kennzahlen bei Anzeigen & Tests";
+
+// Alte Quizfragen den neuen Modulen zuordnen
+const UMZUG = { grund: "plan", content: "plan", ads: "plan", platt: "platt", kpi: "kpi", recht: "recht" };
+const SONDER = [["Guidelines", "unt"], ["Shitstorm", "unt"], ["löschen", "unt"], ["Netiquette", "unt"], ["CPM", "kpi"], ["CPL", "kpi"], ["Conversion-Rate", "kpi"]];
+const ALT_Q = FRAGEN_ALT.map(f => ({ ...f, m: (SONDER.find(([s]) => f.q.includes(s)) || [0, UMZUG[f.m]])[1] }));
+
+const NEU_Q = [
+{m:"einf",q:"Was bedeutet „Many-to-many“-Kommunikation?",a:["Viele Menschen kommunizieren miteinander","Ein Absender erreicht viele Empfänger","Nur zwei Personen schreiben sich","Ein Unternehmen spricht mit einem Kunden"],c:0,e:"Social Media ermöglicht den Austausch aller mit allen – anders als klassische Massenmedien (One-to-many)."},
+{m:"einf",q:"Welche Plattform ist ein Business-Netzwerk?",a:["LinkedIn","TikTok","Pinterest","Snapchat"],c:0,e:"LinkedIn und XING sind berufliche Netzwerke."},
+{m:"einf",q:"Was ist eine Chance von Social Media für Unternehmen?",a:["Direkter Dialog mit Kunden","Volle Kontrolle über alle Kommentare","Keine Arbeit nach dem Einrichten","Garantierte Reichweite ohne Inhalte"],c:0,e:"Der direkte Austausch mit Kunden ist einer der größten Vorteile."},
+{m:"einf",q:"Warum schadet ein verwaistes Profil?",a:["Es wirkt unprofessionell und unzuverlässig","Es kostet monatliche Gebühren","Es ist gesetzlich verboten","Es löscht die Website"],c:0,e:"Wer ein Profil sieht, auf dem seit Monaten nichts passiert, zweifelt an der Zuverlässigkeit des Unternehmens."},
+{m:"einf",q:"Welches Ziel passt zum Einsatzgebiet Personal?",a:["Mehr Bewerbungen für Ausbildungsplätze","Mehr Klicks im Onlineshop","Bessere Pressekontakte","Weniger Reklamationen"],c:0,e:"Recruiting und Employer Branding sind typische Personal-Ziele."},
+{m:"einf",q:"Was ist KEIN typischer Fehler im Social Media Management?",a:["Erfolg regelmäßig messen","Ohne Strategie starten","Kritik löschen","Nur Werbung posten"],c:0,e:"Messen ist richtig – die anderen drei sind klassische Fehlerquellen."},
+{m:"platt",q:"Was ist ein Vorteil von Publishing-Tools?",a:["Mehrere Kanäle zentral planen und zeitgesteuert posten","Automatisch mehr Follower","Keine Impressumspflicht mehr","Kostenlose Werbeanzeigen"],c:0,e:"Planung und Veröffentlichung aus einem Tool sparen Zeit."},
+{m:"platt",q:"Wie gibst du einer Agentur sicher Zugriff auf eure Unternehmensseite?",a:["Über Rollen im Business-Tool der Plattform","Passwort per E-Mail schicken","Gemeinsames Passwort auf einen Zettel","Gar nicht, Agenturen dürfen das nicht"],c:0,e:"Rollen lassen sich gezielt vergeben und wieder entziehen – ohne das Passwort weiterzugeben."},
+{m:"platt",q:"Was sollte man NICHT vollständig automatisieren?",a:["Den persönlichen Dialog mit der Community","Das zeitgesteuerte Veröffentlichen","Benachrichtigungen bei Erwähnungen","Monatliche Standardberichte"],c:0,e:"Automatisiere Routine, nicht Beziehung."},
+{m:"platt",q:"Wofür eignet sich ein gemeinsamer Freigabe-Workflow?",a:["Damit Beiträge vor Veröffentlichung geprüft werden","Um Follower zu zählen","Um Werbung zu blockieren","Um das Impressum zu erstellen"],c:0,e:"Freigaben verhindern Fehler und sorgen für Abstimmung."},
+{m:"unt",q:"Was ist Employer Branding?",a:["Aufbau einer attraktiven Arbeitgebermarke","Ein Logo für Mitarbeiterkleidung","Werbung für Produkte","Die Gehaltsabrechnung"],c:0,e:"Die Arbeitgebermarke zeigt, wofür das Unternehmen als Arbeitgeber steht."},
+{m:"unt",q:"Was beschreibt Enterprise 2.0?",a:["Den Einsatz von Social-Media-Werkzeugen für interne Zusammenarbeit","Eine neue Version von Facebook","Ein Werbeformat auf LinkedIn","Ein Gesetz zum Datenschutz"],c:0,e:"Interne Netzwerke, Wikis und Chats fördern Wissensaustausch."},
+{m:"unt",q:"Welcher Nachteil hat ein rein dezentrales Social-Media-Modell?",a:["Der Auftritt wird schnell uneinheitlich","Die Fachabteilungen sind zu weit weg","Es ist immer teurer als zentral","Man kann keine Inhalte posten"],c:0,e:"Wenn jede Abteilung selbst postet, leiden Einheitlichkeit und Qualität."},
+{m:"unt",q:"Was braucht Social Media im Unternehmen unbedingt?",a:["Rückhalt der Geschäftsführung und klare Zuständigkeiten","Ein eigenes Gebäude","Mindestens zehn Kanäle","Einen täglichen Gewinnspiel-Post"],c:0,e:"Ohne Rückendeckung und Ressourcen bleibt Social Media ein Nebenbei-Projekt."},
+{m:"unt",q:"Was bedeutet integrierte Kommunikation?",a:["Alle Kanäle erzählen abgestimmt dieselbe Geschichte","Jeder Kanal hat eigene Botschaften","Nur Social Media wird genutzt","Die Website wird abgeschaltet"],c:0,e:"Abgestimmte Botschaften über alle Kanäle verstärken sich gegenseitig."},
+{m:"kpi",q:"Was ist Benchmarking?",a:["Vergleich eigener Kennzahlen mit Vergleichswerten","Kauf von Werbeplätzen","Ein Tool zum Posten","Das Löschen schlechter Beiträge"],c:0,e:"Verglichen wird mit Wettbewerbern, der Branche oder der eigenen Vergangenheit."},
+{m:"kpi",q:"Was misst das Sentiment?",a:["Die Tonalität von Erwähnungen (positiv, neutral, negativ)","Die Anzahl der Follower","Die Ladezeit der Website","Die Kosten pro Klick"],c:0,e:"Sentiment-Analysen zeigen die Stimmung rund um eine Marke."},
+{m:"kpi",q:"Was ist beim Benchmarking wichtig?",a:["Nur vergleichbare Werte vergleichen","Möglichst viele verschiedene Zeiträume mischen","Nur die besten Werte zeigen","Fremde Konten hacken"],c:0,e:"Gleicher Zeitraum, gleiche Plattform, gleiche Berechnung."},
+{m:"kpi",q:"Was bedeutet CPC?",a:["Kosten pro Klick","Klicks pro Kampagne","Conversions pro Kanal","Kosten pro Community"],c:0,e:"Cost per Click."},
+{m:"kpi",q:"Welche KPI passt zum Ziel „mehr Bewerbungen“?",a:["Anzahl der Bewerbungen über Social Media","Anzahl der Likes","Anzahl der Beiträge","Anzahl der Hashtags"],c:0,e:"Die KPI muss direkt am Ziel hängen."}
+];
+
+// Freitext-Fragen wie im Abschlusstest. muster: [Musterpunkt, Stichworte für den Abgleich (RegExp, ohne Groß/Klein)]
+const FREI = [
+{m:"einf",t:"frei",q:"Nennen Sie drei Chancen, die Social Media einem Unternehmen bietet.",muster:[["Hohe Reichweite / Bekanntheit bei geringen Kosten","reichweit|bekannt|kosten"],["Direkter Dialog mit Kunden","dialog|kommunikat|austausch|direkt"],["Kundenservice, Kundenbindung","service|bindung|loyal"],["Recruiting / Employer Branding","recruit|bewerb|personal|mitarbeit|arbeitgeber"],["Feedback, Marktforschung, Messbarkeit","feedback|meinung|markt|mess"]],min:3},
+{m:"einf",t:"frei",q:"Nennen Sie vier typische Fehler im Social Media Management.",muster:[["Ohne Ziele / Strategie starten","ziel|strateg|plan"],["Zu viele Kanäle / zu wenig Ressourcen","kanäle|kanal|ressourc|zeit"],["Unregelmäßig posten, verwaiste Profile","unregelm|verwaist|regelmäßig|selten"],["Nur Werbung, kein Dialog","werbung|dialog|senden"],["Kritik löschen oder ignorieren","kritik|lösch|ignor"],["Erfolg nicht messen","mess|kpi|kennzahl|auswert"],["Rechtliche Fehler","recht|impressum|bild|urheber"]],min:4},
+{m:"einf",t:"frei",q:"Erklären Sie den Unterschied zwischen Web 1.0 und Web 2.0.",muster:[["Web 1.0: Anbieter veröffentlichen, Nutzer lesen nur","lesen|passiv|statisch|anbieter|einbahn"],["Web 2.0: Nutzer erstellen und teilen selbst Inhalte","erstell|teil|mitmach|user|nutzer|inhalte"],["Interaktion / Dialog, viele mit vielen","interakt|dialog|many|viele|kommentar"]],min:2},
+{m:"platt",t:"frei",q:"Wie würden Sie entscheiden, welche Plattformen ein Unternehmen nutzt? Nennen Sie mindestens drei Kriterien.",muster:[["Wo ist die Zielgruppe aktiv?","zielgrupp"],["Passt die Plattform zum Ziel?","ziel"],["Passen Format und Inhalte (Video, Bild, Text)?","format|inhalt|video|bild"],["Reichen Zeit, Personal und Budget?","ressourc|zeit|personal|budget"],["Was macht der Wettbewerb?","wettbewerb|konkurrenz"]],min:3},
+{m:"platt",t:"frei",q:"Nennen Sie je ein Beispiel für ein Tool zur Planung, zur Gestaltung und zur Zusammenarbeit und beschreiben Sie den Nutzen.",muster:[["Planung/Publishing (z. B. Meta Business Suite, Hootsuite, Buffer): Beiträge zeitgesteuert für mehrere Kanäle","plan|hootsuite|buffer|business suite|meta|zeitgesteuert|later"],["Gestaltung (z. B. Canva, CapCut, Adobe): Grafiken/Videos im Corporate Design","canva|capcut|adobe|gestalt|design|grafik"],["Zusammenarbeit (z. B. Trello, Asana, Teams, geteilte Tabellen): Redaktionsplan, Freigaben","trello|asana|teams|slack|notion|tabelle|freigab|zusammen"]],min:3},
+{m:"platt",t:"frei",q:"Welche Regeln sollten beim Einsatz von KI-Tools im Social Media Management gelten?",muster:[["Ergebnisse vor Veröffentlichung prüfen","prüf|kontroll|check"],["Keine personenbezogenen/vertraulichen Daten eingeben","daten|personenbez|vertraul|datenschutz"],["Täuschend echte KI-Inhalte kennzeichnen","kennzeich|offenleg|transparen"],["Urheber- und Persönlichkeitsrechte beachten","urheber|recht|persönlich"]],min:3},
+{m:"unt",t:"frei",q:"Beschreiben Sie die Organisationsmodelle zentral, dezentral und Hub-and-Spoke mit je einem Vor- oder Nachteil.",muster:[["Zentral: ein Team steuert alles – einheitlich, aber fern der Fachabteilungen","zentral"],["Dezentral: Abteilungen posten selbst – nah dran, aber uneinheitlich","dezentral"],["Hub-and-Spoke: Zentrum koordiniert, Abteilungen liefern zu – Kompromiss","hub|spoke|koordin"]],min:3},
+{m:"unt",t:"frei",q:"Was sollte in Social-Media-Guidelines für Mitarbeitende stehen?",muster:[["Was vertraulich ist und nicht gepostet wird","vertraul|geheim|intern"],["Kennzeichnung, dass man für/über das Unternehmen spricht","kennzeich|zugehörig|privat|meinung"],["Umgang mit Kritik, wer antwortet","kritik|antwort|zuständ|ansprech"],["Ton und Verhalten (respektvoll)","ton|respekt|verhalten|höflich"],["Rechtliches (Bilder, Datenschutz)","recht|bild|daten"]],min:3},
+{m:"unt",t:"frei",q:"Wie reagieren Sie als Social Media Manager auf einen Shitstorm? Beschreiben Sie das Vorgehen.",muster:[["Lage einschätzen (berechtigt? Ausmaß?)","einschätz|analys|lage|prüf"],["Krisenplan aktivieren, intern abstimmen","krisenplan|intern|abstimm|geschäftsführ"],["Schnell erste Reaktion zeigen","schnell|zeitnah|reagier"],["Sachlich bleiben, Fehler eingestehen, Lösung anbieten","sachlich|fehler|entschuld|lösung"],["Berechtigte Kritik nicht löschen","lösch"],["Nachbereitung, daraus lernen","nachbereit|auswert|lernen"]],min:4},
+{m:"recht",t:"frei",q:"Welche Anforderungen gelten für das Impressum auf einem geschäftlich genutzten Social-Media-Profil?",muster:[["Pflicht nach § 5 Digitale-Dienste-Gesetz (DDG)","ddg|digitale-dienste|§ ?5"],["Leicht erkennbar","erkennbar"],["Unmittelbar erreichbar (wenige Klicks)","erreichbar|klick"],["Ständig verfügbar","verfügbar|ständig"],["Praxis: Link in der Profil-Info","link|profil|bio"]],min:3},
+{m:"recht",t:"frei",q:"Sie möchten ein Foto von einer Firmenfeier mit Mitarbeitenden posten. Was müssen Sie rechtlich beachten?",muster:[["Einwilligung der erkennbar abgebildeten Personen","einwillig|zustimm|erlaubnis"],["Am besten schriftlich dokumentieren","schriftlich|dokument"],["Hinweis auf Widerrufsrecht","widerruf"],["Recht am eigenen Bild / DSGVO","eigenen bild|kug|dsgvo|datenschutz"],["Urheberrecht des Fotografen klären","urheber|fotograf|nutzungsrecht"]],min:3},
+{m:"recht",t:"frei",q:"Nennen Sie wichtige Bestandteile rechtssicherer Teilnahmebedingungen für ein Gewinnspiel.",muster:[["Veranstalter","veranstalt"],["Zeitraum / Teilnahmeschluss","zeitraum|ende|schluss|frist|datum"],["Teilnahmevoraussetzungen (z. B. Alter, Wohnsitz)","voraussetz|alter|wohnsitz|teilnahmeberecht"],["Gewinn und Auswahl/Benachrichtigung der Gewinner","gewinn|auslos|benachricht"],["Datenschutzhinweise","daten"],["Hinweis zur Plattform (nicht beteiligt)","plattform|instagram|facebook|meta"]],min:4},
+{m:"kpi",t:"frei",q:"Erklären Sie den Unterschied zwischen Monitoring und Reporting.",muster:[["Monitoring: laufendes Beobachten von Erwähnungen, Stimmung, Themen (Social Listening)","beobacht|erwähn|stimmung|listening|laufend"],["Reporting: regelmäßige Auswertung der eigenen Kennzahlen gegen die Ziele","auswert|kennzahl|kpi|ziel|bericht"],["Reporting enthält Interpretation und Handlungsempfehlungen","empfehl|maßnahm|interpret"]],min:2},
+{m:"kpi",t:"frei",q:"Ein Beitrag hat 8.000 Reichweite, 12.000 Impressionen, 400 Interaktionen und 96 Klicks. Berechnen Sie Engagement-Rate (auf Reichweite) und CTR.",muster:[["Engagement-Rate = 400 ÷ 8.000 × 100 = 5 %","\\b5\\s?%|5,0|5 prozent"],["CTR = 96 ÷ 12.000 × 100 = 0,8 %","0[,.]8"]],min:2},
+{m:"kpi",t:"frei",q:"Was gehört in ein monatliches Social-Media-Reporting für die Geschäftsführung?",muster:[["Ziele und Zeitraum","ziel|zeitraum"],["KPIs im Vergleich (Vormonat, Zielwert)","vergleich|vormonat|kpi|kennzahl"],["Top- und Flop-Beiträge","top|flop|beste|schlecht"],["Interpretation","interpret|warum|bewert"],["Handlungsempfehlungen","empfehl|maßnahm|nächste"]],min:3},
+{m:"plan",t:"frei",q:"Nennen Sie die Schritte zur Planung einer Social-Media-Strategie in sinnvoller Reihenfolge.",muster:[["Analyse der Ausgangslage","analys|ist-|ausgangs"],["Ziele (SMART)","ziel"],["Zielgruppe / Persona","zielgrupp|persona"],["Kanäle auswählen","kanal|kanäle|plattform"],["Inhalte & Redaktionsplan","inhalt|content|redaktion"],["Budget & Ressourcen","budget|ressourc"],["Erfolgsmessung / KPIs","kpi|mess|kennzahl|erfolg"]],min:5},
+{m:"plan",t:"frei",q:"Formulieren Sie ein SMART-Ziel für den Instagram-Auftritt einer Bäckerei und erklären Sie kurz, warum es SMART ist.",muster:[["Konkreter Inhalt (spezifisch)","spezif|konkret"],["Zahl (messbar)","\\d"],["Termin / Zeitraum (terminiert)","bis|202\\d|monat|woche|quartal|ende"],["Realistisch / erreichbar begründet","realist|erreich"]],min:3},
+{m:"plan",t:"frei",q:"Beschreiben Sie eine Persona für ein Unternehmen Ihrer Wahl. Welche Angaben gehören hinein?",muster:[["Name, Alter, Wohnort, Beruf","alter|jahre|beruf|wohn"],["Ziele und Wünsche","ziel|wunsch|wünsch"],["Probleme / Pain Points","problem|pain|sorge"],["Mediennutzung: welche Plattformen, wann","instagram|linkedin|tiktok|facebook|youtube|nutzt|plattform"]],min:3},
+{m:"plan",t:"frei",q:"Welche Kostenblöcke gehören in ein Social-Media-Budget?",muster:[["Werbebudget (Ads)","werb|ads|anzeig"],["Produktion (Foto, Video, Grafik)","produkt|foto|video|grafik"],["Personal / interne Arbeitszeit","personal|zeit|stunden|mitarbeit"],["Tools / Software","tool|software|lizenz"],["Externe Dienstleister","agentur|extern|dienstleist|freelanc"]],min:3}
+];
+
+export const FRAGEN = [...ALT_Q, ...NEU_Q, ...FREI];

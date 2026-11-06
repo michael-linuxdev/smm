@@ -1,4 +1,4 @@
-import { MODULE, FRAGEN, GESPRAECH } from "./data/kurs.js";
+import { MODULE, FRAGEN } from "./data/kurs.js";
 
 /* ---------- Hilfen ---------- */
 const $ = (s, el = document) => el.querySelector(s);
@@ -12,11 +12,15 @@ const shade = (hex, f) => { const n = parseInt(hex.slice(1), 16); const c = [n >
 const modGrad = m => `linear-gradient(150deg, ${shade(m.farbe, .72)}, ${shade(m.farbe, .5)})`;
 
 const I = {
- grund: '<path d="M12 3l2.6 5.6 6 .7-4.5 4.1 1.2 6L12 16.4 6.7 19.4l1.2-6L3.4 9.3l6-.7z"/>',
+ einf: '<path d="M12 3l2.6 5.6 6 .7-4.5 4.1 1.2 6L12 16.4 6.7 19.4l1.2-6L3.4 9.3l6-.7z"/>',
  platt: '<rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/><rect x="14" y="14" width="7" height="7" rx="2"/>',
- content: '<path d="M4 5h16v11H8l-4 4z"/><path d="M8 9h8M8 12h5"/>',
+ unt: '<path d="M4 21V7l8-4 8 4v14M9 21v-5h6v5M8 10h.01M12 10h.01M16 10h.01M8 13h.01M16 13h.01"/>',
  kpi: '<path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/>',
- ads: '<path d="M3 11v2a1 1 0 001 1h3l6 5V5L7 10H4a1 1 0 00-1 1zM17 8a5 5 0 010 8"/>',
+ plan: '<circle cx="12" cy="12" r="9"/><path d="M15.5 8.5l-2 5-5 2 2-5z"/>',
+ info: '<circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5v.5"/>',
+ cal: '<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/>',
+ pen: '<path d="M4 20l4-1 11-11-3-3L5 16zM14 6l3 3"/>',
+ clock: '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
  recht: '<path d="M12 3v18M5 21h14M6 7h12M6 7l-3 7a3 3 0 006 0zM18 7l-3 7a3 3 0 006 0z"/>',
  home: '<path d="M3 11l9-7 9 7v9a1 1 0 01-1 1h-5v-6H9v6H4a1 1 0 01-1-1z"/>',
  book: '<path d="M4 5h7a2 2 0 012 2v12a2 2 0 00-2-2H4zM20 5h-7a2 2 0 00-2 2v12a2 2 0 012-2h7z"/>',
@@ -37,7 +41,7 @@ const I = {
 const ic = (n, extra = "") => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ${extra}>${I[n]}</svg>`;
 
 /* ---------- Speicher ---------- */
-let S = { lek: {}, q: {}, proj: {}, last: null, tests: [] };
+let S = { lek: {}, q: {}, last: null, tests: [], pruefung: "" };
 try { Object.assign(S, JSON.parse(localStorage.getItem("smm-coach") || "{}")); } catch (e) {}
 const save = () => { try { localStorage.setItem("smm-coach", JSON.stringify(S)); } catch (e) {} };
 function toast(t) { const el = $("#toast"); el.textContent = t; el.classList.add("on"); clearTimeout(toast.t); toast.t = setTimeout(() => el.classList.remove("on"), 2200); }
@@ -61,7 +65,7 @@ function ringSvg(p, size = 76, w = 4, track = "var(--line)", color = null) {
 }
 
 /* ---------- Router ---------- */
-const TABS = [["start", "Start", "home"], ["lernen", "Lernen", "book"], ["pruefung", "Prüfung", "exam"], ["projekt", "Projekt", "proj"]];
+const TABS = [["start", "Start", "home"], ["lernen", "Lernen", "book"], ["pruefung", "Prüfung", "exam"], ["lehrgang", "Lehrgang", "info"]];
 function tabbar(active) {
  return `<nav class="tabbar" aria-label="Navigation">${TABS.map(([h, t, i]) => `<a href="#${h}" class="${active === h ? "on" : ""}">${ic(i)}<span>${t}</span></a>`).join("")}</nav>`;
 }
@@ -69,7 +73,7 @@ function page(active, html) { app.innerHTML = `<div class="wrap">${html}</div>${
 function head() { return `<div class="top"><div class="logo">${ic("bolt", 'stroke="#fff"')}</div><div class="t">SMM Coach<small>Social Media Manager (IHK)</small></div></div>`; }
 
 function route() {
- closeStory();
+ closeStory(); clearInterval(testTimer);
  const h = (location.hash || "#start").slice(1);
  const [a, b, ...rest] = h.split("-");
  if (a === "lektion" && b) return openStory(b, rest.join("-"));
@@ -78,8 +82,7 @@ function route() {
  if (h === "lernen") return viewLernen();
  if (h === "pruefung") return viewPruefung();
  if (h === "test") return viewTest();
- if (h === "gespraech") return viewTalk();
- if (h === "projekt") return viewProjekt();
+ if (h === "lehrgang") return viewLehrgang();
  return viewStart();
 }
 addEventListener("hashchange", route);
@@ -95,28 +98,32 @@ function ringsHtml() {
   return `<a class="ring" href="#modul-${m.id}" style="text-decoration:none"><div class="r">${ringSvg(p)}<div class="ic" style="background:${modGrad(m)}">${ic(m.id)}</div>${p >= .999 ? `<div class="done-badge">${ic("check", 'stroke="#fff" stroke-width="3"')}</div>` : ""}</div><div class="lbl">${m.kurz}</div></a>`;
  }).join("")}</div>`;
 }
+const PASS = 70; // Bestehensgrenze: Annahme, nicht offiziell bestätigt
+function daysLeft() { if (!S.pruefung) return null; const d = Math.ceil((new Date(S.pruefung + "T09:00") - Date.now()) / 86400000); return isNaN(d) ? null : d; }
 function viewStart() {
- const p = allProgress(), n = nextLesson();
+ const p = allProgress(), n = nextLesson(), dl = daysLeft();
  const lessonsDone = Object.values(S.lek).filter(Boolean).length, lessonsAll = MODULE.reduce((s, m) => s + m.lektionen.length, 0);
  const best = S.tests.length ? Math.max(...S.tests) : null;
+ const perWeek = dl > 0 ? Math.ceil((lessonsAll - lessonsDone) / Math.max(1, dl / 7)) : null;
  page("start", `${head()}
  <section class="hero">
-  <div class="kicker">${p > 0 ? "Weiter so" : "Willkommen"}</div>
+  <div class="kicker">${dl !== null && dl >= 0 ? (dl === 0 ? "Heute ist Prüfung – viel Erfolg!" : `Noch ${dl} Tag${dl === 1 ? "" : "e"} bis zur Prüfung`) : p > 0 ? "Weiter so" : "Willkommen"}</div>
   <h1>${p > 0 ? `${Math.round(p * 100)} % geschafft` : "Werde Social Media Manager"}</h1>
-  <p style="opacity:.92;max-width:460px">${p > 0 ? "Kurze Lektionen, dann Quiz – so bleibt das Wissen hängen." : "In kurzen Story-Lektionen lernen, im Quiz festigen und das Abschlussprojekt Schritt für Schritt vorbereiten."}</p>
+  <p style="opacity:.92;max-width:460px">${p > 0 ? (perWeek ? `Plan: etwa ${perWeek} Lektion${perWeek === 1 ? "" : "en"} pro Woche, dann passt es bis zur Prüfung.` : "Kurze Lektionen, dann Quiz – so bleibt das Wissen hängen.") : "Vorbereitung auf den Abschlusstest beim IHK-Bildungszentrum Dresden: Story-Lektionen, Quiz, Freitext-Training und Probetest wie im Original."}</p>
   <div class="hero-stat"><div><b>${lessonsDone}/${lessonsAll}</b><span>Lektionen</span></div><div><b>${POOL.filter(q => S.q[q.key]).length}</b><span>Fragen sicher</span></div><div><b>${best === null ? "–" : best + " %"}</b><span>Bester Test</span></div></div>
   ${n ? `<div class="row"><a class="btn white" href="#lektion-${n.m.id}-${n.l.id}">${ic("play")} ${p > 0 ? "Weiterlernen" : "Erste Lektion starten"}</a></div>` : ""}
  </section>
+ ${S.pruefung ? "" : `<a class="cont" href="#lehrgang" style="margin-bottom:6px"><div class="thumb" style="background:var(--grad-strong)">${ic("cal")}</div><div><b style="font-size:16px">Prüfungstermin eintragen</b><div class="small muted">Dann zeigt dir die App, wie viel du pro Woche lernen solltest.</div></div><span class="chev" style="margin-left:auto;color:var(--ink-3)">${ic("right")}</span></a>`}
  <div class="sec-h"><h2>Deine Module</h2><a class="small muted" href="#lernen">Alle anzeigen</a></div>
  ${ringsHtml()}
  ${n ? `<div class="sec-h"><h2>Als Nächstes</h2></div>
- <a class="cont" href="#lektion-${n.m.id}-${n.l.id}" style="text-decoration:none"><div class="thumb" style="background:${modGrad(n.m)}">${ic(n.m.id)}</div><div><div class="small muted">${n.m.name} · ${n.l.min} Min.</div><b style="font-size:17px">${n.l.titel}</b></div><div class="play">${ic("play", 'style="color:#fff"')}</div></a>` : ""}
+ <a class="cont" href="#lektion-${n.m.id}-${n.l.id}"><div class="thumb" style="background:${modGrad(n.m)}">${ic(n.m.id)}</div><div><div class="small muted">${n.m.name} · ${n.l.min} Min.</div><b style="font-size:17px">${n.l.titel}</b></div><div class="play">${ic("play", 'style="color:#fff"')}</div></a>` : ""}
  <div class="sec-h"><h2>Trainieren</h2></div>
  <div class="tiles">
-  <a class="tile" href="#quiz-mix" style="text-decoration:none"><div class="ti" style="background:linear-gradient(135deg,#ff9f1c,#ff5a5f)">${ic("shuffle")}</div><b>Schnell-Quiz</b><span>10 gemischte Fragen aus allen Modulen</span></a>
-  <a class="tile" href="#test" style="text-decoration:none"><div class="ti" style="background:linear-gradient(135deg,#e83e8c,#7048e8)">${ic("exam")}</div><b>Probetest</b><span>20 Fragen wie im Lehrgangstest</span></a>
-  <a class="tile" href="#gespraech" style="text-decoration:none"><div class="ti" style="background:linear-gradient(135deg,#7048e8,#1c7ed6)">${ic("talk")}</div><b>Fachgespräch</b><span>Typische Prüferfragen üben</span></a>
-  <a class="tile" href="#projekt" style="text-decoration:none"><div class="ti" style="background:linear-gradient(135deg,#2f9e44,#1c7ed6)">${ic("proj")}</div><b>Projekt-Coach</b><span>Deine Strategie fürs Abschlussprojekt</span></a>
+  <a class="tile" href="#quiz-mix"><div class="ti" style="background:linear-gradient(135deg,#c2410c,#c92a2a)">${ic("shuffle")}</div><b>Schnell-Quiz</b><span>10 gemischte Fragen aus allen Modulen</span></a>
+  <a class="tile" href="#quiz-frei"><div class="ti" style="background:linear-gradient(135deg,#a61e4d,#6741d9)">${ic("pen")}</div><b>Freitext üben</b><span>${FREI_POOL().length} offene Fragen mit Musterlösung</span></a>
+  <a class="tile" href="#test"><div class="ti" style="background:var(--grad-strong)">${ic("exam")}</div><b>Probetest</b><span>30 Fragen in 60 Minuten – wie in Dresden</span></a>
+  <a class="tile" href="#lehrgang"><div class="ti" style="background:linear-gradient(135deg,#2b8a3e,#1864ab)">${ic("info")}</div><b>Lehrgang & Karriere</b><span>Ablauf, Prüfung, Kosten, Gehalt und Jobs</span></a>
  </div>`);
 }
 
@@ -190,34 +197,54 @@ addEventListener("resize", () => storyEl && fitSlide());
 function nextIn(m, l) { const k = m.lektionen.indexOf(l); return m.lektionen[k + 1] || null; }
 
 /* ---------- Quiz ---------- */
+const FREI_POOL = () => POOL.filter(q => q.t === "frei");
+const MC_POOL = () => POOL.filter(q => q.t !== "frei");
+const freiMatch = (q, txt) => q.muster.map(([, kw]) => { try { return new RegExp(kw, "i").test(txt); } catch (e) { return false; } });
+function chip(q) { const m = modById(q.m); return `<span class="chip" style="background:color-mix(in srgb,${m.farbe} 14%,var(--surface));color:color-mix(in srgb,${m.farbe} 58%,#000)">${m.kurz}${q.t === "frei" ? " · Freitext" : ""}</span>`; }
 function quizCard(q, meta) {
+ if (q.t === "frei") return { html: `<div class="qcard"><div class="qtop">${chip(q)}<span class="small muted">${meta}</span></div><div class="qtext">${esc(q.q)}</div><textarea id="ftxt" placeholder="Deine Antwort in Stichpunkten …" style="min-height:140px"></textarea><div class="fbx"></div></div>` };
  const order = shuf(q.a.map((_, k) => k));
- return { order, html: `<div class="qcard"><div class="qtop"><span class="chip" style="background:${modById(q.m).farbe}22;color:${shade(modById(q.m).farbe, .75)}">${modById(q.m).kurz}</span><span class="small muted">${meta}</span></div><div class="qtext">${esc(q.q)}</div>${order.map((k, n) => `<button class="opt" data-k="${k}"><span class="l">${"ABCD"[n]}</span><span>${esc(q.a[k])}</span></button>`).join("")}<div class="fbx"></div></div>` };
+ return { order, html: `<div class="qcard"><div class="qtop">${chip(q)}<span class="small muted">${meta}</span></div><div class="qtext">${esc(q.q)}</div>${order.map((k, n) => `<button class="opt" data-k="${k}"><span class="l">${"ABCD"[n]}</span><span>${esc(q.a[k])}</span></button>`).join("")}<div class="fbx"></div></div>` };
+}
+function musterHtml(q, txt) {
+ const hit = freiMatch(q, txt || ""), n = hit.filter(Boolean).length;
+ return `<div class="fb ${n >= q.min ? "ok" : "bad"}" style="margin-top:12px"><b>Musterlösung</b><span class="small">Gefordert: mindestens ${q.min} Punkt${q.min > 1 ? "e" : ""}. ${txt ? `In deiner Antwort erkannt: ${n}.` : ""}</span><ul class="muster">${q.muster.map(([t], i) => `<li class="${hit[i] ? "hit" : ""}">${ic(hit[i] ? "check" : "right", 'stroke-width="3"')}<span>${esc(t)}</span></li>`).join("")}</ul><span class="small muted">Die Erkennung ist nur eine Hilfe – entscheide selbst, ob deine Antwort passt.</span></div>`;
 }
 function viewQuiz(id) {
- const m = modById(id), isMix = !m;
- let list = isMix ? shuf(POOL).slice(0, 10) : shuf(modPool(id)).sort((a, b) => (S.q[a.key] ? 1 : 0) - (S.q[b.key] ? 1 : 0));
+ const m = modById(id), isMix = id === "mix", isFrei = id === "frei";
+ let list = isMix ? shuf(MC_POOL()).slice(0, 10) : isFrei ? shuf(FREI_POOL()) : shuf(modPool(id)).sort((a, b) => (S.q[a.key] ? 1 : 0) - (S.q[b.key] ? 1 : 0));
+ if (!m && !isMix && !isFrei) return viewLernen();
  const total = list.length; let queue = list.slice(), first = 0, miss = new Set(), n = 0;
- const backHref = isMix ? "#start" : "#modul-" + id;
+ const backHref = m ? "#modul-" + id : "#start", tab = m ? "lernen" : "start";
  next();
  function next() {
   if (!queue.length) return done();
   const q = queue.shift(); n++;
   const { html } = quizCard(q, miss.has(q) ? "Wiederholung" : `${Math.min(n, total)} / ${total}`);
-  page(isMix ? "start" : "lernen", `<a class="back" href="${backHref}">${ic("x")} Beenden</a><div class="bar dark" style="margin:0 0 16px"><i style="width:${(1 - (queue.length + 1) / (total + miss.size)) * 100}%"></i></div>${html}`);
+  page(tab, `<a class="back" href="${backHref}">${ic("x")} Beenden</a><div class="bar dark" style="margin:0 0 16px"><i style="width:${(1 - (queue.length + 1) / (total + miss.size)) * 100}%"></i></div>${html}`);
+  const rate = ok => { if (ok) { S.q[q.key] = true; if (!miss.has(q)) first++; } else { S.q[q.key] = false; miss.add(q); queue.push(q); } save(); };
+  const weiter = () => { $(".fbx").insertAdjacentHTML("beforeend", `<button class="btn block" style="margin-top:14px" id="nx">Weiter ${ic("right")}</button>`); $("#nx").onclick = next; $("#nx").focus(); };
+  if (q.t === "frei") {
+   $(".fbx").innerHTML = `<button class="btn ghost block" style="margin-top:12px" id="show">Musterlösung anzeigen</button>`;
+   $("#show").onclick = () => {
+    const txt = $("#ftxt").value; $("#ftxt").readOnly = true;
+    $(".fbx").innerHTML = musterHtml(q, txt) + `<p style="font-weight:700;margin:14px 0 8px">Wie gut war deine Antwort?</p><div class="row"><button class="btn ghost" data-r="0" style="flex:1">Daneben</button><button class="btn ghost" data-r="1" style="flex:1">Teilweise</button><button class="btn" data-r="2" style="flex:1">Richtig</button></div>`;
+    $$("[data-r]").forEach(b => b.onclick = () => { rate(b.dataset.r === "2"); $(".fbx .row").remove(); $(".fbx p:last-of-type")?.remove(); toast(b.dataset.r === "2" ? "Stark!" : "Kommt nochmal dran"); weiter(); });
+   };
+   return;
+  }
   $$(".opt").forEach(b => b.onclick = () => {
    if ($(".fbx").innerHTML) return;
    const k = +b.dataset.k, ok = k === q.c;
    $$(".opt").forEach(x => { const xk = +x.dataset.k; x.classList.add(xk === q.c ? "ok" : xk === k ? "bad" : "dim"); });
-   if (ok) { S.q[q.key] = true; if (!miss.has(q)) first++; } else { S.q[q.key] = false; miss.add(q); queue.push(q); }
-   save();
-   $(".fbx").innerHTML = `<div class="fb ${ok ? "ok" : "bad"}"><b>${ok ? "Richtig!" : "Nicht ganz – die Frage kommt gleich nochmal."}</b>${esc(q.e)}</div><button class="btn block" style="margin-top:14px" id="nx">Weiter ${ic("right")}</button>`;
-   $("#nx").onclick = next; $("#nx").focus();
+   rate(ok);
+   $(".fbx").innerHTML = `<div class="fb ${ok ? "ok" : "bad"}"><b>${ok ? "Richtig!" : "Nicht ganz – die Frage kommt gleich nochmal."}</b>${esc(q.e)}</div>`;
+   weiter();
   });
  }
  function done() {
   const p = first / total;
-  page(isMix ? "start" : "lernen", `<div class="qcard result"><div class="big-ring">${ringSvg(p, 150, 12, "var(--surface-2)")}<b>${Math.round(p * 100)}%</b></div><h2>${p >= .8 ? "Stark!" : p >= .5 ? "Gut gemacht!" : "Dranbleiben!"}</h2><p class="muted">${first} von ${total} Fragen beim ersten Versuch richtig.</p><div class="row" style="justify-content:center;margin-top:18px"><a class="btn ghost" href="${backHref}">Zurück</a><button class="btn" id="again">Nochmal</button></div></div>`);
+  page(tab, `<div class="qcard result"><div class="big-ring">${ringSvg(p, 150, 12, "var(--surface-2)")}<b>${Math.round(p * 100)}%</b></div><h2>${p >= .8 ? "Stark!" : p >= .5 ? "Gut gemacht!" : "Dranbleiben!"}</h2><p class="muted">${first} von ${total} Fragen beim ersten Versuch richtig.</p><div class="row" style="justify-content:center;margin-top:18px"><a class="btn ghost" href="${backHref}">Zurück</a><button class="btn" id="again">Nochmal</button></div></div>`);
   $("#again").onclick = () => viewQuiz(id);
  }
 }
@@ -225,112 +252,129 @@ function viewQuiz(id) {
 /* ---------- Prüfung ---------- */
 function viewPruefung() {
  const best = S.tests.length ? Math.max(...S.tests) : null;
- page("pruefung", `${head()}<h1 style="margin-bottom:6px">Prüfung</h1><p class="muted" style="margin-bottom:18px">Je nach IHK besteht der Abschluss aus einem Lehrgangstest, einer Projektarbeit mit Präsentation und einem Fachgespräch. Frag bei deiner IHK nach dem genauen Ablauf.</p>
+ page("pruefung", `${head()}<h1 style="margin-bottom:6px">Prüfung</h1><p class="muted" style="margin-bottom:18px">Abschlusstest beim IHK-Bildungszentrum Dresden: 30 Fragen, Multiple Choice und Freitext, 60 Minuten, online von zu Hause. <a href="#lehrgang" style="text-decoration:underline">Mehr zum Ablauf</a></p>
  <div class="tiles">
-  <a class="tile" href="#test" style="text-decoration:none"><div class="ti" style="background:linear-gradient(135deg,#e83e8c,#7048e8)">${ic("exam")}</div><b>Probetest</b><span>20 Fragen, Auswertung am Ende${best !== null ? ` · Bestwert ${best} %` : ""}</span></a>
-  <a class="tile" href="#gespraech" style="text-decoration:none"><div class="ti" style="background:linear-gradient(135deg,#7048e8,#1c7ed6)">${ic("talk")}</div><b>Fachgespräch</b><span>${GESPRAECH.length} typische Prüferfragen mit Antwort-Leitfaden</span></a>
-  <a class="tile" href="#projekt" style="text-decoration:none"><div class="ti" style="background:linear-gradient(135deg,#2f9e44,#1c7ed6)">${ic("proj")}</div><b>Projekt-Coach</b><span>Strategie aufbauen und Lücken finden</span></a>
+  <a class="tile" href="#test"><div class="ti" style="background:var(--grad-strong)">${ic("exam")}</div><b>Probetest</b><span>30 Fragen · 60 Min. · Bestehen ab ${PASS} %*${best !== null ? ` · Bestwert ${best} %` : ""}</span></a>
+  <a class="tile" href="#quiz-frei"><div class="ti" style="background:linear-gradient(135deg,#a61e4d,#6741d9)">${ic("pen")}</div><b>Freitext üben</b><span>Offene Fragen mit Musterlösung und Selbstcheck</span></a>
+  <a class="tile" href="#quiz-mix"><div class="ti" style="background:linear-gradient(135deg,#c2410c,#c92a2a)">${ic("shuffle")}</div><b>Schnell-Quiz</b><span>10 Multiple-Choice-Fragen</span></a>
  </div>
- ${S.tests.length ? `<div class="sec-h"><h2>Deine Probetests</h2></div><div class="card"><div class="row" style="align-items:flex-end;gap:8px;height:120px">${S.tests.slice(-10).map(t => `<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px"><span class="small muted">${t}</span><div style="width:100%;max-width:36px;height:${Math.max(6, t)}px;border-radius:8px;background:${t >= 50 ? "var(--grad)" : "var(--bad-soft)"}"></div></div>`).join("")}</div></div>` : ""}`);
+ <p class="small muted" style="margin-top:12px">* Die Bestehensgrenze ist nicht veröffentlicht. Die App rechnet vorsichtig mit ${PASS} % – frag bei der HSB Akademie oder dem IHK-Bildungszentrum Dresden nach.</p>
+ ${S.tests.length ? `<div class="sec-h"><h2>Deine Probetests</h2></div><div class="card"><div class="row" style="align-items:flex-end;gap:8px;height:130px">${S.tests.slice(-10).map(t => `<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px"><span class="small muted">${t}</span><div style="width:100%;max-width:36px;height:${Math.max(6, t)}px;border-radius:8px;background:${t >= PASS ? "var(--grad-strong)" : "var(--bad-soft)"}"></div></div>`).join("")}</div></div>` : ""}`);
 }
+let testTimer = null;
 function viewTest() {
- page("pruefung", `<a class="back" href="#pruefung">${ic("left")} Prüfung</a><section class="hero"><div class="kicker">Probetest</div><h1>20 Fragen aus allen Modulen</h1><p style="opacity:.92">Wie im Lehrgangstest: kein Feedback zwischendurch, die Auswertung kommt am Ende. Viele IHK-Lehrgangstests gelten ab 50 % als bestanden.</p><div class="row"><button class="btn white" id="go">${ic("play")} Test starten</button></div></section>`);
+ clearInterval(testTimer);
+ const nMC = Math.min(22, MC_POOL().length), nFr = Math.min(30 - nMC, FREI_POOL().length);
+ page("pruefung", `<a class="back" href="#pruefung">${ic("left")} Prüfung</a><section class="hero"><div class="kicker">Probetest wie in Dresden</div><h1>${nMC + nFr} Fragen · 60 Minuten</h1><p style="opacity:.95">${nMC} Multiple-Choice- und ${nFr} Freitext-Fragen aus allen sechs Themen. Kein Feedback zwischendurch. Am Ende bewertest du deine Freitext-Antworten selbst anhand der Musterlösung. Bestanden ab ${PASS} % (Annahme).</p><div class="row"><button class="btn white" id="go">${ic("clock")} Test starten</button></div></section>`);
  $("#go").onclick = () => {
-  const list = shuf(POOL).slice(0, 20), ans = []; let p = 0; const t0 = Date.now();
+  const list = shuf([...shuf(MC_POOL()).slice(0, nMC), ...shuf(FREI_POOL()).slice(0, nFr)]), ans = []; let p = 0;
+  const end = Date.now() + 60 * 60000;
+  const tick = () => { const r = Math.max(0, end - Date.now()), el = $("#timer"); if (el) { el.textContent = `${Math.floor(r / 60000)}:${String(Math.floor(r / 1000) % 60).padStart(2, "0")}`; el.classList.toggle("low", r < 5 * 60000); } if (r <= 0) { clearInterval(testTimer); toast("Die Zeit ist um"); result(); } };
+  testTimer = setInterval(tick, 1000);
   step();
   function step() {
-   if (p === list.length) return result();
-   const { html } = quizCard(list[p], `Frage ${p + 1} / ${list.length}`);
-   page("pruefung", `<a class="back" href="#pruefung">${ic("x")} Abbrechen</a><div class="bar dark" style="margin:0 0 16px"><i style="width:${p / list.length * 100}%"></i></div>${html}`);
-   $$(".opt").forEach(b => b.onclick = () => { b.classList.add("ok"); ans.push(+b.dataset.k); p++; setTimeout(step, 180); });
+   if (p === list.length) { clearInterval(testTimer); return result(); }
+   const q = list[p], { html } = quizCard(q, `Frage ${p + 1} / ${list.length}`);
+   page("pruefung", `<div class="row" style="justify-content:space-between;margin-bottom:12px"><a class="back" href="#pruefung" style="margin:0">${ic("x")} Abbrechen</a><span class="timer" id="timer">60:00</span></div><div class="bar dark" style="margin:0 0 16px"><i style="width:${p / list.length * 100}%"></i></div>${html}`);
+   tick();
+   if (q.t === "frei") { $(".fbx").innerHTML = `<button class="btn block" style="margin-top:12px" id="nx">Weiter ${ic("right")}</button>`; $("#nx").onclick = () => { ans[p] = $("#ftxt").value; p++; step(); }; return; }
+   $$(".opt").forEach(b => b.onclick = () => { b.classList.add("sel"); ans[p] = +b.dataset.k; p++; setTimeout(step, 180); });
   }
   function result() {
-   const ok = list.filter((q, k) => ans[k] === q.c).length, pct = Math.round(ok / list.length * 100), min = Math.max(1, Math.round((Date.now() - t0) / 60000));
-   list.forEach((q, k) => S.q[q.key] = ans[k] === q.c); S.tests.push(pct); save();
-   const wrong = list.map((q, k) => ({ q, a: ans[k] })).filter(x => x.a !== x.q.c);
-   const byMod = {}; wrong.forEach(x => byMod[x.q.m] = (byMod[x.q.m] || 0) + 1);
-   const weak = Object.entries(byMod).sort((a, b) => b[1] - a[1]).slice(0, 2).map(([k]) => modById(k));
-   page("pruefung", `<div class="qcard result"><div class="big-ring">${ringSvg(pct / 100, 150, 12, "var(--surface-2)", pct >= 50 ? null : "var(--bad)")}<b>${pct}%</b></div><h2>${pct >= 80 ? "Sehr gut vorbereitet!" : pct >= 50 ? "Bestanden!" : "Noch nicht bestanden"}</h2><p class="muted">${ok} von ${list.length} richtig · ${min} Min.</p>${weak.length ? `<p style="margin-top:12px">Übe am besten: ${weak.map(m => `<a class="chip" href="#modul-${m.id}" style="text-decoration:none">${m.kurz}</a>`).join(" ")}</p>` : ""}<div class="row" style="justify-content:center;margin-top:16px"><a class="btn ghost" href="#pruefung">Zurück</a><button class="btn" id="again">Neuer Test</button></div></div>
-   ${wrong.length ? `<div class="sec-h"><h2>Zum Nacharbeiten</h2></div>${wrong.map(x => `<div class="card"><span class="chip">${modById(x.q.m).kurz}</span><p style="font-weight:700;margin-top:10px">${esc(x.q.q)}</p><p class="small" style="color:var(--bad)">Deine Antwort: ${esc(x.q.a[x.a])}</p><p class="small" style="color:var(--ok)">Richtig: ${esc(x.q.a[x.q.c])}</p><div class="fb ok" style="margin-top:8px">${esc(x.q.e)}</div></div>`).join("")}` : ""}`);
-   $("#again").onclick = viewTest;
+   const rated = {};
+   const mcOk = list.filter((q, k) => q.t !== "frei" && ans[k] === q.c).length;
+   const fr = list.map((q, k) => ({ q, k })).filter(x => x.q.t === "frei");
+   draw();
+   function draw() {
+    const frPts = Object.values(rated).reduce((a, b) => a + b, 0), allRated = fr.every(x => x.k in rated);
+    const pct = Math.round((mcOk + frPts) / list.length * 100);
+    const wrong = list.map((q, k) => ({ q, a: ans[k] })).filter(x => x.q.t !== "frei" && x.a !== x.q.c);
+    page("pruefung", `<div class="qcard result"><div class="big-ring">${ringSvg(pct / 100, 150, 12, "var(--surface-2)", pct >= PASS ? null : "var(--bad)")}<b>${pct}%</b></div><h2>${!allRated ? "Fast fertig" : pct >= PASS ? "Bestanden!" : "Noch nicht bestanden"}</h2><p class="muted">Multiple Choice: ${mcOk} von ${list.length - fr.length} richtig${fr.length ? ` · Freitext: ${allRated ? frPts + " von " + fr.length + " Punkten" : "bitte unten selbst bewerten"}` : ""}</p><p class="small muted">Bestehensgrenze ${PASS} % (Annahme)</p></div>
+    ${fr.length ? `<div class="sec-h"><h2>Freitext selbst bewerten</h2></div>${fr.map(({ q, k }) => `<div class="card">${chip(q)}<p style="font-weight:700;margin:10px 0 6px">${esc(q.q)}</p><div class="answer">${ans[k] ? esc(ans[k]) : "<i>Keine Antwort</i>"}</div>${musterHtml(q, ans[k])}<div class="row" style="margin-top:12px">${[[0, "Daneben"], [.5, "Teilweise"], [1, "Richtig"]].map(([v, t]) => `<button class="btn ${rated[k] === v ? "" : "ghost"}" data-k="${k}" data-v="${v}" style="flex:1">${t}</button>`).join("")}</div></div>`).join("")}` : ""}
+    ${allRated ? `<div class="row" style="justify-content:center;margin:8px 0 20px"><a class="btn ghost" href="#pruefung">Zurück</a><button class="btn" id="again">Neuer Test</button></div>` : ""}
+    ${wrong.length ? `<div class="sec-h"><h2>Multiple Choice nacharbeiten</h2></div>${wrong.map(x => `<div class="card">${chip(x.q)}<p style="font-weight:700;margin-top:10px">${esc(x.q.q)}</p><p class="small" style="color:var(--bad)">Deine Antwort: ${x.a === undefined ? "keine" : esc(x.q.a[x.a])}</p><p class="small" style="color:var(--ok)">Richtig: ${esc(x.q.a[x.q.c])}</p><div class="fb ok" style="margin-top:8px">${esc(x.q.e)}</div></div>`).join("")}` : ""}`);
+    $$("[data-v]").forEach(b => b.onclick = () => { const y = scrollY; rated[b.dataset.k] = +b.dataset.v; draw(); scrollTo(0, y); });
+    $("#again")?.addEventListener("click", viewTest);
+    if (allRated && !draw.saved) { draw.saved = true; list.forEach((q, k) => S.q[q.key] = q.t === "frei" ? rated[k] === 1 : ans[k] === q.c); S.tests.push(pct); save(); }
+   }
   }
  };
 }
-function viewTalk() {
- const order = shuf(GESPRAECH.map((_, i) => i)); let p = 0, open = false;
- draw();
- function draw() {
-  const t = GESPRAECH[order[p]];
-  page("pruefung", `<a class="back" href="#pruefung">${ic("left")} Prüfung</a><h1 style="margin-bottom:6px">Fachgespräch</h1><p class="muted" style="margin-bottom:16px">Beantworte die Frage erst laut – dann tippe auf die Karte.</p>
-  <div class="flip ${open ? "open" : ""}" id="fl"><div class="inner"><div class="face front"><span class="small" style="opacity:.85;font-weight:700">Frage ${p + 1} von ${GESPRAECH.length}</span><div class="qtext">${esc(t.q)}</div><span class="small" style="opacity:.85">Tippen zum Umdrehen</span></div><div class="face back"><b class="display" style="font-size:18px">Eine gute Antwort enthält:</b><ul>${t.a.map(x => `<li>${ic("check", 'stroke-width="3"')}<span>${esc(x)}</span></li>`).join("")}</ul></div></div></div>
-  <div class="row"><button class="btn ghost" id="pv">${ic("left")}</button><button class="btn" id="nx" style="flex:1">Nächste Frage ${ic("right")}</button></div>`);
-  $("#fl").onclick = () => { open = !open; $("#fl").classList.toggle("open", open); };
-  $("#nx").onclick = () => { p = (p + 1) % GESPRAECH.length; open = false; draw(); };
-  $("#pv").onclick = () => { p = (p - 1 + GESPRAECH.length) % GESPRAECH.length; open = false; draw(); };
- }
-}
 
-/* ---------- Projekt-Coach ---------- */
-const KAN = ["LinkedIn", "Instagram", "TikTok", "Facebook", "YouTube", "Pinterest", "X", "WhatsApp-Kanal", "Threads"];
-const STEPS = [
- { id: "firma", t: "Unternehmen & Ausgangslage", h: "Wer ist das Unternehmen, was bietet es an, wie ist es heute auf Social Media aufgestellt? Was macht die Konkurrenz?" },
- { id: "ziel", t: "Ziele (SMART)", h: "z. B. „Bis 31.03. gewinnen wir über Instagram 15 Bewerbungen für Ausbildungsplätze.“" },
- { id: "persona", t: "Zielgruppe & Persona", h: "Name, Alter, Beruf, Wünsche, Probleme – welche Plattformen nutzt sie wann? Woher weißt du das?" },
- { id: "kanaele", t: "Kanäle", h: "Wähle bewusst und begründe – im Fachgespräch wird danach gefragt.", kan: true },
- { id: "content", t: "Inhalte & Redaktionsplan", h: "Themensäulen, Formate (Reel, Karussell …), Tonalität, wie oft, wer ist zuständig, wer gibt frei?" },
- { id: "kpi", t: "KPIs & Messung", h: "Pro Ziel: Kennzahl, Ausgangswert, Zielwert, Datenquelle, Reporting-Rhythmus." },
- { id: "budget", t: "Budget & Ressourcen", h: "Werbebudget, Produktion, interne Arbeitszeit, Tools, ggf. Dienstleister." },
- { id: "recht", t: "Recht & Risiken", h: "Impressum, Datenschutz, Bildrechte, Werbekennzeichnung, Gewinnspiele, KI, Krisenplan." }
-];
-function viewProjekt(step) {
- const P = S.proj; P.kan = P.kan || [];
- if (step === undefined) step = P._step || 0;
- if (step >= STEPS.length) return coach();
- P._step = step; save();
- const st = STEPS[step];
- page("projekt", `${head()}<h1 style="margin-bottom:6px">Projekt-Coach</h1><p class="muted" style="margin-bottom:16px">Baue Schritt für Schritt deine Social-Media-Strategie für das Abschlussprojekt. Alles bleibt auf deinem Gerät.</p>
- <div class="progress-steps">${STEPS.map((_, i) => `<i class="${i <= step ? "on" : ""}"></i>`).join("")}</div>
- <div class="qcard"><span class="small muted" style="font-weight:700">Schritt ${step + 1} von ${STEPS.length}</span><h2 style="margin:6px 0 4px">${st.t}</h2><p class="muted small" style="margin-bottom:14px">${st.h}</p>
- ${st.kan ? `<div class="chips" style="margin-bottom:16px">${KAN.map(k => `<label><input type="checkbox" value="${k}" ${P.kan.includes(k) ? "checked" : ""}><span>${k}</span></label>`).join("")}</div><div class="field"><label for="warum">Warum diese Kanäle?</label><div class="hint">Bezug zu Zielgruppe, Zielen und Ressourcen</div><textarea id="warum">${esc(P.warum || "")}</textarea></div>` : `<textarea id="${st.id}" style="min-height:150px">${esc(P[st.id] || "")}</textarea>`}
+/* ---------- Lehrgang & Karriere (IHK Dresden / HSB Akademie) ----------
+   Angaben aus öffentlichen Kursbeschreibungen, Stand 11/2026 – ohne Gewähr. */
+const SRC = {
+ kurs: ["fernstudi.net – Social Media Manager/-in (IHK), HSB Akademie", "https://www.fernstudi.net/weiterbildung/wirtschaft/public-relations/13937"],
+ zfu: ["ZFU – Zulassung Nr. 686514", "https://zfu.de/download-pdf/lehrgangssuche-uebersicht/686514"],
+ hsb: ["HSB Akademie", "https://www.hsb-akademie.de"],
+ step: ["StepStone – Gehalt Social Media Manager/in", "https://www.stepstone.de/gehalt/Social-Media-Manager-in.html"],
+ indeed: ["Indeed – Gehalt Social Media Manager", "https://de.indeed.com/salaries/social-media-manager-Salaries,-DE"]
+};
+const src = (...k) => `<p class="small muted src">Quelle: ${k.map(x => `<a href="${SRC[x][1]}" target="_blank" rel="noopener">${SRC[x][0]}</a>`).join(" · ")}</p>`;
+function viewLehrgang() {
+ const dl = daysLeft();
+ page("lehrgang", `${head()}<h1 style="margin-bottom:6px">Lehrgang & Karriere</h1><p class="muted" style="margin-bottom:18px">Social Media Manager/-in (IHK) mit Abschlusstest beim IHK-Bildungszentrum Dresden.</p>
+
+ <div class="card"><h2 style="margin-bottom:8px">${ic("cal", 'style="width:22px;height:22px;vertical-align:-4px"')} Dein Prüfungstermin</h2>
+  <p class="small muted">Der Termin wird individuell mit dem IHK-Bildungszentrum abgestimmt. Trag ihn ein, sobald du ihn kennst.</p>
+  <div class="row" style="margin-top:10px"><input type="date" id="pdate" value="${esc(S.pruefung || "")}" style="flex:1;min-width:180px"><button class="btn ghost" id="pdel" ${S.pruefung ? "" : "hidden"}>Löschen</button></div>
+  ${dl !== null ? `<p style="margin-top:10px;font-weight:700">${dl > 0 ? `Noch ${dl} Tag${dl === 1 ? "" : "e"}.` : dl === 0 ? "Heute ist Prüfung – viel Erfolg!" : "Der Termin liegt in der Vergangenheit."}</p>` : ""}
  </div>
- <div class="row">${step > 0 ? `<button class="btn ghost" id="pv">${ic("left")}</button>` : ""}<button class="btn" id="nx" style="flex:1">${step === STEPS.length - 1 ? "Prüfen & Gliederung erstellen" : "Weiter"} ${ic("right")}</button></div>
- ${Object.keys(P).some(k => !k.startsWith("_") && (Array.isArray(P[k]) ? P[k].length : P[k])) ? `<p style="text-align:center;margin-top:14px"><button class="btn ghost" id="toc" style="padding:10px 16px;font-size:14px">Direkt zur Auswertung</button></p>` : ""}`);
- const store = () => { $$("textarea").forEach(t => P[t.id] = t.value); if (st.kan) P.kan = $$(".chips input:checked").map(x => x.value); save(); };
- $$("textarea,input").forEach(el => el.addEventListener("input", store));
- $$(".chips input").forEach(el => el.addEventListener("change", store));
- $("#nx").onclick = () => { store(); viewProjekt(step + 1); };
- $("#pv")?.addEventListener("click", () => { store(); viewProjekt(step - 1); });
- $("#toc")?.addEventListener("click", () => { store(); coach(); });
-}
-function coach() {
- const P = S.proj, v = k => (P[k] || "").trim(), w = [];
- if (!v("ziel")) w.push("Es fehlt ein Ziel – ohne Ziel lässt sich der Erfolg nicht messen.");
- else {
-  if (!/\d/.test(v("ziel"))) w.push("Dein Ziel enthält keine Zahl – ist es wirklich messbar?");
-  if (!/(bis|202\d|monat|woche|quartal|q[1-4]|jan|feb|mär|apr|mai|jun|jul|aug|sep|okt|nov|dez|ende)/i.test(v("ziel"))) w.push("Dein Ziel hat keinen Termin – SMART-Ziele sind terminiert.");
- }
- if (!v("persona")) w.push("Die Zielgruppe fehlt – beschreibe mindestens eine Persona.");
- else if (!/(insight|daten|befrag|umfrage|studie|statistik|analyse)/i.test(v("persona"))) w.push("Woher kennst du die Zielgruppe? Nenne eine Datenquelle (Insights, Befragung, Studie).");
- if (!P.kan?.length) w.push("Du hast noch keinen Kanal gewählt.");
- else if (P.kan.length > 3) w.push(`Du planst ${P.kan.length} Kanäle – Prüfer fragen gern, ob das mit den Ressourcen realistisch ist.`);
- if (P.kan?.length && !v("warum")) w.push("Begründe deine Kanalwahl – das ist eine typische Prüfungsfrage.");
- if (!v("content")) w.push("Inhalte und Redaktionsplan fehlen.");
- else if (!/(säule|thema|themen)/i.test(v("content"))) w.push("Lege Themensäulen fest – so bleibt der Kanal erkennbar.");
- if (!v("kpi")) w.push("Es fehlen KPIs mit Ausgangs- und Zielwert.");
- else if (/follower/i.test(v("kpi")) && !/(klick|ctr|lead|bewerb|anfrage|conversion|engagement|umsatz|verkauf|reichweite)/i.test(v("kpi"))) w.push("Deine KPIs drehen sich nur um Follower – ergänze Kennzahlen, die direkt am Ziel hängen.");
- if (!v("budget")) w.push("Das Budget fehlt.");
- else if (!/(stunde|zeit|personal|\bh\b|produktion|foto|video|grafik)/i.test(v("budget"))) w.push("Im Budget fehlen interne Arbeitszeit oder Produktionskosten.");
- const r = v("recht").toLowerCase();
- [["impressum", "Impressum"], ["daten", "Datenschutz"], ["bild", "Bildrechte & Einwilligungen"], ["werb", "Werbekennzeichnung"], ["kris", "Krisenplan"]].forEach(([k, l]) => { if (!r.includes(k)) w.push(`Recht: „${l}“ fehlt noch.`); });
- const outline = `SOCIAL-MEDIA-STRATEGIE – GLIEDERUNG\n\n1. Ausgangslage\n${v("firma") || "–"}\n\n2. Ziele\n${v("ziel") || "–"}\n\n3. Zielgruppe / Persona\n${v("persona") || "–"}\n\n4. Kanäle: ${(P.kan || []).join(", ") || "–"}\nBegründung: ${v("warum") || "–"}\n\n5. Inhalte & Redaktionsplan\n${v("content") || "–"}\n\n6. KPIs & Reporting\n${v("kpi") || "–"}\n\n7. Budget & Ressourcen\n${v("budget") || "–"}\n\n8. Recht & Risiken\n${v("recht") || "–"}\n\n9. Fazit & nächste Schritte`;
- const score = Math.max(0, 1 - w.length / 14);
- page("projekt", `<button class="back" id="edit">${ic("left")} Bearbeiten</button>
- <div class="qcard result" style="padding:24px 20px"><div class="big-ring" style="width:120px;height:120px">${ringSvg(score, 120, 10, "var(--surface-2)")}<b style="font-size:28px">${Math.round(score * 100)}%</b></div><h2>${w.length ? "Fast da – ein paar Lücken" : "Vollständig!"}</h2><p class="muted">${w.length ? `Der Coach hat ${w.length} Hinweis${w.length > 1 ? "e" : ""} für dich.` : "Jetzt im Fachgespräch-Training üben."}</p></div>
- ${w.map(x => `<div class="tip">${ic("warn", 'style="color:var(--bad)"')}<span>${esc(x)}</span></div>`).join("")}
- ${!w.length ? `<a class="btn block" href="#gespraech">Fachgespräch üben ${ic("right")}</a>` : ""}
- <div class="card" style="margin-top:16px"><div class="row" style="justify-content:space-between"><h3>Gliederung für deine Präsentation</h3><button class="btn ghost" id="cp" style="padding:10px 16px">${ic("copy")} Kopieren</button></div><pre class="outline">${esc(outline)}</pre></div>`);
- $("#edit").onclick = () => viewProjekt(0);
- $("#cp").onclick = async () => { try { await navigator.clipboard.writeText(outline); toast("Gliederung kopiert"); } catch (e) { toast("Bitte Text markieren und kopieren"); } };
+
+ <div class="sec-h"><h2>So läuft der Lehrgang ab</h2></div>
+ <ol class="road">
+  <li><b>Anmeldung bei der HSB Akademie</b><span>Fernlehrgang aus Leipzig, staatlich zugelassen (ZFU-Nr. 686514). Besondere Voraussetzungen gibt es nicht; Grundkenntnisse in Englisch, Marketing und am PC sind hilfreich.</span></li>
+  <li><b>Selbstlernphase online</b><span>Lernmodule auf dem Onlinecampus zu den sechs Themen, die du auch hier in der App findest. Rechne mit etwa 8–10 Stunden pro Woche.</span></li>
+  <li><b>Online-Vorlesungen</b><span>Live-Vorlesungen montags 18:30–20:00 Uhr – je nach Angabe 14 bis 16 Termine.</span></li>
+  <li><b>Zwei Workshops</b><span>Zwei ganztägige Workshops (9–16 Uhr). Die Teilnahme ist freiwillig, aber empfohlen.</span></li>
+  <li><b>Abschlusstest beim IHK-Bildungszentrum Dresden</b><span>Wenn alle Module bearbeitet sind und du nachweist, dass du ausreichend vorbereitet bist, wird der Termin individuell abgestimmt.</span></li>
+  <li><b>IHK-Zertifikat</b><span>Mit bestandenem Test erhältst du das Zertifikat „Social Media Manager/-in (IHK)“. Ohne IHK-Test ist auch ein Abschluss mit HSB-Zertifikat möglich.</span></li>
+ </ol>
+ ${src("kurs", "zfu")}
+
+ <div class="sec-h"><h2>Der Abschlusstest</h2></div>
+ <div class="card"><dl class="facts">
+  <dt>Form</dt><dd>Online-Test, von zu Hause – kein Prüfungszentrum</dd>
+  <dt>Umfang</dt><dd>30 Fragen, Multiple Choice und Freitext</dd>
+  <dt>Dauer</dt><dd>60 Minuten</dd>
+  <dt>Prüfende Stelle</dt><dd>IHK-Bildungszentrum Dresden gGmbH</dd>
+  <dt>Bestehen</dt><dd>Nicht veröffentlicht – die App rechnet mit ${PASS} % (Annahme)</dd>
+ </dl>
+ <div class="tip good" style="margin-top:12px">${ic("bolt", 'style="color:var(--ok)"')}<span><b>Tipp:</b> Bei Freitext-Fragen in Stichpunkten antworten und genau so viele Punkte nennen, wie gefragt sind. Das trainierst du unter <a href="#quiz-frei" style="text-decoration:underline">Freitext üben</a>.</span></div>
+ ${src("kurs")}</div>
+
+ <div class="sec-h"><h2>Kosten & Förderung</h2></div>
+ <div class="card"><dl class="facts">
+  <dt>Mit IHK-Zertifikat</dt><dd>1.905 € gesamt, inklusive IHK-Testgebühr (umsatzsteuerbefreit)</dd>
+  <dt>Nur HSB-Zertifikat</dt><dd>1.700 €</dd>
+  <dt>Zahlung</dt><dd>Zinslose Ratenzahlung möglich</dd>
+  <dt>Förderung</dt><dd>Bildungsgutschein laut Anbieter möglich – vorher bei Agentur für Arbeit oder Jobcenter klären</dd>
+  <dt>Steuer</dt><dd>Berufliche Weiterbildung ist in der Regel als Werbungskosten absetzbar</dd>
+ </dl>${src("kurs")}</div>
+
+ <div class="sec-h"><h2>Karriere & Gehalt</h2></div>
+ <div class="card">
+  <div class="stats3"><div><b>38.600 €</b><span>Ø brutto/Jahr laut StepStone (Spanne 32.200–46.200 €)</span></div><div><b>38.700 €</b><span>Ø in Dresden laut StepStone (32.400–45.800 €)</span></div><div><b>44.843 €</b><span>Ø laut Indeed (787 Angaben, Stand 10/2026)</span></div></div>
+  <p class="small" style="margin-top:12px">Die Zahlen schwanken je nach Quelle. Entscheidend sind Berufserfahrung, Unternehmensgröße, Branche und Region – in Großstädten im Westen und Süden wird meist mehr gezahlt als in Sachsen.</p>
+  ${src("step", "indeed")}
+ </div>
+ <div class="card"><h3 style="margin-bottom:8px">Wo Social Media Manager arbeiten</h3><ul class="ticks">
+  <li>In Unternehmen jeder Größe – meist im Marketing oder in der Unternehmenskommunikation</li>
+  <li>In Werbe-, Social-Media- und PR-Agenturen</li>
+  <li>Bei Verbänden, Kammern, Kommunen, Hochschulen und Vereinen</li>
+  <li>Selbstständig als Freelancer für kleine Unternehmen</li></ul></div>
+ <div class="card"><h3 style="margin-bottom:8px">Typische Jobtitel & Spezialisierungen</h3><div class="chips static">${["Social Media Manager", "Community Manager", "Social Media Redakteur", "Content Creator", "Paid Social / Social Ads Manager", "Influencer Marketing Manager", "Employer Branding", "Social Media Strategist"].map(t => `<span>${t}</span>`).join("")}</div></div>
+ <div class="card"><h3 style="margin-bottom:8px">So geht es weiter</h3><ol class="road small-road">
+  <li><b>Einstieg</b><span>Junior Social Media Manager oder Redakteur – oft mit Zertifikat und ersten eigenen Praxisprojekten</span></li>
+  <li><b>Social Media Manager</b><span>Eigene Kanäle, Strategie und Budget verantworten</span></li>
+  <li><b>Senior / Teamleitung</b><span>Team führen, Kampagnen über mehrere Kanäle steuern</span></li>
+  <li><b>Head of Social Media / Leitung Kommunikation</b><span>Strategische Gesamtverantwortung</span></li></ol>
+  <p class="small" style="margin-top:8px">Aufbauend bietet die HSB Akademie weitere IHK-Zertifikate an, z. B. Social Advertising Manager, Online Marketing Manager, Content Marketing Manager oder KI Marketing Manager.</p>${src("hsb")}</div>
+ <div class="tip good">${ic("check", 'style="color:var(--ok)" stroke-width="3"')}<span><b>Tipp für Bewerbungen:</b> Zeig ein kleines Portfolio – z. B. eine Beispielstrategie, einen Redaktionsplan und ein Reporting. Das Zertifikat gehört ins LinkedIn-Profil.</span></div>
+
+ <p class="small muted" style="margin:24px 0 0">SMM Coach ist ein unabhängiges Lernangebot und kein offizielles Angebot der IHK Dresden, des IHK-Bildungszentrums Dresden oder der HSB Akademie. Alle Angaben ohne Gewähr, Stand November 2026. Verbindlich sind die Informationen des Anbieters.</p>`);
+ $("#pdate").onchange = e => { S.pruefung = e.target.value; save(); toast(S.pruefung ? "Prüfungstermin gespeichert" : "Termin gelöscht"); viewLehrgang(); };
+ $("#pdel").onclick = () => { S.pruefung = ""; save(); viewLehrgang(); };
 }
 
 /* ---------- Start ---------- */
