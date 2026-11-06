@@ -59,7 +59,7 @@ export const GESTRICHEN = [
  "Was beschreibt der Begriff „Streuverlust“?", // ads: Zusatzmodul ads, Begriffsfrage (Streuverlust im Glossar)
  "Was sind „Creatives“ bei einer Anzeige?", // ads: Zusatzmodul ads, Begriffsfrage (Creatives im Glossar)
  "Was machte die ALS Ice Bucket Challenge 2014 vor allem viral?", // einf: Dublette zum Check „Was war der entscheidende virale Mechanismus der Ice Bucket Challenge?“
- "Welches soziale Netzwerk nutzten laut Bericht zur ARD/ZDF-Medienstudie 2026 die meisten Menschen ab 14 mindestens wöchentlich?", // einf: Schnell veraltende Studienzahl (ARD/ZDF 2026); Lektion nutzung-de hat eigenen Check
+ "Welches dieser Netzwerke nutzten laut Bericht zur ARD/ZDF-Medienstudie 2026 die meisten Menschen ab 14 mindestens wöchentlich?", // einf: Schnell veraltende Studienzahl (ARD/ZDF 2026); Lektion nutzung-de hat eigenen Check
  "Fans reichen auf LEGO Ideas eigene Set-Ideen ein. Was erhält ein Fan, wenn daraus ein Set wird?", // einf: Detail-Trivia (LEGO-Ideas-Umsatzbeteiligung 1 %)
  "Warum eignet sich Pinterest gut, um Besucher auf eine Website zu bringen?", // platt: Dublette zum Check „Was unterscheidet Pinterest von den meisten anderen Netzwerken?“
  "Was ist das Fediverse?", // platt: Fast-Dublette zu „Was ist das Besondere an Mastodon?“ und Mehrfachfrage Mastodon/Fediverse; Begriff im Glossar

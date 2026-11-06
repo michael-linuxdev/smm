@@ -1,0 +1,332 @@
+[
+ {
+  "q": "Wofür steht das „T“ in SMART?",
+  "m": "unt",
+  "grund": "Fast-Dublette zum Check „Welches Ziel ist SMART formuliert?“, Mehrfachfrage SMART und Freitext SMART-Ziel"
+ },
+ {
+  "q": "Was ist der erste Schritt einer Social-Media-Strategie?",
+  "m": "unt",
+  "grund": "Fast-Dublette zu Freitext „Schritte zur Planung einer Social-Media-Strategie“ und Check Status-quo-Analyse"
+ },
+ {
+  "q": "Was hilft am meisten bei einem Shitstorm?",
+  "m": "plan",
+  "grund": "Fast-Dublette zum Check krise („Krisenplan … erstellen“) und Mehrfachfrage Krisenvorbereitung"
+ },
+ {
+  "q": "Was gehört in ein gutes Reporting?",
+  "m": "kpi",
+  "grund": "Dublette zum Check „Was macht ein Reporting wertvoll?“ (identische Lösung)"
+ },
+ {
+  "q": "Was beobachtet Social Listening?",
+  "m": "kpi",
+  "grund": "Fast-Dublette zu Check monitoring und Mehrfachfrage „Was trifft auf Social Listening zu?“"
+ },
+ {
+  "q": "Ein Video hat 10.000 Reichweite und 300 Interaktionen. Engagement-Rate?",
+  "m": "kpi",
+  "grund": "Dublette zum Check „…4.000 Personen … 200 Interaktionen. Engagement-Rate“ (gleiche Rechnung)"
+ },
+ {
+  "q": "Was ist ein korrekter A/B-Test?",
+  "m": "kpi",
+  "grund": "Fast-Dublette zu „Was ist für einen aussagekräftigen A/B-Test wichtig?“ und „…ursächlich nachzuweisen“ (A/B-Test, ein Merkmal)"
+ },
+ {
+  "q": "Was gehört in eine vollständige Budgetplanung?",
+  "m": "unt",
+  "grund": "Fast-Dublette zum Check „…bei der Budgetplanung am häufigsten vergessen?“ und Freitext Kostenblöcke"
+ },
+ {
+  "q": "Ein Influencer bekommt Geld für einen Post. Was ist Pflicht?",
+  "m": "recht",
+  "grund": "Fast-Dublette zur Mehrfachfrage Kennzeichnung Reel, Freitext Influencerin und Kamera-Geschenk-Frage"
+ },
+ {
+  "q": "Du willst ein Teamfoto posten. Was brauchst du?",
+  "m": "recht",
+  "grund": "Fast-Dublette zu Freitext Firmenfeier-Foto und Mehrfachfrage Fotos von Mitarbeitenden"
+ },
+ {
+  "q": "Wo sollte das Impressum auf einem Social-Media-Profil stehen?",
+  "m": "recht",
+  "grund": "Fast-Dublette zu Freitext Impressum-Anforderungen und Check impressum"
+ },
+ {
+  "q": "Was ist eine Chance von Social Media für Unternehmen?",
+  "m": "einf",
+  "grund": "Fast-Dublette zu Mehrfachfrage „Welche Chancen bietet Social Media…“ und Freitext „Nennen Sie drei Chancen…“"
+ },
+ {
+  "q": "Was ist Employer Branding?",
+  "m": "unt",
+  "grund": "Fast-Dublette zum Freitext „Was versteht man unter Employer Branding?…“"
+ },
+ {
+  "q": "Was bedeutet CPC?",
+  "m": "kpi",
+  "grund": "Abkürzungsfrage CPC, abgedeckt durch CPC-Rechenfrage, Freitext-Rechnung und Glossar"
+ },
+ {
+  "q": "Wer hat den Begriff „Web 2.0“ Mitte der 2000er-Jahre maßgeblich bekannt gemacht?",
+  "m": "einf",
+  "grund": "Personen-Trivia (Tim O’Reilly) ohne Lernwert; Web 2.0 durch Check web20, Freitext und Mehrfachfrage abgedeckt"
+ },
+ {
+  "q": "Was bedeutet „Viralität“ in Social Media?",
+  "m": "einf",
+  "grund": "Dublette zum Check „Was kennzeichnet den viralen Effekt?“ (Lektion viral); Viralität auch im Glossar"
+ },
+ {
+  "q": "Ein Getränkehersteller lässt seine Community über die nächste Sorte abstimmen und Vorschläge einreichen. Wie nennt man das?",
+  "m": "einf",
+  "grund": "Dublette zum Check „…Produktideen einreichen und darüber abstimmen“ (Crowdsourcing, Lektion einsatz)"
+ },
+ {
+  "q": "Was ist der Vorteil von Lead-Gen-Formularen in LinkedIn-Anzeigen?",
+  "m": "ads",
+  "grund": "Zusatzmodul ads (nicht prüfungsrelevant), LinkedIn-Plattformdetail"
+ },
+ {
+  "q": "Was sind TikTok Spark Ads?",
+  "m": "ads",
+  "grund": "Zusatzmodul ads, schnell veraltendes TikTok-Werbeformat-Detail"
+ },
+ {
+  "q": "Was ist ein „Stitch“ auf TikTok?",
+  "m": "platt",
+  "grund": "Plattform-Funktionsdetail (TikTok Stitch), für IHK-Test unwahrscheinlich"
+ },
+ {
+  "q": "Wie legt man auf YouTube Kapitel in einem Video an?",
+  "m": "platt",
+  "grund": "Plattform-Bediendetail (YouTube-Kapitel per Zeitstempel)"
+ },
+ {
+  "q": "Was bietet ein gemeinsamer Posteingang (Social Inbox) in einem Social-Media-Tool?",
+  "m": "platt",
+  "grund": "Fast-Dublette zu „Welche Zusatzfunktion bieten viele Publishing-Tools…“ (gemeinsamer Posteingang)"
+ },
+ {
+  "q": "Wer prägte 2006 den Begriff „Enterprise 2.0“?",
+  "m": "unt",
+  "grund": "Personen-/Jahreszahl-Trivia (McAfee 2006)"
+ },
+ {
+  "q": "Welcher Nutzen wird Enterprise 2.0 typischerweise zugeschrieben?",
+  "m": "unt",
+  "grund": "Fast-Dublette zu „Was beschreibt Enterprise 2.0?“ (gleiches Lernziel)"
+ },
+ {
+  "q": "Welche Angabe gehört bei einer GmbH ins Impressum nach § 5 DDG?",
+  "m": "recht",
+  "grund": "Fast-Dublette zur Mehrfachfrage „GmbH … Impressum nach § 5 DDG“"
+ },
+ {
+  "q": "Welche Vorschrift verlangt in Deutschland eine Einwilligung, bevor nicht notwendige Cookies oder Tracking-Pixel auf dem Endgerät gespeichert oder ausgelesen werden?",
+  "m": "recht",
+  "grund": "Dublette zum Check dsgvo (Meta-Pixel/Einwilligung) und Freitext Tracking-Pixel"
+ },
+ {
+  "q": "Seit wann müssen Unternehmen als Betreiber nach Art. 50 Abs. 4 KI-Verordnung von ihnen erzeugte Deepfakes offenlegen?",
+  "m": "recht",
+  "grund": "Datums-Trivia (KI-VO Art. 50 ab 2.8.2026); Kennzeichnung über Frage „KI-Video … täuschend echt“ und Freitext KI abgedeckt"
+ },
+ {
+  "q": "Was verlangt Art. 4 KI-Verordnung (in der Fassung des Digital-Omnibus) von Unternehmen, die KI-Tools einsetzen?",
+  "m": "recht",
+  "grund": "Sehr schnell veraltendes Gesetzgebungsdetail (Digital-Omnibus, Art. 4 KI-VO)"
+ },
+ {
+  "q": "Welche Behörde ist in Deutschland zentraler Koordinator für digitale Dienste nach dem Digital Services Act (DSA)?",
+  "m": "recht",
+  "grund": "Behörden-Trivia (Bundesnetzagentur als DSC)"
+ },
+ {
+  "q": "Mit 2.000 € Werbebudget werden 8.000 € Umsatz erzielt. Wie hoch ist der ROAS?",
+  "m": "kpi",
+  "grund": "Dublette zum Check „500 € … 2.000 € Umsatz. ROAS?“ (gleiche Rechnung, gleiches Ergebnis 4)"
+ },
+ {
+  "q": "Von 1.000 Erwähnungen einer Marke sind 280 positiv, 120 negativ und 600 neutral. Wie hoch ist der Anteil negativer Erwähnungen?",
+  "m": "kpi",
+  "grund": "Fast-Dublette zu Sentiment-Ratio-Frage und Mehrfachfrage Sentiment-Rechnung"
+ },
+ {
+  "q": "Ein Handwerksbetrieb hat ein kameraaffines, sehr engagiertes Azubi-Team. Wohin gehört das in der SWOT-Analyse?",
+  "m": "unt",
+  "grund": "Fast-Dublette zur SWOT-Frage Fahrradladen, Check analyse und Mehrfachfrage interne Faktoren"
+ },
+ {
+  "q": "Eine Neukunden-Kampagne soll keine bestehenden Kunden erreichen. Was tun Sie im Targeting?",
+  "m": "ads",
+  "grund": "Zusatzmodul ads, Targeting-Detail (Exclusion); Targeting bleibt über Begriffsfrage abgedeckt"
+ },
+ {
+  "q": "Was gilt seit Januar 2023 für XING-Gruppen?",
+  "m": "platt",
+  "grund": "Jahreszahl-Trivia (XING-Gruppen 2023); XING durch Check und Freitext zu XING/X abgedeckt"
+ },
+ {
+  "q": "Wofür verhängte die EU-Kommission im Dezember 2025 eine DSA-Geldbuße gegen X?",
+  "m": "platt",
+  "grund": "Jahres-/Ereignis-Trivia (DSA-Geldbuße gegen X 12/2025), schnell veraltend"
+ },
+ {
+  "q": "Kommt es nach dem BAG für die Mitbestimmung nach § 87 Abs. 1 Nr. 6 BetrVG darauf an, ob der Arbeitgeber die Daten auswerten will?",
+  "m": "unt",
+  "grund": "Dublette zum Check governance-zugaenge (Betriebsrat/Mitbestimmung bei Überwachungseignung); BAG-Detail"
+ },
+ {
+  "q": "Ihr vergleicht die Impressionen eines Instagram-Beitrags von 2023 mit den Aufrufen eines Beitrags von 2025. Worauf müsst ihr achten?",
+  "m": "kpi",
+  "grund": "Schnell veraltendes Meta-Kennzahlen-Detail (Impressionen→Aufrufe); Vergleichbarkeit über „feste Quelle und Definition“ und Benchmarking abgedeckt"
+ },
+ {
+  "q": "Wie viele Hashtags erlaubt Instagram seit der Umstellung Ende 2025 höchstens pro Beitrag oder Reel?",
+  "m": "plan",
+  "grund": "Schnell veraltendes Plattformdetail (Instagram-Hashtag-Limit seit Ende 2025)"
+ },
+ {
+  "q": "Ein Hersteller von Backöfen verkauft an Bäckereien. Was beschreibt diese Art von Geschäft?",
+  "m": "einf",
+  "grund": "Begriffsfrage B2B: Glossar + Check „Krume liefert … an ein Hotel“ (grundwortschatz)"
+ },
+ {
+  "q": "Was beschreibt „Earned Media“?",
+  "m": "unt",
+  "grund": "Begriffsfrage Earned Media: Glossar + Check „Ein begeisterter Kunde teilt euren Beitrag…“"
+ },
+ {
+  "q": "Was ist eine „Persona“?",
+  "m": "unt",
+  "grund": "Begriffsfrage Persona: Glossar + Check persona + Mehrfachfrage/Freitext Persona"
+ },
+ {
+  "q": "Was beschreibt „Outsourcing“ im Social Media Management?",
+  "m": "unt",
+  "grund": "Begriffsfrage Outsourcing: Glossar + Agentur-Frage und Freitext Auslagerung"
+ },
+ {
+  "q": "Was ist im Datenschutz eine wirksame „Einwilligung“?",
+  "m": "recht",
+  "grund": "Begriffsfrage Einwilligung: Glossar + Mehrfachfrage „Anforderungen … wirksame Einwilligung nach DSGVO“"
+ },
+ {
+  "q": "Was bedeutet „Conversion“?",
+  "m": "kpi",
+  "grund": "Begriffsfrage Conversion: Glossar + Check „Dinkelbrot-Kampagne … Conversion“"
+ },
+ {
+  "q": "Wofür steht „KPI“?",
+  "m": "kpi",
+  "grund": "Begriffsfrage KPI: Glossar + „Wann wird aus einer Kennzahl ein KPI?“"
+ },
+ {
+  "q": "Was misst die CTR (Click-Through-Rate)?",
+  "m": "kpi",
+  "grund": "Begriffsfrage CTR: Glossar + „Wie berechnet man die CTR?“ + Freitext-Rechnung"
+ },
+ {
+  "q": "Was beschreibt der ROI (Return on Investment)?",
+  "m": "kpi",
+  "grund": "Begriffsfrage ROI: Glossar + ROI-Rechnung und ROI/ROAS-Abgrenzung"
+ },
+ {
+  "q": "Was beschreibt der ROAS (Return on Ad Spend)?",
+  "m": "kpi",
+  "grund": "Begriffsfrage ROAS: Glossar + Check ROAS-Rechnung + „Worin unterscheidet sich der ROI vom ROAS?“"
+ },
+ {
+  "q": "Was bedeutet „CPA“ bei Anzeigen?",
+  "m": "kpi",
+  "grund": "Begriffsfrage CPA: Glossar + CPA-Rechenfrage + Freitext CPM/CPC/CPA/ROAS"
+ },
+ {
+  "q": "Was zeigt die Engagement-Rate?",
+  "m": "kpi",
+  "grund": "Begriffsfrage Engagement-Rate: Glossar + Check und mehrere Rechenfragen"
+ },
+ {
+  "q": "Was beschreibt der „Share of Voice“?",
+  "m": "kpi",
+  "grund": "Begriffsfrage Share of Voice: Glossar + Check SoV-Rechnung (benchmarking)"
+ },
+ {
+  "q": "Was beschreibt ein „Funnel“ im Marketing?",
+  "m": "plan",
+  "grund": "Begriffsfrage Funnel: Glossar + Awareness-Frage + Freitext Funnel/Customer Journey"
+ },
+ {
+  "q": "Was beschreibt die „Customer Journey“?",
+  "m": "plan",
+  "grund": "Begriffsfrage Customer Journey: Glossar + Touchpoint-Frage + Freitext Funnel/Customer Journey"
+ },
+ {
+  "q": "Was ist ein „Shitstorm“?",
+  "m": "plan",
+  "grund": "Begriffsfrage Shitstorm: Glossar + Freitext Shitstorm-Begriff + Shitstorm-Skala-Frage"
+ },
+ {
+  "q": "Was bedeutet „Geotargeting“?",
+  "m": "ads",
+  "grund": "Zusatzmodul ads, Begriffsfrage (Geotargeting im Glossar), Targeting-Frage bleibt"
+ },
+ {
+  "q": "Was beschreibt der Begriff „Streuverlust“?",
+  "m": "ads",
+  "grund": "Zusatzmodul ads, Begriffsfrage (Streuverlust im Glossar)"
+ },
+ {
+  "q": "Was sind „Creatives“ bei einer Anzeige?",
+  "m": "ads",
+  "grund": "Zusatzmodul ads, Begriffsfrage (Creatives im Glossar)"
+ },
+ {
+  "q": "Was machte die ALS Ice Bucket Challenge 2014 vor allem viral?",
+  "m": "einf",
+  "grund": "Dublette zum Check „Was war der entscheidende virale Mechanismus der Ice Bucket Challenge?“"
+ },
+ {
+  "q": "Welches soziale Netzwerk nutzten laut Bericht zur ARD/ZDF-Medienstudie 2026 die meisten Menschen ab 14 mindestens wöchentlich?",
+  "m": "einf",
+  "grund": "Schnell veraltende Studienzahl (ARD/ZDF 2026); Lektion nutzung-de hat eigenen Check"
+ },
+ {
+  "q": "Fans reichen auf LEGO Ideas eigene Set-Ideen ein. Was erhält ein Fan, wenn daraus ein Set wird?",
+  "m": "einf",
+  "grund": "Detail-Trivia (LEGO-Ideas-Umsatzbeteiligung 1 %)"
+ },
+ {
+  "q": "Warum eignet sich Pinterest gut, um Besucher auf eine Website zu bringen?",
+  "m": "platt",
+  "grund": "Dublette zum Check „Was unterscheidet Pinterest von den meisten anderen Netzwerken?“"
+ },
+ {
+  "q": "Was ist das Fediverse?",
+  "m": "platt",
+  "grund": "Fast-Dublette zu „Was ist das Besondere an Mastodon?“ und Mehrfachfrage Mastodon/Fediverse; Begriff im Glossar"
+ },
+ {
+  "q": "Was sind YouTube Shorts?",
+  "m": "platt",
+  "grund": "Schnell veraltendes Plattformdetail (Shorts-Länge); YouTube durch Check und Mehrfachfrage abgedeckt"
+ },
+ {
+  "q": "Was versteht man unter Social Media Relations?",
+  "m": "unt",
+  "grund": "Dublette zum Check smr und Freitext „Erklären Sie den Begriff Social Media Relations…“; Begriff im Glossar"
+ },
+ {
+  "q": "Welche Kennzahl passt zum Ziel „Verkäufe“ bei einer Influencer-Kampagne?",
+  "m": "unt",
+  "grund": "Dublette zum Check „Wie lässt sich der Verkaufserfolg eines Influencer-Posts am besten messen?“"
+ },
+ {
+  "q": "Warum sollte ein Unternehmen auf negative Bewertungen öffentlich antworten?",
+  "m": "plan",
+  "grund": "Fast-Dublette zum Check bewertungen und Freitext Ein-Stern-Bewertung"
+ }
+]

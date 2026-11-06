@@ -14,7 +14,7 @@ export const LEKTIONEN_R4 = [
  // ---------- einf ----------
  { id: "nutzung-de", titel: "Wie Deutschland Social Media nutzt", min: 3, folien: [
   { k: "intro", h: "Zahlen statt Bauchgefühl", b: "Wer Kanäle auswählt, braucht verlässliche Daten. Eine wichtige Quelle ist die jährliche **ARD/ZDF-Medienstudie** – 2026 mit 2.462 Befragten ab 14 Jahren. Laut ZDF nutzt ein Drittel (33 %) täglich Social Media, im Schnitt 32 Minuten." },
-  { k: "liste", h: "Mindestens wöchentlich genutzt", l: ["Instagram: 40 %", "Facebook: 28 % (minus 3 Punkte)", "TikTok: 18 %, Snapchat: 13 %", "Pinterest: 11 %, LinkedIn: 8 %", "Laut ARD/ZDF-Medienstudie 2026, berichtet von onlinemarketing.de"] },
+  { k: "liste", h: "Mindestens wöchentlich genutzt", l: ["Instagram: 40 % (Videoplattform YouTube: 47 %)", "Facebook: 28 % (minus 3 Punkte)", "TikTok: 18 %, Snapchat: 13 %", "Pinterest: 11 %, LinkedIn: 8 %", "Laut ARD/ZDF-Medienstudie 2026, berichtet von onlinemarketing.de und ZDF"] },
   { k: "text", h: "Das Alter entscheidet", b: "Laut demselben Bericht nutzen Social Media mindestens wöchentlich **91 %** der 14- bis 29-Jährigen, 74 % der 30- bis 49-Jährigen, 53 % der 50- bis 69-Jährigen und **22 %** der über 70-Jährigen." },
   { k: "merke", h: "Quelle und Jahr nennen", b: "Studien zeigen Trends, nicht **deine** Zielgruppe. Prüfe zusätzlich eigene Statistiken und nenne immer **Quelle und Jahr** – Studien messen unterschiedlich (täglich, wöchentlich, Altersgrenze)." },
   { k: "check", q: "Welche Altersgruppe nutzt Social Media laut Bericht zur ARD/ZDF-Medienstudie 2026 am häufigsten?", a: ["14 bis 29 Jahre", "30 bis 49 Jahre", "50 bis 69 Jahre", "Über 70 Jahre"], c: 0, e: "91 % der 14- bis 29-Jährigen nutzen Social Media mindestens wöchentlich, bei den über 70-Jährigen sind es 22 %." }
@@ -31,7 +31,7 @@ export const LEKTIONEN_R4 = [
   { k: "beispiel", h: "ALS Ice Bucket Challenge (2014)", b: "Eiswasser über den Kopf, Video posten, drei Personen nominieren. Über **17 Mio.** Menschen luden Videos hoch. Die ALS Association erhielt etwa **115 Mio. US-$** Spenden (Vorjahreszeitraum: 2,8 Mio.). Quelle: Nature, 2017." },
   { k: "beispiel", h: "EDEKA #heimkommen (2015)", b: "Weihnachtsspot von Jung von Matt, ab 28.11.2015 auf YouTube: Ein Großvater täuscht seinen Tod vor, damit die Familie heimkommt. Nach vier Tagen über **20 Mio.** Aufrufe, bis 18.12. über **43 Mio.** Treiber: starke Emotion, Gesprächsstoff, Parodien. Quelle: Wikipedia „Heimkommen“." },
   { k: "beispiel", h: "Duolingo: „Duo ist tot“ (2025)", b: "Am 11.02.2025 verkündete Duolingo den „Tod“ seines Eulen-Maskottchens, vor allem auf TikTok. Fans spekulierten und erstellten rund **160.000** eigene Beiträge. Laut Unternehmen etwa **1,7 Mrd.** Impressionen in zwei Wochen – geplant waren 70 Mio. Quelle: Fast Company." },
-  { k: "check", q: "Was war der entscheidende virale Mechanismus der Ice Bucket Challenge?", a: ["Jede Person nominierte weitere Personen zum Mitmachen", "Ein großes TV-Werbebudget der ALS Association", "Ein Gewinnspiel mit wertvollen Sachpreisen", "Bezahlte Anzeigen auf allen großen Plattformen"], c: 0, e: "Die Nominierung machte jede Teilnahme zum Startpunkt neuer Teilnahmen – ein Schneeballeffekt mit Millionen Videos." },
+  { k: "check", q: "Was haben Ice Bucket Challenge, #heimkommen und „Duo ist tot“ gemeinsam?", a: ["Die Reichweite entstand vor allem, weil Menschen die Inhalte selbst teilten und weitertrugen", "Alle drei liefen ausschließlich als bezahlte TV-Werbung", "Alle drei waren Gewinnspiele mit wertvollen Sachpreisen", "Alle drei wurden nur den eigenen Followern angezeigt"], c: 0, e: "Ob Nominierung, Rührung oder Rätselraten: In allen drei Fällen trugen die Nutzer den Inhalt weiter – das ist der virale Effekt." },
   { k: "liste", h: "So löst du die Hausaufgabe", l: ["**Begriff** in ein bis zwei Sätzen erklären", "**Wirkung:** Teilen, Netzwerk, Algorithmus", "**Reales Beispiel:** wer, was, wann, welche Plattform", "**Belegte Zahlen** mit Quelle – Zahlen selbst nachprüfen", "**Fazit:** Warum war der Effekt entscheidend? Stichpunkte, max. 1 Seite"] },
   { k: "check", q: "Du sollst in der Hausaufgabe ein reales Beispiel nennen. Was gehört unbedingt dazu?", a: ["Wer, wann, welche Plattform – mit belegten Zahlen und Quelle", "Ein selbst ausgedachtes Beispiel, das gut klingt", "Möglichst viele Kampagnen ohne Details aufzählen", "Nur der Name der Marke, Zahlen sind unwichtig"], c: 0, e: "„Reales Beispiel“ heißt: nachprüfbar. Name, Zeitpunkt, Plattform, Ergebnis und Quelle machen die Antwort stark." }
  ]},
@@ -52,7 +52,7 @@ export const LEKTIONEN_R4 = [
  ]},
  { id: "threads-bluesky", titel: "Threads, Bluesky & Mastodon", min: 3, folien: [
   { k: "intro", h: "Alternativen zu X", b: "Seit dem Umbau von Twitter zu X nutzen viele Medien, Fachleute und Organisationen **zusätzliche Kanäle** für schnelle Textbeiträge. Drei Namen solltest du kennen." },
-  { k: "text", h: "Threads", b: "Text-App von **Meta**, 2023 gestartet und eng mit Instagram verbunden – in der EU seit Ende 2023 auch ohne Instagram-Konto nutzbar. Laut Meta im Juni 2026 rund **500 Mio.** monatlich aktive Nutzer. Vorteil: Start mit der vorhandenen Instagram-Community." },
+  { k: "text", h: "Threads", b: "Text-App von **Meta**, 2023 gestartet und eng mit Instagram verbunden. In der EU lässt sich Threads seit Ende 2023 ohne Instagram-Konto **lesen**; eigene Profile ohne Instagram testet Meta seit 2025. Laut Meta im Juni 2026 rund **500 Mio.** monatlich aktive Nutzer. Vorteil: Start mit der Instagram-Community." },
   { k: "text", h: "Bluesky und Mastodon", b: "**Bluesky** ähnelt X und setzt auf ein offenes Protokoll mit wählbaren Feeds. **Mastodon** ist **dezentral**: viele unabhängige Server (Instanzen) im **Fediverse**, ohne zentrale Betreiberfirma. Beliebt bei Wissenschaft, Behörden, Journalismus und Tech." },
   { k: "liste", h: "Für Unternehmen prüfen", l: ["Ist meine Zielgruppe dort wirklich aktiv?", "Habe ich Zeit für schnellen, dauerhaften Dialog?", "Passt das Umfeld zur Marke (Markensicherheit)?", "Gibt es Statistiken und Werbemöglichkeiten?", "Lieber einen Kanal gut als viele halb"] },
   { k: "check", q: "Ein Handwerksbetrieb überlegt, auf Bluesky aktiv zu werden. Was sollte er zuerst klären?", a: ["Ob seine Zielgruppe dort wirklich aktiv ist", "Ob er dort möglichst viele Hashtags nutzen darf", "Ob er seine Instagram-Beiträge automatisch spiegeln kann", "Ob der Kanal neu und deshalb im Trend ist"], c: 0, e: "Wie bei jedem Kanal gilt: erst Zielgruppe, Ziel und Ressourcen prüfen – dann entscheiden." }
@@ -97,7 +97,7 @@ export const FRAGEN_R4 = [
  { m: "einf", q: "Was ist ein typisches Risiko viraler Kampagnen?", a: ["Verlauf und Deutung lassen sich kaum planen oder kontrollieren", "Sie sind grundsätzlich teurer als klassische TV-Werbung", "Sie sind in Deutschland gesetzlich verboten", "Sie erreichen nur die eigenen Follower"], c: 0, e: "Nutzer bestimmen, wie und mit welchem Kommentar ein Inhalt weiterläuft – auch Kritik kann viral gehen." },
  { m: "einf", q: "Was machte die ALS Ice Bucket Challenge 2014 vor allem viral?", a: ["Teilnehmende nominierten weitere Personen zum Mitmachen", "Ein großes TV-Werbebudget der ALS Association", "Ein Gewinnspiel mit wertvollen Sachpreisen", "Bezahlte Anzeigen auf allen großen Plattformen"], c: 0, e: "Über 17 Mio. Menschen luden Videos hoch; die ALS Association erhielt rund 115 Mio. US-$ (Vorjahreszeitraum 2,8 Mio.).", quelle: Q_NATURE },
  { m: "einf", q: "Der EDEKA-Spot #heimkommen erreichte 2015 binnen Tagen über 20 Mio. YouTube-Aufrufe. Was trieb die Verbreitung vor allem an?", a: ["Eine stark emotionale Geschichte, die Menschen teilen wollten", "Ein besonders hoher Rabatt, der im Video genannt wurde", "Eine Teilnahmepflicht an einem Gewinnspiel", "Eine Ausstrahlung ausschließlich im Fernsehen"], c: 0, e: "Der Spot (Jung von Matt) wurde online veröffentlicht und lebte von Rührung und Gesprächswert.", quelle: "https://en.wikipedia.org/wiki/Heimkommen" },
- { m: "einf", q: "Welches soziale Netzwerk nutzten laut Bericht zur ARD/ZDF-Medienstudie 2026 die meisten Menschen ab 14 mindestens wöchentlich?", a: ["Instagram", "Facebook", "TikTok", "LinkedIn"], c: 0, e: "Instagram 40 %, Facebook 28 %, TikTok 18 %, LinkedIn 8 % (berichtet von onlinemarketing.de).", quelle: Q_STUDIE },
+ { m: "einf", alt: ["Welches soziale Netzwerk nutzten laut Bericht zur ARD/ZDF-Medienstudie 2026 die meisten Menschen ab 14 mindestens wöchentlich?"], q: "Welches dieser Netzwerke nutzten laut Bericht zur ARD/ZDF-Medienstudie 2026 die meisten Menschen ab 14 mindestens wöchentlich?", a: ["Instagram", "Facebook", "TikTok", "LinkedIn"], c: 0, e: "Instagram 40 %, Facebook 28 %, TikTok 18 %, LinkedIn 8 % (berichtet von onlinemarketing.de). Die Videoplattform YouTube liegt mit 47 % noch darüber (ZDF).", quelle: Q_STUDIE },
  { m: "einf", q: "Was ist Social Customer Care?", a: ["Kundenservice über Social-Media-Kanäle, z. B. in Kommentaren und Direktnachrichten", "Die Pflege der privaten Social-Media-Profile von Kunden", "Eine Versicherung für Social-Media-Konten", "Werbung mit Fotos zufriedener Kunden"], c: 0, e: "Kunden erwarten schnelle Antworten dort, wo sie ohnehin sind – öffentlich sichtbar und damit auch Imagearbeit." },
  { m: "einf", q: "Fans reichen auf LEGO Ideas eigene Set-Ideen ein. Was erhält ein Fan, wenn daraus ein Set wird?", a: ["1 % des Nettoumsatzes des Sets", "Einen einmaligen Gutschein über 100 €", "Nichts, die Rechte gehen ohne Gegenleistung an LEGO", "Eine Festanstellung als Designer bei LEGO"], c: 0, e: "Ab 10.000 Unterstützern prüft LEGO die Idee. Crowdsourcing liefert Produktideen, Marktforschung und Fanbindung zugleich.", quelle: "https://ideas.lego.com/howitworks" },
  // ---------- platt ----------
@@ -123,13 +123,12 @@ export const FRAGEN_R4 = [
 
  // ---------- Freitext: Hausaufgaben- und Prüfungsstil („Erläutern + reales Beispiel“) ----------
  { m: "einf", t: "frei", q: "Erläutern Sie kurz, was unter dem viralen Effekt im Rahmen von Social Media zu verstehen ist. Nennen Sie ein reales Beispiel für eine Kampagne, bei der der virale Effekt entscheidend für den Erfolg war.", muster: [
-   ["Nutzer teilen und verbreiten Inhalte selbst weiter (von Person zu Person)", "teil|weiterge|weiterleit|verbreit|person zu person"],
+   ["Nutzer teilen und verbreiten Inhalte selbst weiter (von Person zu Person)", "\\bteil(?!nehm|weise)|geteilt|weiterteil|\\bshares?\\b|weiterge|weiterleit|verbreit|person zu person|nutzer zu nutzer"],
    ["Schnelle, sich selbst verstärkende (sprunghafte) Reichweite", "schnell|exponent|schneeball|rasant|lawine|lauffeuer|sprunghaft|selbst verstärk"],
    ["Earned Media: kaum bezahlte Reichweite, Unternehmen gibt nur den Anstoß", "earned|kostenlos|kostengünstig|geringe kosten|unbezahlt|organisch|ohne (bezahl|budget|werbung)|anstoß|impuls"],
    ["Reales Beispiel mit Name und Jahr, z. B. Ice Bucket Challenge 2014, EDEKA #heimkommen 2015, Duolingo 2025", "ice.?bucket|als association|edeka|heimkommen|duolingo|old spice"],
    ["Begründung mit Fakten: Mechanik (Nominierung, Emotion) und belegte Zahlen", "\\d|nominier|emotion|mitmach|rühr|humor"]
-  ], min: 4, quelle: Q_NATURE,
-  bsp: "• Viraler Effekt: Ein Inhalt verbreitet sich, weil Nutzer ihn selbst weiterteilen – von Person zu Person.\n• Jede Weitergabe erreicht ein neues Netzwerk, Algorithmen verstärken das: Reichweite wächst sprunghaft, ohne gekauft zu sein (Earned Media).\n• Beispiel: ALS Ice Bucket Challenge 2014 – Eiswasser-Video posten und drei Personen nominieren.\n• Über 17 Mio. Videos, rund 115 Mio. US-$ Spenden für die ALS Association (Nature, 2017).\n• Entscheidend war die Nominierung: Jede Teilnahme löste neue Teilnahmen aus." },
+  ], min: 4, quelle: Q_NATURE, bsp: "• Viraler Effekt: Ein Inhalt verbreitet sich, weil Nutzer ihn selbst weiterteilen – von Person zu Person.\n• Jede Weitergabe erreicht ein neues Netzwerk, Algorithmen verstärken das: Reichweite wächst sprunghaft, ohne gekauft zu sein (Earned Media).\n• Beispiel: ALS Ice Bucket Challenge 2014 – Eiswasser-Video posten und drei Personen nominieren.\n• Über 17 Mio. Videos, rund 115 Mio. US-$ Spenden für die ALS Association (Nature, 2017).\n• Entscheidend war die Nominierung: Jede Teilnahme löste neue Teilnahmen aus." },
  { m: "einf", t: "frei", q: "Nennen Sie drei Erfolgsfaktoren und zwei Risiken viraler Kampagnen.", muster: [
    ["Starke Emotionen (Humor, Rührung, Überraschung)", "emotion|humor|lustig|rühr|überrasch"],
    ["Einfache, verständliche Idee", "einfach|verständlich|simpel"],
@@ -147,23 +146,23 @@ export const FRAGEN_R4 = [
    ["Marktforschung / Innovation: Social Listening, Crowdsourcing; interne Kommunikation", "marktforsch|listening|innovation|crowdsourc|produktidee|intern|wissensmanag"]
   ], min: 4 },
  { m: "platt", t: "frei", q: "Vergleichen Sie Pinterest und Snapchat hinsichtlich Zielgruppe, typischer Inhalte und Eignung für Unternehmen.", muster: [
-   ["Pinterest: visuelle Suchmaschine, Ideen auf Pinnwänden", "such|pinnwand|idee|inspiration"],
-   ["Pinterest: lange auffindbar, Traffic zur Website; Handel, Food, Einrichtung, Mode", "langfrist|lange|monate|traffic|website|link|handel|rezept|einricht|mode|deko"],
-   ["Snapchat: Messenger für Jüngere, Fotos/Kurzvideos unter Freunden", "jung|jugend|messenger|freund|chat"],
-   ["Snapchat: Stories, AR-Linsen, Werbung; z. B. Ausbildungsmarketing", "story|stories|\\bar\\b|ar-|augmented|linse|lens|filter|ausbildung|azubi"],
+   ["Pinterest: visuelle Suchmaschine, Ideen auf Pinnwänden", "pinterest(?:(?!snapchat)[\\s\\S]){0,150}(such|pinnwand|idee|inspiration)|(such|pinnwand|idee|inspiration)(?:(?!snapchat)[\\s\\S]){0,40}pinterest"],
+   ["Pinterest: lange auffindbar, Traffic zur Website; Handel, Food, Einrichtung, Mode", "pinterest(?:(?!snapchat)[\\s\\S]){0,200}(langfrist|lange|monate|traffic|website|link|handel|rezept|einricht|mode|deko)"],
+   ["Snapchat: Messenger für Jüngere, Fotos/Kurzvideos unter Freunden", "snapchat(?:(?!pinterest)[\\s\\S]){0,150}(jung|jugend|messenger|freund|chat)|(jung|jugend|messenger)(?:(?!pinterest)[\\s\\S]){0,40}snapchat"],
+   ["Snapchat: Stories, AR-Linsen, Werbung; z. B. Ausbildungsmarketing", "snapchat(?:(?!pinterest)[\\s\\S]){0,200}(story|stories|\\bar\\b|ar-|augmented|linse|lens|filter|ausbildung|azubi)"],
    ["Beide für B2B selten erste Wahl / Wahl nach Zielgruppe begründen", "b2b|zielgrupp"]
   ], min: 3 },
  { m: "unt", t: "frei", q: "Erklären Sie den Begriff Social Media Relations und grenzen Sie ihn vom Influencer Marketing ab.", muster: [
-   ["Beziehungspflege mit Meinungsmachern im Social Web (Blogger, Creator, Journalisten)", "beziehung|kontakt|pflege|blogger|creator|journalist|meinungs"],
-   ["Ziel: unbezahlte Berichterstattung / Earned Media / Glaubwürdigkeit", "earned|unbezahlt|bericht|empfehl|glaubwürd|vertrauen"],
+   ["Beziehungspflege mit Meinungsmachern im Social Web (Blogger, Creator, Journalisten)", "beziehung|kontakt|pflege|dialog|vernetz"],
+   ["Ziel: unbezahlte Berichterstattung / Earned Media / Glaubwürdigkeit", "earned|unbezahlt|nicht bezahlt|ohne bezahlung|freiwillig|bericht|empfehl|glaubwürd|vertrauen"],
    ["Grundsätze: Recherche, persönliche Ansprache, Mehrwert, Ehrlichkeit", "recherch|persönlich|mehrwert|ehrlich|transparen|exklusiv"],
-   ["Influencer Marketing: bezahlte Kooperation / Gegenleistung", "bezahl|gegenleist|honorar|vergüt|kooperation|vertrag"],
-   ["Bei Gegenleistung Kennzeichnungspflicht als Werbung", "kennzeichn|werbung|anzeige"]
+   ["Influencer Marketing: bezahlte Kooperation / Gegenleistung", "(?<!un)bezahl|gegenleist|honorar|vergüt|vertrag|gekauft|sponsor"],
+   ["Bei Gegenleistung Kennzeichnungspflicht als Werbung", "kennzeichn|werbekennz|als werbung|\\banzeige\\b"]
   ], min: 3 },
  { m: "unt", t: "frei", q: "Wie messen Sie den Erfolg einer Influencer-Kampagne? Ordnen Sie passende Kennzahlen den Zielen Bekanntheit, Interaktion und Verkauf zu.", muster: [
-   ["Bekanntheit: Reichweite, Aufrufe/Views, Impressionen", "reichweit|aufruf|view|impression"],
-   ["Interaktion: Engagement-Rate, Kommentare, Shares, Saves", "engagement|kommentar|share|geteilt|speicher|interakt"],
-   ["Verkauf: Rabattcodes, Tracking-Links/UTM, Conversions, Umsatz", "code|tracking|utm|link|conversion|umsatz|verkäuf|käufe"],
+   ["Bekanntheit: Reichweite, Aufrufe/Views, Impressionen", "(bekannt|awareness)(?:(?!interakt|verkauf|engagement)[\\s\\S]){0,60}(reichweit|aufruf|view|impression)|(reichweit|aufruf|view|impression)(?:(?!interakt|verkauf|engagement)[\\s\\S]){0,40}(bekannt|awareness)"],
+   ["Interaktion: Engagement-Rate, Kommentare, Shares, Saves", "(interakt|engagement)(?:(?!bekannt|verkauf)[\\s\\S]){0,60}(engagement|kommentar|share|geteilt|speicher|save|like)|(kommentar|share|geteilt|speicher|save|like)(?:(?!bekannt|verkauf)[\\s\\S]){0,40}(interakt|engagement)"],
+   ["Verkauf: Rabattcodes, Tracking-Links/UTM, Conversions, Umsatz", "(verkauf|abverkauf|sales|kauf)(?:(?!bekannt|interakt)[\\s\\S]){0,60}(code|tracking|utm|link|conversion|umsatz|käufe|bestellung)|(code|tracking|utm|link|conversion|umsatz)(?:(?!bekannt|interakt)[\\s\\S]){0,40}(verkauf|sales)"],
    ["Ziele und Zielwerte vorab festlegen / Kosten in Relation (z. B. CPA, ROI)", "vorab|vorher|zielwert|\\bcpa\\b|\\broi\\b|kosten pro|budget"]
   ], min: 3 },
  { m: "unt", t: "frei", q: "Erläutern Sie, was Influencer-Marketing ist, und nennen Sie ein reales Beispiel einer Kooperation. Woran messen Sie den Erfolg?", muster: [
@@ -174,19 +173,19 @@ export const FRAGEN_R4 = [
    ["Erfolgsmessung: Engagement-Rate, Klicks/Rabattcode, Conversions – nicht nur Follower", "engagement|rabattcode|code|klick|conversion|utm"]
   ], min: 4 },
  { m: "plan", t: "frei", q: "Was versteht man unter Online Reputation Management? Nennen Sie vier konkrete Maßnahmen.", muster: [
-   ["Ruf/Image eines Unternehmens im Netz beobachten, pflegen, schützen", "\\bruf\\b|image|reputation|ansehen"],
+   ["Ruf/Image eines Unternehmens im Netz beobachten, pflegen, schützen", "\\bruf\\b|image|ansehen|reputation(?:(?!lösch)[\\s\\S]){0,40}(beobacht|pfleg|schütz|steuer|aufbau|verbesser)|(beobacht|pfleg|schütz|steuer)[\\s\\S]{0,40}reputation"],
    ["Monitoring von Erwähnungen und Bewertungen (Alerts, Tools)", "monitor|beobacht|alert|listening"],
-   ["Auf Bewertungen und Kritik zeitnah und sachlich antworten", "antwort|reagier|stellung"],
+   ["Auf Bewertungen und Kritik zeitnah und sachlich antworten", "(?<!ver)antwort|reagier|stellung"],
    ["Zufriedene Kunden um echte Bewertungen bitten", "bitten|aufforder|zufriedene"],
-   ["Eigene Inhalte stärken (Website, Profile, Fachbeiträge)", "eigene inhalte|content|website|profil|fachbeitr"],
-   ["Krisenvorsorge, rechtswidrige Inhalte melden", "krise|melden|rechtswidrig|unwahr"]
+   ["Eigene Inhalte stärken (Website, Profile, Fachbeiträge)", "eigene[nr]? (inhalt|website|profil|kanäl|beitr)|content|fachbeitr|\\bseo\\b|(website|profil)[\\s\\S]{0,30}(pfleg|stärk|aktuell|ausbau|optimier)"],
+   ["Krisenvorsorge, rechtswidrige Inhalte melden", "krise|rechtswidrig|unwahr|(portal|plattform|google)[\\s\\S]{0,30}meld|meld(en|ung)[\\s\\S]{0,30}(portal|plattform|google)"]
   ], min: 4 },
  { m: "plan", t: "frei", q: "Ein Restaurant erhält auf Google eine Ein-Stern-Bewertung: „Unfreundliches Personal, kalte Pizza.“ Formulieren Sie eine Antwort und begründen Sie Ihr Vorgehen.", muster: [
-   ["Dank für das Feedback, Person ernst nehmen", "dank"],
+   ["Dank für das Feedback, Person ernst nehmen", "\\bdank|bedank"],
    ["Bedauern / Entschuldigung, Fehler einräumen", "entschuldig|bedauer|leid|fehler"],
    ["Konkret auf Personal und Pizza eingehen", "personal|pizza|kalt|unfreundlich"],
-   ["Lösung oder Einladung anbieten, Kontakt ins Private verlagern", "lösung|einlad|gutschein|kontakt|melden|telefon|mail"],
-   ["Begründung: Mitlesende sehen den Umgang mit Kritik; nicht löschen", "mitles|öffentlich|andere|vertrauen|image|nicht lösch"]
+   ["Lösung oder Einladung anbieten, Kontakt ins Private verlagern", "lösung|einlad|gutschein|kontakt|melden sie sich (gern|bei|direkt|unter|per)|meldet euch|telefon|mail|persönlich|privat"],
+   ["Begründung: Mitlesende sehen den Umgang mit Kritik; nicht löschen", "mitles|öffentlich|andere[nr]? (gäste|kunden|leser|nutzer)[\\s\\S]{0,30}(sehen|lesen|zeig|wirk)|potenziell|künftig|vertrauen|image|nicht lösch|professionell"]
   ], min: 3 },
  { m: "plan", t: "frei", q: "Erläutern Sie den Begriff Shitstorm und nennen Sie ein reales Beispiel. Was hat das Unternehmen richtig oder falsch gemacht?", muster: [
    ["Definition: Welle massenhafter, oft emotionaler Kritik in kurzer Zeit", "welle|massenhaft|empör|viele (kritische|negative)|kritik"],
