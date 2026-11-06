@@ -53,7 +53,7 @@ const ic = (n, extra = "") => `<svg viewBox="0 0 24 24" fill="none" stroke="curr
 /* ---------- Speicher ----------
    Doppelt: localStorage (schnell) + IndexedDB (robuster). Dazu persistenten Speicher anfragen
    und regelmäßig an eine Sicherungsdatei erinnern. */
-const KEY = "smm-coach", VERSION = "0.6.1";
+const KEY = "smm-coach", VERSION = "0.7.0";
 const DEF = () => ({ lek: {}, q: {}, srs: {}, last: null, tests: [], pruefung: "", set: { size: "m", theme: "auto" }, lastBackup: 0, created: Date.now() });
 let S = DEF();
 try { const x = JSON.parse(localStorage.getItem(KEY) || "null"); if (x) S = Object.assign(DEF(), x); } catch (e) {}

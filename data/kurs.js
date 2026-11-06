@@ -1,3 +1,4 @@
+import { NEUE } from "./fragen2.js";
 // Lerninhalte SMM Coach. Aufbau je Modul: Lektionen (Story-Folien) → Quiz.
 // Folientypen: intro, text, liste, beispiel, merke, check (Verständnisfrage, Index c = richtige Antwort).
 // **fett** ist erlaubt. Rechtliche Inhalte: Stand 11/2026, vor Veröffentlichung fachlich prüfen lassen.
@@ -379,7 +380,7 @@ const FREI = [
 {m:"plan",t:"frei",q:"Welche Kostenblöcke gehören in ein Social-Media-Budget?",muster:[["Werbebudget (Ads)","werb|ads|anzeig"],["Produktion (Foto, Video, Grafik)","produkt|foto|video|grafik"],["Personal / interne Arbeitszeit","personal|zeit|stunden|mitarbeit"],["Tools / Software","tool|software|lizenz"],["Externe Dienstleister","agentur|extern|dienstleist|freelanc"]],min:3}
 ];
 
-export const FRAGEN = [...ALT_Q, ...NEU_Q, ...FREI];
+export const FRAGEN = [...ALT_Q, ...NEU_Q, ...FREI, ...NEUE.mc, ...NEUE.frei];
 
 /* =====================================================================
    Ergänzungen nach der Fachprüfung (06.11.2026): Lücken schließen
