@@ -53,7 +53,7 @@ const ic = (n, extra = "") => `<svg viewBox="0 0 24 24" fill="none" stroke="curr
 /* ---------- Speicher ----------
    Doppelt: localStorage (schnell) + IndexedDB (robuster). Dazu persistenten Speicher anfragen
    und regelmäßig an eine Sicherungsdatei erinnern. */
-const KEY = "smm-coach", VERSION = "0.7.1";
+const KEY = "smm-coach", VERSION = "0.7.2";
 const DEF = () => ({ lek: {}, q: {}, srs: {}, last: null, tests: [], pruefung: "", set: { size: "m", theme: "auto" }, lastBackup: 0, created: Date.now() });
 let S = DEF();
 try { const x = JSON.parse(localStorage.getItem(KEY) || "null"); if (x) S = Object.assign(DEF(), x); } catch (e) {}
@@ -303,11 +303,12 @@ function viewQuiz(id) {
   const rate = ok => { grade(q.key, ok); if (ok) { if (!miss.has(q)) first++; } else { miss.add(q); queue.push(q); } save(); };
   const weiter = () => { $(".fbx").insertAdjacentHTML("beforeend", `<button class="btn block" style="margin-top:14px" id="nx">Weiter ${ic("right")}</button>`); $("#nx").onclick = next; $("#nx").focus(); };
   if (q.t === "frei") {
-   $(".fbx").innerHTML = `<button class="btn ghost block" style="margin-top:12px" id="show">Musterlösung anzeigen</button>`;
-   $("#show").onclick = () => {
+   $(".fbx").innerHTML = `<button type="button" class="btn ghost block" style="margin-top:12px" id="show">Musterlösung anzeigen</button>`;
+   $("#show").onclick = e => {
+    e.preventDefault(); e.stopPropagation(); document.activeElement?.blur?.();
     const txt = $("#ftxt").value; $("#ftxt").readOnly = true;
     $(".fbx").innerHTML = musterHtml(q, txt) + `<p style="font-weight:700;margin:14px 0 8px">Wie gut war deine Antwort?</p><div class="row"><button class="btn ghost" data-r="0" style="flex:1">Daneben</button><button class="btn ghost" data-r="1" style="flex:1">Teilweise</button><button class="btn" data-r="2" style="flex:1">Richtig</button></div>`;
-    $$("[data-r]").forEach(b => b.onclick = () => { rate(b.dataset.r === "2"); $(".fbx .row").remove(); $(".fbx p:last-of-type")?.remove(); toast(b.dataset.r === "2" ? "Stark!" : "Kommt nochmal dran"); weiter(); });
+    $$("[data-r]").forEach(b => b.onclick = e => { e.preventDefault(); e.stopPropagation(); rate(b.dataset.r === "2"); $(".fbx .row").remove(); $(".fbx p:last-of-type")?.remove(); toast(b.dataset.r === "2" ? "Stark!" : "Kommt nochmal dran"); weiter(); });
    };
    return;
   }
