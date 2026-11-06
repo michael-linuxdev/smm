@@ -54,7 +54,7 @@ const ic = (n, extra = "") => `<svg viewBox="0 0 24 24" fill="none" stroke="curr
 /* ---------- Speicher ----------
    Doppelt: localStorage (schnell) + IndexedDB (robuster). Beim Start gewinnt der neuere Stand (Zeitstempel).
    Fragen und Lektionen haben stabile Schlüssel (unabhängig vom Modul), alte Schlüssel werden migriert. */
-const KEY = "smm-coach", VERSION = "0.9.1";
+const KEY = "smm-coach", VERSION = "0.9.2";
 const DEF = () => ({ lek: {}, q: {}, srs: {}, last: null, tests: [], pruefung: "", set: { size: "m", theme: "auto" }, lastBackup: 0, created: Date.now(), updated: 0, run: null, lastRun: null });
 let S = DEF();
 try { const x = JSON.parse(localStorage.getItem(KEY) || "null"); if (x) S = Object.assign(DEF(), x); } catch (e) {}
@@ -357,7 +357,7 @@ function viewQuiz(id) {
   if (!queue.length) return done();
   const q = queue.shift(); n++;
   const { html } = quizCard(q, miss.has(q) ? "Wiederholung" : `${Math.min(n, total)} / ${total}`);
-  page(tab, `<h1 class="sr-only">${isFrei ? "Freitext üben" : isWdh ? "Wiederholen" : isErr ? "Fehlerkiste" : m ? m.name + " – Quiz" : "Schnell-Quiz"}</h1><a class="back" href="${backHref}">${ic("x")} Beenden</a><div class="bar dark" style="margin:0 0 16px" aria-hidden="true"><i style="width:${(1 - (queue.length + 1) / (total + miss.size)) * 100}%"></i></div>${html}`);
+  page(tab, `<h1 class="sr-only">${isFrei ? "Freitext üben" : isWdh ? "Wiederholen" : isErr ? "Fehlerkiste" : m ? m.name + " – Quiz" : "Schnell-Quiz"}</h1><a class="back" href="${backHref}">${ic("x")} Beenden</a>${isFrei ? `<details class="card tippbox" style="margin:0 0 14px"><summary><b>So schreibst du Freitext-Antworten</b></summary><ol class="small" style="margin:8px 0 0;padding-left:20px"><li><b>Benennen:</b> Problem oder Fachbegriff nennen (z. B. „Vanity Metrics“, „Recht am eigenen Bild“).</li><li><b>Begründen:</b> immer das Warum – „weil die Zielgruppe …“.</li><li><b>Konkret werden:</b> wie du es umsetzt, mit Beispiel.</li></ol><p class="small" style="margin:8px 0 0">Stichpunkte statt langer Fließtexte. Genau so viele Punkte nennen, wie gefragt. Bei Unsicherheit das Prinzip beschreiben – dafür gibt es oft Teilpunkte.</p></details>` : ""}<div class="bar dark" style="margin:0 0 16px" aria-hidden="true"><i style="width:${(1 - (queue.length + 1) / (total + miss.size)) * 100}%"></i></div>${html}`);
   const rate = (ok, requeue = !ok) => { grade(q.key, ok); if (ok) { if (!miss.has(q)) first++; } else if (requeue && !miss.has(q)) { miss.add(q); queue.push(q); } else miss.add(q); save(); };
   const weiter = () => { $(".fbx").insertAdjacentHTML("afterend", `<button type="button" class="btn block" style="margin-top:14px" id="nx">Weiter ${ic("right")}</button>`); $("#nx").onclick = next; $("#nx").focus({ preventScroll: true }); };
   if (q.t === "frei") {

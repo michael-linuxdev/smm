@@ -358,3 +358,6 @@ label.check input{width:22px;height:22px;accent-color:var(--c2,#1971c2)}
 .ok-t{color:var(--ok);font-weight:700} .bad-t{color:var(--bad);font-weight:700}
 h2.h3{font-size:1.1rem;margin:20px 0 8px}
 .zusatz{display:inline-block;font-size:.75rem;font-weight:700;padding:2px 8px;border-radius:99px;background:var(--surface-2);color:var(--ink-2);margin-left:6px;vertical-align:middle}
+.tippbox summary{cursor:pointer;list-style:none;display:flex;justify-content:space-between;align-items:center}
+.tippbox summary::after{content:"+";font-weight:700;font-size:1.2rem;color:var(--ink-3)} .tippbox[open] summary::after{content:"–"}
+.tippbox summary::-webkit-details-marker{display:none}
