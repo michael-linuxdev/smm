@@ -53,7 +53,7 @@ const ic = (n, extra = "") => `<svg viewBox="0 0 24 24" fill="none" stroke="curr
 /* ---------- Speicher ----------
    Doppelt: localStorage (schnell) + IndexedDB (robuster). Dazu persistenten Speicher anfragen
    und regelmäßig an eine Sicherungsdatei erinnern. */
-const KEY = "smm-coach", VERSION = "0.7.0";
+const KEY = "smm-coach", VERSION = "0.7.1";
 const DEF = () => ({ lek: {}, q: {}, srs: {}, last: null, tests: [], pruefung: "", set: { size: "m", theme: "auto" }, lastBackup: 0, created: Date.now() });
 let S = DEF();
 try { const x = JSON.parse(localStorage.getItem(KEY) || "null"); if (x) S = Object.assign(DEF(), x); } catch (e) {}
@@ -217,6 +217,22 @@ function openStory(mid, lid) {
  const go = d => { const f = F[i]; if (d > 0 && f.k === "check" && !(i in answered)) return toast("Wähle zuerst eine Antwort"); i = Math.max(0, Math.min(F.length - 1, i + d)); draw(); };
  storyKey = e => { if (e.key === "ArrowRight") go(1); if (e.key === "ArrowLeft") go(-1); if (e.key === "Escape") location.hash = "modul-" + mid; };
  addEventListener("keydown", storyKey);
+ // Nach unten wischen schließt die Story (wie bei Instagram)
+ let t0 = null;
+ storyEl.addEventListener("touchstart", e => { const t = e.touches[0]; t0 = { x: t.clientX, y: t.clientY, drag: false }; }, { passive: true });
+ storyEl.addEventListener("touchmove", e => {
+  if (!t0) return; const t = e.touches[0], dy = t.clientY - t0.y, dx = t.clientX - t0.x;
+  if (!t0.drag && dy > 12 && dy > Math.abs(dx) * 1.3) t0.drag = true;
+  if (t0.drag) { storyEl.style.transition = "none"; storyEl.style.transform = `translateY(${Math.max(0, dy)}px) scale(${1 - Math.min(dy, 400) / 4000})`; storyEl.style.opacity = String(1 - Math.min(dy, 400) / 800); }
+ }, { passive: true });
+ const end = e => {
+  if (!t0) return; const dy = (e.changedTouches?.[0]?.clientY ?? t0.y) - t0.y, drag = t0.drag; t0 = null;
+  if (!drag) return;
+  storyEl.style.transition = "transform .22s ease, opacity .22s ease";
+  if (dy > 110) { storyEl.style.transform = "translateY(100%)"; storyEl.style.opacity = "0"; setTimeout(() => { location.hash = "modul-" + mid; }, 200); }
+  else { storyEl.style.transform = ""; storyEl.style.opacity = ""; }
+ };
+ storyEl.addEventListener("touchend", end); storyEl.addEventListener("touchcancel", end);
  function draw() {
   const f = F[i], last = f.k === "ende";
   const kindName = { intro: "Lektion", text: "Wissen", liste: "Überblick", beispiel: "Beispiel", merke: "Merke", check: "Kurz-Check", bild: "Schaubild" }[f.k] || "";
