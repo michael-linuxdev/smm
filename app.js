@@ -56,7 +56,7 @@ const ic = (n, extra = "") => `<svg viewBox="0 0 24 24" fill="none" stroke="curr
 /* ---------- Speicher ----------
    Doppelt: localStorage (schnell) + IndexedDB (robuster). Beim Start gewinnt der neuere Stand (Zeitstempel).
    Fragen und Lektionen haben stabile Schlüssel (unabhängig vom Modul), alte Schlüssel werden migriert. */
-const KEY = "smm-coach", VERSION = "0.12.1";
+const KEY = "smm-coach", VERSION = "0.12.2";
 const DEF = () => ({ lek: {}, q: {}, srs: {}, last: null, tests: [], pruefung: "", day: null, seen: 0, set: { size: "m", theme: "auto", goal: "15", vibe: true, step: true, mig1: 1 }, lastBackup: 0, created: Date.now(), updated: 0, run: null, lastRun: null });
 let S = DEF();
 try { const x = JSON.parse(localStorage.getItem(KEY) || "null"); if (x) S = Object.assign(DEF(), x); } catch (e) {}
@@ -266,7 +266,7 @@ function viewStart() {
  const best = S.tests.length ? Math.max(...S.tests) : null;
  const perWeek = dl > 0 ? Math.ceil((lessonsAll - lessonsDone) / Math.max(1, dl / 7)) : null;
  page("start", `${head()}
- <div class="fx"><div class="sec-h"><h2>Deine Module</h2></div>
+ <div class="fx"><h2 class="sr-only">Deine Module</h2>
  ${ringsHtml()}</div>
  <section class="hero">
   <div class="kicker">${dl !== null && dl >= 0 ? (dl === 0 ? "Heute ist Prüfung – viel Erfolg!" : `Noch ${dl} Tag${dl === 1 ? "" : "e"} bis zur Prüfung`) : p > 0 ? "Weiter so" : "Willkommen"}</div>
