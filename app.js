@@ -56,7 +56,7 @@ const ic = (n, extra = "") => `<svg viewBox="0 0 24 24" fill="none" stroke="curr
 /* ---------- Speicher ----------
    Doppelt: localStorage (schnell) + IndexedDB (robuster). Beim Start gewinnt der neuere Stand (Zeitstempel).
    Fragen und Lektionen haben stabile Schlüssel (unabhängig vom Modul), alte Schlüssel werden migriert. */
-const KEY = "smm-coach", VERSION = "0.11.0";
+const KEY = "smm-coach", VERSION = "0.11.1";
 const DEF = () => ({ lek: {}, q: {}, srs: {}, last: null, tests: [], pruefung: "", day: null, seen: 0, set: { size: "m", theme: "auto", goal: "10", vibe: true }, lastBackup: 0, created: Date.now(), updated: 0, run: null, lastRun: null });
 let S = DEF();
 try { const x = JSON.parse(localStorage.getItem(KEY) || "null"); if (x) S = Object.assign(DEF(), x); } catch (e) {}
@@ -246,9 +246,9 @@ function viewStart() {
   <h1>${p > 0 ? `${Math.round(p * 100)} % geschafft` : "Werde Social Media Manager"}</h1>
   <p style="opacity:.92;max-width:460px">${p > 0 ? (perWeek ? `Plan: etwa ${perWeek} Lektion${perWeek === 1 ? "" : "en"} pro Woche, dann passt es bis zur Prüfung.` : "Kurze Lektionen, dann Quiz – so bleibt das Wissen hängen.") : "Begleiter zum Lehrgang mit Abschlusstest beim IHK-Bildungszentrum Dresden: kurze Lektionen, Quiz, Freitext-Training und ein Probetest im bekannten Format."}</p>
   <div class="hero-stat fx"><div><b>${lessonsDone}/${lessonsAll}</b><span>Lektionen</span></div><div><b>${POOL.filter(q => q.key in S.q).length}/${POOL.length}</b><span>Fragen bearbeitet</span></div><div><b>${best === null ? "–" : best + " %"}</b><span>Bester Test</span></div></div>
-  <div class="row"><a class="btn white" href="#mini">${ic("clock")} 5 Minuten lernen</a>${n ? `<a class="btn ghost-w fx" href="#lektion-${n.m.id}-${n.l.id}">${ic("play")} ${p > 0 ? "Weiterlernen" : "Erste Lektion"}</a>` : ""}</div>
+  <div class="row"><a class="btn white" href="#mini">${ic("play")} ${p > 0 ? "Weiterlernen" : "Loslegen"}</a></div>
  </section>
- ${PAUSE_TAGE >= 3 && hasProgress(S) ? `<div class="card welcome"><b>Schön, dass du wieder da bist!</b><p class="small" style="margin:4px 0 0">Kein Stress wegen der Pause. Fang einfach mit 5 Minuten an – der Rest kommt von allein.</p></div>` : ""}
+ ${PAUSE_TAGE >= 3 && hasProgress(S) ? `<div class="card welcome"><b>Schön, dass du wieder da bist!</b><p class="small" style="margin:4px 0 0">Kein Stress wegen der Pause. Tipp einfach auf „Weiterlernen“ – eine kurze Lektion reicht für den Anfang.</p></div>` : ""}
  ${(() => { const h = heute(), g = goal(), ok = h >= g; return `<div class="card daygoal ${ok ? "ok" : ""}"><div class="row" style="justify-content:space-between;align-items:center"><b>${ok ? "Tagesziel geschafft ✓" : "Heute"}</b><span class="small muted">${Math.min(h, g)} von ${g} Fragen</span></div><div class="bar2" aria-hidden="true"><i style="width:${Math.min(1, h / g) * 100}%"></i></div></div>`; })()}
  ${(() => { const done = POOL.filter(q => q.key in S.q).length, sure = POOL.filter(q => S.q[q.key]).length; return `<div class="card qprog fx"><div class="row" style="justify-content:space-between"><b>Fragen</b><span class="small muted">${done} von ${POOL.length} bearbeitet · ${sure} sicher</span></div><div class="bar2"><i class="d" style="width:${done / POOL.length * 100}%"></i><i class="s" style="width:${sure / POOL.length * 100}%"></i></div></div>`; })()}
  ${(() => { const d = dueKeys().length; return d ? `<a class="cont" href="#quiz-wdh" style="margin-bottom:10px"><div class="thumb" style="background:linear-gradient(135deg,#1864ab,#6741d9)">${ic("repeat")}</div><div><b style="font-size:1rem">${d > 10 ? "Kurz auffrischen: 10 Fragen" : `${d} Wiederholung${d === 1 ? "" : "en"} bereit`}</b><div class="small muted">Kurz auffrischen, damit es bis zur Prüfung sitzt.</div></div><span class="chev" style="margin-left:auto;color:var(--ink-3)">${ic("right")}</span></a>` : ""; })()}
