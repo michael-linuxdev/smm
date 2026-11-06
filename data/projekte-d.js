@@ -43,11 +43,12 @@ export const PROJEKTE_D = [
       { t: "Screenshots sichern, bei Google begründet melden, sachlich antworten", p: 2, fb: "Richtig: **Dokumentieren und melden** statt drohen. Begründe konkret, z. B. „kein Gast laut Buchungssystem“. Nach dem BGH (2022) muss ein Portal bei so einer Rüge die Bewertung prüfen. Bleibt Google untätig, hilft ein Anwalt." },
       { t: "Gar nicht reagieren – irgendwann gehen die Bewertungen in der Masse unter", p: 1, fb: "Ruhe bewahren ist gut, aber 30 Fake-Bewertungen drücken den Schnitt sofort. Ohne **Meldung** bleiben sie stehen. Wer prüft und meldet, hat gute Chancen auf Entfernung." }
     ] },
-    { k: "wahl", h: "Drei Ideen für bessere Sterne", b: "Für die Hotel-Website liegen drei Vorschläge auf dem Tisch. Welcher ist rechtlich sauber?", o: [
-      { t: "Agentur-Angebot: 40 Fünf-Sterne-Bewertungen von „echten Profilen“ für 290 €", p: 0, fb: "Das ist die Beauftragung gefälschter Bewertungen – nach **UWG, Anhang Nr. 23c** immer unlauter. Abmahnung und Ärger mit Google drohen, egal wie echt die Profile wirken." },
-      { t: "Auf der Website nur ausgewählte 5-Sterne-Stimmen zeigen, ohne Angaben zur Prüfung", p: 1, fb: "Besser als Fälschen, aber wenig glaubwürdig. Wer Bewertungen zeigt, muss sagen, **ob und wie** er ihre Echtheit prüft (§ 5b Abs. 3 UWG). Nur Lob zu zeigen und es als Gesamtbild auszugeben, wäre irreführend." },
-      { t: "Bewertungen aus dem Buchungssystem zeigen – nur Gäste mit Buchungsnummer", p: 2, fb: "Richtig: Das ist eine echte **Verifizierung**. Du informierst offen über die Prüfung (§ 5b Abs. 3 UWG). Nur dann darfst du behaupten, die Bewertungen stammen von echten Gästen (**Anhang Nr. 23b**)." }
-    ] },
+    { k: "wahl", h: "Drei Ideen für bessere Sterne", b: "Für die Hotel-Website liegen drei Vorschläge auf dem Tisch. Welcher ist rechtlich sauber und am glaubwürdigsten?",
+  o: [
+    { t: "Agentur-Angebot: 40 Fünf-Sterne-Bewertungen von „echten Profilen“ für 290 €", p: 0, fb: "Das ist die Beauftragung gefälschter Bewertungen – nach **UWG, Anhang Nr. 23c** immer unlauter. Abmahnung und Ärger mit Google drohen, egal wie echt die Profile wirken." },
+    { t: "Alle Google-Bewertungen per Widget zeigen, mit Hinweis „nicht von uns geprüft“", p: 1, fb: "Erlaubt: Du sagst offen, dass nicht geprüft wird (§ 5b Abs. 3 UWG), und zeigst auch Kritik. Aber ungeprüfte Stimmen überzeugen weniger – und die Fake-Welle stünde mit auf deiner Website." },
+    { t: "Bewertungen aus dem Buchungssystem zeigen – nur Gäste mit Buchungsnummer", p: 2, fb: "Richtig: Das ist eine echte **Verifizierung**. Du informierst offen über die Prüfung (§ 5b Abs. 3 UWG). Nur dann darfst du behaupten, die Bewertungen stammen von echten Gästen (**Anhang Nr. 23b**)." }
+  ] },
     { k: "wahl", h: "Gäste um Bewertungen bitten", b: "Der Juniorchef schlägt vor: „Wer 5 Sterne gibt, bekommt 10 % Rabatt auf den nächsten Aufenthalt.“", o: [
       { t: "Ein Schild an der Rezeption aufhängen: „Bewerten Sie uns!“", p: 1, fb: "Erlaubt, aber wenig wirksam. Ein Aushang ohne direkten Link und ohne persönliche Bitte bringt kaum neue Bewertungen." },
       { t: "Den Rabatt umsetzen – das bringt schnell viele Fünf-Sterne-Bewertungen", p: 0, fb: "Eine Gegenleistung, die an eine Sternzahl geknüpft ist, verfälscht das Bild. Das ist irreführend (UWG) und verstößt gegen die Google-Richtlinien. Google kann solche Bewertungen löschen." },
@@ -59,12 +60,13 @@ export const PROJEKTE_D = [
       { t: "Das mündliche Okay des Vaters am Frühstückstisch reicht aus", p: 1, fb: "Ein Anfang, aber schwer zu beweisen. Bei Kindern müssen die **Sorgeberechtigten** zustimmen. Halte die Einwilligung schriftlich oder elektronisch fest, mit Kanal und Dauer." },
       { t: "Schriftliche Einwilligung beider Eltern: Kanäle, Dauer, Widerruf", p: 2, fb: "Richtig: Das **Recht am eigenen Bild** gilt auch für Kinder. Die Einwilligung der **Sorgeberechtigten** ist dokumentiert, Umfang und Widerrufsrecht sind klar. So kannst du das Foto ohne Risiko nutzen." }
     ] },
-    { k: "szene", h: "Nachts um halb zwölf", b: "Ein Gast schreibt: „Schnitzel zäh, 1 Stern.“ Küchenchef **Ronny** hat das Google-Passwort und antwortet nachts: „Wer Ketchup aufs Schnitzel kippt, hat eh keine Ahnung. Bleib beim Imbiss, du Banause.“ Am Morgen kursiert der Screenshot in einer Facebook-Gruppe der Region: 140 Kommentare." },
-    { k: "wahl", h: "Wie reagiert das Hotel?", o: [
-      { t: "Antwort stehen lassen – Ronny hat beim Schnitzel fachlich ja recht", p: 0, fb: "Eine Beleidigung bleibt eine Beleidigung, egal wer recht hat. Alle Mitlesenden sehen, wie das Hotel mit Gästen umgeht. Die Welle wird größer." },
-      { t: "Antwort löschen, sich als Inhaberin öffentlich entschuldigen, Zugänge neu regeln", p: 2, fb: "Richtig: Fehler offen zugeben und zeigen, was sich ändert. Dazu gehört **Social Media Governance**: Nur zwei Personen antworten, eigene Rollen statt geteiltem Passwort. Kritische Antworten gehen vorher zur Freigabe." },
-      { t: "Antwort still löschen und hoffen, dass sich alles beruhigt", p: 1, fb: "Das Löschen ist richtig, aber der Screenshot ist längst im Umlauf. Schweigen wirkt wie Vertuschen. Erst eine Entschuldigung und neue Regeln beenden die Diskussion." }
-    ] },
+    { k: "szene", h: "Nachts um halb zwölf", b: "Ein Gast schreibt: „Schnitzel zäh, 1 Stern.“ Küchenchef **Marco** hat das Google-Passwort und antwortet nachts: „Wer Ketchup aufs Schnitzel kippt, hat eh keine Ahnung. Bleib beim Imbiss, du Banause.“ Am Morgen kursiert der Screenshot in einer Facebook-Gruppe der Region: 140 Kommentare." },
+    { k: "wahl", h: "Wie reagiert das Hotel?",
+  o: [
+    { t: "Antwort stehen lassen – Marco hat beim Schnitzel fachlich ja recht", p: 0, fb: "Eine Beleidigung bleibt eine Beleidigung, egal wer recht hat. Alle Mitlesenden sehen, wie das Hotel mit Gästen umgeht. Die Welle wird größer." },
+    { t: "Antwort löschen, sich als Inhaberin öffentlich entschuldigen, Zugänge neu regeln", p: 2, fb: "Richtig: Fehler offen zugeben und zeigen, was sich ändert. Dazu gehört **Social Media Governance**: Nur zwei Personen antworten, eigene Rollen statt geteiltem Passwort. Kritische Antworten gehen vorher zur Freigabe." },
+    { t: "Antwort still löschen und hoffen, dass sich alles beruhigt", p: 1, fb: "Das Löschen ist richtig, aber der Screenshot ist längst im Umlauf. Schweigen wirkt wie Vertuschen. Erst eine Entschuldigung und neue Regeln beenden die Diskussion." }
+  ] },
     { k: "daten", h: "Sechs Monate später", l: [
       "Start: 400 Bewertungen, Ø 3,6 Sterne",
       "Davon 30 Fake-1-Sterne – nach Meldung entfernt",
@@ -79,11 +81,12 @@ export const PROJEKTE_D = [
       { t: "3,8 Sterne", p: 0, fb: "Das ist nur der Wert nach dem Entfernen der Fakes: 1.410 ÷ 370 = 3,8. Die 200 neuen Bewertungen fehlen noch." },
       { t: "4,7 Sterne", p: 0, fb: "Das ist nur der Schnitt der neuen Bewertungen. Google rechnet mit allen 570 Bewertungen, die online stehen." }
     ] },
-    { k: "wahl", h: "Was meldest du Anja?", b: "Die **Antwortquote** liegt bei 188 ÷ 200 × 100 = 94 %. Anja fragt: „Und die Buchungen? Plus 18 %, oder?“", o: [
-      { t: "Ja, +18 % mehr Direktbuchungen – das ist allein der Erfolg der Bewertungen", p: 0, fb: "Q1 ist Nebensaison, Q3 Hauptsaison. Der Vergleich zeigt vor allem die **Saison**, nicht die Wirkung der Bewertungen. Ursache und Zusammenhang sind nicht dasselbe." },
-      { t: "Die Buchungen lieber gar nicht berichten, nur Sterne und Antwortquote", p: 1, fb: "Sterne und Antwortquote sind wichtig. Aber das Ziel ist Umsatz – ein guter Bericht zeigt deshalb auch die Buchungen, nur richtig verglichen." },
-      { t: "+4 % zum Vorjahresquartal; bessere Bewertungen sind ein möglicher Grund unter mehreren", p: 2, fb: "Richtig: 366 ÷ 352 = **+4 %** im fairen **Soll-Ist-Vergleich** mit dem Vorjahr. Ehrlich eingeordnet bleibt der Bericht glaubwürdig." }
-    ] },
+    { k: "wahl", h: "Was meldest du Anja?", b: "Die **Antwortquote** liegt bei 188 ÷ 200 × 100 = 94 %. Anja fragt: „Und die Buchungen? Plus 18 %, oder?“",
+  o: [
+    { t: "Ja, +18 % mehr Direktbuchungen – das ist allein der Erfolg der Bewertungen", p: 0, fb: "Q1 ist Nebensaison, Q3 Hauptsaison. Der Vergleich zeigt vor allem die **Saison**, nicht die Wirkung der Bewertungen. Ursache und Zusammenhang sind nicht dasselbe." },
+    { t: "Die Buchungen lieber gar nicht berichten, nur Sterne und Antwortquote", p: 1, fb: "Sterne und Antwortquote sind wichtig. Aber das Ziel ist Umsatz – ein guter Bericht zeigt deshalb auch die Buchungen, nur richtig verglichen." },
+    { t: "+4 % zum Vorjahresquartal; bessere Bewertungen sind ein möglicher Grund unter mehreren", p: 2, fb: "Richtig: 366 ÷ 352 = **+4 %** im fairen **Vorjahresvergleich** derselben Saison. Für einen **Soll-Ist-Vergleich** bräuchtest du ein vorher festgelegtes Ziel. Ehrlich eingeordnet bleibt der Bericht glaubwürdig." }
+  ] },
     { k: "fazit", h: "Was du in diesem Projekt angewendet hast", l: [
       "**ORM:** Monitoring und gepflegte Bewertungsprofile zuerst",
       "Berechtigte Kritik: danken, zugeben, lösen, Kontakt anbieten",
@@ -102,7 +105,7 @@ export const PROJEKTE_D = [
   module: ["einf", "unt", "recht", "plan", "kpi"],
   min: 14,
   schritte: [
-    { k: "szene", h: "Der Auftrag", wer: "Bürgermeister Frank Seidel, Vorstandsvorsitzender", b: "Unsere Region kennt keiner unter 50. Wir brauchen ein **virales Video** – so wie damals die Ice Bucket Challenge! Ganz Deutschland soll über die Silberauen reden. Du hast 15.000 Euro und bis Mai Zeit. Im Herbst will der Vorstand Ergebnisse sehen." },
+    { k: "szene", h: "Der Auftrag", wer: "Bürgermeister Matthias Kunze, Vorstandsvorsitzender", b: "Unsere Region kennt keiner unter 50. Wir brauchen ein **virales Video** – so wie damals die Ice Bucket Challenge! Ganz Deutschland soll über die Silberauen reden. Du hast 15.000 Euro und bis Mai Zeit. Im Herbst will der Vorstand Ergebnisse sehen." },
     { k: "daten", h: "Ausgangslage", l: [
       "Instagram: 3.900 Follower, Ø Reichweite 2.100 je Beitrag",
       "Übernachtungen im Jahr: 380.000, Ø Alter der Gäste: 58",
@@ -116,12 +119,15 @@ export const PROJEKTE_D = [
       { t: "„Wir kopieren die Ice Bucket Challenge: Eiswasser über den Kopf am Stausee.“", p: 1, fb: "Mitmach-Mechanik ist gut, aber eine Kopie wirkt alt. Ihr fehlt der Bezug zur Region und zu einem guten Zweck. Und Mutproben am Wasser bringen ein Sicherheitsrisiko." },
       { t: "„Mit 15.000 € Werbebudget kaufen wir eine Million Views – dann sind wir doch viral.“", p: 0, fb: "Gekaufte Reichweite ist **Paid Media**, nicht viral. Der virale Effekt entsteht, wenn Nutzer selbst teilen (**Earned Media**). Kaufen lässt er sich nicht." }
     ] },
-    { k: "frei", h: "Ziel und Zielgruppe festlegen", b: "Formuliere für die Kampagne ein **SMART-Ziel**. Nenne dazu die **Hauptzielgruppe**. Denk an Zahl, Kennzahl, Zeitraum und Kanal.", muster: [
-      ["Zahl mit Messgröße", "\\d[\\d.,]* ?(%|prozent|buchung|übernacht|beitr|anfrag|gäste|besuch|follower|klick)"],
-      ["Zeitraum oder Termin", "\\bbis\\b|\\bende\\b|\\binnerhalb\\b|\\bmonat|\\bwochen\\b|quartal|\\bsommer|\\bseptember|\\b20\\d\\d\\b"],
-      ["Konkrete Zielgruppe", "famili|\\bpaare?\\b|kurzurlaub|wander|\\bjunge|leipzig|dresden|chemnitz|berlin|\\d+ ?(bis|–|-) ?\\d+ jahr"],
-      ["Kanal oder Mechanik", "instagram|tiktok|hashtag|\\bugc\\b|website|webseite|\\breels?\\b"]
-    ], min: 3, bsp: "• Ziel: Bis 30. September 2027 steigen die Buchungsanfragen über die Website um 15 % gegenüber dem Vorjahreszeitraum.\n• Zusätzlich: 2.000 Gäste-Beiträge mit dem Kampagnen-Hashtag auf Instagram.\n• Zielgruppe: junge Familien (30–45 Jahre) aus Leipzig, Dresden und Berlin, die Kurzurlaub in der Natur suchen." },
+    { k: "frei", h: "Ziel und Zielgruppe festlegen", b: "Formuliere für die Kampagne ein **SMART-Ziel**. Nenne dazu die **Hauptzielgruppe**. Denk an Zahl, Kennzahl, Zeitraum und Kanal.",
+  muster: [
+    ["Zahl mit Messgröße (Anfragen, Buchungen, Gäste-Beiträge – nicht Follower)", "\\d[\\d.,]*\\s?(%|prozent|([a-zäöüß-]+\\s)?(buchung|übernacht|beitr|anfrag|gäste|besuch|klick|ankünft))"],
+    ["Zeitraum oder Termin", "\\bbis\\b|\\bende\\b|\\binnerhalb\\b|\\bmonat|\\bwochen\\b|quartal|\\bsommer|\\bseptember|\\b20\\d\\d\\b"],
+    ["Konkrete Zielgruppe", "famili|\\bpaare?\\b|kurzurlaub|wander|\\bjunge|leipzig|dresden|chemnitz|berlin|\\d+ ?(bis|–|-) ?\\d+ jahr"],
+    ["Kanal oder Mechanik", "instagram|tiktok|facebook|youtube|hashtag|\\bugc\\b|website|webseite|\\breels?\\b|creator|influencer"]
+  ],
+  min: 4,
+  bsp: "• Ziel: Bis 30. September 2027 steigen die Buchungsanfragen über die Website um 15 % gegenüber dem Vorjahreszeitraum.\n• Zusätzlich: 2.000 Gäste-Beiträge mit dem Kampagnen-Hashtag auf Instagram.\n• Zielgruppe: junge Familien (30–45 Jahre) aus Leipzig, Dresden und Berlin, die Kurzurlaub in der Natur suchen." },
     { k: "wahl", h: "Welche Kampagnen-Idee?", o: [
       { t: "Hochwertiger Imagefilm für 12.000 €, Start auf YouTube und der Website", p: 1, fb: "Ein schöner Film kann helfen, aber ihm fehlt die **Mitmach-Mechanik**. Ohne Anlass zum Teilen bleibt die Reichweite bei bezahlter Ausspielung hängen – und das Budget ist fast weg." },
       { t: "Gewinnspiel: „Teile diesen Beitrag in deiner Chronik und gewinne ein Wochenende“", p: 0, fb: "Meta verbietet, das Teilen in der eigenen Chronik zur Teilnahme vorzuschreiben. Außerdem bringt das Teilen keine echten Inhalte über die Region." },
@@ -137,11 +143,12 @@ export const PROJEKTE_D = [
       { t: "Nur den Fotografen fragen und ihm eine Lizenz für Plakate abkaufen", p: 1, fb: "Die Rechte am Foto sind damit geklärt, die am Bauwerk aber nicht. Für die Drohnensicht brauchst du zusätzlich die Erlaubnis der Architekten – oder ein Foto vom Boden." },
       { t: "Lizenz vom Fotografen und Okay der Architekten – sonst Foto vom Wanderweg", p: 2, fb: "Richtig: Zwei Rechte, zwei Erlaubnisse. Ein Foto vom öffentlichen Weg fällt unter die **Panoramafreiheit**. Prüfe auch die Drohnenregeln: Über Naturschutzgebieten ist Fliegen meist verboten." }
     ] },
-    { k: "wahl", h: "Welche Creatorin oder welcher Creator?", b: "Für das **Seeding** willst du regionale Creators einbinden. Budget: 2.500 €.", o: [
-      { t: "@wanderwilma: 23.000 Follower, Familien-Wandertouren, 70 % aus Mitteldeutschland, Engagement-Rate 5,2 %", p: 2, fb: "Richtig: Sie passt zur Zielgruppe und hat eine aktive Community. Die **Engagement-Rate** zählt mehr als die Follower-Zahl. Ihr Publikum ist nah dran und kommt eher wirklich vorbei." },
-      { t: "@cityjonas: 180.000 Follower, Lifestyle aus Berlin, Engagement-Rate 0,8 %, Preis 4.000 €", p: 1, fb: "Viel Reichweite, aber wenig Beteiligung und kaum Bezug zur Region. Außerdem sprengt er das Budget. Für **Seeding** zählt die Passung zur Zielgruppe." },
-      { t: "@travel.dreams: 95.000 Follower für 300 €, Follower meist aus dem Ausland, Engagement-Rate 0,2 %", p: 0, fb: "Viele Follower, fast keine Interaktion, falsches Publikum – typische Hinweise auf **gekaufte Follower**. Das Geld wäre verloren." }
-    ] },
+    { k: "wahl", h: "Welche Creatorin oder welcher Creator?", b: "Für das **Seeding** willst du regionale Creators einbinden. Budget: 2.500 €.",
+  o: [
+    { t: "@wanderwilma: 23.000 Follower, Familien-Wandertouren, 70 % aus Mitteldeutschland, Engagement-Rate 5,2 %", p: 2, fb: "Richtig: Sie passt zur Zielgruppe und hat eine aktive Community. Die **Engagement-Rate** zählt mehr als die Follower-Zahl. Ihr Publikum ist nah dran und kommt eher wirklich vorbei." },
+    { t: "@cityjonas: 180.000 Follower, Lifestyle aus Berlin, Engagement-Rate 0,8 %, Preis 4.000 €", p: 1, fb: "Viel Reichweite, aber wenig Beteiligung und kaum Bezug zur Region. Außerdem sprengt er das Budget. Für **Seeding** zählt die Passung zur Zielgruppe." },
+    { t: "Ein Reiseprofil: 95.000 Follower für 300 €, Follower meist aus dem Ausland, Engagement-Rate 0,2 %", p: 0, fb: "Viele Follower, fast keine Interaktion, falsches Publikum – typische Hinweise auf **gekaufte Follower**. Das Geld wäre verloren." }
+  ] },
     { k: "wahl", h: "Wie wird der Beitrag gekennzeichnet?", b: "@wanderwilma bekommt 800 € und zwei Übernachtungen. Der Bürgermeister meint: „Wir sind ein Verein, das ist doch keine Werbung.“", o: [
       { t: "Gar nicht – der Verband verkauft ja nichts und zahlt nur die Übernachtung", p: 0, fb: "Geld und Übernachtungen sind eine **Gegenleistung**. Der Beitrag wirbt für die Region und ihre Betriebe. Ohne Kennzeichnung ist das Schleichwerbung (§ 5a Abs. 4 UWG)." },
       { t: "„Werbung“ an den Anfang jedes Beitrags und jeder Story-Kachel, per Vertrag", p: 2, fb: "Richtig: Werbung muss **auf den ersten Blick** erkennbar sein. Das Label „Bezahlte Partnerschaft“ kannst du zusätzlich nutzen. Im Vertrag regelst du Kennzeichnung, Freigabe und Nutzungsrechte." },

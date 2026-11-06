@@ -623,3 +623,5 @@ label.check.sw input:checked{background:var(--ok)} label.check.sw input:checked:
 /* iOS 26: In installierten Web-Apps legt das System eine Unschärfe-Kante unter die Statusleiste,
    die Web-Inhalte nicht abschalten können. Kopfzeile deshalb tiefer setzen. */
 @media (display-mode: standalone){ .wrap, .wrap.compact{padding-top:calc(env(safe-area-inset-top, 0px) + 38px)} }
+.story.projekt .opt.dim{display:none}
+.compact > .countdown{margin:0 0 10px} .compact > .countdown .cd{background:var(--surface);box-shadow:var(--shadow);border:0;border-radius:16px}

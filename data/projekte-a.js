@@ -34,17 +34,16 @@ export const PROJEKTE_A = [
         "Mitbewerber: Kette am Bahnhof mit App und Rabatten"
       ] },
 
-    { k: "frei", h: "Formuliere ein SMART-Ziel",
-      b: "Jana sagt: „Mehr junge Leute sollen vorbestellen.“ Mach daraus ein **SMART-Ziel** für Social Media bis Ende Februar 2027.",
-      muster: [
-        ["Spezifisch: Vorbestellungen als Ziel", "vorbestell|bestellung"],
-        ["Messbar: eine konkrete Zahl", "\\d"],
-        ["Terminiert: klares Enddatum", "\\bbis\\b|\\d{1,2}\\.\\s?\\d{1,2}\\.|\\bende\\b|\\b(dezember|januar|februar|märz)\\b|\\b20\\d\\d\\b"],
-        ["Messweg: über Instagram-Link, WhatsApp oder Code", "\\blink|\\bcode\\b|rabattcode|\\butm|instagram|whatsapp"],
-        ["Zielgruppe benannt (z. B. 20 bis 35 Jahre)", "\\bjung|\\b(18|20|25)\\s?(–|-|bis)\\s?(30|35|40)\\b|studi|neukund"]
-      ],
-      min: 3,
-      bsp: "• Bis 28.02.2027 (terminiert)\n• gehen pro Monat 150 Vorbestellungen ein (messbar)\n• über den Instagram-Link und den Code „KRUME“ (spezifisch, messbar)\n• vor allem von Neukunden zwischen 20 und 35 (Zielgruppe)\n• mit 1.500 € und 4 Stunden pro Woche realistisch" },
+    { k: "frei", h: "Formuliere ein SMART-Ziel", b: "Jana sagt: „Mehr junge Leute sollen vorbestellen.“ Mach daraus ein **SMART-Ziel** für Social Media bis Ende Februar 2027.",
+  muster: [
+    ["Spezifisch: Vorbestellungen als Ziel", "vorbestell|bestellung"],
+    ["Messbar: Zahl der Vorbestellungen (oder Steigerung in %)", "\\b\\d[\\d.]*\\s?(%|prozent|(neue|zusätzliche|weitere|online-?)?\\s?(vor)?bestell)"],
+    ["Terminiert: klares Enddatum", "\\bbis\\b|\\d{1,2}\\.\\s?\\d{1,2}\\.|\\bende\\b|\\b(dezember|januar|februar|märz)\\b|\\b20\\d\\d\\b"],
+    ["Messweg: über Instagram-Link, WhatsApp oder Code", "\\blink|\\bcode\\b|rabattcode|\\butm|instagram|whatsapp"],
+    ["Zielgruppe benannt (z. B. 20 bis 35 Jahre)", "\\bjung|\\b(18|20|25)\\s?(–|-|bis)\\s?(30|35|40)\\b|studi|neukund"]
+  ],
+  min: 4,
+  bsp: "• Bis 28.02.2027 (terminiert)\n• gehen pro Monat 150 Vorbestellungen ein (messbar)\n• über den Instagram-Link und den Code „KRUME“ (spezifisch, messbar)\n• vor allem von Neukunden zwischen 20 und 35 (Zielgruppe)\n• mit 1.500 € und 4 Stunden pro Woche realistisch" },
 
     { k: "wahl", h: "Wie entsteht die Persona?", b: "Jana schlägt vor, einfach ihre 24-jährige Tochter zu fragen.",
       o: [

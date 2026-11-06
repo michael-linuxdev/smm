@@ -121,14 +121,11 @@ export const PROJEKTE_C = [
         { t: "3,2 %", p: 0, fb: "Das sind Probetrainings im Verhältnis zu den 1.480 Teilnahmen. Gefragt war die Rate bezogen auf die Klicks: 5 %." }
       ] },
     { k: "wahl", h: "Was steht oben in deinem Bericht an Ronny?",
-      o: [
-        { t: "„1.900 neue Follower – das beste Ergebnis seit Jahren!“", p: 0,
-          fb: "Follower sind hier eine **Vanity Metric**: 420 sind schon wieder weg. Über den Geschäftserfolg sagt die Zahl wenig." },
-        { t: "„48 Probetrainings statt 40, 12 Neumitglieder zu 100 € je Mitglied“", p: 2,
-          fb: "Richtig: **Soll-Ist-Vergleich** am Ziel (48 statt 40) und Kosten je Neumitglied (**CPA** = 1.200 € ÷ 12 = 100 €). Zwei Monatsbeiträge – das versteht jeder Inhaber." },
-        { t: "„1.480 Teilnahmen und 640 Kommentare schon an Tag 4“", p: 1,
-          fb: "Zeigt Engagement, aber nicht den Erfolg. Kennzahlen gehören in den Anhang, oben steht die Zahl, die am Ziel hängt." }
-      ] },
+  o: [
+    { t: "„1.900 neue Follower – das beste Ergebnis seit Jahren!“", p: 0, fb: "Follower sind hier eine **Vanity Metric**: 420 sind schon wieder weg. Über den Geschäftserfolg sagt die Zahl wenig." },
+    { t: "„48 Probetrainings statt 40, 12 Neumitglieder zu 100 € je Mitglied“", p: 2, fb: "Richtig: **Soll-Ist-Vergleich** am Ziel (48 statt 40) und Kosten je Neumitglied (**CPA** = 1.200 € ÷ 12 = 100 €). Weniger als zwei Monatsbeiträge (2 × 59 € = 118 €) – das versteht jeder Inhaber." },
+    { t: "„1.480 Teilnahmen und 640 Kommentare schon an Tag 4“", p: 1, fb: "Zeigt Engagement, aber nicht den Erfolg. Kennzahlen gehören in den Anhang, oben steht die Zahl, die am Ziel hängt." }
+  ] },
     { k: "fazit", h: "Was du in diesem Projekt angewendet hast", l: [
       "**SMART-Ziel** am Geschäftserfolg statt Follower-Jagd",
       "**Meta-Regeln**: kein Teilen oder Markieren als Bedingung",
@@ -140,7 +137,7 @@ export const PROJEKTE_C = [
 {
   id: "kanzlei",
   titel: "Expertise auf LinkedIn",
-  firma: "Elbtal Steuerberatung PartG mbB, Dresden",
+  firma: "Seidel & Hoffmann Steuerberater PartG mbB, Dresden",
   rolle: "Du übernimmst Social Media für eine Steuerberatungskanzlei mit 25 Mitarbeitenden.",
   kurz: "Seriöse B2B-Sichtbarkeit nach Berufsrecht",
   module: ["platt", "unt", "recht", "kpi"],
@@ -163,16 +160,15 @@ export const PROJEKTE_C = [
         { t: "BWL-Studierende in Dresden, weil sie später Mandanten werden", p: 1,
           fb: "Passt zum Ziel **Fachkräfte**, aber nicht zu den Mandaten. Für zwei Ziele brauchst du zwei Zielgruppen – und getrennte Kennzahlen." }
       ] },
-    { k: "frei", h: "SMART-Ziel formulieren",
-      b: "Die Partner wollen wissen, woran sie den Erfolg erkennen. Formuliere ein **SMART-Ziel** für Mandatsanfragen über LinkedIn.",
-      muster: [
-        ["Konkrete Zahl", "\\d"],
-        ["Klarer Zeitraum oder Termin", "\\bbis\\b|\\bmonat|\\bquartal|\\bhalbjahr|\\bwoche|\\bjahr|\\b20\\d\\d\\b"],
-        ["Messgröße: Anfragen, Leads oder Erstgespräche", "\\banfrage|\\bleads?\\b|\\bmandat|\\berstgespr|\\bkontaktanfrage|\\bgespräch"],
-        ["Zielgruppe oder Kanal", "\\blinkedin|\\bmittelst|\\bunternehm|\\bgeschäftsführ|\\bentscheider|\\bfirmen"]
-      ],
-      min: 3,
-      bsp: "• Bis 30. Juni 2027 kommen über LinkedIn 12 qualifizierte Mandatsanfragen\n• Zielgruppe: Geschäftsführung mittelständischer Firmen in Sachsen\n• Gemessen über Formular mit UTM-Link und Nachfrage im Erstgespräch\n• Ausgangswert: bisher 0 Anfragen über LinkedIn" },
+    { k: "frei", h: "SMART-Ziel formulieren", b: "Die Partner wollen wissen, woran sie den Erfolg erkennen. Formuliere ein **SMART-Ziel** für Mandatsanfragen über LinkedIn.",
+  muster: [
+    ["Konkrete Zahl an Anfragen, Leads oder Erstgesprächen", "\\b\\d+\\s?(%|prozent|(qualifizierte|neue|zusätzliche|weitere)?\\s?(mandats)?(anfrage|leads?\\b|erstgespr|mandat|kontaktanfrage|gespräch))"],
+    ["Klarer Zeitraum oder Termin", "\\bbis\\b|\\bmonat|\\bquartal|\\bhalbjahr|\\bwoche|\\bjahr|\\b20\\d\\d\\b"],
+    ["Messgröße: Anfragen, Leads oder Erstgespräche", "\\banfrage|\\bleads?\\b|\\bmandat|\\berstgespr|\\bkontaktanfrage|\\bgespräch"],
+    ["Zielgruppe oder Kanal", "\\blinkedin|\\bmittelst|\\bunternehm|\\bgeschäftsführ|\\bentscheider|\\bfirmen"]
+  ],
+  min: 3,
+  bsp: "• Bis 30. Juni 2027 kommen über LinkedIn 12 qualifizierte Mandatsanfragen\n• Zielgruppe: Geschäftsführung mittelständischer Firmen in Sachsen\n• Gemessen über Formular mit UTM-Link und Nachfrage im Erstgespräch\n• Ausgangswert: bisher 0 Anfragen über LinkedIn" },
     { k: "wahl", h: "Unternehmensseite oder persönliche Profile?",
       o: [
         { t: "Nur die Unternehmensseite pflegen – die Partner bleiben außen vor", p: 1,
@@ -218,14 +214,11 @@ export const PROJEKTE_C = [
       "Foto: Inhaber mit Katrin Hoffmann vor dem Laden",
       "Geplant: morgen 8 Uhr auf der Unternehmensseite" ] },
     { k: "wahl", h: "Darf der Beitrag so raus?",
-      o: [
-        { t: "Nur mit schriftlicher Einwilligung, sonst anonymer Praxisfall", p: 2,
-          fb: "Richtig: Mandantendaten nur mit **ausdrücklicher Einwilligung**. Ohne sie wird ein neutraler Fall daraus („Ein Handwerksbetrieb fragte uns …“), ohne Ort, Foto und Betrag." },
-        { t: "Ja – der Bäcker freut sich bestimmt über die Werbung", p: 0,
-          fb: "Schon dass jemand Mandant ist, fällt unter die **Verschwiegenheit** (§ 57 StBerG, § 203 StGB). Ohne schriftliche Einwilligung ist der Beitrag ein Berufsrechtsverstoß." },
-        { t: "Name weglassen, aber „Bäcker aus Pirna“ und Betrag behalten", p: 1,
-          fb: "Besser, aber mit Foto und Ort bleibt der Mandant **erkennbar**. Und „dank uns gespart“ ist reißerisch statt sachlich." }
-      ] },
+  o: [
+    { t: "Nur mit schriftlicher Einwilligung und sachlich, sonst anonymer Praxisfall", p: 2, fb: "Richtig: Mandantendaten nur mit **ausdrücklicher Einwilligung**, und auch dann sachlich statt „Dank uns gespart 💪“ (§ 57a StBerG). Ohne Einwilligung wird ein neutraler Fall daraus („Ein Handwerksbetrieb fragte uns …“), ohne Ort, Foto und Betrag." },
+    { t: "Ja – der Bäcker freut sich bestimmt über die Werbung", p: 0, fb: "Schon dass jemand Mandant ist, fällt unter die **Verschwiegenheit** (§ 57 StBerG, § 203 StGB). Ohne seine Einwilligung – zum Beweis schriftlich – ist der Beitrag ein Berufsrechtsverstoß." },
+    { t: "Name weglassen, aber „Bäcker aus Pirna“ und Betrag behalten", p: 1, fb: "Besser, aber mit Foto und Ort bleibt der Mandant **erkennbar**. Und „dank uns gespart“ ist reißerisch statt sachlich." }
+  ] },
     { k: "wahl", h: "Wer verwaltet eigentlich die Seite?",
       b: "Einziger Super-Admin der Unternehmensseite ist ein Ex-Azubi, der im Sommer gekündigt hat.",
       o: [

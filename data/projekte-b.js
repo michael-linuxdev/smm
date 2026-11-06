@@ -33,14 +33,13 @@ export const PROJEKTE_B = [
         { t: "Reels für Aufmerksamkeit, Try-on für Überlegung, Code für Kauf", p: 2,
           fb: "**Phasengerechter Content**: Reichweite am Anfang, Orientierung (Stoff, Passform) in der Mitte, Rabattcode als klarer Anstoß. Je Phase passt eine eigene KPI." }
       ] },
-    { k: "daten", h: "Die Shortlist",
-      l: [
-        "**A** @stylebyvanessa: 410.000 Follower, Ø Reichweite 38.000, Ø 340 Interaktionen, 5.500 € je Reel",
-        "**B** Vier Mikro-Influencerinnen aus Sachsen: je 12.000–35.000 Follower, Engagement-Rate 4–7 %",
-        "**B** zusammen: 3.600 € Honorar für drei, Lea nur Kleidung; alle je zwei Teile",
-        "**C** @nachhaltignora: 88.000 Follower, davon +30.000 in einer Woche",
-        "**C** Ø Reichweite 2.500, Kommentare meist „Nice 🔥“ von Profilen ohne Bild"
-      ] },
+    { k: "daten", h: "Die Shortlist", l: [
+  "**A** @stylebyvanessa: 410.000 Follower, Ø Reichweite 38.000, Ø 340 Interaktionen, 5.500 €/Reel",
+  "**B** Vier Mikro-Influencerinnen aus Sachsen: je 12.000–35.000 Follower, Engagement-Rate 4–7 %",
+  "**B** zusammen: 3.600 € Honorar für drei, Lea nur Kleidung; alle je zwei Teile",
+  "**C** Öko-Profil: 88.000 Follower, +30.000 in einer Woche",
+  "**C** Ø Reichweite 2.500, Kommentare meist „Nice 🔥“ von Profilen ohne Bild"
+] },
     { k: "wahl", h: "Rechne nach: Wie hoch ist die Engagement-Rate von A?",
       b: "Engagement-Rate = Interaktionen ÷ Reichweite × 100",
       o: [
@@ -80,16 +79,12 @@ export const PROJEKTE_B = [
       ],
       min: 3,
       bsp: "• Inhalt: 2 Reels + 3 Storys, Kernbotschaft „fair & bequem“\n• Zeitraum: 1.–30.06.2027\n• Kennzeichnung „Werbung“ am Anfang, jede Story-Kachel\n• Freigabe vorab durch uns\n• Nutzungsrechte: eigene Kanäle und Anzeigen, 12 Monate\n• Vergütung: 1.200 € + 2 Teile" },
-    { k: "wahl", h: "„Muss ich das kennzeichnen?“",
-      b: "Lea, eine der vier, schreibt: „Bei mir gibt es kein Honorar, ich bekomme nur die Kleider. Dann ist das doch keine Werbung, oder?“",
-      o: [
-        { t: "Doch: „Werbung“ an den Anfang, bei Storys auf jede Kachel", p: 2,
-          fb: "Auch **Gratisprodukte** sind eine Gegenleistung. Dann muss der Beitrag auf den ersten Blick als Werbung erkennbar sein (**§ 5a Abs. 4 UWG**, BGH 2021). Werbung ohne Kennzeichnung kann auch euch eine Abmahnung bringen." },
-        { t: "Ja, ein „#ad“ am Ende der Hashtags genügt", p: 0,
-          fb: "Ein „#ad“ zwischen anderen Hashtags ist **nicht auf den ersten Blick** erkennbar. Klar ist „Werbung“ oder „Anzeige“ am Anfang." },
-        { t: "Ja, das Label „Bezahlte Partnerschaft“ der Plattform reicht", p: 1,
-          fb: "Das Plattform-Label hilft, ist aber klein und nicht überall sichtbar. Darauf allein besser nicht bauen – zusätzlich **„Werbung“** an den Anfang." }
-      ] },
+    { k: "wahl", h: "„Muss ich das kennzeichnen?“", b: "Lea, eine der vier, schreibt: „Bei mir gibt es kein Honorar, ich bekomme nur die Kleider. Dann ist das doch keine Werbung, oder?“",
+  o: [
+    { t: "Doch: „Werbung“ an den Anfang, bei Storys auf jede Kachel", p: 2, fb: "Auch **Gratisprodukte** sind eine Gegenleistung (**§ 5a Abs. 4 UWG**; BGH 2022, „Influencerin III“). Dann muss der Beitrag auf den ersten Blick als Werbung erkennbar sein. Ohne Kennzeichnung droht auch euch eine Abmahnung." },
+    { t: "Ja, ein „#ad“ am Ende der Hashtags genügt", p: 0, fb: "Ein „#ad“ zwischen anderen Hashtags ist **nicht auf den ersten Blick** erkennbar. Klar ist „Werbung“ oder „Anzeige“ am Anfang." },
+    { t: "Ja, das Label „Bezahlte Partnerschaft“ der Plattform reicht", p: 1, fb: "Das Plattform-Label hilft, ist aber klein und nicht überall sichtbar. Darauf allein besser nicht bauen – zusätzlich **„Werbung“** an den Anfang." }
+  ] },
     { k: "daten", h: "Entwurf zur Freigabe: Leas Reel",
       l: [
         "Video: Lea radelt im Sommerkleid über die Augustusbrücke",
