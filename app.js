@@ -54,7 +54,7 @@ const ic = (n, extra = "") => `<svg viewBox="0 0 24 24" fill="none" stroke="curr
 /* ---------- Speicher ----------
    Doppelt: localStorage (schnell) + IndexedDB (robuster). Beim Start gewinnt der neuere Stand (Zeitstempel).
    Fragen und Lektionen haben stabile Schlüssel (unabhängig vom Modul), alte Schlüssel werden migriert. */
-const KEY = "smm-coach", VERSION = "0.9.3";
+const KEY = "smm-coach", VERSION = "0.9.4";
 const DEF = () => ({ lek: {}, q: {}, srs: {}, last: null, tests: [], pruefung: "", set: { size: "m", theme: "auto" }, lastBackup: 0, created: Date.now(), updated: 0, run: null, lastRun: null });
 let S = DEF();
 try { const x = JSON.parse(localStorage.getItem(KEY) || "null"); if (x) S = Object.assign(DEF(), x); } catch (e) {}
@@ -312,17 +312,30 @@ function openStory(mid, lid) {
   $(".prev", storyEl)?.addEventListener("click", () => go(-1));
   $(".tapzone.l", storyEl)?.addEventListener("click", () => go(-1));
   $(".tapzone.r", storyEl)?.addEventListener("click", () => go(1));
-  fitSlide();
+  fitSlide(); requestAnimationFrame(fitSlide); if (draw.first !== false) watchFit();
   if (draw.first !== false) { draw.first = false; $(".x", storyEl).focus({ preventScroll: true }); } else if (!storyEl.contains(document.activeElement)) ($(".next", storyEl) || $(".x", storyEl)).focus({ preventScroll: true });
   $$(".opt", storyEl).forEach(b => b.onclick = () => { if (i in answered) return; answered[i] = +b.dataset.k; const p = POOL.find(p => p.q === f.q); if (p) grade(p.key, answered[i] === f.c); save(); draw(); });
  }
  draw();
 }
 // Kein Scrollen in Storys: Schrift so lange verkleinern, bis die Karte in die Bühne passt.
+// Karte so verkleinern, dass nichts abgeschnitten wird. Läuft erneut, wenn Schrift
+// nachgeladen ist oder sich die Größe ändert (iOS: Adressleiste, Drehen, Schriftgröße).
 function fitSlide() {
  const stage = $(".stage", storyEl), slide = $(".slide", storyEl); if (!stage || !slide) return;
- let k = 1; slide.style.setProperty("--k", k);
- while (slide.scrollHeight > stage.clientHeight - 8 && k > .55) { k -= .04; slide.style.setProperty("--k", k.toFixed(2)); }
+ const avail = stage.clientHeight - 8; if (avail <= 0) return;
+ const fits = () => slide.scrollHeight <= avail && slide.scrollHeight <= slide.clientHeight + 1;
+ let lo = .5, hi = 1; slide.style.setProperty("--k", 1);
+ if (fits()) return;
+ for (let i = 0; i < 8; i++) { const mid = (lo + hi) / 2; slide.style.setProperty("--k", mid.toFixed(3)); if (fits()) lo = mid; else hi = mid; }
+ slide.style.setProperty("--k", lo.toFixed(3));
+}
+let fitRO = null;
+function watchFit() {
+ fitRO?.disconnect();
+ const stage = storyEl && $(".stage", storyEl); if (!stage) return;
+ if ("ResizeObserver" in window) { fitRO = new ResizeObserver(() => requestAnimationFrame(fitSlide)); fitRO.observe(stage); }
+ document.fonts?.ready.then(() => requestAnimationFrame(fitSlide));
 }
 addEventListener("resize", () => storyEl && fitSlide());
 function nextIn(m, l) { const k = m.lektionen.indexOf(l); return m.lektionen[k + 1] || null; }

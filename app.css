@@ -361,3 +361,6 @@ h2.h3{font-size:1.1rem;margin:20px 0 8px}
 .tippbox summary{cursor:pointer;list-style:none;display:flex;justify-content:space-between;align-items:center}
 .tippbox summary::after{content:"+";font-weight:700;font-size:1.2rem;color:var(--ink-3)} .tippbox[open] summary::after{content:"–"}
 .tippbox summary::-webkit-details-marker{display:none}
+/* iOS: kein Link-Vorschau-Menü beim langen Drücken (App-Gefühl statt Safari-Vorschau) */
+a, img, button, .cont, .tile, .tabbar a { -webkit-touch-callout: none; -webkit-user-select: none; user-select: none; -webkit-tap-highlight-color: transparent }
+a[href], img { -webkit-user-drag: none }
