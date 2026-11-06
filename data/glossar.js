@@ -3,8 +3,8 @@ import { GLOSSAR_NEU, SYN_ALT } from "./glossar2.js";
 export const GLOSSAR = [
  { w: "Balanced Scorecard", m: "kpi", d: "Kennzahlensystem, das Ziele aus vier Blickwinkeln misst: Finanzen, Kunden, interne Prozesse sowie Lernen und Entwicklung. Im Social-Media-Controlling verbindet sie Kanal-KPIs mit den Unternehmenszielen." },
  { w: "Sentiment Ratio", m: "kpi", d: "Verhältnis positiver, neutraler und negativer Erwähnungen, z. B. 60 % positiv, 30 % neutral, 10 % negativ. Zeigt die Stimmung gegenüber Marke oder Thema." },
- { w: "Conversation Rate", m: "kpi", d: "Kommentare pro Beitrag im Verhältnis zur Follower-Zahl. Zeigt, wie sehr Inhalte Gespräche auslösen." },
- { w: "Amplification Rate", m: "kpi", d: "Geteilte Beiträge pro Beitrag im Verhältnis zur Follower-Zahl. Zeigt, wie stark die Community Inhalte weiterverbreitet." },
+ { w: "Conversation Rate", m: "kpi", d: "Kommentare bzw. Antworten pro Beitrag (nach Avinash Kaushik). Beispiel: 160 Kommentare auf 20 Beiträge = 8 pro Beitrag. Manche Tools teilen zusätzlich durch die Follower und geben Prozent an – dann die Bezugsgröße nennen." },
+ { w: "Amplification Rate", m: "kpi", d: "Weiterverbreitungen (Shares, Reposts) pro Beitrag (nach Avinash Kaushik). Beispiel: 60 Shares auf 20 Beiträge = 3 pro Beitrag. Manche Tools teilen zusätzlich durch die Follower – dann die Bezugsgröße nennen." },
  { w: "Customer Journey", m: "plan", d: "Der Weg einer Person vom ersten Kontakt mit einer Marke bis zum Kauf und darüber hinaus. Jede Berührung unterwegs ist ein Touchpoint." },
  { w: "Touchpoint", m: "plan", d: "Berührungspunkt zwischen Kunde und Marke, z. B. ein Post, eine Anzeige, eine Bewertung oder ein Gespräch im Laden." },
  { w: "Status-quo-Analyse", m: "unt", d: "Bestandsaufnahme vor der Strategie: Welche Kanäle gibt es, wie laufen sie, was machen Wettbewerber, welche Ressourcen sind da? Werkzeuge sind z. B. Social-Media-Audit und SWOT-Analyse." },
@@ -28,17 +28,17 @@ export const GLOSSAR = [
  { w: "Deepfake", m: "recht", d: "Mit KI erzeugte oder veränderte Bilder, Videos oder Töne, die echte Personen, Orte oder Ereignisse täuschend echt zeigen. Nach der EU-KI-Verordnung offenzulegen." },
  { w: "Earned Media", m: "unt", d: "Reichweite, die andere freiwillig erzeugen: Shares, Erwähnungen, Bewertungen, Presseberichte." },
  { w: "Employer Branding", m: "unt", d: "Aufbau einer attraktiven Arbeitgebermarke." },
- { w: "Engagement", m: "kpi", d: "Alle Interaktionen mit einem Inhalt: Likes, Kommentare, Shares, Saves, Klicks." },
+ { w: "Engagement", m: "kpi", d: "Alle Interaktionen mit einem Inhalt: Likes, Kommentare, Shares, Saves. Manche Plattformen zählen auch Klicks mit – dann im Bericht angeben, was gezählt wurde." },
  { w: "Enterprise 2.0", m: "unt", d: "Einsatz von Social-Media-Prinzipien und -Werkzeugen für die interne Zusammenarbeit (Wikis, interne Netzwerke, Chats)." },
  { w: "Funnel", m: "plan", d: "Trichter-Modell der Kundenreise: Bekanntheit → Interesse → Kauf/Handlung → Bindung. Je Stufe passen andere Inhalte und Ziele." },
  { w: "Gemeinsame Verantwortlichkeit", m: "recht", d: "Fanpage-Betreiber und Plattform sind gemeinsam für den Datenschutz verantwortlich (EuGH 2018, Art. 26 DSGVO)." },
- { w: "Hub-and-Spoke", m: "unt", d: "Organisationsmodell: ein zentrales Team (Hub) koordiniert, Fachabteilungen (Spokes) liefern Inhalte zu." },
+ { w: "Hub-and-Spoke", m: "unt", d: "Organisationsmodell: ein zentrales Team (Hub) setzt Standards, schult und koordiniert; Fachabteilungen oder Standorte (Spokes) liefern Inhalte zu oder posten im vorgegebenen Rahmen selbst. Bei mehreren Marken oder Ländern: Multiple Hub-and-Spoke mit mehreren Hubs." },
  { w: "Impressionen", m: "kpi", d: "Wie oft ein Inhalt insgesamt angezeigt wurde – auch mehrfach bei derselben Person." },
  { w: "Impressumspflicht", m: "recht", d: "Geschäftlich genutzte Online-Auftritte brauchen ein leicht erkennbares, unmittelbar erreichbares und ständig verfügbares Impressum (§ 5 DDG)." },
  { w: "KPI", m: "kpi", d: "Key Performance Indicator: Kennzahl, die zeigt, ob ein Ziel erreicht wird." },
  { w: "Lead", m: "kpi", d: "Kontakt mit Interesse, z. B. Anfrage, Formular, Bewerbung." },
  { w: "Lookalike Audience", m: "ads", d: "Zielgruppe, die einer Ausgangsgruppe (z. B. Bestandskunden) ähnlich ist; von der Werbeplattform berechnet." },
- { w: "Monitoring / Social Listening", m: "kpi", d: "Laufendes Beobachten, was über Marke, Produkte, Wettbewerb und Branche gesagt wird." },
+ { w: "Monitoring / Social Listening", m: "kpi", d: "Social Monitoring erfasst laufend, was über Marke, Produkte und Wettbewerb gesagt wird – auch außerhalb der eigenen Kanäle. Social Listening wertet diese Gespräche aus: Stimmung, Themen, Trends." },
  { w: "Netiquette", m: "plan", d: "Öffentliche Diskussionsregeln auf einem Kanal – Grundlage, um Beleidigungen oder Spam zu entfernen." },
  { w: "Owned Media", m: "unt", d: "Eigene Kanäle: Website, Profile, Newsletter, Blog." },
  { w: "Paid Media", m: "unt", d: "Bezahlte Reichweite: Anzeigen, Sponsoring, bezahlte Influencer-Kooperationen." },
@@ -70,7 +70,12 @@ export const FORMELN = [
  { n: "Share of Voice", f: "Erwähnungen eigene Marke ÷ alle Erwähnungen im Markt × 100", b: "150 von 1.000 Erwähnungen = 15 %" },
  { n: "Follower-Wachstum", f: "(Follower Ende − Follower Anfang) ÷ Follower Anfang × 100", b: "von 800 auf 1.000 Follower = 25 %" },
  { n: "ROI (Return on Investment)", f: "(Ertrag − Kosten) ÷ Kosten × 100", b: "1.500 € Ertrag bei 1.000 € Kosten → (1.500 − 1.000) ÷ 1.000 × 100 = 50 %", h: "Ertrag = der der Maßnahme zurechenbare Rohertrag bzw. Deckungsbeitrag, nicht der reine Umsatz." },
- { n: "ROAS (Return on Ad Spend)", f: "Umsatz aus Anzeigen ÷ Werbekosten", b: "2.000 € Umsatz bei 500 € Werbekosten = ROAS 4 (also 4 € Umsatz je 1 €)" }
+ { n: "ROAS (Return on Ad Spend)", f: "Umsatz aus Anzeigen ÷ Werbekosten", b: "2.000 € Umsatz bei 500 € Werbekosten = ROAS 4 (also 4 € Umsatz je 1 €)" },
+ { n: "CPA (Cost per Action)", f: "Kosten ÷ Conversions", b: "1.500 € für 60 Käufe = 25 € CPA" },
+ { n: "Frequenz", f: "Impressionen ÷ Reichweite", b: "30.000 Impressionen bei 12.000 Personen = 2,5", h: "Kann nie unter 1 liegen." },
+ { n: "Conversation Reach (Altimeter)", f: "Aktiv Beteiligte ÷ alle Erreichten × 100", b: "400 von 20.000 Erreichten = 2 %" },
+ { n: "Conversation / Amplification / Applause Rate (Kaushik)", f: "Kommentare bzw. Shares bzw. Likes ÷ Anzahl Beiträge", b: "60 Shares auf 20 Beiträge = Amplification Rate 3", h: "Kaushik rechnet pro Beitrag; Tools teilen oft zusätzlich durch Follower." },
+ { n: "Soll-Ist-Abweichung", f: "(Ist − Soll) ÷ Soll × 100", b: "Soll 40, Ist 28 Bewerbungen = −30 %" }
 ];
 
 // Erweiterung für Quereinsteiger: neue Begriffe + Schreibvarianten/Übersetzungen der vorhandenen

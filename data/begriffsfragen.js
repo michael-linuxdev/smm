@@ -201,7 +201,7 @@ export const BEGRIFFSFRAGEN = [
   "Gewinn aus Anzeigen abzüglich aller Personalkosten",
   "Werbekosten geteilt durch die Zahl der Klicks",
   "Anteil der Anzeigen, die vollständig angesehen wurden"
- ], c: 0, e: "Beispiel: 500 € Werbung, 2.000 € Umsatz = ROAS 4. Werbekosten ÷ Klicks ergibt den CPC." },
+ ], c: 0, e: "Beispiel: 300 € Werbung, 1.500 € Umsatz = ROAS 5. Werbekosten ÷ Klicks ergibt den CPC." },
  { m: "kpi", q: "Was bedeutet „CPA“ bei Anzeigen?", a: [
   "Kosten pro Abschluss, z. B. pro Kauf",
   "Kosten pro 1.000 Impressionen einer Anzeige",
@@ -209,10 +209,10 @@ export const BEGRIFFSFRAGEN = [
   "Klicks pro Anzeige und Tag"
  ], c: 0, e: "CPA = Cost per Action/Acquisition: Kosten ÷ Conversions. Kosten pro 1.000 Impressionen ist der CPM, Kosten pro Klick der CPC." },
  { m: "kpi", q: "Was zeigt die Engagement-Rate?", a: [
-  "Wie stark die Erreichten mit einem Beitrag interagieren – Interaktionen im Verhältnis zur Reichweite",
-  "Wie viele Mitarbeitende Beiträge des Unternehmens teilen",
-  "Wie viele neue Follower ein Profil pro Monat gewinnt",
-  "Wie lange ein Video im Durchschnitt angesehen wird"
+  "Interaktionen im Verhältnis zur Reichweite",
+  "Wie viele Mitarbeitende Beiträge teilen",
+  "Neue Follower eines Profils pro Monat",
+  "Durchschnittliche Wiedergabedauer von Videos"
  ], c: 0, e: "Engagement-Rate = Interaktionen ÷ Reichweite × 100. Im Bericht immer angeben, worauf sie bezogen ist (Reichweite, Follower oder Impressionen)." },
  { m: "kpi", q: "Was beschreibt die „Bounce Rate“ (Absprungrate) einer Website?", a: [
   "Den Anteil der Besucher, die ohne weitere Aktion wieder gehen",

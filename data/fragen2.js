@@ -201,7 +201,7 @@ export const NEUE = {
 "quelle": ""
 },
 {
-"m": "platt",
+"m": "ads",
 "q": "Was ist der Vorteil von Lead-Gen-Formularen in LinkedIn-Anzeigen?",
 "a": ["Sie sind mit Profildaten vorausgefüllt, Interessenten müssen LinkedIn nicht verlassen", "Sie sind immer kostenlos, weil sie nicht als Werbeanzeige abgerechnet werden", "Sie ersetzen die Datenschutzhinweise, eine Einwilligung ist nicht nötig", "Sie funktionieren nur ohne Targeting und erreichen alle LinkedIn-Nutzer"],
 "c": 0,
@@ -209,7 +209,7 @@ export const NEUE = {
 "quelle": ""
 },
 {
-"m": "platt",
+"m": "ads",
 "q": "Was sind TikTok Spark Ads?",
 "a": ["Bestehende organische Videos – eigene oder von Creatorn mit Erlaubnis – werden beworben", "Eigens produzierte Werbespots, die nie organisch auf einem Profil erscheinen", "Werbung ausschließlich mit Text und Bild, ganz ohne Video oder Ton", "Anzeigen, die Videos von Konkurrenten ohne deren Erlaubnis automatisch bewerben"],
 "c": 0,
@@ -319,7 +319,7 @@ export const NEUE = {
 "q": "Ein Versandhändler möchte Kundenanfragen über WhatsApp mit mehreren Mitarbeitenden und Anbindung an sein CRM bearbeiten. Was passt?",
 "a": ["Die WhatsApp Business Plattform (API) über einen Anbieter", "Die private WhatsApp-App auf einem gemeinsamen Diensthandy", "Die kostenlose WhatsApp Business App auf einem Smartphone", "Eine WhatsApp-Gruppe mit allen Kunden und Mitarbeitenden"],
 "c": 0,
-"e": "Die Business Plattform ist für größere Unternehmen mit mehreren Bearbeitern, Automatisierung und Systemanbindung gedacht.",
+"e": "Die Business Plattform ist für größere Unternehmen mit mehreren Bearbeitern, Automatisierung und Systemanbindung gedacht – direkt bei Meta oder über einen Anbieter.",
 "quelle": ""
 },
 {
@@ -785,7 +785,7 @@ export const NEUE = {
 "40 %"
 ],
 "c": 0,
-"e": "ROI = (Gewinn − Investition) ÷ Investition × 100 = (5.000 − 2.000) ÷ 2.000 × 100 = 150 %.",
+"e": "ROI = (Deckungsbeitrag − Kosten) ÷ Kosten × 100 = (5.000 − 2.000) ÷ 2.000 × 100 = 150 %.",
 "quelle": ""
 },
 {
@@ -1155,11 +1155,11 @@ export const NEUE = {
 ],
 [
 "PR/Unternehmenskommunikation: Presse, Krisen",
-"\\bpr\\b|presse|öffentlichkeit|krise|kommunikationsabteil"
+"\\bpr\\b|presse|öffentlichkeit|krise|kommunikationsabteil|unternehmenskommunikation"
 ],
 [
 "Geschäftsführung: Ziele, Freigaben, Budget",
-"geschäftsführ|geschäftsleitung|unternehmensleitung|chef|inhaber|management|freigab"
+"geschäftsführ|geschäftsleitung|unternehmensleitung|chef|inhaber|vorstand|freigab"
 ]
 ],
 "min": 3,
@@ -1187,11 +1187,11 @@ export const NEUE = {
 "abhängig|algorithm|plattform|eigene kanäle|newsletter|website"
 ],
 [
-"Gegenmaßnahmen benannt (Monitoring, Krisenplan, Guidelines, Schulung)",
-"monitor|krisenplan|guideline|richtlinie|schul|leitfad"
+"Je Risiko eine Gegenmaßnahme (Monitoring, Krisenplan, Guidelines, Schulung, Redaktionsplan, eigene Kanäle)",
+"monitor|krisenplan|guideline|richtlinie|schul|leitfad|redaktionsplan|planung|vertretung|prüf|eigene (kanäle|website)|newsletter"
 ]
 ],
-"min": 3,
+"min": 4,
 "quelle": ""
 },
 {
@@ -1201,7 +1201,7 @@ export const NEUE = {
 "muster": [
 [
 "Dialog statt Einbahnstraße (many-to-many statt one-to-many)",
-"dialog|many|einbahn|interakt|zwei.?weg|austausch"
+"dialog|many|einbahn|interakt|interag|zwei.?weg|austausch|komment|antwort|mitreden|feedback"
 ],
 [
 "Nutzer erstellen selbst Inhalte (User Generated Content)",
@@ -1234,7 +1234,7 @@ export const NEUE = {
 "muster": [
 [
 "LinkedIn: berufliche Zielgruppe, Fach- und Führungskräfte, B2B",
-"fachwissen|fachbeitr|expert|dokument|karussell|artikel|whitepaper"
+"beruf|fachkr|führungskr|b2b|business|karriere|professional|entscheider"
 ],
 [
 "LinkedIn-Inhalte: Fachwissen, Einblicke, Texte/Dokumente",
@@ -1271,7 +1271,7 @@ export const NEUE = {
 ],
 [
 "Datenschutz: Telefonnummern von Admins und Followern nicht sichtbar",
-"nummer|datenschutz|privat|anonym"
+"nummer[\\s\\S]{0,40}(nicht|privat|verborgen|unsichtbar|geschützt)|datenschutz|privat|anonym"
 ],
 [
 "Einweg-Kommunikation / Broadcast, kaum Dialog",
@@ -1411,7 +1411,7 @@ export const NEUE = {
 ],
 [
 "Reaktion auf Arbeitgeberbewertungen / Candidate Experience",
-"\\bwerte\\b|unternehmenswert|kultur|mission|benefit"
+"bewertung|kununu|glassdoor|candidate experience|bewerbungsprozess|rückmeld|schnell (antwort|reagier)"
 ],
 [
 "Werte und Kultur zeigen",
@@ -1663,11 +1663,11 @@ export const NEUE = {
 ],
 [
 "Conversion-Tracking/Pixel – mit Einwilligung",
-"conversion|kauf|anfrage|anmeld|lead"
+"pixel|conversion.?tracking|conversions?.?api|einwillig|consent|cookie"
 ],
 [
 "Conversion-Ziele definieren (Kauf, Anfrage, Anmeldung)",
-"conversion|ziel|kauf|anfrage|anmeld|lead"
+"conversion|ziel|k[aä]uf|anfrage|anmeld|lead"
 ],
 [
 "Attribution berücksichtigen (z. B. Last Click, mehrere Kontaktpunkte)",
@@ -1707,25 +1707,25 @@ export const NEUE = {
 "quelle": ""
 },
 {
-"m": "plan",
+"m": "unt",
 "t": "frei",
 "q": "Erstellen Sie eine kurze SWOT-Analyse für den Social-Media-Auftritt eines regionalen Handwerksbetriebs (je mindestens ein Punkt) und leiten Sie eine Maßnahme ab.",
 "muster": [
 [
 "Stärke (intern), z. B. engagiertes Team, sichtbare Projekte",
-"stärke|strength"
+"\\bstärken?\\b|strength"
 ],
 [
 "Schwäche (intern), z. B. wenig Zeit, kein Know-how",
-"schwäche|weakness"
+"\\bschwächen?\\b|weakness"
 ],
 [
 "Chance (extern), z. B. Fachkräftesuche über Social Media, lokale Zielgruppe",
-"chance|opportunit"
+"\\bchancen?\\b|opportunit"
 ],
 [
 "Risiko (extern), z. B. Konkurrenz, Algorithmusänderung",
-"risik|threat|bedroh|gefahr"
+"\\brisik|threat|bedroh|\\bgefahr"
 ],
 [
 "Abgeleitete Strategie/Maßnahme",
@@ -1816,7 +1816,7 @@ export const NEUE = {
 "muster": [
 [
 "Aufmerksamkeit (Awareness): reichweitenstarke, unterhaltsame Inhalte",
-"aufmerksam|awareness|attention|bekannt|see"
+"aufmerksam|awareness|attention|bekannt|\\bsee\\b"
 ],
 [
 "Interesse/Abwägung (Consideration): Tipps, Vergleiche, Erklärvideos",
@@ -1828,7 +1828,7 @@ export const NEUE = {
 ],
 [
 "Bindung (Loyalty/Care): Service, Community, exklusive Inhalte",
-"bind|loyal|care|service|stammkund|community"
+"kundenbind|\\bbindung|loyal|\\bcare\\b|service|stammkund|community"
 ],
 [
 "Empfehlung (Advocacy): UGC, Bewertungen",

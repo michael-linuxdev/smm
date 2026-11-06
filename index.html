@@ -18,6 +18,13 @@
 <body>
 <main id="app" tabindex="-1"><div class="loading">Lädt …</div></main>
 <div id="toast" role="status" aria-live="polite"></div>
+<script>
+// Falls die App nach einem Update nicht startet: Hinweis mit „Neu laden“ statt endlosem „Lädt …“
+function showBoot() { var a = document.getElementById("app"); if (!a || !/Lädt/.test(a.textContent)) return;
+ a.innerHTML = '<div class="loading"><p>Die App wurde gerade aktualisiert.</p><button class="btn" onclick="caches.keys().then(function(k){return Promise.all(k.map(function(x){return caches.delete(x)}))}).finally(function(){location.reload()})">Neu laden</button></div>'; }
+addEventListener("error", function (e) { if (/export named|dynamically imported|Importing a module|Failed to fetch/.test(e.message || "")) showBoot(); }, true);
+setTimeout(showBoot, 8000);
+</script>
 <script src="app.js" type="module"></script>
 </body>
 </html>

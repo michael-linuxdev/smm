@@ -31,7 +31,7 @@
 }}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html{-webkit-text-size-adjust:100%}
-body{margin:0;background:var(--bg);color:var(--ink);font:1.062rem/1.55 var(--font);min-height:100vh}
+body{margin:0;background:var(--bg);color:var(--ink);font:1.062rem/1.55 var(--font);min-height:100vh;min-height:100dvh}
 h1,h2,h3,.display{font-family:var(--display);font-weight:700;letter-spacing:-.02em;line-height:1.2;margin:0}
 h1{font-size:clamp(26px,5vw,34px)} h2{font-size:1.375rem} h3{font-size:1.125rem}
 p{margin:.4em 0}
@@ -165,7 +165,7 @@ a{color:inherit;text-decoration:none}
 .story .x{margin-left:auto;border:0;background:var(--surface);box-shadow:var(--shadow);width:40px;height:40px;border-radius:50%;display:grid;place-items:center;flex:none}
 .story .x svg{width:20px;height:20px}
 .story .stage{flex:1;min-height:0;display:flex;align-items:center;justify-content:center;padding:4px 18px;overflow:hidden;position:relative}
-.story .slide{width:100%;max-width:600px;max-height:100%;font-size:calc(var(--k,1) * clamp(17px,3.3vw,20px));line-height:1.5;background:var(--surface);border-radius:26px;box-shadow:var(--shadow);padding:1.3em 1.2em;border-top:6px solid var(--m);animation:slidein .28s ease}
+.story .slide{width:100%;max-width:600px;max-height:100%;font-size:calc(var(--k,1) * clamp(1.0625rem,3.3vw,1.25rem));line-height:1.5;background:var(--surface);border-radius:26px;box-shadow:var(--shadow);padding:1.3em 1.2em;border-top:6px solid var(--m);animation:slidein .28s ease}
 @keyframes slidein{from{opacity:0;transform:translateX(14px)}to{opacity:1;transform:none}}
 .story .kind{display:inline-block;font-size:.66em;font-weight:700;letter-spacing:.1em;text-transform:uppercase;background:var(--m-soft);color:var(--m-ink);padding:.35em .9em;border-radius:99px;margin-bottom:.8em}
 .story h2{font-size:1.6em;margin-bottom:.55em;color:var(--ink)}
@@ -385,7 +385,7 @@ label.check.sw input{margin-top:2px;flex:none}
 .tstrat{margin:12px 0;background:rgba(255,255,255,.14);border-radius:14px;padding:10px 14px}
 .tstrat summary{cursor:pointer;font-weight:700} .tstrat ol{margin:8px 0 0;padding-left:20px;font-size:.95rem}
 /* Fokusmodus: nur das Nötigste */
-:root[data-focus] .tabbar, :root[data-focus] .fx, :root[data-focus] .nag{display:none!important}
+:root[data-focus] .fx, :root[data-focus] .nag, :root[data-focus] .hero-stat{display:none!important}
 :root[data-focus] .wrap{padding-bottom:32px}
 /* Ruhige Darstellung */
 :root[data-calm]{--font:Verdana,"Atkinson Hyperlegible",-apple-system,"Segoe UI",sans-serif;--display:var(--font);--grad-strong:linear-gradient(135deg,#5c5470,#423a56)}
@@ -463,3 +463,40 @@ details.fold > .road, details.fold > .src{margin-top:0}
 @media (max-height:700px){.compact .hero-stat{display:none}}
 .compact .ring{width:68px} .compact .ring svg.prog{width:100%;height:100%} .compact .ring .lbl{font-size:.68rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 @media (max-height:680px){.compact .hero p{display:none} .compact .cont .small{display:none} .compact .cont{padding:8px 12px} .compact .cont .thumb{width:36px;height:36px}}
+.flipcard{all:unset;box-sizing:border-box;display:flex;flex-direction:column;gap:10px;justify-content:center;align-items:center;text-align:center;width:100%;min-height:220px;padding:22px;border-radius:22px;background:var(--surface);box-shadow:var(--shadow);border-top:6px solid var(--m);cursor:pointer}
+.flipcard b{font-family:var(--display);font-size:1.5rem;line-height:1.25}
+.flipcard.back{align-items:flex-start;text-align:left;justify-content:flex-start}
+.flipcard:focus-visible{outline:3px solid var(--c2,#1971c2);outline-offset:2px}
+.card.kompakt{padding:14px 16px;margin-bottom:10px} .card.kompakt ul{margin:6px 0 0;padding-left:18px}
+details.bsp{margin:10px 0 6px} details.bsp summary{cursor:pointer;font-weight:700}
+.rate-row .btn.sel{border-color:var(--c3,#6741d9);background:color-mix(in srgb,var(--c3,#6741d9) 12%,var(--surface))}
+
+/* ---------- 0.14: Review Technik/Barrierefreiheit ---------- */
+.story .opt.dim{display:none}
+:root[data-size=xl] .story .shead .n small{display:none}
+:root[data-theme=dark] .opt.ok .l, :root[data-theme=dark] .opt.bad .l{color:#110e16}
+@media (prefers-color-scheme:dark){:root:not([data-theme=light]) .opt.ok .l, :root:not([data-theme=light]) .opt.bad .l{color:#110e16}}
+:root{--line-strong:#8f857a}
+:root[data-theme=dark]{--line-strong:#7a7290}
+@media (prefers-color-scheme:dark){:root:not([data-theme=light]){--line-strong:#7a7290}}
+.searchbox{border-color:var(--line-strong)!important}
+textarea, .searchbox input, input[type=date]{font-size:max(16px,1rem)}
+.compact .top .iconbtn,.qtop .say,.story .x,.story .shead .say{min-width:44px;min-height:44px}
+.back{min-height:44px}.seg button{min-height:44px}.compact details.fold>summary{min-height:44px}
+.wrap{padding-left:max(18px,env(safe-area-inset-left));padding-right:max(18px,env(safe-area-inset-right))}
+.story{padding-left:env(safe-area-inset-left);padding-right:env(safe-area-inset-right)}
+@media (orientation:landscape) and (max-height:500px){.story .shead{padding-block:4px}.story .snav{padding-block:6px calc(6px + var(--safe-b))}.story .snav .btn{padding-block:8px}}
+.story .body strong,.story li strong{padding:0 .12em;margin:0 -.12em;-webkit-box-decoration-break:clone;box-decoration-break:clone}
+/* Quiz/Test: Reiterleiste nicht über Antworten und Erklärung – dort gibt es „Beenden“ */
+body:has(.qcard:not(.result)) .tabbar{display:none}
+body:has(.qcard:not(.result)) .wrap{padding-bottom:calc(32px + var(--safe-b))}
+.term{display:inline}
+.vplan{list-style:none;margin:0;padding:0} .vplan > li{border-top:1px solid var(--line);padding:2px 0}
+.vplan summary, .vplan .vrow{display:flex;gap:10px;align-items:center;padding:9px 0;cursor:pointer;list-style:none;font-size:.95rem}
+.vplan summary::-webkit-details-marker{display:none}
+.vplan .kw{flex:none;width:74px;font-weight:700;font-variant-numeric:tabular-nums;color:var(--ink-2)} .vplan summary > span:nth-child(2), .vplan .vrow > span:nth-child(2){flex:1}
+.vplan li.vorbei{opacity:.6} .vplan li.naechste .kw{color:var(--c1,#d6336c)}
+.vplan ul{margin:0 0 8px 84px;padding:0;list-style:none} .vplan ul li{padding:4px 0} .vplan ul a{text-decoration:underline}
+.steps li.abschnitt{padding:14px 0 4px;font-family:var(--display);font-weight:700;color:var(--ink-2);font-size:.95rem} .steps li.abschnitt::before{display:none}
+.wrap.compact{padding-bottom:calc(68px + var(--safe-b))}
+@media (max-height:680px){.compact details.fold>summary{padding:8px 0;min-height:40px} .compact details.fold{margin-bottom:6px} .compact .nofold{font-size:.66rem;line-height:1.35;margin-top:6px!important} .compact .card.termin{padding:8px 12px}}
