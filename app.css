@@ -412,3 +412,8 @@ strong .term, .term strong{font-weight:inherit}
 .ts-grip{width:40px;height:5px;border-radius:9px;background:var(--line-strong);margin:0 auto 12px}
 .ts-in h2{font-size:1.35rem;margin-bottom:4px} .ts-de{color:var(--ink-3);font-weight:600;margin:0 0 8px} .ts-in p{margin:0 0 6px}
 .ts-in .say{width:48px;height:48px;flex:none}
+.hero p:empty{display:none}
+.hgoal{margin:14px 0 4px;max-width:460px} .hgoal b{font-size:1rem} .hgoal span{font-size:.92rem;opacity:.85}
+.hgoal .hbar{height:8px;border-radius:9px;margin-top:8px;background:color-mix(in srgb,currentColor 16%,transparent);overflow:hidden}
+.hgoal .hbar i{display:block;height:100%;border-radius:9px;background:var(--grad-strong);min-width:0}
+.hgoal.ok .hbar i{background:var(--ok)}
