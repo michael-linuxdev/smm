@@ -318,3 +318,14 @@ label.btn{cursor:pointer}
 .bar2 i{position:absolute;left:0;top:0;bottom:0;border-radius:99px}
 .bar2 .d{background:color-mix(in srgb,var(--c3) 30%,var(--surface))}
 .bar2 .s{background:var(--grad-strong)}
+
+/* Hero zurückhaltend: heller, leicht getönter Grund, dunkle Schrift, Farbe nur als Akzent */
+.hero{background:linear-gradient(135deg,color-mix(in srgb,#e83e8c 8%,var(--surface)),color-mix(in srgb,#7048e8 8%,var(--surface)));color:var(--ink);border:1px solid color-mix(in srgb,#ae3ec9 16%,var(--surface));box-shadow:var(--shadow)}
+.hero::after{background:color-mix(in srgb,#e83e8c 7%,transparent)}
+.hero::before{background:color-mix(in srgb,#7048e8 6%,transparent)}
+.hero .kicker{color:#a61e4d;opacity:1}
+.hero p{color:var(--ink-2);opacity:1!important}
+.hero-stat span{color:var(--ink-3);opacity:1}
+.hero .btn.white{background:var(--grad-strong);color:#fff;box-shadow:var(--shadow-l)}
+:root[data-theme=dark] .hero .kicker{color:#ff8cc0}
+@media (prefers-color-scheme:dark){:root:not([data-theme=light]) .hero .kicker{color:#ff8cc0}}
