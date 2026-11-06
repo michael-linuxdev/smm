@@ -9,7 +9,7 @@ const md = t => esc(t).replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>");
 const shuf = a => { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
 const modById = id => MODULE.find(m => m.id === id);
 const shade = (hex, f) => { const n = parseInt(hex.slice(1), 16); const c = [n >> 16, (n >> 8) & 255, n & 255].map(v => Math.round(v * f)); return `rgb(${c.join(",")})`; };
-const modGrad = m => `linear-gradient(150deg, ${m.farbe}, ${shade(m.farbe, .62)})`;
+const modGrad = m => `linear-gradient(150deg, ${shade(m.farbe, .72)}, ${shade(m.farbe, .5)})`;
 
 const I = {
  grund: '<path d="M12 3l2.6 5.6 6 .7-4.5 4.1 1.2 6L12 16.4 6.7 19.4l1.2-6L3.4 9.3l6-.7z"/>',
@@ -129,14 +129,14 @@ function viewModul(id) {
  const m = modById(id); if (!m) return viewLernen();
  const d = lekDone(m), all = d === m.lektionen.length;
  page("lernen", `<a class="back" href="#lernen">${ic("left")} Module</a>
- <section class="mod-head" style="background:${modGrad(m)}"><div class="ic">${ic(m.id)}</div><h1>${m.name}</h1><p>${m.text}</p><div class="bar"><i style="width:${modProgress(m) * 100}%"></i></div></section>
- <ol class="steps">${m.lektionen.map((l, i) => { const ok = S.lek[m.id + "/" + l.id]; return `<li><div class="dot ${ok ? "ok" : ""}" style="${ok ? `background:${m.farbe}` : ""}">${ok ? ic("check", 'stroke-width="3"') : i + 1}</div><a class="item" href="#lektion-${m.id}-${l.id}" style="display:flex;align-items:center;gap:10px;width:100%;text-decoration:none;background:var(--surface);border-radius:18px;padding:14px 16px;box-shadow:var(--shadow)"><div><b>${l.titel}</b><span class="small muted">${l.folien.length} Karten · ${l.min} Min.${ok ? " · erledigt" : ""}</span></div><span class="chev">${ic("right")}</span></a></li>`; }).join("")}
+ <section class="mod-head" style="--m:${m.farbe}"><div class="ic">${ic(m.id)}</div><h1>${m.name}</h1><p>${m.text}</p><div class="bar"><i style="width:${modProgress(m) * 100}%"></i></div></section>
+ <ol class="steps">${m.lektionen.map((l, i) => { const ok = S.lek[m.id + "/" + l.id]; return `<li><div class="dot ${ok ? "ok" : ""}" style="${ok ? `background:${shade(m.farbe, .6)}` : ""}">${ok ? ic("check", 'stroke-width="3"') : i + 1}</div><a class="item" href="#lektion-${m.id}-${l.id}" style="display:flex;align-items:center;gap:10px;width:100%;text-decoration:none;background:var(--surface);border-radius:18px;padding:14px 16px;box-shadow:var(--shadow)"><div><b>${l.titel}</b><span class="small muted">${l.folien.length} Karten · ${l.min} Min.${ok ? " · erledigt" : ""}</span></div><span class="chev">${ic("right")}</span></a></li>`; }).join("")}
  <li><div class="dot" style="${all ? "background:var(--grad);color:#fff" : ""}">${ic(all ? "bolt" : "lock")}</div><a class="item" href="#quiz-${m.id}" style="display:flex;align-items:center;gap:10px;width:100%;text-decoration:none;background:var(--surface);border-radius:18px;padding:14px 16px;box-shadow:var(--shadow)"><div><b>Modul-Quiz</b><span class="small muted">${modPool(m.id).length} Fragen · ${qDone(m.id)} sicher${all ? "" : " · empfohlen nach den Lektionen"}</span></div><span class="chev">${ic("right")}</span></a></li></ol>`);
 }
 
 /* ---------- Story-Player (Erstvermittlung) ---------- */
 let storyEl = null, storyKey = null;
-function closeStory() { if (storyEl) { storyEl.remove(); storyEl = null; document.body.style.overflow = ""; removeEventListener("keydown", storyKey); } }
+function closeStory() { if (storyEl) { storyEl.remove(); storyEl = null; if (!document.getElementById("gate")) document.body.classList.remove("no-scroll"); removeEventListener("keydown", storyKey); } }
 function openStory(mid, lid) {
  const m = modById(mid), l = m && m.lektionen.find(x => x.id === lid);
  if (!l) return viewLernen();
@@ -145,9 +145,9 @@ function openStory(mid, lid) {
  const F = [...l.folien, { k: "ende" }];
  let i = 0, answered = {};
  storyEl = document.createElement("div");
- storyEl.className = "story"; storyEl.style.background = modGrad(m);
+ storyEl.className = "story"; storyEl.style.setProperty("--m", m.farbe);
  storyEl.setAttribute("role", "dialog"); storyEl.setAttribute("aria-label", l.titel);
- document.body.appendChild(storyEl); document.body.style.overflow = "hidden";
+ document.body.appendChild(storyEl); document.body.classList.add("no-scroll");
  const go = d => { const f = F[i]; if (d > 0 && f.k === "check" && !(i in answered)) return toast("Wähle zuerst eine Antwort"); i = Math.max(0, Math.min(F.length - 1, i + d)); draw(); };
  storyKey = e => { if (e.key === "ArrowRight") go(1); if (e.key === "ArrowLeft") go(-1); if (e.key === "Escape") location.hash = "modul-" + mid; };
  addEventListener("keydown", storyKey);
@@ -156,29 +156,37 @@ function openStory(mid, lid) {
   const kindName = { intro: "Lektion", text: "Wissen", liste: "Überblick", beispiel: "Beispiel", merke: "Merke", check: "Kurz-Check" }[f.k] || "";
   let body = "";
   if (f.k === "liste") body = `<span class="kind">${kindName}</span><h2>${md(f.h)}</h2><ul>${f.l.map((x, n) => `<li style="animation-delay:${n * 60}ms">${md(x)}</li>`).join("")}</ul>`;
-  else if (f.k === "beispiel" || f.k === "merke") body = `<div class="note"><span class="kind">${kindName}</span><h2 style="color:var(--ink);font-size:clamp(22px,5vw,30px)">${md(f.h)}</h2><div class="body">${md(f.b)}</div></div>`;
+  else if (f.k === "beispiel" || f.k === "merke") body = `<span class="kind">${kindName}</span><h2>${md(f.h)}</h2><div class="body">${md(f.b)}</div>`;
   else if (f.k === "check") {
    const order = f._o || (f._o = shuf(f.a.map((t, k) => k)));
    const a = answered[i];
-   body = `<span class="kind">${kindName}</span><h2 style="font-size:clamp(21px,4.6vw,28px)">${md(f.q)}</h2>${order.map((k, n) => { let cl = ""; if (a !== undefined) cl = k === f.c ? "ok" : k === a ? "bad" : "dim"; return `<button class="opt ${cl}" data-k="${k}"><span class="l">${"ABCD"[n]}</span><span>${esc(f.a[k])}</span></button>`; }).join("")}${a !== undefined ? `<div class="fb"><b>${a === f.c ? "Richtig!" : "Nicht ganz."}</b>${esc(f.e)}</div>` : ""}`;
+   body = `<span class="kind">${kindName}</span><h2 style="font-size:1.3em">${md(f.q)}</h2>${order.map((k, n) => { let cl = ""; if (a !== undefined) cl = k === f.c ? "ok" : k === a ? "bad" : "dim"; return `<button class="opt ${cl}" data-k="${k}"><span class="l">${"ABCD"[n]}</span><span>${esc(f.a[k])}</span></button>`; }).join("")}${a !== undefined ? `<div class="fb ${a === f.c ? "ok" : "bad"}"><b>${a === f.c ? "Richtig!" : "Nicht ganz."}</b>${esc(f.e)}</div>` : ""}`;
   }
   else if (last) body = `<div style="text-align:center"><div class="confetti">🎉</div><span class="kind">Geschafft</span><h2>${esc(l.titel)}</h2><div class="body">Lektion abgeschlossen. ${nextIn(m, l) ? "Weiter mit der nächsten Lektion?" : "Jetzt im Modul-Quiz festigen!"}</div></div>`;
   else body = `<span class="kind">${kindName}</span><h2>${md(f.h)}</h2><div class="body">${md(f.b)}</div>`;
   const nx = nextIn(m, l);
   storyEl.innerHTML = `<div class="segs">${F.slice(0, -1).map((_, n) => `<i class="${n < i || last ? "on" : ""}"><b style="${n === i ? "width:100%" : ""}"></b></i>`).join("")}</div>
   <div class="shead"><div class="av">${ic(m.id)}</div><div class="n">${esc(l.titel)}<small>${esc(m.name)}</small></div><button class="x" aria-label="Schließen">${ic("x")}</button></div>
-  <div class="stage">${f.k !== "check" && !last ? '<div class="tapzone l"></div><div class="tapzone r"></div>' : ""}<div class="slide">${body}</div></div>
-  <div class="snav">${i > 0 ? `<button class="btn prev" aria-label="Zurück">${ic("left")}</button>` : ""}${last ? (nx ? `<a class="btn white" href="#lektion-${m.id}-${nx.id}">Nächste Lektion ${ic("right")}</a>` : `<a class="btn white" href="#quiz-${m.id}">Zum Modul-Quiz ${ic("right")}</a>`) : `<button class="btn white next">Weiter ${ic("right")}</button>`}</div>`;
+  <div class="stage">${f.k !== "check" && !last ? '<div class="tapzone l"></div><div class="tapzone r"></div>' : ""}<div class="slide ${f.k === "beispiel" || f.k === "merke" ? "note" : ""}">${body}</div></div>
+  <div class="snav">${i > 0 ? `<button class="btn prev" aria-label="Zurück">${ic("left")}</button>` : ""}${last ? (nx ? `<a class="btn" href="#lektion-${m.id}-${nx.id}">Nächste Lektion ${ic("right")}</a>` : `<a class="btn" href="#quiz-${m.id}">Zum Modul-Quiz ${ic("right")}</a>`) : `<button class="btn next">Weiter ${ic("right")}</button>`}</div>`;
   if (last) { S.lek[m.id + "/" + l.id] = true; save(); }
   $(".x", storyEl).onclick = () => location.hash = "modul-" + mid;
   $(".next", storyEl)?.addEventListener("click", () => go(1));
   $(".prev", storyEl)?.addEventListener("click", () => go(-1));
   $(".tapzone.l", storyEl)?.addEventListener("click", () => go(-1));
   $(".tapzone.r", storyEl)?.addEventListener("click", () => go(1));
+  fitSlide();
   $$(".opt", storyEl).forEach(b => b.onclick = () => { if (i in answered) return; answered[i] = +b.dataset.k; const p = POOL.find(p => p.q === f.q); if (p && answered[i] === f.c) S.q[p.key] = true; save(); draw(); });
  }
  draw();
 }
+// Kein Scrollen in Storys: Schrift so lange verkleinern, bis die Karte in die Bühne passt.
+function fitSlide() {
+ const stage = $(".stage", storyEl), slide = $(".slide", storyEl); if (!stage || !slide) return;
+ let k = 1; slide.style.setProperty("--k", k);
+ while (slide.scrollHeight > stage.clientHeight - 8 && k > .55) { k -= .04; slide.style.setProperty("--k", k.toFixed(2)); }
+}
+addEventListener("resize", () => storyEl && fitSlide());
 function nextIn(m, l) { const k = m.lektionen.indexOf(l); return m.lektionen[k + 1] || null; }
 
 /* ---------- Quiz ---------- */
@@ -330,3 +338,93 @@ route();
 if ("serviceWorker" in navigator && location.protocol === "https:" && !/claude|claudeusercontent/.test(location.host)) {
  navigator.serviceWorker.register("sw.js").catch(() => {});
 }
+
+/* ---------- Als App installieren (wie Einbürgerungs-App) ----------
+   Handy/Tablet im Browser: Vollbild-Hinweis „Zuerst installieren“ bei jedem neuen Besuch.
+   „Im Browser weiter“ gilt 6 Stunden, danach erscheint der Hinweis wieder. Solange: Balken oben. */
+const APP_URL = "https://smm.micana.de";
+const GATE_KEY = "smm.gateSkip", GATE_HOURS = 6;
+let deferredPrompt = null, appInstalled = false;
+addEventListener("beforeinstallprompt", e => { e.preventDefault(); deferredPrompt = e; $$('[data-act="native-install"]').forEach(b => b.hidden = false); });
+addEventListener("appinstalled", () => { appInstalled = true; toast("App installiert"); if ($("#gate")) installGate(true); });
+function platform() {
+ const ua = navigator.userAgent;
+ const standalone = matchMedia("(display-mode: standalone)").matches || matchMedia("(display-mode: fullscreen)").matches || navigator.standalone === true;
+ const ios = /iPhone|iPad|iPod/.test(ua) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+ const android = /Android/.test(ua);
+ const inapp = /Instagram|FBAN|FBAV|Line\/|Telegram|WhatsApp|TikTok|LinkedInApp|; wv\)/i.test(ua);
+ let browser = "other";
+ if (inapp) browser = "inapp";
+ else if (ios) browser = /CriOS/.test(ua) ? "chrome" : /FxiOS/.test(ua) ? "firefox" : /EdgiOS/.test(ua) ? "edge" : /Safari/.test(ua) ? "safari" : "other";
+ else if (android) browser = /SamsungBrowser/.test(ua) ? "samsung" : /Firefox/.test(ua) ? "firefox" : /EdgA/.test(ua) ? "edge" : /OPR|Opera/.test(ua) ? "opera" : /Chrome/.test(ua) ? "chrome" : "other";
+ else browser = /Edg\//.test(ua) ? "edge" : /Chrome/.test(ua) ? "chrome" : /Firefox/.test(ua) ? "firefox" : /Safari/.test(ua) ? "safari" : "other";
+ return { os: ios ? "ios" : android ? "android" : "desktop", browser, standalone };
+}
+const SHARE = '<svg width="18" height="18" viewBox="0 0 24 24" style="vertical-align:-3px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round"><path d="M12 3v12M8 7l4-4 4 4M5 12v8h14v-8"/></svg>';
+function installSteps(os, browser) {
+ const S2 = {
+  "ios-safari": ["Unten (iPhone) bzw. oben (iPad) auf das Teilen-Symbol {S} tippen.", "Nach unten scrollen und „Zum Home-Bildschirm“ wählen.", "Oben rechts auf „Hinzufügen“ tippen."],
+  "ios-chrome": ["Oben rechts in der Adresszeile auf das Teilen-Symbol {S} tippen.", "„Zum Home-Bildschirm“ wählen (eventuell erst „Mehr“ antippen).", "Auf „Hinzufügen“ tippen."],
+  "ios-firefox": ["Unten rechts auf das Menü ☰ tippen.", "„Teilen“ wählen, dann „Zum Home-Bildschirm“.", "Auf „Hinzufügen“ tippen."],
+  "ios-edge": ["Unten auf das Menü ⋯ tippen, dann auf „Teilen“ {S}.", "„Zum Home-Bildschirm“ wählen.", "Auf „Hinzufügen“ tippen."],
+  "ios-other": ["Öffne diese Seite in Safari (Adresse kopieren und in Safari einfügen).", "Dann Teilen {S} → „Zum Home-Bildschirm“ → „Hinzufügen“."],
+  "android-chrome": ["Oben rechts auf das Menü ⋮ tippen.", "„App installieren“ oder „Zum Startbildschirm hinzufügen“ wählen.", "Mit „Installieren“ bestätigen."],
+  "android-samsung": ["Unten rechts auf das Menü ☰ tippen.", "„Seite hinzufügen zu“ wählen, dann „Startbildschirm“.", "Mit „Hinzufügen“ bestätigen."],
+  "android-firefox": ["Auf das Menü ⋮ tippen.", "„Installieren“ bzw. „Zum Startbildschirm hinzufügen“ wählen.", "Mit „Hinzufügen“ bestätigen."],
+  "android-edge": ["Unten auf das Menü ⋯ tippen.", "„Zum Telefon hinzufügen“ bzw. „App installieren“ wählen.", "Bestätigen."],
+  "android-opera": ["Auf das Menü ⋮ tippen.", "„Zum Startbildschirm hinzufügen“ wählen.", "Bestätigen."],
+  "android-other": ["Öffne diese Seite am besten in Chrome.", "Menü ⋮ → „App installieren“."],
+  "inapp": ["Du hast die Seite aus einer App (z. B. Instagram, LinkedIn oder WhatsApp) geöffnet. Von dort kann man nichts installieren.", "Tippe oben rechts auf ⋯ bzw. ⋮ und wähle „Im Browser öffnen“.", "Dann erscheint die passende Anleitung."],
+  "desktop-chrome": ["Rechts in der Adresszeile auf das Installieren-Symbol (Bildschirm mit Pfeil) klicken.", "„Installieren“ bestätigen."],
+  "desktop-edge": ["Rechts in der Adresszeile auf „App verfügbar“ klicken.", "„Installieren“ bestätigen."],
+  "desktop-safari": ["Im Menü „Ablage“ → „Zum Dock hinzufügen“ wählen."],
+  "desktop-other": ["Am bequemsten lernst du am Handy: smm.micana.de öffnen und dort installieren."]
+ };
+ return S2[browser === "inapp" ? "inapp" : `${os}-${browser}`] || S2[`${os}-other`] || S2["desktop-other"];
+}
+const OS_NAME = { ios: "iPhone / iPad", android: "Android", desktop: "Computer" };
+const BR_NAME = { safari: "Safari", chrome: "Chrome", firefox: "Firefox", edge: "Edge", samsung: "Samsung Internet", opera: "Opera", inapp: "In-App-Browser", other: "Browser" };
+const installGuide = p => `<p class="small muted" style="margin:0 0 10px">Erkannt: ${OS_NAME[p.os]} · ${BR_NAME[p.browser]}</p>
+ <button class="btn block" data-act="native-install" ${deferredPrompt ? "" : "hidden"} style="margin-bottom:12px">Jetzt installieren</button>
+ <ol class="isteps">${installSteps(p.os, p.browser).map(s => `<li>${esc(s).replace(/\{S\}/g, SHARE)}</li>`).join("")}</ol>`;
+async function nativeInstall() { if (!deferredPrompt) return; deferredPrompt.prompt(); const r = await deferredPrompt.userChoice; deferredPrompt = null; if (r.outcome === "accepted") { appInstalled = true; if ($("#gate")) installGate(true); } }
+const gateSkipped = () => { try { return Date.now() - (+localStorage.getItem(GATE_KEY) || 0) < GATE_HOURS * 3600000; } catch (e) { return false; } };
+async function detectInstalled() { try { const a = await navigator.getInstalledRelatedApps?.(); if (a && a.length) appInstalled = true; } catch (e) {} return appInstalled; }
+function installGate(force) {
+ const p = platform();
+ $("#nag")?.remove(); document.body.classList.remove("nagged");
+ if (p.standalone) { $("#gate")?.remove(); return; }
+ if (p.os === "desktop") return; // Computer: kein Zwang
+ if (!force && gateSkipped()) { $("#gate")?.remove(); return nag(); }
+ const draw = () => {
+  let el = $("#gate");
+  if (!el) { el = document.createElement("div"); el.id = "gate"; el.className = "gate"; el.setAttribute("role", "dialog"); el.setAttribute("aria-modal", "true"); el.setAttribute("aria-labelledby", "gate-h"); document.body.appendChild(el); }
+  el.innerHTML = `<div class="gate-in">
+   <div class="top"><div class="logo">${ic("bolt", 'stroke="#fff"')}</div><div class="t">SMM Coach<small>Social Media Manager (IHK)</small></div></div>
+   ${appInstalled ? `<h1 id="gate-h" tabindex="-1">Die App ist installiert</h1><div class="tip good" style="margin-top:14px">Öffne sie jetzt über das Symbol „SMM Coach“ auf deinem Startbildschirm. Dieses Browserfenster kannst du schließen.</div>`
+   : `<h1 id="gate-h" tabindex="-1">Zuerst die App installieren</h1><p class="muted" style="margin:8px 0 16px">Dauert 20 Sekunden – danach lernst du wie in einer richtigen App.</p>
+    <div class="card"><h3 style="margin-bottom:10px">So geht's</h3>${installGuide(p)}${p.browser === "inapp" || p.browser === "other" ? `<button class="btn ghost" data-act="copy-url" style="margin-top:6px">Adresse kopieren</button>` : ""}</div>
+    <ul class="gate-why"><li>${ic("check", 'stroke-width="3"')}<span><b>Immer auf dem Startbildschirm</b> – ein Tipp, und du lernst weiter.</span></li><li>${ic("check", 'stroke-width="3"')}<span><b>Funktioniert ohne Internet</b> – auch in Bahn und Pause.</span></li><li>${ic("check", 'stroke-width="3"')}<span><b>Dein Lernstand ist sicherer</b> – der Browser löscht ihn nicht so leicht.</span></li></ul>
+    ${p.os === "ios" && p.browser !== "inapp" ? `<div class="tip">${ic("warn", 'style="color:var(--bad)"')}<span>Wichtig auf iPhone und iPad: Was du hier im Browser lernst, wird <b>nicht</b> in die installierte App übernommen. Installiere deshalb jetzt zuerst.</span></div>` : ""}`}
+   <button class="gate-skip" data-act="gate-skip">${appInstalled ? "Trotzdem im Browser weiter" : "Ohne Installation im Browser weiter"}</button></div>`;
+ };
+ draw();
+ document.body.classList.add("no-scroll");
+ const el = $("#gate");
+ el.onclick = async e => {
+  const t = e.target;
+  if (t.closest('[data-act="native-install"]')) return nativeInstall();
+  if (t.closest('[data-act="copy-url"]')) { try { await navigator.clipboard.writeText(APP_URL); toast("Adresse kopiert – im Browser einfügen"); } catch (x) { toast(APP_URL); } return; }
+  if (t.closest('[data-act="gate-skip"]')) { try { localStorage.setItem(GATE_KEY, String(Date.now())); } catch (x) {} el.remove(); document.body.classList.remove("no-scroll"); nag(); }
+ };
+ if (!force && !appInstalled) detectInstalled().then(x => { if (x && $("#gate")) draw(); });
+ $("#gate-h")?.focus();
+}
+function nag() {
+ if ($("#nag")) return;
+ const el = document.createElement("button"); el.id = "nag"; el.className = "nag";
+ el.innerHTML = `<span><b>App nicht installiert</b></span><span class="go">Installieren ${ic("right")}</span>`;
+ el.onclick = () => installGate(true);
+ document.body.appendChild(el); document.body.classList.add("nagged");
+}
+installGate();
