@@ -529,3 +529,9 @@ body:has(.qcard:not(.result)) .wrap{padding-bottom:calc(32px + var(--safe-b))}
 .compact .ring .lbl{font-size:.78rem} .compact .ring .done-badge{width:24px;height:24px}
 .compact .rings{gap:12px}
 .compact .top{margin-bottom:6px} .compact .hero{margin-bottom:10px}
+.tgrid{display:grid;grid-template-columns:auto 1fr;gap:6px 10px;align-items:center} .tgrid label{font-weight:600;font-size:.92rem}
+.tgrid input[type=date]{width:100%;min-width:0;padding:6px 10px}
+.tgrid{grid-template-columns:1fr 1fr;gap:8px} .tcell{display:flex;flex-direction:column;gap:2px;min-width:0} .tcell label{font-size:.78rem;color:var(--ink-2)}
+.compact .card.termin h2{font-size:1rem}
+@media (max-height:680px){.compact .card.termin h2{display:none} .compact #pinfo{display:none}}
+.tabbar a{padding:10px 18px} @media (max-width:360px){.tabbar a{padding:10px 13px}}

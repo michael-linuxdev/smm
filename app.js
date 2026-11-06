@@ -60,7 +60,7 @@ const ic = (n, extra = "") => `<svg viewBox="0 0 24 24" fill="none" stroke="curr
 /* ---------- Speicher ----------
    Doppelt: localStorage (schnell) + IndexedDB (robuster). Beim Start gewinnt der neuere Stand (Zeitstempel).
    Fragen und Lektionen haben stabile Schlüssel (unabhängig vom Modul), alte Schlüssel werden migriert. */
-const KEY = "smm-coach", VERSION = "0.14.4";
+const KEY = "smm-coach", VERSION = "0.15.0";
 const DEF = () => ({ lek: {}, q: {}, srs: {}, last: null, tests: [], pruefung: "", day: null, seen: 0, set: { size: "m", theme: "auto", goal: "15", vibe: true, step: true, mig1: 1 }, lastBackup: 0, created: Date.now(), updated: 0, run: null, lastRun: null });
 let S = DEF();
 try { const x = JSON.parse(localStorage.getItem(KEY) || "null"); if (x) S = Object.assign(DEF(), x); } catch (e) {}
@@ -164,7 +164,8 @@ function normalizeState() {
  for (const k of Object.keys(S.srs)) if (!POOL_KEYS.has(k)) { S.orph.srs[k] = S.srs[k]; delete S.srs[k]; }
  // T8: importierte Daten säubern (Schutz vor eingeschleustem Code)
  S.tests = (Array.isArray(S.tests) ? S.tests : []).map(Number).filter(n => Number.isFinite(n) && n >= 0 && n <= 100).map(Math.round);
- S.pruefung = /^\d{4}-\d{2}-\d{2}$/.test(S.pruefung || "") ? S.pruefung : "";
+ const iso = v => /^\d{4}-\d{2}-\d{2}$/.test(v || "") ? v : "";
+ S.pruefung = iso(S.pruefung); S.kursStart = iso(S.kursStart); S.workshops = [0, 1].map(k => iso((S.workshops || [])[k]));
  const okSet = { size: ["s", "m", "l", "xl"], theme: ["auto", "light", "dark"], goal: ["10", "15", "25"], pomo: ["", "10", "25"], clock: ["", "genau"] };
  for (const [k, v] of Object.entries(okSet)) if (!v.includes(String(S.set[k] ?? v[0]))) S.set[k] = k === "goal" ? "15" : v[0];
  if (S.run && !(Array.isArray(S.run.ids) && S.run.ans && typeof S.run.ans === "object")) S.run = null;
@@ -187,7 +188,7 @@ function ringSvg(p, size = 76, w = 4, track = "var(--line)", color = null) {
 }
 
 /* ---------- Router ---------- */
-const TABS = [["start", "Start", "home"], ["praxis", "Praxis", "praxis"], ["pruefung", "Prüfung", "exam"], ["lehrgang", "Lehrgang", "info"]];
+const TABS = [["start", "Start", "home"], ["praxis", "Praxis", "praxis"], ["pruefung", "Prüfung", "exam"], ["lehrgang", "Lehrgang", "info"], ["einstellungen", "Einstellungen", "gear"]];
 function tabbar(active) {
  return `<nav class="tabbar" aria-label="Navigation">${TABS.filter(([h]) => h !== "praxis" || PROJEKTE.length).map(([h, t, i]) => `<a href="#${h}" data-tab aria-label="${t}" title="${t}" class="${active === h ? "on" : ""}"${active === h ? ' aria-current="page"' : ""}>${ic(i)}<span class="sr-only">${t}</span></a>`).join("")}</nav>`;
 }
@@ -202,11 +203,11 @@ function page(active, html, o = {}) {
  if (h1 && page.n++) { h1.setAttribute("tabindex", "-1"); h1.focus({ preventScroll: true }); }
 }
 page.n = 0;
-function head(t = "Social Media Manager (IHK)") { return `<div class="top"><div class="t">${t}</div><a class="iconbtn" href="#einstellungen" aria-label="Einstellungen">${ic("gear")}</a></div>`; }
+function head(t = "Social Media Manager (IHK)") { return `<div class="top"><div class="t">${t}</div></div>`; }
 
 /* ---------- Navigation: „Zurück“ führt dorthin, wo man herkam ----------
    Tab-Wurzeln setzen den Verlauf zurück, damit Zurück nie in einen anderen Reiter springt. */
-const TAB_ROOTS = ["#start", "#praxis", "#pruefung", "#lehrgang"];
+const TAB_ROOTS = ["#start", "#praxis", "#pruefung", "#lehrgang", "#einstellungen"];
 const NAV = { st: (() => { try { return JSON.parse(sessionStorage.getItem("nav")) || []; } catch (e) { return []; } })(), rep: false };
 function navTrack() {
  const h = location.hash || "#start", st = NAV.st;
@@ -292,6 +293,18 @@ function ringsHtml() {
 }
 const PASS = 50; // Bestehensgrenze: bei IHK-Zertifikatstests üblich 50 %, für Dresden nicht offiziell bestätigt
 const ZIEL = 70; // Übungsziel mit Sicherheitspuffer (Selbstbewertung der Freitexte ist meist zu milde)
+// Termine: Beginn der Weiterbildung, zwei Workshop-Tage, Prüfung
+const TERMINE = [["beginn", "Beginn"], ["ws1", "Workshop 1"], ["ws2", "Workshop 2"], ["pruefung", "Prüfung"]];
+const terminWert = k => k === "pruefung" ? S.pruefung || "" : k === "beginn" ? S.kursStart || "" : (S.workshops || [])[k === "ws1" ? 0 : 1] || "";
+function terminSetzen(k, v) { if (k === "pruefung") S.pruefung = v; else if (k === "beginn") S.kursStart = v; else { S.workshops = S.workshops || ["", ""]; S.workshops[k === "ws1" ? 0 : 1] = v; } }
+const tageBis = d => d ? Math.ceil((new Date(d + "T09:00") - Date.now()) / 86400000) : null;
+function naechsterTermin() {
+ return TERMINE.map(([k, t]) => ({ k, t: k === "pruefung" ? "Prüfung" : k === "beginn" ? "Start der Weiterbildung" : t, d: tageBis(terminWert(k)) })).filter(x => x.d !== null && x.d >= 0).sort((a, b) => a.d - b.d)[0] || null;
+}
+function terminInfo() {
+ const n = naechsterTermin(); if (!n) return TERMINE.some(([k]) => terminWert(k)) ? "Alle eingetragenen Termine liegen in der Vergangenheit." : "Trag deine Termine ein, sobald du sie kennst.";
+ return n.d === 0 ? `Heute: ${n.t}${n.k === "pruefung" ? " – viel Erfolg!" : ""}` : `Als Nächstes: ${n.t} in ${n.d} Tag${n.d === 1 ? "" : "en"}.`;
+}
 function daysLeft() { if (!S.pruefung) return null; const d = Math.ceil((new Date(S.pruefung + "T09:00") - Date.now()) / 86400000); return isNaN(d) ? null : d; }
 // Hauptseiten sollen ohne Scrollen passen: notfalls die unwichtigsten Hinweiskarten ausblenden
 /* ---------- Vorlesungsplan (laut Foto des Teilnehmers, nicht offiziell) ---------- */
@@ -324,7 +337,7 @@ function viewStart() {
   <div class="hero-stat fx"><div><b>${lessonsDone}/${lessonsAll}</b><span>Lektionen</span></div><div><b>${POOL.filter(q => q.key in S.q).length}/${POOL.length}</b><span>Fragen bearbeitet</span></div><div><b>${best === null ? "–" : best + " %"}</b><span>Bester Test</span></div></div>
   <div class="row"><a class="btn white" href="${endspurt ? "#endspurt" : "#mini"}">${ic("play")} ${endspurt ? "Endspurt heute" : p > 0 ? "Weiterlernen" : "Loslegen"}</a></div>
  </section>
- ${[(S.run ? `<a class="cont" href="#test" style="margin-bottom:10px"><div class="thumb" style="background:var(--grad-strong)">${ic("clock")}</div><div><b style="font-size:1rem">Probetest läuft</b><div class="small muted">Weitermachen, wo du aufgehört hast</div></div><span class="chev" style="margin-left:auto">${ic("right")}</span></a>` : ""), (() => { const v = naechsteVorlesung(); if (!v) return ""; const offen = v.lektionen.map(LEK).filter(x => x && !S.lek[x.l.id]); if (!offen.length) return ""; const t = (new Date(v.datum + "T12:00") - Date.now()) / 86400000; if (t > 8) return ""; return `<a class="cont" href="#lektion-${offen[0].m.id}-${offen[0].l.id}"><div class="thumb" style="background:linear-gradient(135deg,#2b8a3e,#1864ab)">${ic("cal")}</div><div><b style="font-size:1rem">Vorlesung ${datumDE(v.datum)}: ${esc(v.titel)}</b><div class="small muted">${offen.length} passende Lektion${offen.length === 1 ? "" : "en"} vorab lernen</div></div><span class="chev" style="margin-left:auto">${ic("right")}</span></a>`; })(), ((() => { const d = uebenN(); return d ? `<a class="cont" href="#quiz-ueben" style="margin-bottom:10px"><div class="thumb" style="background:linear-gradient(135deg,#1864ab,#6741d9)">${ic("repeat")}</div><div><b style="font-size:1rem">Üben: ${Math.min(d, 10)} Frage${d === 1 ? "" : "n"}</b><div class="small muted">Fehler und fällige Wiederholungen – damit es bis zur Prüfung sitzt.</div></div><span class="chev" style="margin-left:auto">${ic("right")}</span></a>` : ""; })()), (S.lek.grundwortschatz && !S.set?.hilfeGefragt ? `<a class="cont" href="#einstellungen" data-hilfe style="margin-bottom:10px"><div class="thumb" style="background:linear-gradient(135deg,#2b8a3e,#1864ab)">${ic("focus")}</div><div><b style="font-size:1rem">Lernhilfen einstellen</b><div class="small muted">Fokusmodus, Pausen, ruhige Darstellung – z. B. bei ADHS</div></div><span class="chev" style="margin-left:auto">${ic("right")}</span></a>` : ""), (hasProgress(S) && Date.now() - (S.lastBackup || S.created || 0) > (S.lastBackup ? 14 : 7) * 86400000 /* erste Erinnerung nach 7 Tagen, danach alle 14 */ ? `<a class="cont" href="#einstellungen" style="margin-bottom:10px"><div class="thumb" style="background:linear-gradient(135deg,#495057,#212529)">${ic("download")}</div><div><b style="font-size:1rem">Lernstand sichern</b><div class="small muted">Lade eine Sicherungsdatei herunter – falls der Browser Daten löscht.</div></div><span class="chev" style="margin-left:auto;color:var(--ink-3)">${ic("right")}</span></a>` : ""), (platform().standalone && !hasProgress(S) && !S.set?.restoreGesehen && !S.day && Date.now() - (S.created || 0) < 3 * 86400000 ? `<a class="cont" href="#einstellungen" data-restore style="margin-bottom:10px"><div class="thumb" style="background:linear-gradient(135deg,#495057,#212529)">${ic("upload")}</div><div><b style="font-size:1rem">Kommst du aus dem Browser?</b><div class="small muted">Dort gesicherten Lernstand in den Einstellungen wiederherstellen.</div></div><span class="chev" style="margin-left:auto">${ic("right")}</span></a>` : ""), (S.pruefung ? "" : `<a class="cont" href="#lehrgang" style="margin-bottom:6px"><div class="thumb" style="background:var(--grad-strong)">${ic("cal")}</div><div><b style="font-size:1rem">Prüfungstermin eintragen</b><div class="small muted">Dann zeigt dir die App, wie viel du pro Woche lernen solltest.</div></div><span class="chev" style="margin-left:auto;color:var(--ink-3)">${ic("right")}</span></a>`)].filter(Boolean).slice(0, 2).join("")}
+ ${[(S.run ? `<a class="cont" href="#test" style="margin-bottom:10px"><div class="thumb" style="background:var(--grad-strong)">${ic("clock")}</div><div><b style="font-size:1rem">Probetest läuft</b><div class="small muted">Weitermachen, wo du aufgehört hast</div></div><span class="chev" style="margin-left:auto">${ic("right")}</span></a>` : ""), ((() => { const n = naechsterTermin(); if (!n || n.k === "pruefung" || n.d > 7) return ""; return `<a class="cont" href="#lehrgang"><div class="thumb" style="background:linear-gradient(135deg,#2b8a3e,#1864ab)">${ic("cal")}</div><div><b style="font-size:1rem">${esc(n.t)} ${n.d === 0 ? "heute" : n.d === 1 ? "morgen" : `in ${n.d} Tagen`}</b><div class="small muted">${n.k === "beginn" ? "Am besten vorher den Grundwortschatz lernen" : "Termin im Lehrgang ansehen"}</div></div><span class="chev" style="margin-left:auto">${ic("right")}</span></a>`; })()), (() => { const v = naechsteVorlesung(); if (!v) return ""; const offen = v.lektionen.map(LEK).filter(x => x && !S.lek[x.l.id]); if (!offen.length) return ""; const t = (new Date(v.datum + "T12:00") - Date.now()) / 86400000; if (t > 8) return ""; return `<a class="cont" href="#lektion-${offen[0].m.id}-${offen[0].l.id}"><div class="thumb" style="background:linear-gradient(135deg,#2b8a3e,#1864ab)">${ic("cal")}</div><div><b style="font-size:1rem">Vorlesung ${datumDE(v.datum)}: ${esc(v.titel)}</b><div class="small muted">${offen.length} passende Lektion${offen.length === 1 ? "" : "en"} vorab lernen</div></div><span class="chev" style="margin-left:auto">${ic("right")}</span></a>`; })(), ((() => { const d = uebenN(); return d ? `<a class="cont" href="#quiz-ueben" style="margin-bottom:10px"><div class="thumb" style="background:linear-gradient(135deg,#1864ab,#6741d9)">${ic("repeat")}</div><div><b style="font-size:1rem">Üben: ${Math.min(d, 10)} Frage${d === 1 ? "" : "n"}</b><div class="small muted">Fehler und fällige Wiederholungen – damit es bis zur Prüfung sitzt.</div></div><span class="chev" style="margin-left:auto">${ic("right")}</span></a>` : ""; })()), (S.lek.grundwortschatz && !S.set?.hilfeGefragt ? `<a class="cont" href="#einstellungen" data-hilfe style="margin-bottom:10px"><div class="thumb" style="background:linear-gradient(135deg,#2b8a3e,#1864ab)">${ic("focus")}</div><div><b style="font-size:1rem">Lernhilfen einstellen</b><div class="small muted">Fokusmodus, Pausen, ruhige Darstellung – z. B. bei ADHS</div></div><span class="chev" style="margin-left:auto">${ic("right")}</span></a>` : ""), (hasProgress(S) && Date.now() - (S.lastBackup || S.created || 0) > (S.lastBackup ? 14 : 7) * 86400000 /* erste Erinnerung nach 7 Tagen, danach alle 14 */ ? `<a class="cont" href="#einstellungen" style="margin-bottom:10px"><div class="thumb" style="background:linear-gradient(135deg,#495057,#212529)">${ic("download")}</div><div><b style="font-size:1rem">Lernstand sichern</b><div class="small muted">Lade eine Sicherungsdatei herunter – falls der Browser Daten löscht.</div></div><span class="chev" style="margin-left:auto;color:var(--ink-3)">${ic("right")}</span></a>` : ""), (platform().standalone && !hasProgress(S) && !S.set?.restoreGesehen && !S.day && Date.now() - (S.created || 0) < 3 * 86400000 ? `<a class="cont" href="#einstellungen" data-restore style="margin-bottom:10px"><div class="thumb" style="background:linear-gradient(135deg,#495057,#212529)">${ic("upload")}</div><div><b style="font-size:1rem">Kommst du aus dem Browser?</b><div class="small muted">Dort gesicherten Lernstand in den Einstellungen wiederherstellen.</div></div><span class="chev" style="margin-left:auto">${ic("right")}</span></a>` : ""), (S.pruefung ? "" : `<a class="cont" href="#lehrgang" style="margin-bottom:6px"><div class="thumb" style="background:var(--grad-strong)">${ic("cal")}</div><div><b style="font-size:1rem">Termine eintragen</b><div class="small muted">Beginn, Workshops und Prüfung – für deinen Lernplan.</div></div><span class="chev" style="margin-left:auto;color:var(--ink-3)">${ic("right")}</span></a>`)].filter(Boolean).slice(0, 2).join("")}
  <a class="cont" href="#glossar" style="margin-bottom:10px"><div class="thumb" style="background:linear-gradient(135deg,#2b8a3e,#1864ab)">${ic("abc")}</div><div><b style="font-size:1rem">Glossar & Formeln</b><div class="small muted">${GLOSSAR.length} Begriffe und ${FORMELN.length} Formeln nachschlagen</div></div><span class="chev" style="margin-left:auto">${ic("right")}</span></a>
 `, { compact: true });
  fitMain();
@@ -836,8 +849,9 @@ function viewLehrgang() {
  const dl = daysLeft();
  page("lehrgang", `${head("Lehrgang & Karriere")}<h1 class="sr-only">Lehrgang & Karriere</h1>
 
- <div class="card termin"><div class="row" style="align-items:center;gap:10px">${ic("cal", 'style="width:24px;height:24px;flex:none"')}<label for="pdate" style="font-weight:700;flex:none">Prüfungstermin</label><input type="date" id="pdate" value="${esc(S.pruefung || "")}" style="flex:1;min-width:0"><button class="btn ghost" id="pdel" aria-label="Termin löschen" ${S.pruefung ? "" : "hidden"}>${ic("x")}</button></div>
-  <p class="small" style="margin:8px 0 0;font-weight:700" id="pinfo" aria-live="polite">${dl === null ? "" : dl > 0 ? `Noch ${dl} Tag${dl === 1 ? "" : "e"}.` : dl === 0 ? "Heute ist Prüfung – viel Erfolg!" : "Der Termin liegt in der Vergangenheit."}</p>
+ <div class="card termin"><h2 class="h3" style="margin:0 0 6px">${ic("cal", 'style="width:20px;height:20px;vertical-align:-4px"')} Deine Termine</h2>
+  <div class="tgrid">${TERMINE.map(([k, t]) => `<div class="tcell"><label for="t-${k}">${t}</label><input type="date" id="t-${k}" data-termin="${k}" value="${esc(terminWert(k))}"></div>`).join("")}</div>
+  <p class="small" style="margin:8px 0 0;font-weight:700" id="pinfo" aria-live="polite">${esc(terminInfo())}</p>
  </div>
 
  <div class="sec-h"><h2>Vorlesungsplan</h2></div>
@@ -917,8 +931,7 @@ function viewLehrgang() {
 
  <p class="small muted nofold" style="margin:24px 0 0">SMM Coach ist ein unabhängiges Lernangebot und kein offizielles Angebot der IHK Dresden, des IHK-Bildungszentrums Dresden oder der HSB Akademie. Alle Angaben ohne Gewähr, Stand November 2026. Verbindlich sind die Informationen des Anbieters.</p>`, { compact: true });
  foldSections($("#app"));
- $("#pdate").onchange = e => { S.pruefung = e.target.value; save(); toast(S.pruefung ? "Prüfungstermin gespeichert" : "Termin gelöscht"); const dl = daysLeft(), el = $("#pinfo"); if (el) el.textContent = dl === null ? "" : dl > 0 ? `Noch ${dl} Tag${dl === 1 ? "" : "e"}.` : dl === 0 ? "Heute ist Prüfung – viel Erfolg!" : "Der Termin liegt in der Vergangenheit."; $("#pdel").hidden = !S.pruefung; };
- $("#pdel").onclick = () => { S.pruefung = ""; save(); $("#pdate").value = ""; $("#pinfo").textContent = ""; $("#pdel").hidden = true; };
+ $$("[data-termin]").forEach(inp => inp.onchange = () => { terminSetzen(inp.dataset.termin, inp.value); save(); $("#pinfo").textContent = terminInfo(); toast(inp.value ? "Termin gespeichert" : "Termin gelöscht"); });
 }
 
 // Abschnitte (.sec-h + folgende Inhalte) in einklappbare Blöcke verwandeln
@@ -1099,8 +1112,7 @@ function viewEinstellungen(o = {}) {
  const confirmReset = !!o.reset, pend = o.pending;
  const seg = (key, opts, label) => `<div class="seg" role="group" aria-label="${label}">${opts.map(([v, t]) => `<button type="button" data-${key}="${v}" aria-pressed="${(S.set[key] || "") === v}" class="${(S.set[key] || "") === v ? "on" : ""}">${t}</button>`).join("")}</div>`;
  const lb = S.lastBackup ? new Date(S.lastBackup).toLocaleDateString("de-DE") : "noch nie";
- const fromTab = (NAV.st[0] || "#start").slice(1), fromName = { start: "Start", praxis: "Praxis", pruefung: "Prüfung", lehrgang: "Lehrgang" }[fromTab] || "Start";
- page(fromName === "Start" && fromTab !== "start" ? "start" : fromTab, `<a class="back" href="#${fromTab}">${ic("left")} ${fromName}</a><h1 style="margin-bottom:16px" tabindex="-1">Einstellungen</h1>
+ page("einstellungen", `${head("Einstellungen")}<h1 class="sr-only">Einstellungen</h1>
  <div class="card"><h2 class="h3">Schriftgröße</h2><p class="small muted" style="margin:2px 0 10px">Gilt für die ganze App.</p>${seg("size", [["s", "Klein"], ["m", "Normal"], ["l", "Groß"], ["xl", "Sehr groß"]], "Schriftgröße")}</div>
  <div class="card"><h2 class="h3">Design</h2><p class="small muted" style="margin:2px 0 10px">„Automatisch“ folgt der Einstellung deines Geräts.</p>${seg("theme", [["auto", "Automatisch"], ["light", "Hell"], ["dark", "Dunkel"]], "Design")}</div>
  <div class="card" id="lernhilfen"><h2 class="h3">Lernhilfen</h2><p class="small muted" style="margin:2px 0 6px">Für mehr Fokus und weniger Überforderung – zum Beispiel bei ADHS.</p>
