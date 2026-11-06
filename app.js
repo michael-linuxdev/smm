@@ -56,7 +56,7 @@ const ic = (n, extra = "") => `<svg viewBox="0 0 24 24" fill="none" stroke="curr
 /* ---------- Speicher ----------
    Doppelt: localStorage (schnell) + IndexedDB (robuster). Beim Start gewinnt der neuere Stand (Zeitstempel).
    Fragen und Lektionen haben stabile Schlüssel (unabhängig vom Modul), alte Schlüssel werden migriert. */
-const KEY = "smm-coach", VERSION = "0.11.2";
+const KEY = "smm-coach", VERSION = "0.11.3";
 const DEF = () => ({ lek: {}, q: {}, srs: {}, last: null, tests: [], pruefung: "", day: null, seen: 0, set: { size: "m", theme: "auto", goal: "15", vibe: true, step: true, mig1: 1 }, lastBackup: 0, created: Date.now(), updated: 0, run: null, lastRun: null });
 let S = DEF();
 try { const x = JSON.parse(localStorage.getItem(KEY) || "null"); if (x) S = Object.assign(DEF(), x); } catch (e) {}
@@ -184,7 +184,7 @@ function page(active, html, o = {}) {
  if (h1 && page.n++) { h1.setAttribute("tabindex", "-1"); h1.focus({ preventScroll: true }); }
 }
 page.n = 0;
-function head() { return `<div class="top"><div class="logo">${ic("bolt", 'stroke="#fff"')}</div><div class="t">SMM Coach<small>Social Media Manager (IHK)</small></div><a class="iconbtn" href="#einstellungen" aria-label="Einstellungen">${ic("gear")}</a></div>`; }
+function head() { return `<div class="top"><div class="t">Social Media Manager (IHK)</div><a class="iconbtn" href="#einstellungen" aria-label="Einstellungen">${ic("gear")}</a></div>`; }
 
 function route() {
  closeStory(); clearInterval(testTimer);
@@ -243,6 +243,8 @@ function viewStart() {
  const best = S.tests.length ? Math.max(...S.tests) : null;
  const perWeek = dl > 0 ? Math.ceil((lessonsAll - lessonsDone) / Math.max(1, dl / 7)) : null;
  page("start", `${head()}
+ <div class="fx"><div class="sec-h"><h2>Deine Module</h2><a class="small muted" href="#lernen">Alle anzeigen</a></div>
+ ${ringsHtml()}</div>
  <section class="hero">
   <div class="kicker">${dl !== null && dl >= 0 ? (dl === 0 ? "Heute ist Prüfung – viel Erfolg!" : `Noch ${dl} Tag${dl === 1 ? "" : "e"} bis zur Prüfung`) : p > 0 ? "Weiter so" : "Willkommen"}</div>
   <h1>${p > 0 ? `${Math.round(p * 100)} % geschafft` : "Werde Social Media Manager"}</h1>
@@ -258,8 +260,6 @@ function viewStart() {
  ${platform().standalone && !hasProgress(S) ? `<a class="cont" href="#einstellungen" style="margin-bottom:10px"><div class="thumb" style="background:linear-gradient(135deg,#495057,#212529)">${ic("upload")}</div><div><b style="font-size:1rem">Kommst du aus dem Browser?</b><div class="small muted">Dort gesicherten Lernstand in den Einstellungen wiederherstellen.</div></div><span class="chev" style="margin-left:auto">${ic("right")}</span></a>` : ""}
  ${S.run ? `<a class="cont" href="#test" style="margin-bottom:10px"><div class="thumb" style="background:var(--grad-strong)">${ic("clock")}</div><div><b style="font-size:1rem">Probetest läuft</b><div class="small muted">Weitermachen, wo du aufgehört hast</div></div><span class="chev" style="margin-left:auto">${ic("right")}</span></a>` : ""}
  ${S.pruefung ? "" : `<a class="cont" href="#lehrgang" style="margin-bottom:6px"><div class="thumb" style="background:var(--grad-strong)">${ic("cal")}</div><div><b style="font-size:1rem">Prüfungstermin eintragen</b><div class="small muted">Dann zeigt dir die App, wie viel du pro Woche lernen solltest.</div></div><span class="chev" style="margin-left:auto;color:var(--ink-3)">${ic("right")}</span></a>`}
- <div class="fx"><div class="sec-h"><h2>Deine Module</h2><a class="small muted" href="#lernen">Alle anzeigen</a></div>
- ${ringsHtml()}</div>
  ${n ? `<div class="sec-h"><h2>Als Nächstes</h2></div>
  <a class="cont" href="#lektion-${n.m.id}-${n.l.id}"><div class="thumb" style="background:${modGrad(n.m)}">${ic(n.m.id)}</div><div><div class="small muted">${n.m.name} · ${n.l.min} Min.</div><b style="font-size:1.062rem">${n.l.titel}</b></div><div class="play">${ic("play", 'style="color:#fff"')}</div></a>` : ""}
  <div class="sec-h fx"><h2>Trainieren</h2></div>
@@ -841,7 +841,7 @@ function installGate(force) {
   let el = $("#gate");
   if (!el) { el = document.createElement("div"); el.id = "gate"; el.className = "gate"; el.setAttribute("role", "dialog"); el.setAttribute("aria-modal", "true"); el.setAttribute("aria-labelledby", "gate-h"); document.body.appendChild(el); }
   el.innerHTML = `<div class="gate-in">
-   <div class="top"><div class="logo">${ic("bolt", 'stroke="#fff"')}</div><div class="t">SMM Coach<small>Social Media Manager (IHK)</small></div></div>
+   <div class="top"><div class="t">Social Media Manager (IHK)</div></div>
    ${appInstalled ? `<h1 id="gate-h" tabindex="-1">Die App ist installiert</h1><div class="tip good" style="margin-top:14px">Öffne sie jetzt über das Symbol „SMM Coach“ auf deinem Startbildschirm. Dieses Browserfenster kannst du schließen.</div>`
    : `<h1 id="gate-h" tabindex="-1">Zuerst die App installieren</h1><p class="muted" style="margin:8px 0 16px">Dauert 20 Sekunden – danach lernst du wie in einer richtigen App.</p>
     <div class="card"><h3 style="margin-bottom:10px">So geht's</h3>${installGuide(p)}${p.browser === "inapp" || p.browser === "other" ? `<button class="btn ghost" data-act="copy-url" style="margin-top:6px">Adresse kopieren</button>` : ""}</div>
