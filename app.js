@@ -56,7 +56,7 @@ const ic = (n, extra = "") => `<svg viewBox="0 0 24 24" fill="none" stroke="curr
 /* ---------- Speicher ----------
    Doppelt: localStorage (schnell) + IndexedDB (robuster). Beim Start gewinnt der neuere Stand (Zeitstempel).
    Fragen und Lektionen haben stabile Schlüssel (unabhängig vom Modul), alte Schlüssel werden migriert. */
-const KEY = "smm-coach", VERSION = "0.10.0";
+const KEY = "smm-coach", VERSION = "0.10.1";
 const DEF = () => ({ lek: {}, q: {}, srs: {}, last: null, tests: [], pruefung: "", day: null, seen: 0, set: { size: "m", theme: "auto", goal: "10", vibe: true }, lastBackup: 0, created: Date.now(), updated: 0, run: null, lastRun: null });
 let S = DEF();
 try { const x = JSON.parse(localStorage.getItem(KEY) || "null"); if (x) S = Object.assign(DEF(), x); } catch (e) {}
@@ -401,6 +401,12 @@ const isZusatz = q => !!modById(q.m)?.zusatz;
 const MC_POOL = () => POOL.filter(q => q.t !== "frei" && !isZusatz(q));
 const freiMatch = (q, txt) => q.muster.map(([, kw]) => { try { return new RegExp(kw, "i").test(txt); } catch (e) { return false; } });
 function chip(q) { const m = modById(q.m); return `<span class="chip mchip" style="--m:${m.farbe}">${m.kurz}${q.t === "frei" ? " · Freitext" : ""}</span>`; }
+/* ---------- Mehrfachantworten: c ist dann ein Array ---------- */
+const isMulti = q => Array.isArray(q.c);
+const istRichtig = (q, ans) => isMulti(q) ? Array.isArray(ans) && ans.length === q.c.length && q.c.every(k => ans.includes(k)) : ans === q.c;
+const richtigText = q => isMulti(q) ? q.c.map(k => q.a[k]).join(" · ") : q.a[q.c];
+const MULTI_HINT = `<p class="multi-hint">${"☑︎"} Mehrere Antworten richtig – wähle alle passenden.</p>`;
+
 /* ---------- Vorlesen (Sprachausgabe des Geräts) ---------- */
 const canSay = "speechSynthesis" in window;
 function sayBtn() { return canSay ? `<button type="button" class="iconbtn say" data-say aria-label="Vorlesen" title="Vorlesen">${ic("speaker")}</button>` : ""; }
@@ -424,7 +430,7 @@ addEventListener("hashchange", () => canSay && speechSynthesis.cancel());
 function quizCard(q, meta) {
  if (q.t === "frei") return { html: `<div class="qcard"><div class="qtop">${chip(q)}<span class="small muted">${meta}</span>${sayBtn()}</div><p class="qtext" id="qt">${esc(q.q)}</p><label class="sr-only" for="ftxt">Deine Antwort</label><textarea id="ftxt" placeholder="Deine Antwort in Stichpunkten …" style="min-height:140px"></textarea><div class="fbx" role="status" aria-live="polite"></div></div>` };
  const order = shuf(q.a.map((_, k) => k));
- return { order, html: `<div class="qcard"><div class="qtop">${chip(q)}<span class="small muted">${meta}</span>${sayBtn()}</div><p class="qtext" id="qt">${esc(q.q)}</p><div role="group" aria-labelledby="qt">${order.map((k, n) => `<button type="button" class="opt" data-k="${k}"><span class="l">${"ABCD"[n]}</span><span class="ot">${esc(q.a[k])}</span><span class="mark" aria-hidden="true"></span></button>`).join("")}</div><div class="fbx" role="status" aria-live="polite"></div></div>` };
+ return { order, html: `<div class="qcard"><div class="qtop">${chip(q)}<span class="small muted">${meta}</span>${sayBtn()}</div><p class="qtext" id="qt">${esc(q.q)}</p>${isMulti(q) ? MULTI_HINT : ""}<div role="group" aria-labelledby="qt">${order.map((k, n) => `<button type="button" class="opt" data-k="${k}" ${isMulti(q) ? 'aria-pressed="false"' : ""}><span class="l">${"ABCD"[n]}</span><span class="ot">${esc(q.a[k])}</span><span class="mark" aria-hidden="true"></span></button>`).join("")}</div>${isMulti(q) ? `<button type="button" class="btn block" id="chk" style="margin-top:6px" disabled>Antwort prüfen</button>` : ""}<div class="fbx" role="status" aria-live="polite"></div></div>` };
 }
 function musterHtml(q, txt) {
  const hit = freiMatch(q, txt || ""), n = hit.filter(Boolean).length;
@@ -458,6 +464,18 @@ function viewQuiz(id) {
    };
    return;
   }
+  if (isMulti(q)) {
+   const sel = new Set();
+   $$(".opt").forEach(b => b.onclick = () => { if ($(".fbx").innerHTML) return; const k = +b.dataset.k; sel.has(k) ? sel.delete(k) : sel.add(k); b.classList.toggle("sel", sel.has(k)); b.setAttribute("aria-pressed", sel.has(k)); $("#chk").disabled = !sel.size; });
+   $("#chk").onclick = () => {
+    if ($(".fbx").innerHTML) return; const ans = [...sel], ok = istRichtig(q, ans);
+    $$(".opt").forEach(x => { const k = +x.dataset.k, soll = q.c.includes(k), ist = sel.has(k); x.classList.remove("sel"); markOpt(x, soll ? "ok" : ist ? "bad" : "dim"); if (soll && !ist) x.classList.add("missed"); });
+    $("#chk").remove(); rate(ok);
+    $(".fbx").innerHTML = `<div class="fb ${ok ? "ok" : "bad"}"><b>${ok ? "Richtig – alle gefunden!" : "Nicht ganz – grün sind alle richtigen Antworten."}</b>${esc(q.e)}</div>`;
+    weiter();
+   };
+   return;
+  }
   $$(".opt").forEach(b => b.onclick = () => {
    if ($(".fbx").innerHTML) return;
    const k = +b.dataset.k, ok = k === q.c;
@@ -477,14 +495,15 @@ function viewQuiz(id) {
 /* ---------- Prüfung ----------
    Probetest im bekannten Format (30 Fragen, MC + Freitext, 60 Min.). Unbekannt und daher Annahmen:
    Verhältnis MC/Freitext, Bestehensgrenze, Navigation. Der Test wird laufend gespeichert (S.run). */
-const TEST_N = 30, TEST_FR = 8, TEST_MIN = 60;
+const TEST_N = 30, TEST_FR = 5, TEST_MIN = 60, FR_W = 2; // Freitext: 5 Fragen à 2 Punkte (Annahme), MC/Mehrfach à 1 Punkt (alle richtigen nötig)
 const byKey = new Map(POOL.map(q => [q.key, q]));
 const examPool = () => POOL.filter(q => !modById(q.m)?.zusatz);
 function testScore(r) {
  const qs = r.ids.map(k => byKey.get(k)).filter(Boolean);
  let mc = 0, fr = 0, frMax = 0, frRated = 0;
- qs.forEach((q, i) => { if (q.t === "frei") { frMax++; if (i in (r.rated || {})) { frRated++; fr += r.rated[i]; } } else if (r.ans[i] === q.c) mc++; });
- return { n: qs.length, mc, mcN: qs.length - frMax, fr, frMax, allRated: frRated === frMax, pct: Math.round((mc + fr) / Math.max(1, qs.length) * 100) };
+ qs.forEach((q, i) => { if (q.t === "frei") { frMax++; if (i in (r.rated || {})) { frRated++; fr += r.rated[i]; } } else if (istRichtig(q, r.ans[i])) mc++; });
+ const mcN = qs.length - frMax, pts = mc + fr * FR_W, max = mcN + frMax * FR_W;
+ return { n: qs.length, mc, mcN, fr, frMax, pts, max, allRated: frRated === frMax, pct: Math.round(pts / Math.max(1, max) * 100) };
 }
 function viewPruefung() {
  const best = S.tests.length ? Math.max(...S.tests) : null;
@@ -505,7 +524,7 @@ function viewTest() {
  clearInterval(testTimer);
  if (S.run) return runTest();
  const nFr = Math.min(TEST_FR, FREI_POOL().filter(q => !modById(q.m)?.zusatz).length), nMC = TEST_N - nFr;
- page("pruefung", `<a class="back" href="#pruefung">${ic("left")} Prüfung</a><section class="hero"><div class="kicker">Probetest</div><h1>${TEST_N} Fragen · ${TEST_MIN} Minuten</h1><p>Aufgebaut wie der bekannte Abschlusstest: Multiple Choice und Freitext aus allen sechs Themen. Wie viele Freitext-Fragen der echte Test hat, ist nicht veröffentlicht – die App nimmt ${nFr} an. Du kannst vor- und zurückblättern, Fragen markieren und Antworten ändern. Bestanden ab ${PASS} % (Annahme).</p>
+ page("pruefung", `<a class="back" href="#pruefung">${ic("left")} Prüfung</a><section class="hero"><div class="kicker">Probetest</div><h1>${TEST_N} Fragen · ${TEST_MIN} Minuten</h1><p>Aufgebaut wie der bekannte Abschlusstest: Multiple Choice (auch mit mehreren richtigen Antworten) und Freitext aus allen sechs Themen. Die App nimmt ${nFr} Freitext-Fragen à ${FR_W} Punkte an – offiziell veröffentlicht ist die Verteilung nicht. Du kannst vor- und zurückblättern, Fragen markieren und Antworten ändern. Bestanden ab ${PASS} % (Annahme).</p>
   <details class="tstrat"><summary>So gehst du vor</summary><ol><li>Erst alles beantworten, was du sicher weißt.</li><li>Schwierige Fragen <b>markieren</b> und überspringen – später zurückkommen.</li><li>Freitext in Stichpunkten: benennen, begründen, konkret werden.</li><li>Pro Frage grob 2 Minuten. Bei Halbzeit sollten etwa 15 Fragen geschafft sein.</li><li>Zum Schluss die <b>Übersicht</b> prüfen: Ist noch etwas offen?</li></ol></details>
   <label class="check"><input type="checkbox" id="notime"> Ohne Zeitlimit üben</label>
   <div class="row"><button class="btn white" id="go">${ic("clock")} Test starten</button></div></section>`);
@@ -527,7 +546,7 @@ function runTest(confirmMode) {
  if (r.end && left() <= 0) return finishTest(true);
  const tick = () => { const ms = left(), el = $("#timer"); if (ms === null || !el) return; if (S.set?.clock === "genau") el.textContent = fmt(ms); else { el.innerHTML = calmClock(ms, r); } el.classList.toggle("low", ms < 5 * 60000); if (ms <= 0) { clearInterval(testTimer); finishTest(true); } };
  if (r.end) testTimer = setInterval(tick, 1000);
- const answered = i => (i in r.ans) && (qs[i].t !== "frei" || String(r.ans[i]).trim() !== "");
+ const answered = i => (i in r.ans) && (qs[i].t === "frei" ? String(r.ans[i]).trim() !== "" : !Array.isArray(r.ans[i]) || r.ans[i].length > 0);
  if (r.view === "overview" || confirmMode) return overview(confirmMode);
  const p = r.p, q = qs[p];
  const order = q.t === "frei" ? null : (r.order = r.order || {}, r.order[p] = r.order[p] || shuf(q.a.map((_, k) => k)));
@@ -536,11 +555,13 @@ function runTest(confirmMode) {
   <div class="bar dark" style="margin:0 0 16px" aria-hidden="true"><i style="width:${Object.keys(r.ans).length / qs.length * 100}%"></i></div>
   <div class="qcard"><div class="qtop">${chip(q)}<span class="small muted">Frage ${p + 1} / ${qs.length}${r.mark[p] ? " · markiert" : ""}</span></div><p class="qtext" id="qt">${esc(q.q)}</p>
   ${q.t === "frei" ? `<label class="sr-only" for="ftxt">Deine Antwort</label><textarea id="ftxt" placeholder="Deine Antwort in Stichpunkten …" style="min-height:160px">${esc(r.ans[p] || "")}</textarea>`
+   : isMulti(q) ? `${MULTI_HINT}<div role="group" aria-labelledby="qt">${order.map((k, n) => { const on = (r.ans[p] || []).includes(k); return `<button type="button" role="checkbox" aria-checked="${on}" class="opt ${on ? "sel" : ""}" data-k="${k}"><span class="l">${"ABCDE"[n]}</span><span>${esc(q.a[k])}</span></button>`; }).join("")}</div>`
    : `<div role="radiogroup" aria-labelledby="qt">${order.map((k, n) => `<button type="button" role="radio" aria-checked="${r.ans[p] === k}" class="opt ${r.ans[p] === k ? "sel" : ""}" data-k="${k}"><span class="l">${"ABCD"[n]}</span><span>${esc(q.a[k])}</span></button>`).join("")}</div>`}
   </div>
   <div class="row testnav"><button class="btn ghost" id="prev" ${p === 0 ? "disabled" : ""} aria-label="Vorherige Frage">${ic("left")}</button><button class="btn ghost" id="mark" aria-pressed="${!!r.mark[p]}">${r.mark[p] ? "Markiert" : "Markieren"}</button>${p < qs.length - 1 ? `<button class="btn" id="next" style="flex:1">Weiter ${ic("right")}</button>` : `<button class="btn" id="fin" style="flex:1">Abgeben</button>`}</div>`);
  const go = np => { r.p = Math.max(0, Math.min(qs.length - 1, np)); save(); runTest(); };
  if (q.t === "frei") { const ta = $("#ftxt"); let t; ta.oninput = () => { r.ans[p] = ta.value; clearTimeout(t); t = setTimeout(save, 400); }; ta.onblur = save; }
+ else if (isMulti(q)) $$(".opt").forEach(b => b.onclick = () => { const k = +b.dataset.k, a = new Set(r.ans[p] || []); a.has(k) ? a.delete(k) : a.add(k); r.ans[p] = [...a].sort(); save(); const on = a.has(k); b.classList.toggle("sel", on); b.setAttribute("aria-checked", on); $(".bar i").style.width = qs.filter((_, i) => answered(i)).length / qs.length * 100 + "%"; });
  else $$(".opt").forEach(b => b.onclick = () => { r.ans[p] = +b.dataset.k; save(); $$(".opt").forEach(x => { const on = x === b; x.classList.toggle("sel", on); x.setAttribute("aria-checked", on); }); $(".bar i").style.width = Object.keys(r.ans).length / qs.length * 100 + "%"; });
  $("#prev").onclick = () => go(p - 1);
  $("#next")?.addEventListener("click", () => go(p + 1));
@@ -573,15 +594,15 @@ function viewAuswertung() {
  const r = S.lastRun; if (!r) return viewPruefung();
  const qs = r.ids.map(k => byKey.get(k)).filter(Boolean);
  const sc = testScore(r);
- if (sc.allRated && !r.saved) { r.saved = true; qs.forEach((q, i) => grade(q.key, q.t === "frei" ? r.rated[i] === 1 : r.ans[i] === q.c, false)); S.tests.push(sc.pct); save(); }
+ if (sc.allRated && !r.saved) { r.saved = true; qs.forEach((q, i) => grade(q.key, q.t === "frei" ? r.rated[i] === 1 : istRichtig(q, r.ans[i]), false)); S.tests.push(sc.pct); save(); }
  const fr = qs.map((q, i) => ({ q, i })).filter(x => x.q.t === "frei");
- const wrong = qs.map((q, i) => ({ q, a: r.ans[i] })).filter(x => x.q.t !== "frei" && x.a !== x.q.c);
+ const wrong = qs.map((q, i) => ({ q, a: r.ans[i] })).filter(x => x.q.t !== "frei" && !istRichtig(x.q, x.a));
  page("pruefung", `<h1 class="sr-only">Auswertung Probetest</h1><div class="qcard result"><div class="big-ring" aria-hidden="true">${ringSvg(sc.pct / 100, 150, 12, "var(--surface-2)", sc.pct >= PASS ? null : "var(--bad)")}<b>${sc.pct}%</b></div>
   <h2 aria-live="polite">${!sc.allRated ? "Fast fertig – bewerte deine Freitexte" : sc.pct >= ZIEL ? `Sicher bestanden (${sc.pct} %)` : sc.pct >= PASS ? `Knapp bestanden (${sc.pct} %)` : `Noch nicht bestanden (${sc.pct} %)`}</h2>
-  <p class="muted">Multiple Choice: ${sc.mc} von ${sc.mcN} richtig${sc.frMax ? ` · Freitext: ${sc.allRated ? String(sc.fr).replace(".", ",") + " von " + sc.frMax + " Punkten" : "noch nicht bewertet"}` : ""}${r.timeout ? " · Zeit abgelaufen" : ""}</p><p class="small muted">Bestanden ab ${PASS} % (üblich, nicht offiziell bestätigt) · Übungsziel ${ZIEL} %</p></div>
-  ${fr.length ? `<div class="sec-h"><h2>Freitext selbst bewerten</h2></div><p class="small muted" style="margin:-4px 0 10px">Im echten Test korrigieren Fachdozent und IHK-Bildungszentrum. Sei streng: Teilpunkte nur, wenn wirklich Teile der Musterlösung drinstehen.</p>${fr.map(({ q, i }) => `<div class="card">${chip(q)}<p style="font-weight:700;margin:10px 0 6px">${esc(q.q)}</p><div class="answer">${r.ans[i] ? esc(r.ans[i]) : "<i>Keine Antwort</i>"}</div>${musterHtml(q, r.ans[i])}<div class="row" role="group" aria-label="Bewertung" style="margin-top:12px">${[[0, "0 Punkte"], [.5, "½ Punkt"], [1, "1 Punkt"]].map(([v, t]) => `<button type="button" class="btn ${r.rated[i] === v ? "" : "ghost"}" aria-pressed="${r.rated[i] === v}" data-i="${i}" data-v="${v}" style="flex:1">${t}</button>`).join("")}</div></div>`).join("")}` : ""}
+  <p class="muted">Multiple Choice: ${sc.mc} von ${sc.mcN} richtig${sc.frMax ? ` · Freitext: ${sc.allRated ? String(sc.fr * FR_W).replace(".", ",") + " von " + sc.frMax * FR_W + " Punkten" : "noch nicht bewertet"}` : ""}${sc.allRated ? ` · gesamt ${String(sc.pts).replace(".", ",")} von ${sc.max} Punkten` : ""}${r.timeout ? " · Zeit abgelaufen" : ""}</p><p class="small muted">Bestanden ab ${PASS} % (üblich, nicht offiziell bestätigt) · Übungsziel ${ZIEL} %</p></div>
+  ${fr.length ? `<div class="sec-h"><h2>Freitext selbst bewerten</h2></div><p class="small muted" style="margin:-4px 0 10px">Im echten Test korrigieren Fachdozent und IHK-Bildungszentrum. Sei streng: Teilpunkte nur, wenn wirklich Teile der Musterlösung drinstehen.</p>${fr.map(({ q, i }) => `<div class="card">${chip(q)}<p style="font-weight:700;margin:10px 0 6px">${esc(q.q)}</p><div class="answer">${r.ans[i] ? esc(r.ans[i]) : "<i>Keine Antwort</i>"}</div>${musterHtml(q, r.ans[i])}<div class="row" role="group" aria-label="Bewertung" style="margin-top:12px">${[[0, "0 Punkte"], [.5, "1 Punkt"], [1, "2 Punkte"]].map(([v, t]) => `<button type="button" class="btn ${r.rated[i] === v ? "" : "ghost"}" aria-pressed="${r.rated[i] === v}" data-i="${i}" data-v="${v}" style="flex:1">${t}</button>`).join("")}</div></div>`).join("")}` : ""}
   ${sc.allRated ? `<div class="row" style="justify-content:center;margin:8px 0 20px"><a class="btn ghost" href="#pruefung">Zurück</a><button class="btn" id="again">Neuer Test</button></div>` : ""}
-  ${wrong.length ? `<div class="sec-h"><h2>Multiple Choice nacharbeiten</h2></div>${wrong.map(x => `<div class="card">${chip(x.q)}<p style="font-weight:700;margin-top:10px">${esc(x.q.q)}</p><p class="small bad-t">✗ Deine Antwort: ${x.a === undefined ? "keine" : esc(x.q.a[x.a])}</p><p class="small ok-t">✓ Richtig: ${esc(x.q.a[x.q.c])}</p><div class="fb ok" style="margin-top:8px">${esc(x.q.e)}</div></div>`).join("")}` : ""}`, { keep: !!viewAuswertung.keep });
+  ${wrong.length ? `<div class="sec-h"><h2>Multiple Choice nacharbeiten</h2></div>${wrong.map(x => `<div class="card">${chip(x.q)}<p style="font-weight:700;margin-top:10px">${esc(x.q.q)}</p><p class="small bad-t">✗ Deine Antwort: ${x.a === undefined || (Array.isArray(x.a) && !x.a.length) ? "keine" : esc(Array.isArray(x.a) ? x.a.map(k => x.q.a[k]).join(" · ") : x.q.a[x.a])}</p><p class="small ok-t">✓ Richtig: ${esc(richtigText(x.q))}</p><div class="fb ok" style="margin-top:8px">${esc(x.q.e)}</div></div>`).join("")}` : ""}`, { keep: !!viewAuswertung.keep });
  viewAuswertung.keep = false;
  $$("[data-v]").forEach(b => b.onclick = () => { if (r.saved) return toast("Dieser Test ist schon gewertet"); r.rated[b.dataset.i] = +b.dataset.v; save(); viewAuswertung.keep = true; viewAuswertung(); });
  $("#again")?.addEventListener("click", () => { location.hash = "test"; });
@@ -660,8 +681,8 @@ function viewLehrgang() {
  <h3 style="margin:14px 0 6px">Nicht veröffentlicht – in der App angenommen</h3>
  <ul class="ticks small">
   <li>Bestehensgrenze: die App rechnet mit ${PASS} % der Punkte, wie bei IHK-Zertifikatstests üblich – und empfiehlt ${ZIEL} % als Übungsziel</li>
-  <li>Anteil Freitext: die App nimmt 8 von 30 Fragen an</li>
-  <li>Je Multiple-Choice-Frage genau eine richtige Antwort</li>
+  <li>Anteil Freitext: die App nimmt 5 von 30 Fragen an, jede zählt doppelt</li>
+  <li>Multiple Choice teils mit mehreren richtigen Antworten – Punkt nur, wenn alle richtigen gewählt sind</li>
   <li>Vor- und Zurückspringen im Test erlaubt</li>
  </ul>
  <p class="small muted">Frag am besten deine Studienbetreuung oder Dozierenden.</p>

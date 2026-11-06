@@ -365,7 +365,8 @@ h2.h3{font-size:1.1rem;margin:20px 0 8px}
 a, img, button, .cont, .tile, .tabbar a { -webkit-touch-callout: none; -webkit-user-select: none; user-select: none; -webkit-tap-highlight-color: transparent }
 a[href], img { -webkit-user-drag: none }
 /* ---------- 0.10: Lernhilfen (ADHS-freundlich) ---------- */
-.btn.ghost-w{background:rgba(255,255,255,.16);color:#fff;border:1.5px solid rgba(255,255,255,.55)}
+.btn.ghost-w{background:var(--surface);color:var(--ink);border:2px solid var(--line-strong);box-shadow:none}
+.btn.ghost-w svg{color:var(--c1,#d6336c)}
 .welcome{border-left:5px solid var(--ok)}
 .daygoal{padding:14px 16px} .daygoal .bar2{margin-top:8px} .daygoal.ok{background:var(--ok-soft)} .daygoal.ok b{color:var(--ok)}
 .qtop .say{margin-left:8px;width:36px;height:36px;flex:none}
@@ -398,3 +399,6 @@ label.check.sw input{margin-top:2px;flex:none}
 .say svg{width:20px;height:20px}
 .story .shead .say{width:40px;height:40px;flex:none}
 .qtop .say{background:var(--surface-2);box-shadow:none}
+.multi-hint{margin:-4px 0 8px;font-size:.92rem;font-weight:700;color:var(--ink-2)}
+.opt[aria-pressed="true"], .opt[role="checkbox"][aria-checked="true"]{border-color:var(--c3,#6741d9);background:color-mix(in srgb,var(--c3,#6741d9) 10%,var(--surface))}
+.opt.ok.missed{border-style:dashed} .opt.ok.missed .mark::after{content:" übersehen";font-size:.75rem;font-weight:600}
