@@ -56,7 +56,7 @@ const ic = (n, extra = "") => `<svg viewBox="0 0 24 24" fill="none" stroke="curr
 /* ---------- Speicher ----------
    Doppelt: localStorage (schnell) + IndexedDB (robuster). Beim Start gewinnt der neuere Stand (Zeitstempel).
    Fragen und Lektionen haben stabile Schlüssel (unabhängig vom Modul), alte Schlüssel werden migriert. */
-const KEY = "smm-coach", VERSION = "0.12.0";
+const KEY = "smm-coach", VERSION = "0.12.1";
 const DEF = () => ({ lek: {}, q: {}, srs: {}, last: null, tests: [], pruefung: "", day: null, seen: 0, set: { size: "m", theme: "auto", goal: "15", vibe: true, step: true, mig1: 1 }, lastBackup: 0, created: Date.now(), updated: 0, run: null, lastRun: null });
 let S = DEF();
 try { const x = JSON.parse(localStorage.getItem(KEY) || "null"); if (x) S = Object.assign(DEF(), x); } catch (e) {}
@@ -169,7 +169,7 @@ function ringSvg(p, size = 76, w = 4, track = "var(--line)", color = null) {
 }
 
 /* ---------- Router ---------- */
-const TABS = [["start", "Start", "home"], ["lernen", "Lernen", "book"], ["pruefung", "Prüfung", "exam"], ["lehrgang", "Lehrgang", "info"]];
+const TABS = [["start", "Start", "home"], ["pruefung", "Prüfung", "exam"], ["lehrgang", "Lehrgang", "info"]];
 function tabbar(active) {
  return `<nav class="tabbar" aria-label="Navigation">${TABS.map(([h, t, i]) => `<a href="#${h}" class="${active === h ? "on" : ""}"${active === h ? ' aria-current="page"' : ""}>${ic(i)}<span>${t}</span></a>`).join("")}</nav>`;
 }
@@ -188,7 +188,7 @@ function head() { return `<div class="top"><div class="t">Social Media Manager (
 
 /* ---------- Navigation: „Zurück“ führt dorthin, wo man herkam ----------
    Tab-Wurzeln setzen den Verlauf zurück, damit Zurück nie in einen anderen Reiter springt. */
-const TAB_ROOTS = ["#start", "#lernen", "#pruefung", "#lehrgang"];
+const TAB_ROOTS = ["#start", "#pruefung", "#lehrgang"];
 const NAV = { st: (() => { try { return JSON.parse(sessionStorage.getItem("nav")) || []; } catch (e) { return []; } })(), rep: false };
 function navTrack() {
  const h = location.hash || "#start", st = NAV.st;
@@ -217,7 +217,7 @@ function route() {
  if (a === "modul" && b) return viewModul(b);
  if (h === "mini") { const n = nextLesson(); return replaceHash(n ? `#lektion-${n.m.id}-${n.l.id}` : "#quiz-mini"); }
  if (a === "quiz") return viewQuiz(b || "mix");
- if (h === "lernen") return viewLernen();
+ if (h === "lernen") return replaceHash("#start"); // Reiter „Lernen“ gibt es nicht mehr – alles ist auf Start
  if (h === "pruefung") return viewPruefung();
  if (h === "test") return viewTest();
  if (h === "auswertung") return viewAuswertung();
@@ -266,7 +266,7 @@ function viewStart() {
  const best = S.tests.length ? Math.max(...S.tests) : null;
  const perWeek = dl > 0 ? Math.ceil((lessonsAll - lessonsDone) / Math.max(1, dl / 7)) : null;
  page("start", `${head()}
- <div class="fx"><div class="sec-h"><h2>Deine Module</h2><a class="small muted" href="#lernen">Alle anzeigen</a></div>
+ <div class="fx"><div class="sec-h"><h2>Deine Module</h2></div>
  ${ringsHtml()}</div>
  <section class="hero">
   <div class="kicker">${dl !== null && dl >= 0 ? (dl === 0 ? "Heute ist Prüfung – viel Erfolg!" : `Noch ${dl} Tag${dl === 1 ? "" : "e"} bis zur Prüfung`) : p > 0 ? "Weiter so" : "Willkommen"}</div>
@@ -278,6 +278,7 @@ function viewStart() {
  ${PAUSE_TAGE >= 3 && hasProgress(S) ? `<div class="card welcome"><b>Schön, dass du wieder da bist!</b><p class="small" style="margin:4px 0 0">Kein Stress wegen der Pause. Tipp einfach auf „Weiterlernen“ – eine kurze Lektion reicht für den Anfang.</p></div>` : ""}
  ${(() => { const h = heute(), g = goal(), ok = h >= g; return `<div class="card daygoal ${ok ? "ok" : ""}"><div class="row" style="justify-content:space-between;align-items:center"><b>${ok ? "Tagesziel geschafft ✓" : "Heute"}</b><span class="small muted">${Math.min(h, g)} von ${g} Fragen</span></div><div class="bar2" aria-hidden="true"><i style="width:${Math.min(1, h / g) * 100}%"></i></div></div>`; })()}
  ${(() => { const d = uebenN(); return d ? `<a class="cont" href="#quiz-ueben" style="margin-bottom:10px"><div class="thumb" style="background:linear-gradient(135deg,#1864ab,#6741d9)">${ic("repeat")}</div><div><b style="font-size:1rem">Üben: ${Math.min(d, 10)} Frage${d === 1 ? "" : "n"}</b><div class="small muted">Fehler und fällige Wiederholungen – damit es bis zur Prüfung sitzt.</div></div><span class="chev" style="margin-left:auto">${ic("right")}</span></a>` : ""; })()}
+ <a class="cont" href="#glossar" style="margin-bottom:10px"><div class="thumb" style="background:linear-gradient(135deg,#2b8a3e,#1864ab)">${ic("abc")}</div><div><b style="font-size:1rem">Glossar & Formeln</b><div class="small muted">${GLOSSAR.length} Begriffe und ${FORMELN.length} Formeln nachschlagen</div></div><span class="chev" style="margin-left:auto">${ic("right")}</span></a>
  ${hasProgress(S) && Date.now() - (S.lastBackup || S.created || 0) > 14 * 86400000 ? `<a class="cont" href="#einstellungen" style="margin-bottom:10px"><div class="thumb" style="background:linear-gradient(135deg,#495057,#212529)">${ic("download")}</div><div><b style="font-size:1rem">Lernstand sichern</b><div class="small muted">Lade eine Sicherungsdatei herunter – falls der Browser Daten löscht.</div></div><span class="chev" style="margin-left:auto;color:var(--ink-3)">${ic("right")}</span></a>` : ""}
  ${platform().standalone && !hasProgress(S) ? `<a class="cont" href="#einstellungen" style="margin-bottom:10px"><div class="thumb" style="background:linear-gradient(135deg,#495057,#212529)">${ic("upload")}</div><div><b style="font-size:1rem">Kommst du aus dem Browser?</b><div class="small muted">Dort gesicherten Lernstand in den Einstellungen wiederherstellen.</div></div><span class="chev" style="margin-left:auto">${ic("right")}</span></a>` : ""}
  ${S.run ? `<a class="cont" href="#test" style="margin-bottom:10px"><div class="thumb" style="background:var(--grad-strong)">${ic("clock")}</div><div><b style="font-size:1rem">Probetest läuft</b><div class="small muted">Weitermachen, wo du aufgehört hast</div></div><span class="chev" style="margin-left:auto">${ic("right")}</span></a>` : ""}
@@ -287,23 +288,10 @@ function viewStart() {
 
 /* ---------- Lernen ---------- */
 const uebenN = () => new Set([...errorKeys(), ...dueKeys()]).size;
-function toolTiles() {
- const n = uebenN();
- return `<div class="tiles">
-  <a class="tile" href="#quiz-ueben"><div class="ti" style="background:linear-gradient(135deg,#1864ab,#6741d9)">${ic("repeat")}</div><b>Üben</b><span>${n ? `${Math.min(n, 10)} Frage${n === 1 ? "" : "n"} bereit – Fehler und Wiederholungen` : "Gerade nichts offen"}</span></a>
-  <a class="tile" href="#glossar"><div class="ti" style="background:linear-gradient(135deg,#2b8a3e,#1864ab)">${ic("abc")}</div><b>Glossar & Formeln</b><span>${GLOSSAR.length} Begriffe, ${FORMELN.length} Formeln</span></a>
- </div>`;
-}
-function viewLernen() {
- page("lernen", `${head()}<h1 style="margin-bottom:6px">Lernen</h1><p class="muted" style="margin-bottom:18px">Sechs Module nach der Gliederung des Lehrgangs – jedes mit kurzen Lektionen und einem Quiz.</p>
- ${toolTiles()}
- <div class="sec-h"><h2>Module</h2></div>
- ${MODULE.map(m => { const p = modProgress(m); const zh = m.zusatz ? `<div class="sec-h"><h2>Zusatzwissen</h2></div><p class="small muted" style="margin:-4px 0 10px">Nicht im Lehrplan der HSB Akademie und nicht im Probetest.</p>` : ""; return zh + (() => { return `<a class="cont" href="#modul-${m.id}" style="text-decoration:none;margin-bottom:12px"><div class="thumb" style="background:${modGrad(m)}">${ic(m.id)}</div><div style="flex:1;min-width:0"><b style="font-size:1.062rem">${m.name}</b><div class="small muted">${lekDone(m)}/${m.lektionen.length} Lektionen · ${qDone(m.id)}/${modPool(m.id).length} Fragen</div><div class="bar dark" style="margin-top:8px"><i style="width:${p * 100}%"></i></div></div></a>`; })(); }).join("")}`);
-}
 function viewModul(id) {
- const m = modById(id); if (!m) return viewLernen();
+ const m = modById(id); if (!m) return viewStart();
  const d = lekDone(m), all = d === m.lektionen.length;
- page("lernen", `<a class="back" href="#lernen">${ic("left")} Module</a>
+ page("start", `<a class="back" href="#start">${ic("left")} Start</a>
  <section class="mod-head" style="--m:${m.farbe}"><div class="ic">${ic(m.id)}</div><h1>${m.name}</h1><p>${m.text}</p><div class="bar"><i style="width:${modProgress(m) * 100}%"></i></div></section>
  <ol class="steps">${m.lektionen.map((l, i) => { const ok = S.lek[l.id]; return `<li><div class="dot ${ok ? "ok" : ""}" style="${ok ? `background:${shade(m.farbe, .6)}` : ""}">${ok ? ic("check", 'stroke-width="3"') : i + 1}</div><a class="item" href="#lektion-${m.id}-${l.id}" style="display:flex;align-items:center;gap:10px;width:100%;text-decoration:none;background:var(--surface);border-radius:18px;padding:14px 16px;box-shadow:var(--shadow)"><div><b>${l.titel}</b><span class="small muted">${l.folien.length} Karten · ${l.min} Min.${ok ? " · erledigt" : ""}</span></div><span class="chev">${ic("right")}</span></a></li>`; }).join("")}
  <li><div class="dot" style="${all ? "background:var(--grad);color:#fff" : ""}">${ic(all ? "bolt" : "lock")}</div><a class="item" href="#quiz-${m.id}" style="display:flex;align-items:center;gap:10px;width:100%;text-decoration:none;background:var(--surface);border-radius:18px;padding:14px 16px;box-shadow:var(--shadow)"><div><b>Modul-Quiz</b><span class="small muted">${modPool(m.id).length} Fragen · ${qDone(m.id)} sicher${all ? "" : " · empfohlen nach den Lektionen"}</span></div><span class="chev">${ic("right")}</span></a></li></ol>`);
@@ -314,7 +302,7 @@ let storyEl = null, storyKey = null;
 function closeStory() { if (canSay) speechSynthesis.cancel(); if (storyEl) { storyEl.remove(); storyEl = null; if (!document.getElementById("gate")) document.body.classList.remove("no-scroll"); removeEventListener("keydown", storyKey); } }
 function openStory(mid, lid) {
  const m = modById(mid), l = m && m.lektionen.find(x => x.id === lid);
- if (!l) return viewLernen();
+ if (!l) return viewStart();
  viewModul(mid);
  S.last = mid + "/" + lid; save();
  const F = [...l.folien, { k: "ende" }];
@@ -504,10 +492,10 @@ function viewQuiz(id) {
  const m = modById(id), isMini = id === "mini", isMix = id === "mix" || isMini, isFrei = id === "frei", isWdh = id === "ueben" || id === "wdh" || id === "fehler", isErr = false;
  const byKeys = ks => shuf(POOL.filter(q => ks.includes(q.key)));
  let list = isMini ? [...byKeys(dueKeys()).filter(q => q.t !== "frei"), ...shuf(MC_POOL().filter(q => !(q.key in S.q))), ...shuf(MC_POOL())].filter((q, i, a) => a.indexOf(q) === i).slice(0, 5) : isWdh ? [...byKeys(errorKeys()), ...byKeys(dueKeys())].filter((q, i, a) => a.indexOf(q) === i).slice(0, 10) : isErr ? byKeys(errorKeys()) : isMix ? shuf(MC_POOL()).slice(0, 10) : isFrei ? shuf(FREI_POOL()).sort((a, b) => (S.q[a.key] ? 1 : 0) - (S.q[b.key] ? 1 : 0)).slice(0, 8) : shuf(modPool(id)).sort((a, b) => (S.q[a.key] ? 1 : 0) - (S.q[b.key] ? 1 : 0));
- if (!m && !isMix && !isFrei && !isWdh && !isErr) return viewLernen();
- if (!list.length) { page("lernen", `<a class="back" href="#lernen">${ic("left")} Lernen</a><div class="qcard result"><h2>Gerade nichts zu üben</h2><p class="muted">Keine offenen Fehler und keine fälligen Wiederholungen. Lern mit der nächsten Lektion weiter oder mach ein Schnell-Quiz.</p><div class="row" style="justify-content:center;margin-top:16px"><a class="btn" href="#mini">${ic("play")} Weiterlernen</a><a class="btn ghost" href="#quiz-mix">Schnell-Quiz</a></div></div>`); return; }
+ if (!m && !isMix && !isFrei && !isWdh && !isErr) return viewStart();
+ if (!list.length) { page("start", `<a class="back" href="#start">${ic("left")} Start</a><div class="qcard result"><h2>Gerade nichts zu üben</h2><p class="muted">Keine offenen Fehler und keine fälligen Wiederholungen. Lern mit der nächsten Lektion weiter oder mach ein Schnell-Quiz.</p><div class="row" style="justify-content:center;margin-top:16px"><a class="btn" href="#mini">${ic("play")} Weiterlernen</a><a class="btn ghost" href="#quiz-mix">Schnell-Quiz</a></div></div>`); return; }
  const total = list.length; let queue = list.slice(), first = 0, miss = new Set(), n = 0;
- const backHref = m ? "#modul-" + id : isWdh ? "#lernen" : isMini ? "#start" : "#pruefung", tab = m || isWdh ? "lernen" : isMini ? "start" : "pruefung";
+ const backHref = m ? "#modul-" + id : isWdh || isMini ? "#start" : "#pruefung", tab = m || isWdh || isMini ? "start" : "pruefung";
  next();
  function next() {
   if (!queue.length) return done();
@@ -890,7 +878,7 @@ installGate();
 /* ---------- Glossar & Formeln ---------- */
 function viewGlossar() {
  let tab = "begriffe";
- page("lernen", `<a class="back" href="#lernen">${ic("left")} Lernen</a><h1 style="margin-bottom:12px">Glossar & Formeln</h1>
+ page("start", `<a class="back" href="#start">${ic("left")} Start</a><h1 style="margin-bottom:12px">Glossar & Formeln</h1>
  <div class="searchbox">${ic("search")}<input type="search" id="gq" placeholder="Begriff suchen …" aria-label="Begriff suchen" autocomplete="off"></div>
  <div class="seg" role="tablist" aria-label="Ansicht"><button type="button" role="tab" data-t="begriffe" aria-selected="true" class="on">Begriffe</button><button type="button" role="tab" data-t="formeln" aria-selected="false">Formeln</button></div>
  <p class="sr-only" id="gcount" aria-live="polite"></p><div id="glist"></div>`);
