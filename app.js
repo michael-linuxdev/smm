@@ -2,7 +2,7 @@ import { MODULE, FRAGEN } from "./data/kurs.js";
 import { GLOSSAR, FORMELN } from "./data/glossar.js";
 import { BILDER } from "./data/bilder.js";
 import { VORLESUNGEN } from "./data/vorlesungen.js";
-import { PROJEKTE } from "./data/projekte.js";
+import { PROJEKTE, PRAXIS_FREI } from "./data/projekte.js";
 import { PROJEKTBILDER } from "./data/projektbilder.js";
 
 /* ---------- Hilfen ---------- */
@@ -60,7 +60,7 @@ const ic = (n, extra = "") => `<svg viewBox="0 0 24 24" fill="none" stroke="curr
 /* ---------- Speicher ----------
    Doppelt: localStorage (schnell) + IndexedDB (robuster). Beim Start gewinnt der neuere Stand (Zeitstempel).
    Fragen und Lektionen haben stabile Schlüssel (unabhängig vom Modul), alte Schlüssel werden migriert. */
-const KEY = "smm-coach", VERSION = "0.15.0";
+const KEY = "smm-coach", VERSION = "0.15.1";
 const DEF = () => ({ lek: {}, q: {}, srs: {}, last: null, tests: [], pruefung: "", day: null, seen: 0, set: { size: "m", theme: "auto", goal: "15", vibe: true, step: true, mig1: 1 }, lastBackup: 0, created: Date.now(), updated: 0, run: null, lastRun: null });
 let S = DEF();
 try { const x = JSON.parse(localStorage.getItem(KEY) || "null"); if (x) S = Object.assign(DEF(), x); } catch (e) {}
@@ -190,7 +190,7 @@ function ringSvg(p, size = 76, w = 4, track = "var(--line)", color = null) {
 /* ---------- Router ---------- */
 const TABS = [["start", "Start", "home"], ["praxis", "Praxis", "praxis"], ["pruefung", "Prüfung", "exam"], ["lehrgang", "Lehrgang", "info"], ["einstellungen", "Einstellungen", "gear"]];
 function tabbar(active) {
- return `<nav class="tabbar" aria-label="Navigation">${TABS.filter(([h]) => h !== "praxis" || PROJEKTE.length).map(([h, t, i]) => `<a href="#${h}" data-tab aria-label="${t}" title="${t}" class="${active === h ? "on" : ""}"${active === h ? ' aria-current="page"' : ""}>${ic(i)}<span class="sr-only">${t}</span></a>`).join("")}</nav>`;
+ return `<nav class="tabbar" aria-label="Navigation">${TABS.filter(([h]) => h !== "praxis" || (PROJEKTE.length && PRAXIS_FREI)).map(([h, t, i]) => `<a href="#${h}" data-tab aria-label="${t}" title="${t}" class="${active === h ? "on" : ""}"${active === h ? ' aria-current="page"' : ""}>${ic(i)}<span class="sr-only">${t}</span></a>`).join("")}</nav>`;
 }
 function page(active, html, o = {}) {
  const y = scrollY;
@@ -305,6 +305,25 @@ function terminInfo() {
  const n = naechsterTermin(); if (!n) return TERMINE.some(([k]) => terminWert(k)) ? "Alle eingetragenen Termine liegen in der Vergangenheit." : "Trag deine Termine ein, sobald du sie kennst.";
  return n.d === 0 ? `Heute: ${n.t}${n.k === "pruefung" ? " – viel Erfolg!" : ""}` : `Als Nächstes: ${n.t} in ${n.d} Tag${n.d === 1 ? "" : "en"}.`;
 }
+// Countdown auf Start: Prüfung + nächster Termin (Beginn, Workshop, Online-Vorlesung)
+function countdowns() {
+ const heuteD = dayLocal(), jetzt = new Date(), out = [];
+ const tage = d => Math.round((new Date(d + "T12:00") - new Date(heuteD + "T12:00")) / 86400000);
+ const evs = [];
+ if (S.kursStart && S.kursStart >= heuteD) evs.push({ t: "Beginn", d: S.kursStart, i: "play" });
+ (S.workshops || []).forEach((w, k) => { if (w && w >= heuteD) evs.push({ t: `Workshop ${k + 1}`, d: w, i: "pen" }); });
+ const v = VORLESUNGEN.find(x => x.datum > heuteD || (x.datum === heuteD && jetzt.getHours() * 60 + jetzt.getMinutes() < 20 * 60));
+ if (v) evs.push({ t: /sprechstunde/i.test(v.titel) ? "Sprechstunde" : "Online-Vorlesung", d: v.datum, i: "clock", zeit: "18:30" });
+ evs.sort((a, b) => a.d.localeCompare(b.d));
+ if (S.pruefung && S.pruefung >= heuteD) out.push({ t: "Prüfung", d: S.pruefung, i: "exam", haupt: true });
+ if (evs[0]) out.push(evs[0]);
+ return out.map(e => ({ ...e, n: tage(e.d) }));
+}
+function countdownHtml() {
+ const c = countdowns(); if (!c.length) return "";
+ const wann = e => e.n === 0 ? (e.zeit ? `heute ${e.zeit}` : "heute") : e.n === 1 ? (e.zeit ? `morgen ${e.zeit}` : "morgen") : `in ${e.n} Tagen`;
+ return `<div class="countdown">${c.map(e => `<a href="#lehrgang" class="cd ${e.haupt ? "haupt" : ""}">${ic(e.i)}<span><b>${e.n > 1 ? e.n : wann(e)}</b>${e.n > 1 ? `<small>Tage · ${esc(e.t)}</small>` : `<small>${esc(e.t)}</small>`}</span></a>`).join("")}</div>`;
+}
 function daysLeft() { if (!S.pruefung) return null; const d = Math.ceil((new Date(S.pruefung + "T09:00") - Date.now()) / 86400000); return isNaN(d) ? null : d; }
 // Hauptseiten sollen ohne Scrollen passen: notfalls die unwichtigsten Hinweiskarten ausblenden
 /* ---------- Vorlesungsplan (laut Foto des Teilnehmers, nicht offiziell) ---------- */
@@ -330,7 +349,8 @@ function viewStart() {
  <div class="fx"><h2 class="sr-only">Deine Module</h2>
  ${ringsHtml()}</div>
  <section class="hero">
-  <div class="kicker">${PAUSE_TAGE >= 3 && hasProgress(S) ? "Schön, dass du wieder da bist" : dl !== null && dl >= 0 ? (dl === 0 ? "Heute ist Prüfung – viel Erfolg!" : `Noch ${dl} Tag${dl === 1 ? "" : "e"} bis zur Prüfung`) : p > 0 ? "Weiter so" : "Willkommen"}</div>
+  <div class="kicker">${PAUSE_TAGE >= 3 && hasProgress(S) ? "Schön, dass du wieder da bist" : dl === 0 ? "Heute ist Prüfung – viel Erfolg!" : p > 0 ? "Weiter so" : "Willkommen"}</div>
+  ${countdownHtml()}
   <h1>${p > 0 ? `${Math.round(p * 100)} % insgesamt geschafft` : "Werde Social Media Manager"}</h1>
   ${(() => { const h = heute(), g = goal(), ok = h >= g; return `<div class="hgoal ${ok ? "ok" : ""}"><div class="row" style="justify-content:space-between;align-items:center"><b>${ok ? "Tagesziel geschafft ✓" : "Heute"}</b><span>${Math.min(h, g)} von ${g} Antworten</span></div><div class="hbar" aria-hidden="true"><i style="width:${Math.min(1, h / g) * 100}%"></i></div></div>`; })()}
   <p style="opacity:.92;max-width:460px">${p > 0 ? planText : "Lektionen, Quiz und Probetest für deinen IHK-Abschlusstest."}</p>
@@ -849,8 +869,8 @@ function viewLehrgang() {
  const dl = daysLeft();
  page("lehrgang", `${head("Lehrgang & Karriere")}<h1 class="sr-only">Lehrgang & Karriere</h1>
 
- <div class="card termin"><h2 class="h3" style="margin:0 0 6px">${ic("cal", 'style="width:20px;height:20px;vertical-align:-4px"')} Deine Termine</h2>
-  <div class="tgrid">${TERMINE.map(([k, t]) => `<div class="tcell"><label for="t-${k}">${t}</label><input type="date" id="t-${k}" data-termin="${k}" value="${esc(terminWert(k))}"></div>`).join("")}</div>
+ <div class="card termin"><h2 class="sr-only">Deine Termine</h2>
+  <div class="tgrid">${TERMINE.map(([k, t]) => `<div class="tcell"><label for="t-${k}">${t}</label><input type="date" id="t-${k}" data-termin="${k}" required value="${esc(terminWert(k))}"></div>`).join("")}</div>
   <p class="small" style="margin:8px 0 0;font-weight:700" id="pinfo" aria-live="polite">${esc(terminInfo())}</p>
  </div>
 
