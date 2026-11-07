@@ -61,7 +61,7 @@ const ic = (n, extra = "") => `<svg viewBox="0 0 24 24" fill="none" stroke="curr
 /* ---------- Speicher ----------
    Doppelt: localStorage (schnell) + IndexedDB (robuster). Beim Start gewinnt der neuere Stand (Zeitstempel).
    Fragen und Lektionen haben stabile Schlüssel (unabhängig vom Modul), alte Schlüssel werden migriert. */
-const KEY = "smm-coach", VERSION = "0.18.1";
+const KEY = "smm-coach", VERSION = "0.18.2";
 const DEF = () => ({ lek: {}, q: {}, srs: {}, last: null, tests: [], pruefung: "", day: null, seen: 0, set: { size: "m", theme: "auto", goal: "25", vibe: true, step: true, mig1: 1, mig2: 1 }, lastBackup: 0, created: Date.now(), updated: 0, run: null, lastRun: null });
 let S = DEF();
 try { const x = JSON.parse(localStorage.getItem(KEY) || "null"); if (x) S = Object.assign(DEF(), x); } catch (e) {}
@@ -922,6 +922,7 @@ async function baLive(ort, r, ho) {
  } catch (e) { baGeht = false; return null; } finally { clearTimeout(to); }
 }
 const weiterLinks = (q, r) => { const enc = encodeURIComponent(q || ""); return `<p class="small" style="margin:8px 0 0">Suchen bei: <a href="https://www.arbeitsagentur.de/jobsuche/suche?angebotsart=1&was=Social%20Media&wo=${enc}&umkreis=${r}" target="_blank" rel="noopener noreferrer">Arbeitsagentur</a> · <a href="https://www.stepstone.de/jobs/social-media-manager${enc ? "/in-" + enc : ""}?radius=${r}" target="_blank" rel="noopener noreferrer">StepStone</a> · <a href="https://de.indeed.com/jobs?q=Social+Media+Manager&l=${enc}&radius=${r}" target="_blank" rel="noopener noreferrer">Indeed</a> · <a href="https://www.linkedin.com/jobs/search/?keywords=Social%20Media%20Manager&location=${enc}" target="_blank" rel="noopener noreferrer">LinkedIn</a></p>`; };
+const weiterKnoepfe = (q, r) => { const enc = encodeURIComponent(q || ""); return `<div class="sbtns">${[["Arbeitsagentur", `https://www.arbeitsagentur.de/jobsuche/suche?angebotsart=1&was=Social%20Media&wo=${enc}&umkreis=${r}`], ["StepStone", `https://www.stepstone.de/jobs/social-media-manager${enc ? "/in-" + enc : ""}?radius=${r}`], ["Indeed", `https://de.indeed.com/jobs?q=Social+Media+Manager&l=${enc}&radius=${r}`], ["LinkedIn", `https://www.linkedin.com/jobs/search/?keywords=Social%20Media%20Manager&location=${enc}`]].map(([n, u]) => `<a class="btn ghost" href="${u}" target="_blank" rel="noopener noreferrer">${n}</a>`).join("")}</div>`; };
 function stellenInit() {
  const det = $("#stellen-h")?.closest("details") || $(".card.stellen")?.closest("details"); if (!det) return;
  const zeigen = async () => {
@@ -933,7 +934,7 @@ function stellenInit() {
    const live = await baLive(qq, +$("#s-km").value, $("#s-ho").checked);
    if (live) { const ids = new Set(STELLEN.jobs.map(j => j.id)); STELLEN = { ...STELLEN, jobs: [...STELLEN.jobs, ...live.filter(j => !ids.has(j.id))], live: true }; }
   }
-  if (!STELLEN.jobs.length) { box.innerHTML = `<p class="small">${qq ? "Gerade keine Stellen abrufbar." : "Gib deinen Ort oder deine Postleitzahl ein."} Die Jobbörse der Bundesagentur lässt sich hier leider nicht automatisch abfragen – nutze die Links:</p>${weiterLinks(qq, +$("#s-km").value)}`; return; }
+  if (!STELLEN.jobs.length) { box.innerHTML = weiterKnoepfe(qq, +$("#s-km").value); return; }
   const q = $("#s-ort").value, r = +$("#s-km").value, ho = $("#s-ho").checked, ort = ortFinden(q);
   S.stellenOrt = q; S.stellenKm = r; S.stellenHo = ho; save();
   let liste = STELLEN.jobs.map(j => ({ ...j, e: ort && j.lat != null ? km(ort.lat, ort.lon, j.lat, j.lon) : null }));
