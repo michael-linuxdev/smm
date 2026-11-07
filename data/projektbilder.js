@@ -68,5 +68,49 @@ export const PROJEKTBILDER = {
   <path d="M120 180c10-30 40-44 70-50" stroke="#f3eadc" stroke-width="8" fill="none" stroke-linecap="round"/>
   <path d="M230 30c-16 0-28 12-28 28 0 22 28 50 28 50s28-28 28-50c0-16-12-28-28-28z" fill="#d6336c"/><circle cx="230" cy="58" r="10" fill="#fff"/>
   <rect x="96" y="58" width="52" height="36" rx="7" fill="#3d3650"/><circle cx="122" cy="76" r="11" fill="#e6eef6"/><circle cx="122" cy="76" r="5" fill="#3d3650"/>
-  <path d="M286 118c-7-6-12-9-12-14 0-4 3-6 6-6 2 0 4 1 6 3 2-2 4-3 6-3 3 0 6 2 6 6 0 5-5 8-12 14z" fill="#d6336c" opacity=".8"/>`)
+  <path d="M286 118c-7-6-12-9-12-14 0-4 3-6 6-6 2 0 4 1 6 3 2-2 4-3 6-3 3 0 6 2 6 6 0 5-5 8-12 14z" fill="#d6336c" opacity=".8"/>`),
+ // Bewerbung – roter Faden: Weg von Einkaufstüte zu Handy
+ "b-faden": W("#f2e9e4", `
+  <path d="M40 140C100 140 100 60 160 80S240 50 270 56" fill="none" stroke="#b5544c" stroke-width="5" stroke-linecap="round" stroke-dasharray="2 12"/>
+  <path d="M22 112h40l-4 44H26z" fill="#c9a27e"/><path d="M32 112c0-14 20-14 20 0" fill="none" stroke="#8a6a4f" stroke-width="4"/>
+  <rect x="262" y="22" width="40" height="68" rx="8" fill="#3d3650"/><rect x="267" y="30" width="30" height="50" rx="4" fill="#fff"/>
+  <path d="M282 62c-6-5-10-8-10-12 0-3 2-5 5-5 2 0 4 1 5 3 1-2 3-3 5-3 3 0 5 2 5 5 0 4-4 7-10 12z" fill="#d6336c"/>
+  <circle cx="160" cy="80" r="9" fill="#b5544c"/>`),
+ // Stellenanzeige lesen: Blatt mit Zeilen, Lupe
+ "b-anzeige": W("#e6ecf2", `
+  <rect x="70" y="20" width="130" height="150" rx="8" fill="#fff"/>
+  <rect x="86" y="36" width="80" height="10" rx="4" fill="#5c6b7a"/><rect x="86" y="60" width="98" height="6" rx="3" fill="#c3cdd6"/><rect x="86" y="76" width="80" height="6" rx="3" fill="#c3cdd6"/><rect x="86" y="92" width="62" height="6" rx="3" fill="#c3cdd6"/><rect x="86" y="108" width="98" height="6" rx="3" fill="#c3cdd6"/><rect x="86" y="124" width="80" height="6" rx="3" fill="#c3cdd6"/><rect x="86" y="140" width="62" height="6" rx="3" fill="#c3cdd6"/>
+  <rect x="84" y="90" width="70" height="10" rx="3" fill="#f2d27a" opacity=".7"/>
+  <circle cx="214" cy="104" r="32" fill="none" stroke="#3d4a57" stroke-width="9"/><path d="M237 128l30 30" stroke="#3d4a57" stroke-width="12" stroke-linecap="round"/>`),
+ // Unterlagen: Lebenslauf und Mappe
+ "b-unterlagen": W("#ece7f2", `
+  <rect x="150" y="34" width="120" height="120" rx="10" fill="#8c7aa8"/><rect x="150" y="34" width="120" height="26" rx="10" fill="#a593c2"/>
+  <rect x="56" y="22" width="110" height="146" rx="8" fill="#fff"/>
+  <circle cx="84" cy="52" r="14" fill="#d9cfe8"/><path d="M68 76c2-10 30-10 32 0z" fill="#d9cfe8"/>
+  <rect x="108" y="44" width="44" height="7" rx="3" fill="#5c4d75"/><rect x="108" y="58" width="34" height="5" rx="2" fill="#c3b8d6"/><rect x="70" y="94" width="82" height="5" rx="2" fill="#c3b8d6"/><rect x="70" y="108" width="62" height="5" rx="2" fill="#c3b8d6"/><rect x="70" y="122" width="82" height="5" rx="2" fill="#c3b8d6"/><rect x="70" y="136" width="62" height="5" rx="2" fill="#c3b8d6"/><rect x="70" y="150" width="82" height="5" rx="2" fill="#c3b8d6"/>`),
+ // Portfolio: Beitragskacheln und Kurve
+ "b-portfolio": W("#e8efe6", `
+  <rect x="40" y="30" width="72" height="72" rx="8" fill="#7d8c78"/><rect x="124" y="30" width="72" height="72" rx="8" fill="#b9c7b3"/><rect x="208" y="30" width="72" height="72" rx="8" fill="#a3b39d"/>
+  <circle cx="76" cy="58" r="12" fill="#e8efe6"/><path d="M50 96l20-20 14 12 10-8 14 16z" fill="#e8efe6"/>
+  <path d="M160 52v28M146 66h28" stroke="#fff" stroke-width="6" stroke-linecap="round"/>
+  <path d="M222 92l14-30 12 20 8-10 12 20z" fill="#fff"/>
+  <rect x="40" y="116" width="240" height="40" rx="8" fill="#fff"/><path d="M58 146l16-14 14 8 18-18 16 10" fill="none" stroke="#5f7a59" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+  <text x="200" y="142" font-family="system-ui,sans-serif" font-size="14" font-weight="700" fill="#3f4f3b">+ 68 %</text>`),
+ // Gespräch: zwei Personen am Tisch, Sprechblasen
+ "b-gespraech": W("#f3ece2", `
+  <rect x="0" y="140" width="320" height="40" fill="#e3d6c3"/><rect x="110" y="112" width="100" height="10" rx="4" fill="#a9876a"/>
+  <circle cx="72" cy="88" r="18" fill="#c8794a"/><path d="M44 146c0-26 56-26 56 0z" fill="#8f6a52"/>
+  <circle cx="248" cy="88" r="18" fill="#7a5a44"/><path d="M220 146c0-26 56-26 56 0z" fill="#5c6b7a"/>
+  <rect x="92" y="24" width="64" height="32" rx="12" fill="#fff"/><path d="M104 56l-6 10 14-10z" fill="#fff"/>
+  <rect x="168" y="30" width="60" height="28" rx="12" fill="#fff"/><path d="M212 58l8 10-2-10z" fill="#fff"/>
+  <text x="124" y="46" font-family="system-ui,sans-serif" font-size="17" font-weight="700" text-anchor="middle" fill="#7a5a44">?</text><text x="198" y="49" font-family="system-ui,sans-serif" font-size="16" font-weight="700" text-anchor="middle" fill="#7a5a44">…</text>`),
+ // Probeaufgabe: Laptop mit Redaktionsplan, Uhr
+ "b-probeaufgabe": W("#e6eef2", `
+  <rect x="60" y="44" width="160" height="100" rx="8" fill="#3d4a57"/><rect x="68" y="52" width="144" height="84" rx="4" fill="#fff"/>
+  <path d="M40 144h200l-12 14H52z" fill="#9aa8b5"/><rect x="76" y="62" width="28" height="16" rx="3" fill="#c9d8e2"/><rect x="110" y="62" width="28" height="16" rx="3" fill="#9fb8c8"/><rect x="144" y="62" width="28" height="16" rx="3" fill="#e7d7b0"/><rect x="178" y="62" width="28" height="16" rx="3" fill="#c9d8e2"/><rect x="76" y="84" width="28" height="16" rx="3" fill="#9fb8c8"/><rect x="110" y="84" width="28" height="16" rx="3" fill="#e7d7b0"/><rect x="144" y="84" width="28" height="16" rx="3" fill="#c9d8e2"/><rect x="178" y="84" width="28" height="16" rx="3" fill="#9fb8c8"/><rect x="76" y="106" width="28" height="16" rx="3" fill="#e7d7b0"/><rect x="110" y="106" width="28" height="16" rx="3" fill="#c9d8e2"/><rect x="144" y="106" width="28" height="16" rx="3" fill="#9fb8c8"/><rect x="178" y="106" width="28" height="16" rx="3" fill="#e7d7b0"/>
+  <circle cx="264" cy="70" r="30" fill="#fff" stroke="#5c6b7a" stroke-width="6"/><path d="M264 52v18l12 8" stroke="#5c6b7a" stroke-width="5" stroke-linecap="round" fill="none"/>`),
+ // Gehalt: Balken und Münzstapel
+ "b-gehalt": W("#efeae0", `
+  <rect x="40" y="110" width="30" height="50" rx="4" fill="#c3b79c"/><rect x="82" y="86" width="30" height="74" rx="4" fill="#a99a78"/><rect x="124" y="60" width="30" height="100" rx="4" fill="#8c7c58"/><ellipse cx="236" cy="150" rx="38" ry="10" fill="#c99d3c"/><ellipse cx="236" cy="138" rx="38" ry="10" fill="#d9b45a"/><ellipse cx="236" cy="126" rx="38" ry="10" fill="#c99d3c"/><ellipse cx="236" cy="114" rx="38" ry="10" fill="#d9b45a"/><ellipse cx="236" cy="102" rx="38" ry="10" fill="#c99d3c"/><ellipse cx="236" cy="90" rx="38" ry="10" fill="#d9b45a"/><ellipse cx="236" cy="78" rx="38" ry="10" fill="#c99d3c"/>
+  <ellipse cx="236" cy="66" rx="38" ry="10" fill="#e8c873"/><text x="236" y="71" font-family="system-ui,sans-serif" font-size="13" font-weight="700" text-anchor="middle" fill="#7a5a1c">€</text>`),
 };

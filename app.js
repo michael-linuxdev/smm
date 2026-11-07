@@ -4,6 +4,7 @@ import { BILDER } from "./data/bilder.js";
 import { VORLESUNGEN } from "./data/vorlesungen.js";
 import { PROJEKTE, PRAXIS_FREI } from "./data/projekte.js";
 import { PROJEKTBILDER } from "./data/projektbilder.js";
+import { BEWERBUNG } from "./data/bewerbung.js";
 
 /* ---------- Hilfen ---------- */
 const $ = (s, el = document) => el.querySelector(s);
@@ -61,7 +62,7 @@ const ic = (n, extra = "") => `<svg viewBox="0 0 24 24" fill="none" stroke="curr
 /* ---------- Speicher ----------
    Doppelt: localStorage (schnell) + IndexedDB (robuster). Beim Start gewinnt der neuere Stand (Zeitstempel).
    Fragen und Lektionen haben stabile Schlüssel (unabhängig vom Modul), alte Schlüssel werden migriert. */
-const KEY = "smm-coach", VERSION = "0.18.2";
+const KEY = "smm-coach", VERSION = "0.19.0";
 const DEF = () => ({ lek: {}, q: {}, srs: {}, last: null, tests: [], pruefung: "", day: null, seen: 0, set: { size: "m", theme: "auto", goal: "25", vibe: true, step: true, mig1: 1, mig2: 1 }, lastBackup: 0, created: Date.now(), updated: 0, run: null, lastRun: null });
 let S = DEF();
 try { const x = JSON.parse(localStorage.getItem(KEY) || "null"); if (x) S = Object.assign(DEF(), x); } catch (e) {}
@@ -411,20 +412,24 @@ function viewModul(id) {
 const projStand = id => (S.proj = S.proj || {}, S.proj[id] = S.proj[id] || { i: 0, wahl: {}, frei: {}, pts: {} });
 const projMax = pr => pr.schritte.reduce((a, f) => a + (f.k === "wahl" || f.k === "frei" ? 2 : 0), 0);
 const projPunkte = st => Object.values(st.pts || {}).reduce((a, b) => a + b, 0);
+let praxisSeg = sessionStorage.getItem("praxisSeg") || "proj";
 function viewPraxis() {
- page("praxis", `${head("Praxisprojekte")}<h1 class="sr-only">Praxisprojekte</h1>
- <p class="small muted praxis-intro">Wende dein Wissen in echten Situationen an: Du triffst die Entscheidungen.</p>
- ${PROJEKTE.length ? `<div class="ptiles">${PROJEKTE.map(pr => { const st = S.proj?.[pr.id], max = projMax(pr), done = st?.done, lauf = st && !done && st.i > 0;
-  return `<a class="ptile" href="#projekt-${pr.id}"><div class="pimg">${PROJEKTBILDER[pr.id] || ""}${done ? `<span class="pbadge ok">✓ ${Math.round((st.best ?? projPunkte(st)) / max * 100)} %</span>` : lauf ? `<span class="pbadge">${st.i + 1}/${pr.schritte.length}</span>` : ""}</div><b>${esc(pr.titel)}</b><span>${esc(pr.firma)} · ${pr.min} Min.</span></a>`; }).join("")}</div>`
+ const bew = praxisSeg === "bew" && BEWERBUNG.length, LISTE = bew ? BEWERBUNG : PROJEKTE;
+ page("praxis", `${head("Praxis")}<h1 class="sr-only">Praxis</h1>
+ ${BEWERBUNG.length ? `<div class="seg" role="tablist" aria-label="Bereich"><button role="tab" data-pseg="proj" aria-selected="${!bew}" class="${bew ? "" : "on"}">Projekte</button><button role="tab" data-pseg="bew" aria-selected="${!!bew}" class="${bew ? "on" : ""}">Bewerbung</button></div>` : ""}
+ ${LISTE.length ? `<div class="ptiles">${LISTE.map(pr => { const st = S.proj?.[pr.id], max = projMax(pr), done = st?.done, lauf = st && !done && st.i > 0;
+  return `<a class="ptile" href="#projekt-${pr.id}"><div class="pimg">${PROJEKTBILDER[pr.id] || ""}${done ? `<span class="pbadge ok">✓ ${Math.round((st.best ?? projPunkte(st)) / max * 100)} %</span>` : lauf ? `<span class="pbadge">${st.i + 1}/${pr.schritte.length}</span>` : ""}</div><b>${esc(pr.kachel || pr.titel)}</b><span>${bew ? "" : esc(pr.firma) + " · "}${pr.min} Min.</span></a>`; }).join("")}</div>`
   : `<div class="card"><p>Die Praxisprojekte werden gerade vorbereitet.</p></div>`}`, { compact: true });
+ $$("[data-pseg]").forEach(b => b.onclick = () => { praxisSeg = b.dataset.pseg; sessionStorage.setItem("praxisSeg", praxisSeg); viewPraxis(); });
 }
 function openProjekt(id) {
- const pr = PROJEKTE.find(x => x.id === id); if (!pr) return viewPraxis();
+ const pr = PROJEKTE.find(x => x.id === id) || BEWERBUNG.find(x => x.id === id); if (!pr) return viewPraxis();
+ if (BEWERBUNG.includes(pr) !== (praxisSeg === "bew")) { praxisSeg = BEWERBUNG.includes(pr) ? "bew" : "proj"; sessionStorage.setItem("praxisSeg", praxisSeg); }
  viewPraxis();
  const st = projStand(id); if (st.done) { st.i = 0; st.wahl = {}; st.frei = {}; st.pts = {}; st.done = false; } save();
  const F = pr.schritte, closeP = () => goBack("#praxis");
  storyEl = document.createElement("div"); storyEl.className = "story projekt"; storyEl.style.setProperty("--m", "#5c6b7a");
- storyEl.setAttribute("role", "dialog"); storyEl.setAttribute("aria-modal", "true"); storyEl.setAttribute("aria-label", "Praxisprojekt: " + pr.titel);
+ storyEl.setAttribute("role", "dialog"); storyEl.setAttribute("aria-modal", "true"); storyEl.setAttribute("aria-label", (BEWERBUNG.includes(pr) ? "Bewerbungstraining: " : "Praxisprojekt: ") + pr.titel);
  document.body.appendChild(storyEl); document.body.classList.add("no-scroll");
  const kinds = { szene: "Szene", daten: "Daten", wahl: "Entscheidung", frei: "Anwenden", fazit: "Fazit" };
  const fertig = i => F[i].k === "wahl" ? i in st.wahl : F[i].k === "frei" ? i in st.pts : true;
@@ -447,12 +452,12 @@ function openProjekt(id) {
    else { const hit = freiMatch(f, txt), n = hit.filter(Boolean).length; body += `<div class="answer small">${txt ? esc(txt) : "<i>Keine Antwort</i>"}</div><div class="fb ${st.pts[i] === 2 ? "ok" : st.pts[i] === 1 ? "mid" : "bad"}"><b>Musterlösung · ${n} von ${f.muster.length} Punkten erkannt</b><ul class="muster">${f.muster.map(([t], k) => `<li class="${hit[k] ? "hit" : ""}">${ic(hit[k] ? "check" : "right", 'stroke-width="3"')}<span>${esc(t)}</span></li>`).join("")}</ul>${f.bsp ? `<details class="bsp"><summary>Beispielantwort</summary><p class="small" style="white-space:pre-line;margin:6px 0 0">${esc(f.bsp)}</p></details>` : ""}</div>`; }
   } else if (f.k === "fazit") {
    const pts = projPunkte(st), max = projMax(pr), pc = Math.round(pts / max * 100);
-   body += `<div class="presult"><b>${pts} von ${max} Punkten · ${pc} %</b><span>${pc >= 80 ? "Starke Projektleitung!" : pc >= 50 ? "Solide – ein paar Entscheidungen gehen noch besser." : "Lies die Rückmeldungen nach und versuche es noch einmal."}</span></div><ul>${f.l.map(x => `<li>${md(x)}</li>`).join("")}</ul>`;
+   body += `<div class="presult"><b>${pts} von ${max} Punkten · ${pc} %</b><span>${pc >= 80 ? (BEWERBUNG.includes(pr) ? "Gut vorbereitet!" : "Starke Projektleitung!") : pc >= 50 ? "Solide – ein paar Entscheidungen gehen noch besser." : "Lies die Rückmeldungen nach und versuche es noch einmal."}</span></div><ul>${f.l.map(x => `<li>${md(x)}</li>`).join("")}</ul>`;
   }
   storyEl.innerHTML = `<div class="segs" aria-hidden="true">${F.map((_, n) => `<i class="${n < i ? "on" : ""}"><b style="${n === i ? "width:100%" : ""}"></b></i>`).join("")}</div>
   <div class="shead"><div class="av pimg-av">${PROJEKTBILDER[pr.id] || ic("praxis")}</div><div class="n">${esc(pr.titel)}<small>${esc(pr.firma)} · ${i + 1}/${F.length}</small></div>${sayBtn()}<button class="x" aria-label="Schließen">${ic("x")}</button></div>
   <div class="stage"><div class="slide ${f.k === "szene" && f.wer ? "note" : ""} ${f.k === "fazit" ? "fazit" : ""}">${body}</div></div>
-  <div class="snav">${i > 0 ? `<button class="btn prev" aria-label="Zurück">${ic("left")}</button>` : ""}${last ? `<button class="btn" id="pfin">Projekt abschließen ${ic("check")}</button>` : `<button class="btn next" ${fertig(i) ? "" : "aria-disabled=\"true\""}>Weiter ${ic("right")}</button>`}</div>`;
+  <div class="snav">${i > 0 ? `<button class="btn prev" aria-label="Zurück">${ic("left")}</button>` : ""}${last ? `<button class="btn" id="pfin">${BEWERBUNG.includes(pr) ? "Training" : "Projekt"} abschließen ${ic("check")}</button>` : `<button class="btn next" ${fertig(i) ? "" : "aria-disabled=\"true\""}>Weiter ${ic("right")}</button>`}</div>`;
   $(".x", storyEl).onclick = closeP;
   $(".next", storyEl)?.addEventListener("click", () => go(1));
   $(".prev", storyEl)?.addEventListener("click", () => go(-1));
