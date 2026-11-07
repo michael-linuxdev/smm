@@ -61,7 +61,7 @@ const ic = (n, extra = "") => `<svg viewBox="0 0 24 24" fill="none" stroke="curr
 /* ---------- Speicher ----------
    Doppelt: localStorage (schnell) + IndexedDB (robuster). Beim Start gewinnt der neuere Stand (Zeitstempel).
    Fragen und Lektionen haben stabile Schlüssel (unabhängig vom Modul), alte Schlüssel werden migriert. */
-const KEY = "smm-coach", VERSION = "0.17.0";
+const KEY = "smm-coach", VERSION = "0.18.0";
 const DEF = () => ({ lek: {}, q: {}, srs: {}, last: null, tests: [], pruefung: "", day: null, seen: 0, set: { size: "m", theme: "auto", goal: "25", vibe: true, step: true, mig1: 1, mig2: 1 }, lastBackup: 0, created: Date.now(), updated: 0, run: null, lastRun: null });
 let S = DEF();
 try { const x = JSON.parse(localStorage.getItem(KEY) || "null"); if (x) S = Object.assign(DEF(), x); } catch (e) {}
@@ -893,6 +893,45 @@ const SRC = {
  indeed: ["Indeed – Gehalt Social Media Manager", "https://de.indeed.com/salaries/social-media-manager-Salaries,-DE"]
 };
 const src = (...k) => `<p class="small muted src">Quelle: ${k.map(x => `<a href="${SRC[x][1]}" target="_blank" rel="noopener">${SRC[x][0]}</a>`).join(" · ")}</p>`;
+/* ---------- Offene Stellen (täglich per GitHub Action aus der BA-Jobbörse, Filter auf dem Gerät) ---------- */
+let STELLEN = null, PLZ = null;
+const laden = async u => { const r = await fetch(u, { cache: "no-cache" }); if (!r.ok) throw new Error(r.status); return r.json(); };
+function km(a, b, c, d) { const R = 6371, r = x => x * Math.PI / 180, dl = r(c - a), dn = r(d - b); const h = Math.sin(dl / 2) ** 2 + Math.cos(r(a)) * Math.cos(r(c)) * Math.sin(dn / 2) ** 2; return 2 * R * Math.asin(Math.sqrt(h)); }
+function ortFinden(q) {
+ q = q.trim().toLowerCase(); if (!q || !PLZ) return null;
+ const o = PLZ.orte, plz = /^\d{5}$/.test(q) ? o.find(x => x[0] === q) : /^\d{2,4}$/.test(q) ? o.find(x => x[0].startsWith(q)) : null;
+ if (plz) return { name: plz[1] + " (" + plz[0] + ")", lat: plz[2], lon: plz[3] };
+ const hits = o.filter(x => x[1].toLowerCase() === q); const h = hits.length ? hits : o.filter(x => x[1].toLowerCase().startsWith(q));
+ if (!h.length) return null; // Mittelpunkt aller PLZ des Ortes
+ const lat = h.reduce((a, x) => a + x[2], 0) / h.length, lon = h.reduce((a, x) => a + x[3], 0) / h.length;
+ return { name: h[0][1], lat, lon };
+}
+function stellenInit() {
+ const det = $("#stellen-h")?.closest("details") || $(".card.stellen")?.closest("details"); if (!det) return;
+ const zeigen = async () => {
+  const box = $("#slist");
+  try { if (!STELLEN) [STELLEN, PLZ] = await Promise.all([laden("data/stellen.json"), laden("data/plz.json").catch(() => null)]); }
+  catch (e) { box.innerHTML = `<p class="small">Noch keine Stellenliste vorhanden. Sie wird jeden Morgen automatisch erstellt – bitte später noch einmal schauen.</p>`; return; }
+  const q = $("#s-ort").value, r = +$("#s-km").value, ho = $("#s-ho").checked, ort = ortFinden(q);
+  S.stellenOrt = q; S.stellenKm = r; S.stellenHo = ho; save();
+  let liste = STELLEN.jobs.map(j => ({ ...j, e: ort && j.lat != null ? km(ort.lat, ort.lon, j.lat, j.lon) : null }));
+  if (ort) liste = liste.filter(j => (j.e !== null && j.e <= r) || (ho && j.ho)).sort((a, b) => (a.e ?? 9e9) - (b.e ?? 9e9) || b.d.localeCompare(a.d));
+  else if (q.trim()) { box.innerHTML = `<p class="small">Ort „${esc(q)}“ nicht gefunden. Versuch es mit der Postleitzahl.</p>`; return; }
+  else liste = ho ? liste.filter(j => j.ho) : liste;
+  const stand = new Date(STELLEN.stand), alt = (Date.now() - stand) / 86400000;
+  const datum = d => d ? new Date(d + "T12:00").toLocaleDateString("de-DE", { day: "2-digit", month: "2-digit" }) : "";
+  const zeig = liste.slice(0, box.dataset.mehr ? 200 : 25);
+  const enc = encodeURIComponent(ort?.name?.replace(/ \(.*\)/, "") || q || "");
+  box.innerHTML = `<p class="small muted" style="margin:6px 0 8px">${ort ? `${liste.length} Stelle${liste.length === 1 ? "" : "n"} im Umkreis von ${r} km um ${esc(ort.name)}` : q.trim() ? "" : `${liste.length} Stellen deutschlandweit – gib einen Ort ein`} · Stand ${stand.toLocaleDateString("de-DE")} ${stand.toLocaleTimeString("de-DE", { hour: "2-digit", minute: "2-digit" })}${alt > 2 ? " (älter)" : ""}</p>
+  ${zeig.length ? `<ul class="jobs">${zeig.map(j => `<li><a href="${esc(j.ext && /^https?:/.test(j.ext) ? j.ext : "https://www.arbeitsagentur.de/jobsuche/jobdetail/" + encodeURIComponent(j.id))}" target="_blank" rel="noopener noreferrer"><b>${esc(j.t)}</b><span>${esc(j.ag)}</span><span class="small muted">${esc(j.ort)}${j.e !== null && ort ? ` · ${Math.round(j.e)} km` : ""}${j.ho ? " · Homeoffice möglich" : ""}${j.d ? ` · seit ${datum(j.d)}` : ""}</span></a></li>`).join("")}</ul>` : `<p class="small">Keine passenden Stellen. Vergrößere den Umkreis oder nimm Homeoffice-Stellen dazu.</p>`}
+  ${liste.length > zeig.length ? `<button class="btn ghost block" id="s-mehr">Alle ${liste.length} anzeigen</button>` : ""}
+  <p class="small muted" style="margin:10px 0 0">Quelle: Jobbörse der Bundesagentur für Arbeit, täglich aktualisiert. Weitersuchen: <a href="https://www.stepstone.de/jobs/social-media-manager${enc ? "/in-" + enc : ""}?radius=${r}" target="_blank" rel="noopener noreferrer">StepStone</a> · <a href="https://de.indeed.com/jobs?q=Social+Media+Manager&l=${enc}&radius=${r}" target="_blank" rel="noopener noreferrer">Indeed</a> · <a href="https://www.linkedin.com/jobs/search/?keywords=Social%20Media%20Manager&location=${enc}" target="_blank" rel="noopener noreferrer">LinkedIn</a></p>`;
+  $("#s-mehr")?.addEventListener("click", () => { box.dataset.mehr = 1; zeigen(); });
+ };
+ let t; $("#s-ort").addEventListener("input", () => { clearTimeout(t); t = setTimeout(zeigen, 350); });
+ $("#s-km").onchange = zeigen; $("#s-ho").onchange = zeigen;
+ det.addEventListener("toggle", () => { if (det.open) zeigen(); });
+}
 function viewLehrgang() {
  const dl = daysLeft();
  page("lehrgang", `${head("Lehrgang & Karriere")}<h1 class="sr-only">Lehrgang & Karriere</h1>
@@ -977,8 +1016,13 @@ function viewLehrgang() {
   <p class="small" style="margin-top:8px">Aufbauend bietet die HSB Akademie weitere IHK-Zertifikate an, z. B. Social Advertising Manager, Online Marketing Manager, Content Marketing Manager oder KI Marketing Manager.</p>${src("hsb")}</div>
  <div class="tip good">${ic("check", 'style="color:var(--ok)" stroke-width="3"')}<span><b>Tipp für Bewerbungen:</b> Zeig ein kleines Portfolio – z. B. eine Beispielstrategie, einen Redaktionsplan und ein Reporting. Das Zertifikat gehört ins LinkedIn-Profil.</span></div>
 
+ <div class="sec-h" id="stellen-h"><h2>Offene Stellen</h2></div>
+ <div class="card stellen"><div class="srow"><label class="sr-only" for="s-ort">Ort oder Postleitzahl</label><input id="s-ort" type="search" inputmode="search" autocomplete="postal-code" placeholder="Ort oder PLZ, z. B. Leipzig" value="${esc(S.stellenOrt || "")}"><label class="sr-only" for="s-km">Umkreis</label><select id="s-km">${[10, 25, 50, 100].map(k => `<option value="${k}" ${+(S.stellenKm || 25) === k ? "selected" : ""}>${k} km</option>`).join("")}</select></div>
+  <label class="check" style="padding:6px 0"><input type="checkbox" id="s-ho" ${S.stellenHo ? "checked" : ""}> auch Homeoffice-Stellen aus ganz Deutschland</label>
+  <div id="slist" aria-live="polite"><p class="small muted">Wird geladen, sobald du den Abschnitt öffnest.</p></div></div>
  <p class="small muted nofold" style="margin:24px 0 0">SMM Coach ist ein unabhängiges Lernangebot und kein offizielles Angebot der IHK Dresden, des IHK-Bildungszentrums Dresden oder der HSB Akademie. Alle Angaben ohne Gewähr, Stand November 2026. Verbindlich sind die Informationen des Anbieters.</p>`, { compact: true });
  foldSections($("#app"));
+ stellenInit();
  $$("[data-termin]").forEach(inp => inp.onchange = () => { terminSetzen(inp.dataset.termin, inp.value); save(); $("#pinfo").textContent = terminInfo(); toast(inp.value ? "Termin gespeichert" : "Termin gelöscht"); });
 }
 
