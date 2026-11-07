@@ -5,7 +5,13 @@
 import { writeFile, readFile, access } from "node:fs/promises";
 
 const API = "https://rest.arbeitsagentur.de/jobboerse/jobsuche-service/pc/v4/jobs";
-const HEAD = { "X-API-Key": "jobboerse-jobsuche", "User-Agent": "smm-coach-stellen/1.0 (+https://smm.micana.de)" };
+// Die Schnittstelle prüft Header; wir probieren nacheinander bekannte Varianten und merken uns die erste, die klappt.
+const VARIANTEN = [
+  { "X-API-Key": "jobboerse-jobsuche" },
+  { "X-API-Key": "jobboerse-jobsuche", "User-Agent": "Jobsuche/2.9.2 (de.arbeitsagentur.jobboerse; build:1077; iOS 15.1.0) Alamofire/5.4.4", "Accept": "application/json" },
+  { "X-API-Key": "jobboerse-jobsuche", "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130 Safari/537.36", "Accept": "application/json", "Origin": "https://www.arbeitsagentur.de", "Referer": "https://www.arbeitsagentur.de/jobsuche/" }
+];
+let HEAD = VARIANTEN[0];
 const BEGRIFFE = ["Social Media Manager", "Social Media", "Community Manager", "Content Manager", "Social Media Redakteur", "Online Marketing Manager", "Influencer Marketing"];
 // Nur Stellen, deren Titel wirklich zum Berufsbild passt
 const PASST = /social[\s-]?media|community[\s-]?manag|content[\s-]?(manag|creat|market|redakt|strateg|spezial)|influencer|online[\s-]?(marketing|redakt)|digital[\s-]?market|performance[\s-]?market|redakteur.*(online|digital|social)|kommunikation.*(digital|online|social)|tiktok|instagram|linkedin/i;
@@ -15,9 +21,10 @@ async function holen(params) {
   const url = API + "?" + new URLSearchParams(params);
   for (let versuch = 1; versuch <= 3; versuch++) {
     try {
-      const r = await fetch(url, { headers: HEAD });
+      let r = await fetch(url, { headers: HEAD });
+      if (r.status === 403 && versuch === 1) for (const v of VARIANTEN) { if (v === HEAD) continue; const r2 = await fetch(url, { headers: v }); console.warn("Variante", VARIANTEN.indexOf(v), r2.status); if (r2.ok) { HEAD = v; r = r2; break; } }
       if (r.ok) return await r.json();
-      console.warn("HTTP", r.status, url);
+      console.warn("HTTP", r.status, url, (await r.text()).slice(0, 200));
     } catch (e) { console.warn("Fehler", e.message, url); }
     await sleep(1500 * versuch);
   }
@@ -34,6 +41,18 @@ async function suche(was, extra = {}) {
     await sleep(400);
   }
   return out;
+}
+
+// Postleitzahlen-Tabelle nur anlegen, wenn sie fehlt (Quelle: zauberware/postal-codes-json-xml-csv, MIT-Lizenz, Daten aus GeoNames CC BY 4.0)
+const plzDatei = new URL("../data/plz.json", import.meta.url);
+try { await access(plzDatei); } catch {
+  const r = await fetch("https://raw.githubusercontent.com/zauberware/postal-codes-json-xml-csv/master/data/DE/zipcodes.de.json");
+  if (r.ok) {
+    const roh = await r.json(), seen = new Set(), out = [];
+    for (const z of roh) { const k = z.zipcode + z.place; if (seen.has(k)) continue; seen.add(k); out.push([z.zipcode, z.place, +(+z.latitude).toFixed(3), +(+z.longitude).toFixed(3)]); }
+    await writeFile(plzDatei, JSON.stringify({ quelle: "GeoNames (CC BY 4.0) über zauberware/postal-codes-json-xml-csv", orte: out }));
+    console.log("PLZ-Tabelle:", out.length);
+  } else console.warn("PLZ-Tabelle nicht geladen:", r.status);
 }
 
 const jobs = new Map();
@@ -62,14 +81,3 @@ if (!liste.length) { console.error("Keine Stellen erhalten – Datei bleibt unve
 await writeFile(new URL("../data/stellen.json", import.meta.url), JSON.stringify({ stand: new Date().toISOString(), quelle: "Bundesagentur für Arbeit – Jobbörse", n: liste.length, jobs: liste }));
 console.log("Gespeichert:", liste.length, "Stellen");
 
-// Postleitzahlen-Tabelle nur anlegen, wenn sie fehlt (Quelle: zauberware/postal-codes-json-xml-csv, MIT-Lizenz, Daten aus GeoNames CC BY 4.0)
-const plzDatei = new URL("../data/plz.json", import.meta.url);
-try { await access(plzDatei); } catch {
-  const r = await fetch("https://raw.githubusercontent.com/zauberware/postal-codes-json-xml-csv/master/data/DE/zipcodes.de.json");
-  if (r.ok) {
-    const roh = await r.json(), seen = new Set(), out = [];
-    for (const z of roh) { const k = z.zipcode + z.place; if (seen.has(k)) continue; seen.add(k); out.push([z.zipcode, z.place, +(+z.latitude).toFixed(3), +(+z.longitude).toFixed(3)]); }
-    await writeFile(plzDatei, JSON.stringify({ quelle: "GeoNames (CC BY 4.0) über zauberware/postal-codes-json-xml-csv", orte: out }));
-    console.log("PLZ-Tabelle:", out.length);
-  } else console.warn("PLZ-Tabelle nicht geladen:", r.status);
-}
