@@ -61,7 +61,7 @@ const ic = (n, extra = "") => `<svg viewBox="0 0 24 24" fill="none" stroke="curr
 /* ---------- Speicher ----------
    Doppelt: localStorage (schnell) + IndexedDB (robuster). Beim Start gewinnt der neuere Stand (Zeitstempel).
    Fragen und Lektionen haben stabile Schlüssel (unabhängig vom Modul), alte Schlüssel werden migriert. */
-const KEY = "smm-coach", VERSION = "0.18.0";
+const KEY = "smm-coach", VERSION = "0.18.1";
 const DEF = () => ({ lek: {}, q: {}, srs: {}, last: null, tests: [], pruefung: "", day: null, seen: 0, set: { size: "m", theme: "auto", goal: "25", vibe: true, step: true, mig1: 1, mig2: 1 }, lastBackup: 0, created: Date.now(), updated: 0, run: null, lastRun: null });
 let S = DEF();
 try { const x = JSON.parse(localStorage.getItem(KEY) || "null"); if (x) S = Object.assign(DEF(), x); } catch (e) {}
@@ -906,26 +906,48 @@ function ortFinden(q) {
  const lat = h.reduce((a, x) => a + x[2], 0) / h.length, lon = h.reduce((a, x) => a + x[3], 0) / h.length;
  return { name: h[0][1], lat, lon };
 }
+// Direktabfrage der BA-Jobsuche aus dem Browser; klappt nur, wenn die BA den Zugriff von dieser Seite erlaubt (CORS)
+let baGeht = true;
+async function baLive(ort, r, ho) {
+ if (!baGeht) return null;
+ const ctl = new AbortController(), to = setTimeout(() => ctl.abort(), 7000), out = new Map();
+ try {
+  for (const was of ["Social Media", "Community Manager", "Content Manager"]) {
+   const u = "https://rest.arbeitsagentur.de/jobboerse/jobsuche-service/pc/v4/jobs?" + new URLSearchParams({ was, wo: ort, umkreis: r, angebotsart: 1, size: 50, page: 1, ...(ho ? {} : {}) });
+   const res = await fetch(u, { headers: { "X-API-Key": "jobboerse-jobsuche" }, signal: ctl.signal });
+   if (!res.ok) throw new Error(res.status);
+   for (const s of (await res.json()).stellenangebote || []) { const o = s.arbeitsort || {}; if (!out.has(s.refnr)) out.set(s.refnr, { id: s.refnr, t: s.titel || s.beruf || "", ag: s.arbeitgeber || "", ort: [o.plz, o.ort].filter(Boolean).join(" "), lat: o.koordinaten?.lat ?? null, lon: o.koordinaten?.lon ?? null, d: s.aktuelleVeroeffentlichungsdatum || "", ext: s.externeUrl || "", ho: 0 }); }
+  }
+  return [...out.values()];
+ } catch (e) { baGeht = false; return null; } finally { clearTimeout(to); }
+}
+const weiterLinks = (q, r) => { const enc = encodeURIComponent(q || ""); return `<p class="small" style="margin:8px 0 0">Suchen bei: <a href="https://www.arbeitsagentur.de/jobsuche/suche?angebotsart=1&was=Social%20Media&wo=${enc}&umkreis=${r}" target="_blank" rel="noopener noreferrer">Arbeitsagentur</a> · <a href="https://www.stepstone.de/jobs/social-media-manager${enc ? "/in-" + enc : ""}?radius=${r}" target="_blank" rel="noopener noreferrer">StepStone</a> · <a href="https://de.indeed.com/jobs?q=Social+Media+Manager&l=${enc}&radius=${r}" target="_blank" rel="noopener noreferrer">Indeed</a> · <a href="https://www.linkedin.com/jobs/search/?keywords=Social%20Media%20Manager&location=${enc}" target="_blank" rel="noopener noreferrer">LinkedIn</a></p>`; };
 function stellenInit() {
  const det = $("#stellen-h")?.closest("details") || $(".card.stellen")?.closest("details"); if (!det) return;
  const zeigen = async () => {
   const box = $("#slist");
-  try { if (!STELLEN) [STELLEN, PLZ] = await Promise.all([laden("data/stellen.json"), laden("data/plz.json").catch(() => null)]); }
-  catch (e) { box.innerHTML = `<p class="small">Noch keine Stellenliste vorhanden. Sie wird jeden Morgen automatisch erstellt – bitte später noch einmal schauen.</p>`; return; }
+  if (!PLZ) PLZ = await laden("data/plz.json").catch(() => null);
+  if (!STELLEN) STELLEN = await laden("data/stellen.json").catch(() => ({ stand: null, jobs: [] }));
+  const qq = $("#s-ort").value.trim();
+  if (qq) { // Live: direkt bei der Jobbörse der BA (Ort + Umkreis werden dafür an die BA übertragen)
+   const live = await baLive(qq, +$("#s-km").value, $("#s-ho").checked);
+   if (live) { const ids = new Set(STELLEN.jobs.map(j => j.id)); STELLEN = { ...STELLEN, jobs: [...STELLEN.jobs, ...live.filter(j => !ids.has(j.id))], live: true }; }
+  }
+  if (!STELLEN.jobs.length) { box.innerHTML = `<p class="small">${qq ? "Gerade keine Stellen abrufbar." : "Gib deinen Ort oder deine Postleitzahl ein."} Die Jobbörse der Bundesagentur lässt sich hier leider nicht automatisch abfragen – nutze die Links:</p>${weiterLinks(qq, +$("#s-km").value)}`; return; }
   const q = $("#s-ort").value, r = +$("#s-km").value, ho = $("#s-ho").checked, ort = ortFinden(q);
   S.stellenOrt = q; S.stellenKm = r; S.stellenHo = ho; save();
   let liste = STELLEN.jobs.map(j => ({ ...j, e: ort && j.lat != null ? km(ort.lat, ort.lon, j.lat, j.lon) : null }));
   if (ort) liste = liste.filter(j => (j.e !== null && j.e <= r) || (ho && j.ho)).sort((a, b) => (a.e ?? 9e9) - (b.e ?? 9e9) || b.d.localeCompare(a.d));
   else if (q.trim()) { box.innerHTML = `<p class="small">Ort „${esc(q)}“ nicht gefunden. Versuch es mit der Postleitzahl.</p>`; return; }
   else liste = ho ? liste.filter(j => j.ho) : liste;
-  const stand = new Date(STELLEN.stand), alt = (Date.now() - stand) / 86400000;
+  const stand = new Date(STELLEN.stand || Date.now()), alt = (Date.now() - stand) / 86400000;
   const datum = d => d ? new Date(d + "T12:00").toLocaleDateString("de-DE", { day: "2-digit", month: "2-digit" }) : "";
   const zeig = liste.slice(0, box.dataset.mehr ? 200 : 25);
   const enc = encodeURIComponent(ort?.name?.replace(/ \(.*\)/, "") || q || "");
-  box.innerHTML = `<p class="small muted" style="margin:6px 0 8px">${ort ? `${liste.length} Stelle${liste.length === 1 ? "" : "n"} im Umkreis von ${r} km um ${esc(ort.name)}` : q.trim() ? "" : `${liste.length} Stellen deutschlandweit – gib einen Ort ein`} · Stand ${stand.toLocaleDateString("de-DE")} ${stand.toLocaleTimeString("de-DE", { hour: "2-digit", minute: "2-digit" })}${alt > 2 ? " (älter)" : ""}</p>
+  box.innerHTML = `<p class="small muted" style="margin:6px 0 8px">${ort ? `${liste.length} Stelle${liste.length === 1 ? "" : "n"} im Umkreis von ${r} km um ${esc(ort.name)}` : q.trim() ? "" : `${liste.length} Stellen deutschlandweit – gib einen Ort ein`} ${STELLEN.stand ? ` · Stand ${stand.toLocaleDateString("de-DE")} ${stand.toLocaleTimeString("de-DE", { hour: "2-digit", minute: "2-digit" })}${alt > 2 ? " (älter)" : ""}` : " · live"}</p>
   ${zeig.length ? `<ul class="jobs">${zeig.map(j => `<li><a href="${esc(j.ext && /^https?:/.test(j.ext) ? j.ext : "https://www.arbeitsagentur.de/jobsuche/jobdetail/" + encodeURIComponent(j.id))}" target="_blank" rel="noopener noreferrer"><b>${esc(j.t)}</b><span>${esc(j.ag)}</span><span class="small muted">${esc(j.ort)}${j.e !== null && ort ? ` · ${Math.round(j.e)} km` : ""}${j.ho ? " · Homeoffice möglich" : ""}${j.d ? ` · seit ${datum(j.d)}` : ""}</span></a></li>`).join("")}</ul>` : `<p class="small">Keine passenden Stellen. Vergrößere den Umkreis oder nimm Homeoffice-Stellen dazu.</p>`}
   ${liste.length > zeig.length ? `<button class="btn ghost block" id="s-mehr">Alle ${liste.length} anzeigen</button>` : ""}
-  <p class="small muted" style="margin:10px 0 0">Quelle: Jobbörse der Bundesagentur für Arbeit, täglich aktualisiert. Weitersuchen: <a href="https://www.stepstone.de/jobs/social-media-manager${enc ? "/in-" + enc : ""}?radius=${r}" target="_blank" rel="noopener noreferrer">StepStone</a> · <a href="https://de.indeed.com/jobs?q=Social+Media+Manager&l=${enc}&radius=${r}" target="_blank" rel="noopener noreferrer">Indeed</a> · <a href="https://www.linkedin.com/jobs/search/?keywords=Social%20Media%20Manager&location=${enc}" target="_blank" rel="noopener noreferrer">LinkedIn</a></p>`;
+  <p class="small muted" style="margin:10px 0 0">Quelle: ${STELLEN.live ? "Jobbörse der Bundesagentur für Arbeit (live)" : ""}${STELLEN.live && STELLEN.stand ? " + " : ""}${STELLEN.stand ? "Tagesliste" : ""}.</p>${weiterLinks(ort?.name?.replace(/ \(.*\)/, "") || q, r)}`;
   $("#s-mehr")?.addEventListener("click", () => { box.dataset.mehr = 1; zeigen(); });
  };
  let t; $("#s-ort").addEventListener("input", () => { clearTimeout(t); t = setTimeout(zeigen, 350); });
@@ -1017,7 +1039,7 @@ function viewLehrgang() {
  <div class="tip good">${ic("check", 'style="color:var(--ok)" stroke-width="3"')}<span><b>Tipp für Bewerbungen:</b> Zeig ein kleines Portfolio – z. B. eine Beispielstrategie, einen Redaktionsplan und ein Reporting. Das Zertifikat gehört ins LinkedIn-Profil.</span></div>
 
  <div class="sec-h" id="stellen-h"><h2>Offene Stellen</h2></div>
- <div class="card stellen"><div class="srow"><label class="sr-only" for="s-ort">Ort oder Postleitzahl</label><input id="s-ort" type="search" inputmode="search" autocomplete="postal-code" placeholder="Ort oder PLZ, z. B. Leipzig" value="${esc(S.stellenOrt || "")}"><label class="sr-only" for="s-km">Umkreis</label><select id="s-km">${[10, 25, 50, 100].map(k => `<option value="${k}" ${+(S.stellenKm || 25) === k ? "selected" : ""}>${k} km</option>`).join("")}</select></div>
+ <div class="card stellen"><div class="srow"><label class="sr-only" for="s-ort">Ort oder Postleitzahl</label><input id="s-ort" type="search" inputmode="search" autocomplete="postal-code" placeholder="Ort oder PLZ, z. B. Leipzig" value="${esc(S.stellenOrt || "")}"><label class="sr-only" for="s-km">Umkreis</label><select id="s-km">${[10, 25, 35, 50, 100].map(k => `<option value="${k}" ${+(S.stellenKm || 25) === k ? "selected" : ""}>${k} km</option>`).join("")}</select></div>
   <label class="check" style="padding:6px 0"><input type="checkbox" id="s-ho" ${S.stellenHo ? "checked" : ""}> auch Homeoffice-Stellen aus ganz Deutschland</label>
   <div id="slist" aria-live="polite"><p class="small muted">Wird geladen, sobald du den Abschnitt öffnest.</p></div></div>
  <p class="small muted nofold" style="margin:24px 0 0">SMM Coach ist ein unabhängiges Lernangebot und kein offizielles Angebot der IHK Dresden, des IHK-Bildungszentrums Dresden oder der HSB Akademie. Alle Angaben ohne Gewähr, Stand November 2026. Verbindlich sind die Informationen des Anbieters.</p>`, { compact: true });

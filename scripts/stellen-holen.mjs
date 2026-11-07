@@ -43,16 +43,15 @@ async function suche(was, extra = {}) {
   return out;
 }
 
-// Postleitzahlen-Tabelle nur anlegen, wenn sie fehlt (Quelle: zauberware/postal-codes-json-xml-csv, MIT-Lizenz, Daten aus GeoNames CC BY 4.0)
+// Postleitzahlen-Tabelle (GeoNames, CC BY 4.0) – im Workflow vorher als /tmp/DE.txt entpackt
 const plzDatei = new URL("../data/plz.json", import.meta.url);
 try { await access(plzDatei); } catch {
-  const r = await fetch("https://raw.githubusercontent.com/zauberware/postal-codes-json-xml-csv/master/data/DE/zipcodes.de.json");
-  if (r.ok) {
-    const roh = await r.json(), seen = new Set(), out = [];
-    for (const z of roh) { const k = z.zipcode + z.place; if (seen.has(k)) continue; seen.add(k); out.push([z.zipcode, z.place, +(+z.latitude).toFixed(3), +(+z.longitude).toFixed(3)]); }
-    await writeFile(plzDatei, JSON.stringify({ quelle: "GeoNames (CC BY 4.0) über zauberware/postal-codes-json-xml-csv", orte: out }));
+  try {
+    const roh = await readFile("/tmp/DE.txt", "utf8"), seen = new Set(), out = [];
+    for (const z of roh.split("\n")) { const f = z.split("\t"); if (f.length < 11) continue; const k = f[1] + f[2]; if (seen.has(k)) continue; seen.add(k); out.push([f[1], f[2], +(+f[9]).toFixed(3), +(+f[10]).toFixed(3)]); }
+    await writeFile(plzDatei, JSON.stringify({ quelle: "GeoNames (CC BY 4.0)", orte: out }));
     console.log("PLZ-Tabelle:", out.length);
-  } else console.warn("PLZ-Tabelle nicht geladen:", r.status);
+  } catch (e) { console.warn("PLZ-Tabelle nicht erstellt:", e.message); }
 }
 
 const jobs = new Map();
@@ -76,8 +75,27 @@ for (const was of BEGRIFFE) {
     await sleep(500);
   }
 }
+// Zweite Quelle: Adzuna (nur mit kostenlosen Schlüsseln ADZUNA_ID/ADZUNA_KEY als Repository-Secrets)
+if (process.env.ADZUNA_ID && process.env.ADZUNA_KEY) {
+  for (const was of ["social media manager", "community manager", "content manager", "social media"]) {
+    for (let page = 1; page <= 5; page++) {
+      const u = `https://api.adzuna.com/v1/api/jobs/de/search/${page}?` + new URLSearchParams({ app_id: process.env.ADZUNA_ID, app_key: process.env.ADZUNA_KEY, what: was, results_per_page: 50, max_days_old: 45, "content-type": "application/json" });
+      let d = null; try { const r = await fetch(u); d = r.ok ? await r.json() : (console.warn("Adzuna", r.status), null); } catch (e) { console.warn("Adzuna", e.message); }
+      const res = d?.results || [];
+      for (const j of res) {
+        const t = (j.title || "").replace(/<[^>]+>/g, "");
+        if (!PASST.test(t)) continue;
+        const id = "az-" + j.id; if (jobs.has(id)) continue;
+        jobs.set(id, { id, t, b: "", ag: j.company?.display_name || "", ort: j.location?.display_name || "", lat: j.latitude ?? null, lon: j.longitude ?? null, d: (j.created || "").slice(0, 10), ext: j.redirect_url || "", ho: /home.?office|remote/i.test(t + " " + (j.description || "")) ? 1 : 0, q: "Adzuna" });
+      }
+      console.log(`Adzuna ${was} S.${page}: ${res.length}`);
+      if (res.length < 50) break;
+      await sleep(400);
+    }
+  }
+}
 const liste = [...jobs.values()].sort((a, b) => (b.d || "").localeCompare(a.d || ""));
 if (!liste.length) { console.error("Keine Stellen erhalten – Datei bleibt unverändert."); process.exit(0); }
-await writeFile(new URL("../data/stellen.json", import.meta.url), JSON.stringify({ stand: new Date().toISOString(), quelle: "Bundesagentur für Arbeit – Jobbörse", n: liste.length, jobs: liste }));
+await writeFile(new URL("../data/stellen.json", import.meta.url), JSON.stringify({ stand: new Date().toISOString(), quelle: [...new Set(liste.map(j => j.q || "Bundesagentur für Arbeit"))].join(", "), n: liste.length, jobs: liste }));
 console.log("Gespeichert:", liste.length, "Stellen");
 

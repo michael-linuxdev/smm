@@ -15,7 +15,12 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 20
+      - name: Postleitzahlen (GeoNames) laden
+        run: curl -fsSL https://download.geonames.org/export/zip/DE.zip -o /tmp/DE.zip && unzip -o -q /tmp/DE.zip DE.txt -d /tmp || echo "GeoNames nicht erreichbar"
       - run: node scripts/stellen-holen.mjs
+        env:
+          ADZUNA_ID: ${{ secrets.ADZUNA_ID }}
+          ADZUNA_KEY: ${{ secrets.ADZUNA_KEY }}
       - name: Änderungen speichern
         run: |
           git config user.name "smm-coach-bot"
