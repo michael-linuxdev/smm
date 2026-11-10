@@ -15,7 +15,7 @@ Lern-App (PWA) zum Zertifikatslehrgang **Social Media Manager/-in (IHK)** – au
 
 ## Glossar in einfacher Sprache
 
-Die Begriffe stehen in `data/glossar.js` und `data/glossar2.js`. Die Texte in einfacher Sprache liegen in `data/einfach/` (je 20 Begriffe pro Datei, alphabetisch): eine Kurzerklärung und vier Karten für die Begriffs-Story (Was ist das? · Beispiel · Wozu brauchst du das? bzw. Nicht verwechseln · Merke). In der Glossarliste öffnet ein Tipp die Story, im Lektionstext führt „Mehr dazu“ im Begriffs-Blatt dorthin. Regeln: kurze Sätze (höchstens 18 Wörter), Du-Ansprache, keine Abkürzungen – `node tests/check-data.mjs` prüft das. Neue Datei auch in `sw.js` (ASSETS) eintragen.
+Die Begriffe stehen in `data/glossar.js` und `data/glossar2.js`. Die Texte in einfacher Sprache liegen in `data/einfach/` (alphabetisch: `01.js` bis `05.js` mit je 20 Begriffen, `06.js` mit den übrigen 70 – damit sind alle 170 Begriffe überarbeitet): eine Kurzerklärung und vier Karten für die Begriffs-Story (Was ist das? · Beispiel · Wozu brauchst du das? bzw. Nicht verwechseln · Merke). In der Glossarliste öffnet ein Tipp die Story, im Lektionstext führt „Mehr dazu“ im Begriffs-Blatt dorthin. Regeln: kurze Sätze (höchstens 18 Wörter), Du-Ansprache, keine Abkürzungen – `node tests/check-data.mjs` prüft das. Neue Datei auch in `sw.js` (ASSETS) eintragen.
 
 ## Offene Stellen
 
