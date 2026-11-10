@@ -13,6 +13,10 @@ Lern-App (PWA) zum Zertifikatslehrgang **Social Media Manager/-in (IHK)** – au
 
 **Höchstens 400 Fragen** (Quizfragen + Kurz-Checks in Lektionen). Neue Fragen nur im Tausch gegen bestehende. Gestrichene stehen in `data/gestrichen.js`. Prüfung: `node tests/check-data.mjs` (bricht bei mehr als 400 ab).
 
+## Glossar in einfacher Sprache
+
+Die Begriffe stehen in `data/glossar.js` und `data/glossar2.js`. Die Texte in einfacher Sprache liegen in `data/einfach/` (je 20 Begriffe pro Datei, alphabetisch): eine Kurzerklärung und vier Karten für die Begriffs-Story (Was ist das? · Beispiel · Wozu brauchst du das? bzw. Nicht verwechseln · Merke). In der Glossarliste öffnet ein Tipp die Story, im Lektionstext führt „Mehr dazu“ im Begriffs-Blatt dorthin. Regeln: kurze Sätze (höchstens 18 Wörter), Du-Ansprache, keine Abkürzungen – `node tests/check-data.mjs` prüft das. Neue Datei auch in `sw.js` (ASSETS) eintragen.
+
 ## Offene Stellen
 
 `scripts/stellen-holen.mjs` holt täglich per GitHub Action (`.github/workflows/stellen.yml`, auch manuell unter „Actions“ startbar) passende Stellen aus der Jobbörse der Bundesagentur für Arbeit und schreibt `data/stellen.json`. Die Umkreissuche läuft auf dem Gerät mit `data/plz.json` (GeoNames, CC BY 4.0, über zauberware/postal-codes-json-xml-csv). Andere Jobbörsen ohne offene Schnittstelle werden nur verlinkt. Vor eigenen Pushes `git pull --rebase`, weil die Action täglich committet.

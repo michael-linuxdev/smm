@@ -62,7 +62,7 @@ const ic = (n, extra = "") => `<svg viewBox="0 0 24 24" fill="none" stroke="curr
 /* ---------- Speicher ----------
    Doppelt: localStorage (schnell) + IndexedDB (robuster). Beim Start gewinnt der neuere Stand (Zeitstempel).
    Fragen und Lektionen haben stabile Schlüssel (unabhängig vom Modul), alte Schlüssel werden migriert. */
-const KEY = "smm-coach", VERSION = "0.19.0";
+const KEY = "smm-coach", VERSION = "0.20.0";
 const DEF = () => ({ lek: {}, q: {}, srs: {}, last: null, tests: [], pruefung: "", day: null, seen: 0, set: { size: "m", theme: "auto", goal: "25", vibe: true, step: true, mig1: 1, mig2: 1 }, lastBackup: 0, created: Date.now(), updated: 0, run: null, lastRun: null });
 let S = DEF();
 try { const x = JSON.parse(localStorage.getItem(KEY) || "null"); if (x) S = Object.assign(DEF(), x); } catch (e) {}
@@ -238,7 +238,7 @@ document.addEventListener("click", e => {
  e.preventDefault(); goBack(a.getAttribute("href"));
 });
 function route() {
- closeStory(); clearInterval(testTimer);
+ closeBegriff(true); closeStory(); clearInterval(testTimer);
  const h = (location.hash || "#start").slice(1);
  const [a, b, ...rest] = h.split("-");
  if (a === "lektion" && b) return openStory(b, rest.join("-"));
@@ -471,6 +471,89 @@ function openProjekt(id) {
  draw();
 }
 
+// Nach unten wischen schließt die Story (wie bei Instagram)
+function swipeDown(el, close) {
+ let t0 = null;
+ el.addEventListener("touchstart", e => { const t = e.touches[0]; t0 = { x: t.clientX, y: t.clientY, drag: false }; }, { passive: true });
+ el.addEventListener("touchmove", e => {
+  if (!t0) return; const t = e.touches[0], dy = t.clientY - t0.y, dx = t.clientX - t0.x;
+  if (!t0.drag && dy > 12 && dy > Math.abs(dx) * 1.3) t0.drag = true;
+  if (t0.drag) { el.style.transition = "none"; el.style.transform = `translateY(${Math.max(0, dy)}px) scale(${1 - Math.min(dy, 400) / 4000})`; el.style.opacity = String(1 - Math.min(dy, 400) / 800); }
+ }, { passive: true });
+ const end = e => {
+  if (!t0) return; const dy = (e.changedTouches?.[0]?.clientY ?? t0.y) - t0.y, drag = t0.drag; t0 = null;
+  if (!drag) return;
+  el.style.transition = "transform .22s ease, opacity .22s ease";
+  if (dy > 110) { el.style.transform = "translateY(100%)"; el.style.opacity = "0"; setTimeout(close, 200); }
+  else { el.style.transform = ""; el.style.opacity = ""; }
+ };
+ el.addEventListener("touchend", end); el.addEventListener("touchcancel", end);
+}
+
+/* ---------- Begriffs-Story (Glossar): vier Karten in einfacher Sprache ----------
+   Liegt als eigene Ebene über Seite oder laufender Lektion. System-Zurück schließt sie. */
+let begEl = null, begKey = null;
+const topStory = () => begEl || storyEl;
+function closeBegriff(viaPop) {
+ if (!begEl) return;
+ const el = begEl, opener = el._opener; begEl = null;
+ if (canSay) speechSynthesis.cancel();
+ el.remove(); removeEventListener("keydown", begKey, true);
+ if (!storyEl && !document.getElementById("gate")) document.body.classList.remove("no-scroll");
+ if (!viaPop && history.state?.beg) history.back();
+ if (storyEl) fitSlide();
+ if (opener?.isConnected) opener.focus({ preventScroll: true });
+}
+addEventListener("popstate", () => closeBegriff(true));
+function openBegriff(gi) {
+ const g = GLOSSAR[gi]; if (!g || !g.s) return;
+ const opener = begEl ? begEl._opener : document.activeElement;
+ if (begEl) { begEl.remove(); removeEventListener("keydown", begKey, true); begEl = null; } else if (!history.state?.beg) history.pushState({ beg: 1 }, "");
+ $("#tsheet")?.remove(); if (canSay) speechSynthesis.cancel();
+ const m = modById(g.m) || MODULE[0], F = g.s;
+ let i = 0, rev = 1;
+ const el = begEl = document.createElement("div");
+ el.className = "story begriff"; el.style.setProperty("--m", m.farbe); el._opener = opener;
+ el.setAttribute("role", "dialog"); el.setAttribute("aria-modal", "true"); el.setAttribute("aria-label", "Begriff: " + g.w);
+ document.body.appendChild(el); document.body.classList.add("no-scroll");
+ const closeB = () => closeBegriff();
+ const go = d => {
+  const parts = $$(".rv", el);
+  if (d > 0 && parts.length && rev < parts.length) { const p = parts[rev]; p.classList.remove("h"); p.tabIndex = -1; p.focus({ preventScroll: true }); rev++; buzz(8); mehr(); return; }
+  if (d > 0 && i === F.length - 1) return closeB();
+  if (canSay) speechSynthesis.cancel();
+  i = Math.max(0, i + d); rev = 1; draw();
+ };
+ const saetze = t => stepOn() ? t.split(/(?<=[.!?])\s+(?=[A-ZÄÖÜ„*(])/).map((x, n) => `<span class="rv ${n > 0 ? "h" : ""}">${md(x)}</span>`).join(" ") : md(t);
+ const mehr = () => { const rest = $$(".rv.h", el).length, nb = $(".next", el); nb.innerHTML = rest ? `Weiter lesen <span class="dots" aria-hidden="true">${"●".repeat(rest)}</span>` : i === F.length - 1 ? "Fertig" : `Weiter ${ic("right")}`; };
+ begKey = e => {
+  if ($("#tsheet")) return;
+  if (e.key === "ArrowRight") go(1); else if (e.key === "ArrowLeft") go(-1); else if (e.key === "Escape") closeB();
+  else if (e.key === "Tab") { const f = $$("button,a[href]", el).filter(x => !x.disabled); if (f.length) { const a = f[0], z = f[f.length - 1]; if (e.shiftKey && document.activeElement === a) { e.preventDefault(); z.focus(); } else if (!e.shiftKey && (document.activeElement === z || !el.contains(document.activeElement))) { e.preventDefault(); a.focus(); } } }
+  e.stopPropagation(); // die Lektion darunter bleibt stehen
+ };
+ addEventListener("keydown", begKey, true);
+ swipeDown(el, closeB);
+ function draw() {
+  const f = F[i];
+  el.innerHTML = `<p class="sr-only" aria-live="polite">Karte ${i + 1} von ${F.length}</p><div class="segs" aria-hidden="true">${F.map((_, n) => `<i class="${n < i ? "on" : ""}"><b style="${n === i ? "width:100%" : ""}"></b></i>`).join("")}</div>
+  <div class="shead"><div class="av">${ic("abc")}</div><div class="n">${esc(g.w)}<small>Glossar · ${esc(m.kurz)}</small></div>${sayBtn()}<button class="x" aria-label="Schließen">${ic("x")}</button></div>
+  <div class="stage"><div class="tapzone l"></div><div class="tapzone r"></div><div class="slide ${f.note ? "note" : ""}"><span class="kind">${f.kind}</span><h2>${md(f.h)}</h2>${i === 0 && g.de ? `<p class="bde">${esc(g.de)}</p>` : ""}<div class="body">${saetze(f.b)}</div></div></div>
+  <div class="snav">${i > 0 ? `<button class="btn prev" aria-label="Zurück">${ic("left")}</button>` : ""}<button class="btn next"></button></div>`;
+  mehr();
+  $(".x", el).onclick = closeB;
+  $(".next", el).onclick = () => go(1);
+  $(".prev", el)?.addEventListener("click", () => go(-1));
+  const viaTerm = e => { e.currentTarget.style.pointerEvents = "none"; const t = document.elementFromPoint(e.clientX, e.clientY); e.currentTarget.style.pointerEvents = ""; const tb = t?.closest(".term"); if (tb) { termSheet(+tb.dataset.g); return true; } };
+  $(".tapzone.l", el).addEventListener("click", e => viaTerm(e) || go(-1));
+  $(".tapzone.r", el).addEventListener("click", e => viaTerm(e) || go(1));
+  linkTerms($(".body", el), null, gi);
+  fitSlide(); requestAnimationFrame(fitSlide);
+  if (draw.first !== false) { draw.first = false; watchFit(); const sl = $(".slide", el); sl.tabIndex = -1; sl.focus({ preventScroll: true }); } else if (!el.contains(document.activeElement)) $(".next", el).focus({ preventScroll: true });
+ }
+ draw();
+}
+
 /* ---------- Story-Player (Erstvermittlung) ---------- */
 let storyEl = null, storyKey = null;
 function closeStory() { if (canSay) speechSynthesis.cancel(); if (storyEl) { storyEl.remove(); storyEl = null; if (!document.getElementById("gate")) document.body.classList.remove("no-scroll"); removeEventListener("keydown", storyKey); } }
@@ -498,26 +581,12 @@ function openStory(mid, lid) {
  const saetze = t => stepOn() ? t.split(/(?<=[.!?])\s+(?=[A-ZÄÖÜ„*(])/).map((x, n) => rv(md(x), n)).join(" ") : md(t);
  const closeS = () => goBack("#modul-" + mid);
  storyKey = e => {
+  if (begEl) return;
   if (e.key === "ArrowRight") go(1); if (e.key === "ArrowLeft") go(-1); if (e.key === "Escape") closeS();
   if (e.key === "Tab") { const f = $$("button,a[href]", storyEl).filter(x => !x.disabled); if (!f.length) return; const a = f[0], z = f[f.length - 1]; if (e.shiftKey && document.activeElement === a) { e.preventDefault(); z.focus(); } else if (!e.shiftKey && document.activeElement === z) { e.preventDefault(); a.focus(); } }
  };
  addEventListener("keydown", storyKey);
- // Nach unten wischen schließt die Story (wie bei Instagram)
- let t0 = null;
- storyEl.addEventListener("touchstart", e => { const t = e.touches[0]; t0 = { x: t.clientX, y: t.clientY, drag: false }; }, { passive: true });
- storyEl.addEventListener("touchmove", e => {
-  if (!t0) return; const t = e.touches[0], dy = t.clientY - t0.y, dx = t.clientX - t0.x;
-  if (!t0.drag && dy > 12 && dy > Math.abs(dx) * 1.3) t0.drag = true;
-  if (t0.drag) { storyEl.style.transition = "none"; storyEl.style.transform = `translateY(${Math.max(0, dy)}px) scale(${1 - Math.min(dy, 400) / 4000})`; storyEl.style.opacity = String(1 - Math.min(dy, 400) / 800); }
- }, { passive: true });
- const end = e => {
-  if (!t0) return; const dy = (e.changedTouches?.[0]?.clientY ?? t0.y) - t0.y, drag = t0.drag; t0 = null;
-  if (!drag) return;
-  storyEl.style.transition = "transform .22s ease, opacity .22s ease";
-  if (dy > 110) { storyEl.style.transform = "translateY(100%)"; storyEl.style.opacity = "0"; setTimeout(closeS, 200); }
-  else { storyEl.style.transform = ""; storyEl.style.opacity = ""; }
- };
- storyEl.addEventListener("touchend", end); storyEl.addEventListener("touchcancel", end);
+ swipeDown(storyEl, closeS);
  function draw() {
   const f = F[i], last = f.k === "ende";
   const kindName = { intro: "Lektion", text: "Wissen", liste: "Überblick", beispiel: "Beispiel", merke: "Merke", check: "Kurz-Check", bild: "Schaubild" }[f.k] || "";
@@ -556,8 +625,8 @@ function openStory(mid, lid) {
 // Karte so verkleinern, dass nichts abgeschnitten wird. Läuft erneut, wenn Schrift
 // nachgeladen ist oder sich die Größe ändert (iOS: Adressleiste, Drehen, Schriftgröße).
 function fitSlide() {
- if (!storyEl) return;
- const stage = $(".stage", storyEl), slide = $(".slide", storyEl); if (!stage || !slide) return;
+ const st = topStory(); if (!st) return;
+ const stage = $(".stage", st), slide = $(".slide", st); if (!stage || !slide) return;
  const avail = stage.clientHeight - 8; if (avail <= 0) return;
  const fits = () => slide.scrollHeight <= avail && slide.scrollHeight <= slide.clientHeight + 1;
  slide.style.setProperty("--k", 1); let lo = Math.max(.5, 14 / parseFloat(getComputedStyle(slide).fontSize)), hi = 1;
@@ -568,11 +637,11 @@ function fitSlide() {
 let fitRO = null;
 function watchFit() {
  fitRO?.disconnect();
- const stage = storyEl && $(".stage", storyEl); if (!stage) return;
+ const st = topStory(), stage = st && $(".stage", st); if (!stage) return;
  if ("ResizeObserver" in window) { fitRO = new ResizeObserver(() => requestAnimationFrame(fitSlide)); fitRO.observe(stage); }
  document.fonts?.ready.then(() => requestAnimationFrame(fitSlide));
 }
-addEventListener("resize", () => storyEl && fitSlide());
+addEventListener("resize", () => topStory() && fitSlide());
 function nextIn(m, l) { const k = m.lektionen.indexOf(l); return m.lektionen[k + 1] || null; }
 
 /* ---------- Quiz ---------- */
@@ -594,9 +663,9 @@ const TERM_RX = (() => {
 })();
 // Abkürzungen nur in exakter Schreibweise (sonst „pr“ in Wörtern usw.)
 const termIdx = t => { const i = TERM_RX.map.get(t.toLowerCase()); if (i === undefined) return; const g = GLOSSAR[i], all = [g.w, ...(g.syn || [])]; if (t.length <= 4 && !all.includes(t)) return; return i; };
-function linkTerms(root, seenDe) {
+function linkTerms(root, seenDe, skip) {
  if (!root) return;
- const used = new Set(), w = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, { acceptNode: n => n.parentElement.closest("button,a,.term,.kind,.chip,textarea,.mark,.l") ? NodeFilter.FILTER_REJECT : NodeFilter.FILTER_ACCEPT });
+ const used = new Set(skip === undefined ? [] : [skip]), w = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, { acceptNode: n => n.parentElement.closest("button,a,.term,.kind,.chip,textarea,.mark,.l") ? NodeFilter.FILTER_REJECT : NodeFilter.FILTER_ACCEPT });
  const nodes = []; while (w.nextNode()) nodes.push(w.currentNode);
  for (const node of nodes) {
   const txt = node.nodeValue; TERM_RX.rx.lastIndex = 0; let m, last = 0, frag = null;
@@ -620,12 +689,13 @@ function termSheet(i) {
  const g = GLOSSAR[i]; if (!g) return; $("#tsheet")?.remove();
  const m = modById(g.m) || MODULE[0];
  const el = document.createElement("div"); el.id = "tsheet"; el.className = "tsheet"; el.setAttribute("role", "dialog"); el.setAttribute("aria-modal", "true"); el.setAttribute("aria-labelledby", "ts-h");
- el.innerHTML = `<div class="ts-in" style="--m:${m.farbe}"><div class="ts-grip" aria-hidden="true"></div><h2 id="ts-h">${esc(g.w)}</h2>${g.de ? `<p class="ts-de">${esc(g.de)}</p>` : ""}<p>${esc(g.d)}</p><div class="row" style="margin-top:14px">${sayBtn()}<button type="button" class="btn" id="ts-ok" style="flex:1">Verstanden</button></div></div>`;
+ el.innerHTML = `<div class="ts-in" style="--m:${m.farbe}"><div class="ts-grip" aria-hidden="true"></div><h2 id="ts-h">${esc(g.w)}</h2>${g.de ? `<p class="ts-de">${esc(g.de)}</p>` : ""}<p>${esc(g.d)}</p><div class="row" style="margin-top:14px">${sayBtn()}${g.s ? `<button type="button" class="btn ghost" id="ts-mehr" style="flex:1">Mehr dazu</button>` : ""}<button type="button" class="btn" id="ts-ok" style="flex:1">Verstanden</button></div></div>`;
  document.body.appendChild(el);
  const opener = document.activeElement;
  const close = () => { el.remove(); opener?.focus?.({ preventScroll: true }); };
  el.onclick = e => { if (e.target === el) close(); };
  $("#ts-ok", el).onclick = close; $("#ts-ok", el).focus({ preventScroll: true });
+ if ($("#ts-mehr", el)) $("#ts-mehr", el).onclick = () => { el.remove(); opener?.focus?.({ preventScroll: true }); openBegriff(i); };
  $("[data-say]", el)?.addEventListener("click", e => { e.stopPropagation(); say(g.w + ". " + (g.de ? g.de + ". " : "") + g.d); }, true);
  el.addEventListener("keydown", e => { if (e.key === "Escape") { e.stopPropagation(); close(); } });
  let y0 = null; const box = $(".ts-in", el);
@@ -1182,7 +1252,7 @@ function viewGlossar() {
   if (tab === "karten") return karte();
   $("#gcount").textContent = tab === "begriffe" ? `${items.length} Begriffe` : `${fs.length} Formeln`;
   $("#glist").innerHTML = tab === "begriffe"
-   ? (items.length ? items.map(g => { const m = modById(g.m) || MODULE[0]; return `<div class="gl" style="--m:${m.farbe}"><h2 class="gw">${esc(g.w)}</h2><p>${esc(g.d)}</p><span class="small muted">${m.kurz}</span></div>`; }).join("") : `<p class="muted">Kein Begriff gefunden.</p>`)
+   ? (items.length ? items.map(g => { const m = modById(g.m) || MODULE[0]; return g.s ? `<button type="button" class="gl gl-b" data-g="${GLOSSAR.indexOf(g)}" style="--m:${m.farbe}"><span class="gl-t"><h2 class="gw">${esc(g.w)}</h2><p>${esc(g.d)}</p><span class="small muted">${m.kurz} · antippen: einfach erklärt</span></span><span class="chev" aria-hidden="true">${ic("right")}</span></button>` : `<div class="gl" style="--m:${m.farbe}"><h2 class="gw">${esc(g.w)}</h2><p>${esc(g.d)}</p><span class="small muted">${m.kurz}</span></div>`; }).join("") : `<p class="muted">Kein Begriff gefunden.</p>`)
    : (fs.length ? fs.map(f => `<div class="card formel"><h2 class="gw">${esc(f.n)}</h2><div class="eq">${esc(f.f)}</div><p class="small"><b>Beispiel:</b> ${esc(f.b)}</p>${f.h ? `<p class="small muted">${esc(f.h)}</p>` : ""}</div>`).join("") : `<p class="muted">Keine Formel gefunden.</p>`);
  };
  // Lernkarten: Begriff → antippen → Erklärung → „Wusste ich“ / „Noch nicht“ (bekannte kommen seltener)
@@ -1199,6 +1269,7 @@ function viewGlossar() {
   $("#fc").onclick = () => { $("#fc").innerHTML = `<span class="small muted">${esc(g.w)}</span>${g.de ? `<b style="font-size:1.05rem">${esc(g.de)}</b>` : ""}<span style="font-size:.98rem;line-height:1.5">${esc(g.d)}</span>`; $("#fc").classList.add("back"); $("#fcr").hidden = false; };
   $$("#fcr [data-k]").forEach(b => b.onclick = () => { const ok = b.dataset.k === "1"; S.gk[g.w] = ok ? (S.gk[g.w] || 0) + 1 : 0; lernZaehler(ok); save(); kk++; if (kk >= deck.length) { toast("Runde geschafft!"); neuesDeck(); } karte(); });
  }
+ $("#glist").addEventListener("click", e => { const b = e.target.closest(".gl-b"); if (b) openBegriff(+b.dataset.g); });
  $("#gq").addEventListener("input", draw);
  $$(".seg button").forEach(b => b.onclick = () => { tab = b.dataset.t; draw(); });
  draw();
