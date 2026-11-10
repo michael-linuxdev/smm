@@ -26,7 +26,7 @@ for (const [w, e] of Object.entries(EINFACH)) {
     const t = e[k]; if (!t) continue;
     if (t.length > (k === "merke" ? 160 : 330)) fehler.push(`Einfache Sprache: Karte „${k}“ zu lang (${t.length}): ${w}`);
     if (/\b(z\. ?B\.|d\. ?h\.|u\. ?a\.|bzw\.|ggf\.|usw\.|etc\.)/.test(t + " " + e.d)) fehler.push(`Einfache Sprache: Abkürzung in „${k}“: ${w}`);
-    for (const satz of t.split(/(?<=[.!?])\s+(?=[A-ZÄÖÜ„*(])/)) if (woerter(satz) > 18) fehler.push(`Einfache Sprache: Satz mit mehr als 18 Wörtern in „${k}“: ${w} – ${satz.slice(0, 50)}…`);
+    for (const satz of t.split(/(?<=[.!?])\s+(?=[A-ZÄÖÜ„*(0-9])/)) if (woerter(satz) > 18) fehler.push(`Einfache Sprache: Satz mit mehr als 18 Wörtern in „${k}“: ${w} – ${satz.slice(0, 50)}…`);
   }
 }
 const mitStory = GLOSSAR.filter(g => g.s).length;
