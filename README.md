@@ -17,6 +17,10 @@ Lern-App (PWA) zum Zertifikatslehrgang **Social Media Manager/-in (IHK)** – au
 
 Die Begriffe stehen in `data/glossar.js` und `data/glossar2.js`. Die Texte in einfacher Sprache liegen in `data/einfach/` (alphabetisch: `01.js` bis `05.js` mit je 20 Begriffen, `06.js` mit den übrigen 70 – damit sind alle 170 Begriffe überarbeitet): eine Kurzerklärung und vier Karten für die Begriffs-Story (Was ist das? · Beispiel · Wozu brauchst du das? bzw. Nicht verwechseln · Merke). In der Glossarliste öffnet ein Tipp die Story, im Lektionstext führt „Mehr dazu“ im Begriffs-Blatt dorthin. Regeln: kurze Sätze (höchstens 18 Wörter), Du-Ansprache, keine Abkürzungen – `node tests/check-data.mjs` prüft das. Neue Datei auch in `sw.js` (ASSETS) eintragen.
 
+### Lernpfad und „gelesen“
+
+Die Glossarliste ist aufbauend sortiert: Abschnitte in Kursreihenfolge, darin Grundbegriffe zuerst. Die Reihenfolge steht in `data/lernpfad.js` (jeder Begriff genau einmal, bei seinem Modul – `node tests/check-data.mjs` prüft das). Über „A–Z“ lässt sich die Liste alphabetisch anzeigen; bei einer Suche zählt die Treffergüte. Ein Begriff gilt als gelesen, sobald die letzte Karte seiner Story erreicht ist (gespeichert in `S.gl`, also auch in der Sicherungsdatei). Der Haken rechts in der Liste setzt oder entfernt die Markierung von Hand, „Weiter mit …“ öffnet die nächste ungelesene Story, und in den Einstellungen lassen sich alle Markierungen zurücksetzen.
+
 ## Offene Stellen
 
 `scripts/stellen-holen.mjs` holt täglich per GitHub Action (`.github/workflows/stellen.yml`, auch manuell unter „Actions“ startbar) passende Stellen aus der Jobbörse der Bundesagentur für Arbeit und schreibt `data/stellen.json`. Die Umkreissuche läuft auf dem Gerät mit `data/plz.json` (GeoNames, CC BY 4.0, über zauberware/postal-codes-json-xml-csv). Andere Jobbörsen ohne offene Schnittstelle werden nur verlinkt. Vor eigenen Pushes `git pull --rebase`, weil die Action täglich committet.

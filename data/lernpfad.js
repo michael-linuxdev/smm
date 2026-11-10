@@ -1,0 +1,31 @@
+// Lernpfad durch das Glossar: aufbauende Reihenfolge je Modul (Grundbegriffe zuerst, darauf Aufbauendes danach).
+// Die Module erscheinen in Kursreihenfolge (data/kurs.js). Jeder Glossar-Begriff steht genau einmal hier,
+// und zwar bei seinem Modul – `node tests/check-data.mjs` prüft das. Neue Begriffe an passender Stelle einfügen.
+export const LERNPFAD = {
+ einf: ["Web 2.0", "Social Media", "One-to-many / Many-to-many", "Prosumer", "Community", "Content", "Feed", "Hashtag",
+  "Netzwerkeffekt", "Viralität", "Filterblase", "Crowdsourcing", "Marketing", "Zielgruppe", "B2C", "B2B", "Kampagne", "PR",
+  "Influencer", "Social Commerce", "Social Selling", "Social Customer Care", "HR", "Recruiting", "KI"],
+ platt: ["Algorithmus", "Organische Reichweite", "Business-Konto", "Insights", "Dashboard", "Story", "Reels", "Microblogging",
+  "Fediverse", "Corporate Blog", "Alt-Text", "Crossposting", "Repurposing", "Publishing-Tool", "Social Inbox", "Workflow", "CRM",
+  "Prompt", "Halluzination"],
+ unt: ["Vision und Mission", "Status-quo-Analyse", "SWOT-Analyse", "PEST-Analyse", "SMART", "Persona", "Pain Points",
+  "Owned Media", "Paid Media", "Earned Media", "PESO-Modell", "Content-Säulen / Themensäulen", "Hero-Hub-Help-Modell",
+  "Tonalität", "Corporate Design", "Governance", "Hub-and-Spoke", "RACI-Matrix", "Compliance", "Outsourcing", "Briefing",
+  "Ziel-Aufgaben-Methode", "Enterprise 2.0", "Corporate Influencer", "Employee Advocacy", "Mikro-Influencer", "Affiliate",
+  "Social Media Relations", "Social Media Newsroom", "Employer Branding", "Employer Value Proposition", "Social Recruiting",
+  "Active Sourcing", "Candidate Experience"],
+ recht: ["DSGVO", "Einwilligung", "Datenschutzerklärung", "Cookie", "TDDDG", "Tracking-Pixel", "Fanpage",
+  "Gemeinsame Verantwortlichkeit", "EuGH", "BGH", "DDG", "Impressumspflicht", "DSA", "Notice and Takedown", "UrhG",
+  "Nutzungsrecht", "Creative Commons", "User Generated Content", "KUG", "Recht am eigenen Bild", "UWG", "Werbekennzeichnung",
+  "Abmahnung", "AGB", "KI-Verordnung", "Deepfake", "Social-Media-Guidelines", "BetrVG"],
+ kpi: ["Controlling", "KPI", "Vanity Metrics", "Reichweite", "Impressionen", "Frequenz", "Engagement", "Engagement-Rate",
+  "Conversation Rate", "Amplification Rate", "CTR", "Conversion", "Mikro-Conversion", "Conversion-Rate", "Lead", "Bounce Rate",
+  "CPM", "CPC", "CPL", "CPA", "Deckungsbeitrag", "ROAS", "ROI", "Tracking", "UTM-Parameter", "Attributionsmodell",
+  "Monitoring / Social Listening", "Sentiment", "Sentiment Ratio", "Share of Voice", "Benchmarking", "A/B-Test", "Reporting",
+  "Balanced Scorecard", "PDCA"],
+ plan: ["Customer Journey", "Touchpoint", "Funnel", "AIDA", "See – Think – Do – Care", "Redaktionsplan", "Storytelling",
+  "Evergreen Content", "Seeding", "Community Management", "Netiquette", "Online Reputation Management", "Shitstorm",
+  "Shitstorm-Skala", "Streisand-Effekt", "Krisenkommunikation", "Eskalationsmatrix", "Holding Statement", "Dark Site"],
+ ads: ["Social Ads", "Targeting", "Streuverlust", "Geotargeting", "Custom Audience", "Lookalike Audience",
+  "Ausschluss-Zielgruppe", "Retargeting", "Creatives", "SEO"]
+};

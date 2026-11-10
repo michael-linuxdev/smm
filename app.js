@@ -1,5 +1,6 @@
 import { MODULE, FRAGEN } from "./data/kurs.js";
 import { GLOSSAR, FORMELN } from "./data/glossar.js";
+import { LERNPFAD } from "./data/lernpfad.js";
 import { BILDER } from "./data/bilder.js";
 import { VORLESUNGEN } from "./data/vorlesungen.js";
 import { PROJEKTE, PRAXIS_FREI } from "./data/projekte.js";
@@ -62,7 +63,7 @@ const ic = (n, extra = "") => `<svg viewBox="0 0 24 24" fill="none" stroke="curr
 /* ---------- Speicher ----------
    Doppelt: localStorage (schnell) + IndexedDB (robuster). Beim Start gewinnt der neuere Stand (Zeitstempel).
    Fragen und Lektionen haben stabile Schlüssel (unabhängig vom Modul), alte Schlüssel werden migriert. */
-const KEY = "smm-coach", VERSION = "0.25.0";
+const KEY = "smm-coach", VERSION = "0.26.0";
 const DEF = () => ({ lek: {}, q: {}, srs: {}, last: null, tests: [], pruefung: "", day: null, seen: 0, set: { size: "m", theme: "auto", goal: "25", vibe: true, step: true, mig1: 1, mig2: 1 }, lastBackup: 0, created: Date.now(), updated: 0, run: null, lastRun: null });
 let S = DEF();
 try { const x = JSON.parse(localStorage.getItem(KEY) || "null"); if (x) S = Object.assign(DEF(), x); } catch (e) {}
@@ -377,7 +378,7 @@ function viewStart() {
  </section>
  ${countdownHtml()}
  ${[(S.run ? `<a class="cont" href="#test" style="margin-bottom:10px"><div class="thumb" style="background:var(--grad-strong)">${ic("clock")}</div><div><b style="font-size:1rem">Probetest läuft</b><div class="small muted">Weitermachen, wo du aufgehört hast</div></div><span class="chev" style="margin-left:auto">${ic("right")}</span></a>` : ""), ((() => { const n = naechsterTermin(); if (!n || n.k === "pruefung" || n.d > 7) return ""; return `<a class="cont" href="#lehrgang"><div class="thumb" style="background:linear-gradient(135deg,#2b8a3e,#1864ab)">${ic("cal")}</div><div><b style="font-size:1rem">${esc(n.t)} ${n.d === 0 ? "heute" : n.d === 1 ? "morgen" : `in ${n.d} Tagen`}</b><div class="small muted">${n.k === "beginn" ? "Am besten vorher den Grundwortschatz lernen" : "Termin im Lehrgang ansehen"}</div></div><span class="chev" style="margin-left:auto">${ic("right")}</span></a>`; })()), (() => { const v = naechsteVorlesung(); if (!v) return ""; const offen = v.lektionen.map(LEK).filter(x => x && !S.lek[x.l.id]); if (!offen.length) return ""; const t = (new Date(v.datum + "T12:00") - Date.now()) / 86400000; if (t > 8) return ""; return `<a class="cont" href="#lektion-${offen[0].m.id}-${offen[0].l.id}"><div class="thumb" style="background:linear-gradient(135deg,#2b8a3e,#1864ab)">${ic("cal")}</div><div><b style="font-size:1rem">Vorlesung ${datumDE(v.datum)}: ${esc(v.titel)}</b><div class="small muted">${offen.length} passende Lektion${offen.length === 1 ? "" : "en"} vorab lernen</div></div><span class="chev" style="margin-left:auto">${ic("right")}</span></a>`; })(), ((() => { const d = uebenN(); return d ? `<a class="cont" href="#quiz-ueben" style="margin-bottom:10px"><div class="thumb" style="background:linear-gradient(135deg,#1864ab,#6741d9)">${ic("repeat")}</div><div><b style="font-size:1rem">Üben: ${Math.min(d, 10)} Frage${d === 1 ? "" : "n"}</b><div class="small muted">Fehler und fällige Wiederholungen – damit es bis zur Prüfung sitzt.</div></div><span class="chev" style="margin-left:auto">${ic("right")}</span></a>` : ""; })()), (S.lek.grundwortschatz && !S.set?.hilfeGefragt ? `<a class="cont" href="#einstellungen" data-hilfe style="margin-bottom:10px"><div class="thumb" style="background:linear-gradient(135deg,#2b8a3e,#1864ab)">${ic("focus")}</div><div><b style="font-size:1rem">Lernhilfen einstellen</b><div class="small muted">Fokusmodus, Pausen, ruhige Darstellung – z. B. bei ADHS</div></div><span class="chev" style="margin-left:auto">${ic("right")}</span></a>` : ""), (hasProgress(S) && Date.now() - (S.lastBackup || S.created || 0) > (S.lastBackup ? 14 : 7) * 86400000 /* erste Erinnerung nach 7 Tagen, danach alle 14 */ ? `<a class="cont" href="#einstellungen" style="margin-bottom:10px"><div class="thumb" style="background:linear-gradient(135deg,#495057,#212529)">${ic("download")}</div><div><b style="font-size:1rem">Lernstand sichern</b><div class="small muted">Lade eine Sicherungsdatei herunter – falls der Browser Daten löscht.</div></div><span class="chev" style="margin-left:auto;color:var(--ink-3)">${ic("right")}</span></a>` : ""), (platform().standalone && !hasProgress(S) && !S.set?.restoreGesehen && !S.day && Date.now() - (S.created || 0) < 3 * 86400000 ? `<a class="cont" href="#einstellungen" data-restore style="margin-bottom:10px"><div class="thumb" style="background:linear-gradient(135deg,#495057,#212529)">${ic("upload")}</div><div><b style="font-size:1rem">Kommst du aus dem Browser?</b><div class="small muted">Dort gesicherten Lernstand in den Einstellungen wiederherstellen.</div></div><span class="chev" style="margin-left:auto">${ic("right")}</span></a>` : ""), (S.pruefung ? "" : `<a class="cont" href="#lehrgang" style="margin-bottom:6px"><div class="thumb" style="background:var(--grad-strong)">${ic("cal")}</div><div><b style="font-size:1rem">Termine eintragen</b><div class="small muted">Beginn, Workshops und Prüfung – für deinen Lernplan.</div></div><span class="chev" style="margin-left:auto;color:var(--ink-3)">${ic("right")}</span></a>`)].filter(Boolean).slice(0, 2).join("")}
- <a class="cont" href="#glossar" style="margin-bottom:10px"><div class="thumb" style="background:linear-gradient(135deg,#2b8a3e,#1864ab)">${ic("abc")}</div><div><b style="font-size:1rem">Glossar & Formeln</b><div class="small muted">${GLOSSAR.length} Begriffe und ${FORMELN.length} Formeln nachschlagen</div></div><span class="chev" style="margin-left:auto">${ic("right")}</span></a>
+ <a class="cont" href="#glossar" style="margin-bottom:10px"><div class="thumb" style="background:linear-gradient(135deg,#2b8a3e,#1864ab)">${ic("abc")}</div><div><b style="font-size:1rem">Glossar & Formeln</b><div class="small muted">${gelesenZahl() ? `${gelesenZahl()} von ${GLOSSAR.length} Begriffen gelesen · ${FORMELN.length} Formeln` : `${GLOSSAR.length} Begriffe Schritt für Schritt · ${FORMELN.length} Formeln`}</div></div><span class="chev" style="margin-left:auto">${ic("right")}</span></a>
 `, { compact: true });
  fitMain();
  const rg = $(".rings"); if (rg) { const upd = () => rg.classList.toggle("end", rg.scrollLeft + rg.clientWidth >= rg.scrollWidth - 4); rg.addEventListener("scroll", upd, { passive: true }); upd(); }
@@ -492,8 +493,17 @@ function swipeDown(el, close) {
 
 /* ---------- Begriffs-Story (Glossar): vier Karten in einfacher Sprache ----------
    Liegt als eigene Ebene über Seite oder laufender Lektion. System-Zurück schließt sie. */
-let begEl = null, begKey = null;
+let begEl = null, begKey = null, glossarRefresh = null;
 const topStory = () => begEl || storyEl;
+/* Lernpfad: aufbauende Reihenfolge (data/lernpfad.js), Module in Kursreihenfolge. Gelesen = S.gl[Begriff] (Zeitstempel). */
+const PFAD = MODULE.flatMap(m => (LERNPFAD[m.id] || []).map(w => GLOSSAR.findIndex(g => g.w === w))).filter(i => i >= 0);
+GLOSSAR.forEach((g, i) => { if (!PFAD.includes(i)) PFAD.push(i); });
+const PFAD_POS = new Map(PFAD.map((gi, n) => [gi, n]));
+const gelesen = g => !!(S.gl && S.gl[g.w]);
+const setGelesen = (g, on) => { S.gl = S.gl || {}; if (on === gelesen(g)) return; if (on) S.gl[g.w] = Date.now(); else delete S.gl[g.w]; save(); };
+const gelesenZahl = (liste = GLOSSAR) => liste.filter(gelesen).length;
+// Nächste ungelesene Story im Lernpfad; mit „nach“ ab dem Begriff dahinter (läuft am Ende einmal um).
+const naechsterUngelesen = (nach = -1) => { const start = nach >= 0 ? PFAD_POS.get(nach) + 1 : 0; for (let n = 0; n < PFAD.length; n++) { const gi = PFAD[(start + n) % PFAD.length], g = GLOSSAR[gi]; if (gi !== nach && g.s && !gelesen(g)) return gi; } return -1; };
 function closeBegriff(viaPop) {
  if (!begEl) return;
  const el = begEl, opener = el._opener; begEl = null;
@@ -502,30 +512,36 @@ function closeBegriff(viaPop) {
  if (!storyEl && !document.getElementById("gate")) document.body.classList.remove("no-scroll");
  if (!viaPop && history.state?.beg) history.back();
  if (storyEl) fitSlide();
- if (opener?.isConnected) opener.focus({ preventScroll: true });
+ glossarRefresh?.();
+ // Nach „Nächster Begriff“ landet der Fokus beim zuletzt gelesenen Begriff in der Liste
+ const row = el._pfad ? document.querySelector(`.gl-b[data-g="${el._gi}"]`) : null;
+ if (row) { row.focus({ preventScroll: true }); if (el._gi !== el._gi0) row.scrollIntoView({ block: "center" }); }
+ else if (opener?.isConnected) opener.focus({ preventScroll: true });
 }
 addEventListener("popstate", () => closeBegriff(true));
-function openBegriff(gi) {
+function openBegriff(gi, o = {}) {
  const g = GLOSSAR[gi]; if (!g || !g.s) return;
- const opener = begEl ? begEl._opener : document.activeElement;
+ const opener = begEl ? begEl._opener : document.activeElement, gi0 = o.pfad && begEl?._pfad ? begEl._gi0 : gi;
  if (begEl) { begEl.remove(); removeEventListener("keydown", begKey, true); begEl = null; } else if (!history.state?.beg) history.pushState({ beg: 1 }, "");
  $("#tsheet")?.remove(); if (canSay) speechSynthesis.cancel();
  const m = modById(g.m) || MODULE[0], F = g.s;
  let i = 0, rev = 1;
  const el = begEl = document.createElement("div");
- el.className = "story begriff"; el.style.setProperty("--m", m.farbe); el._opener = opener;
+ el.className = "story begriff"; el.style.setProperty("--m", m.farbe); el._opener = opener; el._pfad = !!o.pfad; el._gi = gi; el._gi0 = gi0;
  el.setAttribute("role", "dialog"); el.setAttribute("aria-modal", "true"); el.setAttribute("aria-label", "Begriff: " + g.w);
  document.body.appendChild(el); document.body.classList.add("no-scroll");
  const closeB = () => closeBegriff();
+ // Aus der Glossarliste geöffnet: nach der letzten Karte geht es mit dem nächsten ungelesenen Begriff weiter
+ const weiter = () => o.pfad ? naechsterUngelesen(gi) : -1;
  const go = d => {
   const parts = $$(".rv", el);
   if (d > 0 && parts.length && rev < parts.length) { const p = parts[rev]; p.classList.remove("h"); p.tabIndex = -1; p.focus({ preventScroll: true }); rev++; buzz(8); mehr(); return; }
-  if (d > 0 && i === F.length - 1) return closeB();
+  if (d > 0 && i === F.length - 1) { const nx = weiter(); return nx >= 0 ? openBegriff(nx, { pfad: 1 }) : closeB(); }
   if (canSay) speechSynthesis.cancel();
   i = Math.max(0, i + d); rev = 1; draw();
  };
  const saetze = t => stepOn() ? t.split(/(?<=[.!?])\s+(?=[A-ZÄÖÜ„*(])/).map((x, n) => `<span class="rv ${n > 0 ? "h" : ""}">${md(x)}</span>`).join(" ") : md(t);
- const mehr = () => { const rest = $$(".rv.h", el).length, nb = $(".next", el); nb.innerHTML = rest ? `Weiter lesen <span class="dots" aria-hidden="true">${"●".repeat(rest)}</span>` : i === F.length - 1 ? "Fertig" : `Weiter ${ic("right")}`; };
+ const mehr = () => { const rest = $$(".rv.h", el).length, nb = $(".next", el); nb.innerHTML = rest ? `Weiter lesen <span class="dots" aria-hidden="true">${"●".repeat(rest)}</span>` : i === F.length - 1 ? (weiter() >= 0 ? `<span class="nb-l">Nächster Begriff</span><span class="nb-s" aria-hidden="true">Nächster</span> ${ic("right")}` : "Fertig") : `Weiter ${ic("right")}`; };
  begKey = e => {
   if ($("#tsheet")) return;
   if (e.key === "ArrowRight") go(1); else if (e.key === "ArrowLeft") go(-1); else if (e.key === "Escape") closeB();
@@ -535,13 +551,16 @@ function openBegriff(gi) {
  addEventListener("keydown", begKey, true);
  swipeDown(el, closeB);
  function draw() {
-  const f = F[i];
-  el.innerHTML = `<p class="sr-only" aria-live="polite">Karte ${i + 1} von ${F.length}</p><div class="segs" aria-hidden="true">${F.map((_, n) => `<i class="${n < i ? "on" : ""}"><b style="${n === i ? "width:100%" : ""}"></b></i>`).join("")}</div>
+  const f = F[i], letzte = i === F.length - 1;
+  if (letzte) setGelesen(g, true); // gelesen, sobald die letzte Karte erreicht ist
+  const nx = letzte ? weiter() : -1;
+  el.innerHTML = `<p class="sr-only" aria-live="polite">Karte ${i + 1} von ${F.length}${letzte ? " – als gelesen markiert" : ""}</p><div class="segs" aria-hidden="true">${F.map((_, n) => `<i class="${n < i ? "on" : ""}"><b style="${n === i ? "width:100%" : ""}"></b></i>`).join("")}</div>
   <div class="shead"><div class="av">${ic("abc")}</div><div class="n">${esc(g.w)}<small>Glossar · ${esc(m.kurz)}</small></div>${sayBtn()}<button class="x" aria-label="Schließen">${ic("x")}</button></div>
   <div class="stage"><div class="tapzone l"></div><div class="tapzone r"></div><div class="slide ${f.note ? "note" : ""}"><span class="kind">${f.kind}</span><h2>${md(f.h)}</h2>${i === 0 && g.de ? `<p class="bde">${esc(g.de)}</p>` : ""}<div class="body">${saetze(f.b)}</div></div></div>
-  <div class="snav">${i > 0 ? `<button class="btn prev" aria-label="Zurück">${ic("left")}</button>` : ""}<button class="btn next"></button></div>`;
+  <div class="snav">${i > 0 ? `<button class="btn prev" aria-label="Zurück">${ic("left")}</button>` : ""}${nx >= 0 ? `<button class="btn ghost done">Fertig</button>` : ""}<button class="btn next"${nx >= 0 ? ` title="${esc(GLOSSAR[nx].w)}"` : ""}></button></div>`;
   mehr();
   $(".x", el).onclick = closeB;
+  $(".done", el)?.addEventListener("click", closeB);
   $(".next", el).onclick = () => go(1);
   $(".prev", el)?.addEventListener("click", () => go(-1));
   const viaTerm = e => { e.currentTarget.style.pointerEvents = "none"; const t = document.elementFromPoint(e.clientX, e.clientY); e.currentTarget.style.pointerEvents = ""; const tb = t?.closest(".term"); if (tb) { termSheet(+tb.dataset.g); return true; } };
@@ -1240,21 +1259,41 @@ function viewGlossar() {
  page("start", `<a class="back" href="#start">${ic("left")} Start</a><h1 style="margin-bottom:12px">Glossar & Formeln</h1>
  <div class="searchbox">${ic("search")}<input type="search" id="gq" placeholder="Begriff suchen …" aria-label="Begriff suchen" autocomplete="off"></div>
  <div class="seg" role="tablist" aria-label="Ansicht"><button type="button" role="tab" data-t="begriffe" aria-selected="true" class="on">Begriffe</button><button type="button" role="tab" data-t="formeln" aria-selected="false">Formeln</button><button type="button" role="tab" data-t="karten" aria-selected="false">Lernkarten</button></div>
+ <div id="ghead"></div>
  <p class="small muted" id="gcount" aria-live="polite" style="margin:-6px 0 8px"></p><div id="glist"></div>`);
  const norm = t => t.toLowerCase().replace(/ä/g, "ae").replace(/ö/g, "oe").replace(/ü/g, "ue").replace(/ß/g, "ss").normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/[-\s_/]+/g, "");
  const score = (g, qy) => { const w = norm(g.w + " " + (g.syn || []).join(" ")), q = norm(qy); return w.startsWith(q) ? 0 : w.includes(q) ? 1 : 2; };
+ const sort = () => S.set.gsort === "az" ? "az" : "pfad";
  const draw = () => {
   const qy = $("#gq").value;
-  const items = GLOSSAR.filter(g => !qy || norm(g.w + " " + (g.syn || []).join(" ") + " " + (g.de || "") + " " + g.d).includes(norm(qy))).sort((a, b) => (qy ? score(a, qy) - score(b, qy) : 0) || a.w.localeCompare(b.w, "de"));
+  const treffer = GLOSSAR.filter(g => !qy || norm(g.w + " " + (g.syn || []).join(" ") + " " + (g.de || "") + " " + g.d).includes(norm(qy)));
+  // Reihenfolge: bei einer Suche nach Treffergüte, sonst Lernpfad (aufbauend) oder A–Z
+  const pfad = !qy && sort() === "pfad";
+  const items = treffer.sort((a, b) => qy ? score(a, qy) - score(b, qy) || a.w.localeCompare(b.w, "de") : pfad ? PFAD_POS.get(GLOSSAR.indexOf(a)) - PFAD_POS.get(GLOSSAR.indexOf(b)) : a.w.localeCompare(b.w, "de"));
   const fs = FORMELN.filter(f => !qy || norm(f.n + " " + f.f).includes(norm(qy)));
-  $$(".seg button").forEach(b => { const on = b.dataset.t === tab; b.classList.toggle("on", on); b.setAttribute("aria-selected", on); b.textContent = { karten: "Lernkarten", begriffe: "Begriffe", formeln: "Formeln" }[b.dataset.t]; });
+  $$(".seg[role=tablist] button").forEach(b => { const on = b.dataset.t === tab; b.classList.toggle("on", on); b.setAttribute("aria-selected", on); b.textContent = { karten: "Lernkarten", begriffe: "Begriffe", formeln: "Formeln" }[b.dataset.t]; });
   $(".searchbox").hidden = tab === "karten";
+  $("#ghead").innerHTML = "";
   if (tab === "karten") return karte();
-  $("#gcount").textContent = tab === "begriffe" ? `${items.length} Begriffe` : `${fs.length} Formeln`;
+  $("#gcount").textContent = tab === "begriffe" ? (qy ? `${items.length} Begriffe` : "") : `${fs.length} Formeln`;
+  if (tab === "begriffe" && !qy) {
+   const n = gelesenZahl(), nx = naechsterUngelesen(), all = GLOSSAR.length;
+   $("#ghead").innerHTML = `<div class="gprog"><div class="gprog-t"><b>${n} von ${all} Begriffen gelesen</b><span class="small muted">${Math.round(n / all * 100)} %</span></div><div class="bar dark" role="progressbar" aria-label="Gelesene Begriffe" aria-valuemin="0" aria-valuemax="${all}" aria-valuenow="${n}"><i style="width:${n / all * 100}%"></i></div>
+    ${nx >= 0 ? `<button type="button" class="btn gweiter" id="gweiter"><span class="gweiter-t"><small>${n ? "Weiter mit" : "Starten mit"}</small><span>${esc(GLOSSAR[nx].w)}</span></span>${ic("right")}</button>` : `<p class="gfertig">${ic("check")} Du hast alle Begriffe gelesen.</p>`}</div>
+    <div class="seg seg-s" role="group" aria-label="Reihenfolge"><button type="button" data-s="pfad" aria-pressed="${pfad}" class="${pfad ? "on" : ""}">Lernpfad</button><button type="button" data-s="az" aria-pressed="${!pfad}" class="${pfad ? "" : "on"}">A–Z</button></div>`;
+   $("#gweiter")?.addEventListener("click", () => openBegriff(nx, { pfad: 1 }));
+   $$("#ghead [data-s]").forEach(b => b.onclick = () => { S.set.gsort = b.dataset.s; save(); draw(); $(`#ghead [data-s="${b.dataset.s}"]`)?.focus({ preventScroll: true }); });
+  }
+  const H = pfad ? "h3" : "h2";
+  const zeile = g => { const m = modById(g.m) || MODULE[0], gi = GLOSSAR.indexOf(g), r = gelesen(g); return g.s ? `<div class="gl-row${r ? " read" : ""}" style="--m:${m.farbe}"><button type="button" class="gl-b" data-g="${gi}"><span class="gl-t"><${H} class="gw">${esc(g.w)}</${H}><p>${esc(g.d)}</p><span class="small muted">${m.kurz} · ${r ? "gelesen" : "antippen: einfach erklärt"}</span></span></button><button type="button" class="gl-chk" data-r="${gi}" aria-pressed="${r}" aria-label="${esc(g.w)}: gelesen" title="${r ? "Als ungelesen markieren" : "Als gelesen markieren"}"><span>${ic("check")}</span></button></div>` : `<div class="gl" style="--m:${m.farbe}"><${H} class="gw">${esc(g.w)}</${H}><p>${esc(g.d)}</p><span class="small muted">${m.kurz}</span></div>`; };
+  const liste = pfad
+   ? MODULE.map(m => { const gs = items.filter(g => g.m === m.id); return gs.length ? `<h2 class="gsec" style="--m:${m.farbe}"><span>${esc(m.name)}</span><span class="small muted">${gelesenZahl(gs)} von ${gs.length} gelesen</span></h2>${gs.map(zeile).join("")}` : ""; }).join("") + items.filter(g => !modById(g.m)).map(zeile).join("")
+   : items.map(zeile).join("");
   $("#glist").innerHTML = tab === "begriffe"
-   ? (items.length ? items.map(g => { const m = modById(g.m) || MODULE[0]; return g.s ? `<button type="button" class="gl gl-b" data-g="${GLOSSAR.indexOf(g)}" style="--m:${m.farbe}"><span class="gl-t"><h2 class="gw">${esc(g.w)}</h2><p>${esc(g.d)}</p><span class="small muted">${m.kurz} · antippen: einfach erklärt</span></span><span class="chev" aria-hidden="true">${ic("right")}</span></button>` : `<div class="gl" style="--m:${m.farbe}"><h2 class="gw">${esc(g.w)}</h2><p>${esc(g.d)}</p><span class="small muted">${m.kurz}</span></div>`; }).join("") : `<p class="muted">Kein Begriff gefunden.</p>`)
+   ? (items.length ? liste : `<p class="muted">Kein Begriff gefunden.</p>`)
    : (fs.length ? fs.map(f => `<div class="card formel"><h2 class="gw">${esc(f.n)}</h2><div class="eq">${esc(f.f)}</div><p class="small"><b>Beispiel:</b> ${esc(f.b)}</p>${f.h ? `<p class="small muted">${esc(f.h)}</p>` : ""}</div>`).join("") : `<p class="muted">Keine Formel gefunden.</p>`);
  };
+ glossarRefresh = () => { if ($("#gq") && $("#glist") && tab === "begriffe") draw(); };
  // Lernkarten: Begriff → antippen → Erklärung → „Wusste ich“ / „Noch nicht“ (bekannte kommen seltener)
  S.gk = S.gk || {};
  let deck = [], kk = 0;
@@ -1269,9 +1308,13 @@ function viewGlossar() {
   $("#fc").onclick = () => { $("#fc").innerHTML = `<span class="small muted">${esc(g.w)}</span>${g.de ? `<b style="font-size:1.05rem">${esc(g.de)}</b>` : ""}<span style="font-size:.98rem;line-height:1.5">${esc(g.d)}</span>`; $("#fc").classList.add("back"); $("#fcr").hidden = false; };
   $$("#fcr [data-k]").forEach(b => b.onclick = () => { const ok = b.dataset.k === "1"; S.gk[g.w] = ok ? (S.gk[g.w] || 0) + 1 : 0; lernZaehler(ok); save(); kk++; if (kk >= deck.length) { toast("Runde geschafft!"); neuesDeck(); } karte(); });
  }
- $("#glist").addEventListener("click", e => { const b = e.target.closest(".gl-b"); if (b) openBegriff(+b.dataset.g); });
+ $("#glist").addEventListener("click", e => {
+  const c = e.target.closest(".gl-chk");
+  if (c) { const g = GLOSSAR[+c.dataset.r], on = !gelesen(g); setGelesen(g, on); draw(); toast(on ? "Als gelesen markiert" : "Als ungelesen markiert"); $(`.gl-chk[data-r="${c.dataset.r}"]`)?.focus({ preventScroll: true }); return; }
+  const b = e.target.closest(".gl-b"); if (b) openBegriff(+b.dataset.g, { pfad: 1 });
+ });
  $("#gq").addEventListener("input", draw);
- $$(".seg button").forEach(b => b.onclick = () => { tab = b.dataset.t; draw(); });
+ $$(".seg[role=tablist] button").forEach(b => b.onclick = () => { tab = b.dataset.t; draw(); });
  draw();
 }
 
@@ -1300,7 +1343,7 @@ function importBackup(file) {
  r.readAsText(file);
 }
 function viewEinstellungen(o = {}) {
- const confirmReset = !!o.reset, pend = o.pending;
+ const confirmReset = !!o.reset, pend = o.pending, glN = gelesenZahl();
  const seg = (key, opts, label) => `<div class="seg" role="group" aria-label="${label}">${opts.map(([v, t]) => `<button type="button" data-${key}="${v}" aria-pressed="${(S.set[key] || "") === v}" class="${(S.set[key] || "") === v ? "on" : ""}">${t}</button>`).join("")}</div>`;
  const lb = S.lastBackup ? new Date(S.lastBackup).toLocaleDateString("de-DE") : "noch nie";
  page("einstellungen", `${head("Einstellungen")}<h1 class="sr-only">Einstellungen</h1>
@@ -1317,6 +1360,8 @@ function viewEinstellungen(o = {}) {
   ${pend ? `<div class="tip" role="alert" style="margin-top:12px">${ic("warn", 'style="color:var(--bad)"')}<span><b>Lernstand ersetzen?</b><br>Sicherung vom ${esc(new Date(pend.date || 0).toLocaleDateString("de-DE"))}: ${summary(pend.data)}.<br>Aktuell auf diesem Gerät: ${summary(S)}.</span></div><div class="row"><button class="btn ghost" id="impno">Abbrechen</button><button class="btn" id="impyes">Ersetzen</button></div>` : ""}
   <p class="small muted" style="margin-top:10px" id="storeinfo"></p></div>
  <div class="card"><h2 class="h3">App</h2><p class="small muted" style="margin:2px 0 10px">Installierte Version: ${VERSION}</p><div class="row" style="margin-top:8px"><button class="btn" id="upchk">${ic("repeat")} Nach Updates suchen</button><button class="btn ghost" id="inst">Als App installieren</button><a class="btn ghost" href="#lehrgang">Prüfungstermin</a></div></div>
+ <div class="card" id="glossarstand"><h2 class="h3">Glossar: gelesene Begriffe</h2><p class="small muted" style="margin:2px 0 12px">${glN} von ${GLOSSAR.length} Begriffen sind als gelesen markiert. Einzelne Begriffe änderst du im Glossar über den Haken.</p>
+  ${o.glreset ? `<div class="tip">${ic("warn", 'style="color:var(--bad)"')}<span>Alle ${glN} Markierungen entfernen? Der übrige Lernstand bleibt erhalten.</span></div><div class="row"><button class="btn ghost" id="glno">Abbrechen</button><button class="btn danger" id="glyes">Zurücksetzen</button></div>` : `<button class="btn ghost" id="glreset"${glN ? "" : " disabled"}>${ic("repeat")} Alle als ungelesen markieren</button>`}</div>
  <div class="card" id="loeschen"><h2 class="h3">Fortschritt löschen</h2><p class="small muted" style="margin:2px 0 12px">Löscht Lektionen, Fragen, Wiederholungen und Testergebnisse auf diesem Gerät.</p>
   ${confirmReset ? `<div class="tip">${ic("warn", 'style="color:var(--bad)"')}<span>Wirklich alles löschen? Das lässt sich nur mit einer Sicherungsdatei rückgängig machen.</span></div><div class="row"><button class="btn ghost" id="rno">Abbrechen</button><button class="btn danger" id="ryes">${ic("trash")} Endgültig löschen</button></div>` : `<button class="btn ghost" id="reset">${ic("trash")} Fortschritt löschen</button>`}</div>
  <p class="small muted" style="text-align:center;margin-top:20px">SMM Coach · Version ${VERSION}<br>Unabhängiges Lernangebot, kein offizielles Angebot der IHK oder der HSB Akademie.</p>`, { keep: o.keep });
@@ -1343,6 +1388,9 @@ function viewEinstellungen(o = {}) {
  };
  $("#imp").onchange = e => e.target.files[0] && importBackup(e.target.files[0]);
  $("#inst").onclick = () => { const p = platform(); if (p.standalone) toast("Die App ist bereits installiert"); else if (p.os === "desktop") toast("Am Computer: Installieren-Symbol in der Adresszeile"); else installGate(true); };
+ $("#glreset")?.addEventListener("click", () => { viewEinstellungen({ keep: true, glreset: true }); $("#glyes")?.focus({ preventScroll: false }); });
+ $("#glno")?.addEventListener("click", () => refocus("#glreset"));
+ $("#glyes")?.addEventListener("click", () => { S.gl = {}; save(); toast("Alle Begriffe sind wieder ungelesen"); refocus("#glossarstand"); });
  $("#reset")?.addEventListener("click", () => viewEinstellungen({ keep: true, reset: true }));
  $("#rno")?.addEventListener("click", () => viewEinstellungen({ keep: true }));
  if (confirmReset) $("#ryes")?.focus({ preventScroll: false });
