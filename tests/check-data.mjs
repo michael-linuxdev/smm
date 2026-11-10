@@ -2,6 +2,7 @@
 // Harte Vorgabe: höchstens 400 Fragen insgesamt (FRAGEN + Kurz-Checks in Lektionen).
 import { MODULE, FRAGEN } from "../data/kurs.js";
 import { GLOSSAR, EINFACH } from "../data/glossar.js";
+import { LERNPFAD } from "../data/lernpfad.js";
 const MAX_FRAGEN = 400;
 const checks = MODULE.flatMap(m => m.lektionen.flatMap(l => l.folien.filter(f => f.k === "check")));
 const total = FRAGEN.length + checks.length, fehler = [];
@@ -29,6 +30,12 @@ for (const [w, e] of Object.entries(EINFACH)) {
     for (const satz of t.split(/(?<=[.!?])\s+(?=[A-ZÄÖÜ„*(0-9])/)) if (woerter(satz) > 18) fehler.push(`Einfache Sprache: Satz mit mehr als 18 Wörtern in „${k}“: ${w} – ${satz.slice(0, 50)}…`);
   }
 }
+// Lernpfad: jeder Begriff genau einmal, beim richtigen Modul; nur bekannte Module
+const pfadAlle = Object.values(LERNPFAD).flat();
+for (const mid of Object.keys(LERNPFAD)) if (!MODULE.some(m => m.id === mid)) fehler.push("Lernpfad: unbekanntes Modul " + mid);
+if (new Set(pfadAlle).size !== pfadAlle.length) fehler.push("Lernpfad: Begriff doppelt: " + pfadAlle.filter((w, i) => pfadAlle.indexOf(w) !== i).join(", "));
+for (const w of pfadAlle) if (!gw.includes(w)) fehler.push("Lernpfad: Begriff nicht im Glossar: " + w);
+for (const g of GLOSSAR) { if (!pfadAlle.includes(g.w)) fehler.push("Lernpfad: Begriff fehlt: " + g.w); else if (!(LERNPFAD[g.m] || []).includes(g.w)) fehler.push(`Lernpfad: ${g.w} steht nicht bei seinem Modul (${g.m})`); }
 const mitStory = GLOSSAR.filter(g => g.s).length;
 console.log(`Fragen: ${total}/${MAX_FRAGEN} · Lektionen: ${lids.length} · Glossar: ${gw.length} (einfach erklärt: ${mitStory})`);
 if (fehler.length) { console.error(fehler.join("\n")); process.exit(1); } else console.log("OK");

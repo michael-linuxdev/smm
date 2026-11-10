@@ -639,3 +639,32 @@ label.check.sw input:checked{background:var(--ok)} label.check.sw input:checked:
 .gl-b:focus-visible{outline:3px solid var(--c2,#1971c2);outline-offset:2px}
 .gl-b:active{transform:scale(.99)}
 .story .bde{margin:-.5em 0 .7em;font-size:.82em;font-weight:600;color:var(--ink-3)}
+/* Glossar: Lernpfad, Fortschritt und Gelesen-Haken */
+.gprog{background:var(--surface);border-radius:18px;padding:14px 16px;box-shadow:var(--shadow);margin-bottom:12px}
+.gprog-t{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.gprog .bar{margin-top:10px}
+.gprog-t .small{flex:none;white-space:nowrap}
+.gweiter{width:100%;margin-top:14px;justify-content:space-between;text-align:left;padding:12px 18px 12px 22px}
+.gweiter-t{display:flex;flex-direction:column;min-width:0}.gweiter-t small{font-weight:600;opacity:.9;font-size:.8rem}
+.gweiter-t span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.gweiter svg{width:22px;height:22px;flex:none}
+.gfertig{display:flex;align-items:center;gap:8px;margin:12px 0 0;font-weight:600}.gfertig svg{width:20px;height:20px;color:var(--ok,#2f9e44);flex:none}
+.seg.seg-s{margin:0 0 12px}.seg.seg-s button{min-height:38px;padding:6px 10px}
+.gsec{display:flex;justify-content:space-between;align-items:baseline;gap:10px;margin:20px 2px 10px;font-size:1.06rem}
+.gsec:first-child{margin-top:4px}
+.gsec>span:first-child{display:flex;align-items:center;gap:8px;min-width:0}
+.gsec>span:first-child::before{content:"";width:10px;height:10px;border-radius:50%;background:var(--m);flex:none}
+.gsec .small{flex:none;font-weight:500}
+.gl-row{display:flex;align-items:stretch;background:var(--surface);border-radius:18px;margin-bottom:10px;box-shadow:var(--shadow);border-left:5px solid var(--m)}
+.gl-row .gl-b{background:none;box-shadow:none;border-left:0;margin:0;width:auto;flex:1;min-width:0;border-radius:14px 0 0 14px;padding:14px 4px 14px 16px}
+.gl-row .gw,.gl .gw{margin:0;font-size:1.031rem}
+.gl-row.read .gl-t{opacity:.68}
+.gl-chk{all:unset;box-sizing:border-box;flex:none;width:54px;display:grid;place-items:center;cursor:pointer;border-radius:0 18px 18px 0;-webkit-tap-highlight-color:transparent}
+.gl-chk span{width:28px;height:28px;border-radius:50%;border:2px solid var(--ink-3);display:grid;place-items:center;color:transparent;transition:background .15s,border-color .15s}
+.gl-chk svg{width:16px;height:16px;stroke-width:3}
+.gl-chk[aria-pressed="true"] span{background:color-mix(in srgb,var(--m) 72%,#000);border-color:transparent;color:#fff}
+.gl-chk:focus-visible{outline:3px solid var(--c2,#1971c2);outline-offset:-3px}
+.gl-chk:active span{transform:scale(.92)}
+.story .snav .done{flex:none;padding-inline:18px}
+.story.begriff .snav .next{white-space:nowrap;padding-inline:14px}
+.nb-s{display:none}
+@media (max-width:359px){.nb-l{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}.nb-s{display:inline}}
