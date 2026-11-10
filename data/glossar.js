@@ -1,6 +1,7 @@
 import { GLOSSAR_NEU, SYN_ALT } from "./glossar2.js";
 import { E01 } from "./einfach/01.js";
 import { E02 } from "./einfach/02.js";
+import { E03 } from "./einfach/03.js";
 // Glossar & Formeln. m = Modul-ID für die Farbe. Stand 11/2026.
 export const GLOSSAR = [
  { w: "Balanced Scorecard", m: "kpi", d: "Kennzahlensystem, das Ziele aus vier Blickwinkeln misst: Finanzen, Kunden, interne Prozesse sowie Lernen und Entwicklung. Im Social-Media-Controlling verbindet sie Kanal-KPIs mit den Unternehmenszielen." },
@@ -85,7 +86,7 @@ for (const g of GLOSSAR) { const x = SYN_ALT[g.w]; if (x) Object.assign(g, x); }
 GLOSSAR.push(...GLOSSAR_NEU);
 
 // Einfache Sprache: neue Kurzerklärung (d) und vier Karten (s) für die Begriffs-Story. Texte in data/einfach/.
-export const EINFACH = Object.assign({}, E01, E02);
+export const EINFACH = Object.assign({}, E01, E02, E03);
 for (const g of GLOSSAR) {
  const e = EINFACH[g.w]; if (!e) continue;
  g.d = e.d;
