@@ -632,3 +632,10 @@ label.check.sw input:checked{background:var(--ok)} label.check.sw input:checked:
 
 .sbtns{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}.sbtns .btn{min-height:52px;font-size:1.05rem;display:flex;align-items:center;justify-content:center;text-align:center}
 @media (max-height:600px){.ptile .pimg{aspect-ratio:3.4/1} .praxis .seg button,.seg button{min-height:38px;padding:6px}}
+/* Glossar: überarbeitete Begriffe öffnen die Begriffs-Story */
+.gl-b{all:unset;box-sizing:border-box;display:flex;align-items:center;gap:10px;width:100%;cursor:pointer;background:var(--surface);border-radius:18px;padding:14px 12px 14px 16px;margin-bottom:10px;box-shadow:var(--shadow);border-left:5px solid var(--m);-webkit-tap-highlight-color:transparent}
+.gl-b .gl-t{display:block;flex:1;min-width:0}.gl-b .gl-t>*{display:block}
+.gl-b .chev{color:var(--ink-3);flex:none}.gl-b .chev svg{width:20px;height:20px;display:block}
+.gl-b:focus-visible{outline:3px solid var(--c2,#1971c2);outline-offset:2px}
+.gl-b:active{transform:scale(.99)}
+.story .bde{margin:-.5em 0 .7em;font-size:.82em;font-weight:600;color:var(--ink-3)}
