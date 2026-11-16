@@ -63,7 +63,7 @@ const ic = (n, extra = "") => `<svg viewBox="0 0 24 24" fill="none" stroke="curr
 /* ---------- Speicher ----------
    Doppelt: localStorage (schnell) + IndexedDB (robuster). Beim Start gewinnt der neuere Stand (Zeitstempel).
    Fragen und Lektionen haben stabile Schlüssel (unabhängig vom Modul), alte Schlüssel werden migriert. */
-const KEY = "smm-coach", VERSION = "0.28.0";
+const KEY = "smm-coach", VERSION = "0.29.0";
 const DEF = () => ({ lek: {}, q: {}, srs: {}, last: null, tests: [], pruefung: "", day: null, seen: 0, set: { size: "m", theme: "auto", goal: "25", vibe: true, step: true, mig1: 1, mig2: 1 }, lastBackup: 0, created: Date.now(), updated: 0, run: null, lastRun: null });
 let S = DEF();
 try { const x = JSON.parse(localStorage.getItem(KEY) || "null"); if (x) S = Object.assign(DEF(), x); } catch (e) {}
@@ -181,15 +181,15 @@ normalizeState();
 
 const lekDone = m => m.lektionen.filter(l => S.lek[l.id]).length;
 const modPool = id => POOL.filter(p => p.m === id);
-const qDone = id => modPool(id).filter(p => S.q[p.key]).length;
-// Fortschritt = Anteil der richtig beantworteten Fragen. Jede Frage zählt gleich viel:
-// 25 neue richtige Fragen heben die Gesamtzahl um rund 6 Prozentpunkte. Lektionen zählen über ihre Kurz-Checks mit.
-const modProgress = m => qDone(m.id) / modPool(m.id).length;
+const qDone = id => modPool(id).filter(p => p.key in S.q).length; // bearbeitet – richtig oder falsch ist für den Fortschritt egal
+// Fortschritt je Modul: zur Hälfte gelesene Lektionen, zur Hälfte bearbeitete Fragen (richtig oder falsch).
+// So kann die Zahl nie sinken – auch nicht durch eine falsche Antwort.
+const modProgress = m => lekDone(m) / m.lektionen.length * .5 + qDone(m.id) / modPool(m.id).length * .5;
 const KERN = () => MODULE.filter(m => !m.zusatz);
 const kernFragen = () => KERN().reduce((s, m) => s + modPool(m.id).length, 0);
-const kernRichtig = () => KERN().reduce((s, m) => s + qDone(m.id), 0);
-const allProgress = () => kernRichtig() / kernFragen();
-const prozent = p => p >= 1 ? 100 : Math.min(99, Math.round(p * 100)); // 100 erst, wenn wirklich alles richtig ist
+const kernBearbeitet = () => KERN().reduce((s, m) => s + qDone(m.id), 0);
+const allProgress = () => KERN().reduce((s, m) => s + modProgress(m), 0) / KERN().length;
+const prozent = p => p >= 1 ? 100 : Math.min(99, Math.round(p * 100)); // 100 erst, wenn wirklich alles geschafft ist
 
 function ringSvg(p, size = 76, w = 4, track = "var(--line)", color = null) {
  const r = (size - w) / 2, c = 2 * Math.PI * r, id = "g" + Math.random().toString(36).slice(2, 7);
@@ -375,10 +375,10 @@ function viewStart() {
  ${ringsHtml()}</div>
  <section class="hero">
   <div class="kicker">${PAUSE_TAGE >= 3 && hasProgress(S) ? "Schön, dass du wieder da bist" : dl === 0 ? "Heute ist Prüfung – viel Erfolg!" : los ? "Weiter so" : "Willkommen"}</div>
-  <h1>${los ? `${prozent(p)} % der Fragen geschafft` : "Werde Social Media Manager"}</h1>
+  <h1>${los ? `${prozent(p)} % insgesamt geschafft` : "Werde Social Media Manager"}</h1>
   ${(() => { const h = heute(), g = goal(), ok = h >= g; return `<div class="hgoal ${ok ? "ok" : ""}"><div class="row" style="justify-content:space-between;align-items:center"><b>${ok ? "Tagesziel geschafft ✓" : "Heute"}</b><span>${Math.min(h, g)} von ${g} Fragen</span></div><div class="hbar" aria-hidden="true"><i style="width:${Math.min(1, h / g) * 100}%"></i></div></div>`; })()}
   <p style="opacity:.92;max-width:460px">${los ? planText : "Lektionen, Quiz und Probetest für deinen IHK-Abschlusstest."}</p>
-  <div class="hero-stat fx"><div><b>${kernDone}/${kernAll}</b><span>Lektionen</span></div><div><b>${kernRichtig()}/${kernFragen()}</b><span>Fragen richtig</span></div><div><b>${best === null ? "–" : best + " %"}</b><span>Bester Test</span></div></div>
+  <div class="hero-stat fx"><div><b>${kernDone}/${kernAll}</b><span>Lektionen</span></div><div><b>${kernBearbeitet()}/${kernFragen()}</b><span>Fragen bearbeitet</span></div><div><b>${best === null ? "–" : best + " %"}</b><span>Bester Test</span></div></div>
   <div class="row"><a class="btn white" href="${endspurt ? "#endspurt" : "#mini"}">${ic("play")} ${endspurt ? "Endspurt heute" : los ? "Weiterlernen" : "Loslegen"}</a></div>
  </section>
  ${countdownHtml()}
@@ -395,9 +395,9 @@ const uebenN = () => new Set([...errorKeys(), ...dueKeys()]).size;
 // sonst erfüllt man das Tagesziel nur mit Wiederholungen und der Fortschritt bleibt stehen.
 // Fragen aus Modulen mit mehr gelesenen Lektionen kommen zuerst.
 const lekAnteil = id => { const m = modById(id); return m ? lekDone(m) / m.lektionen.length : 0; };
-// Höchstens n Fragen, die noch nie richtig waren – Freitext eingeschlossen (eine pro Runde), sonst sind 100 % nicht erreichbar.
+// Höchstens n Fragen, die noch nie richtig waren – unbearbeitete zuerst, Freitext eingeschlossen (eine pro Runde), sonst sind 100 % nicht erreichbar.
 function neueFragen(n) {
- const offen = pool => shuf(pool.filter(q => !S.q[q.key])).sort((a, b) => lekAnteil(b.m) - lekAnteil(a.m));
+ const offen = pool => shuf(pool.filter(q => !S.q[q.key])).sort((a, b) => (a.key in S.q ? 1 : 0) - (b.key in S.q ? 1 : 0) || lekAnteil(b.m) - lekAnteil(a.m));
  const mc = offen(MC_POOL()), fr = offen(FREI_POOL());
  return [...mc.slice(0, fr.length ? n - 1 : n), ...fr, ...mc].filter((q, i, a) => a.indexOf(q) === i).slice(0, n);
 }
@@ -780,7 +780,7 @@ function musterHtml(q, txt) {
 function viewQuiz(id) {
  const m = modById(id), isMini = id === "mini", isMix = id === "mix" || isMini, isFrei = id === "frei", isWdh = id === "ueben" || id === "wdh" || id === "fehler", isErr = false; // isErr: Altlast, Fehlerkiste ist in „Üben“ aufgegangen
  const byKeys = ks => shuf(POOL.filter(q => ks.includes(q.key)));
- let list = isMini ? [...neueFragen(5), ...byKeys(dueKeys()).filter(q => q.t !== "frei"), ...shuf(MC_POOL())].filter((q, i, a) => a.indexOf(q) === i).slice(0, 5) : isWdh ? uebenListe() : isErr ? byKeys(errorKeys()) : isMix ? shuf(MC_POOL()).sort((a, b) => (S.q[a.key] ? 1 : 0) - (S.q[b.key] ? 1 : 0)).slice(0, 10) : isFrei ? shuf(FREI_POOL()).sort((a, b) => (S.q[a.key] ? 1 : 0) - (S.q[b.key] ? 1 : 0)).slice(0, 8) : shuf(modPool(id)).sort((a, b) => (S.q[a.key] ? 1 : 0) - (S.q[b.key] ? 1 : 0));
+ let list = isMini ? [...neueFragen(5), ...byKeys(dueKeys()).filter(q => q.t !== "frei"), ...shuf(MC_POOL())].filter((q, i, a) => a.indexOf(q) === i).slice(0, 5) : isWdh ? uebenListe() : isErr ? byKeys(errorKeys()) : isMix ? shuf(MC_POOL()).sort((a, b) => (S.q[a.key] ? 2 : a.key in S.q ? 1 : 0) - (S.q[b.key] ? 2 : b.key in S.q ? 1 : 0)).slice(0, 10) : isFrei ? shuf(FREI_POOL()).sort((a, b) => (S.q[a.key] ? 1 : 0) - (S.q[b.key] ? 1 : 0)).slice(0, 8) : shuf(modPool(id)).sort((a, b) => (S.q[a.key] ? 1 : 0) - (S.q[b.key] ? 1 : 0));
  if (!m && !isMix && !isFrei && !isWdh && !isErr) return viewStart();
  if (!list.length) { page("start", `<a class="back" href="#start">${ic("left")} Start</a><div class="qcard result"><h2>Gerade nichts zu üben</h2><p class="muted">Keine offenen Fehler, keine fälligen Wiederholungen und keine neuen Fragen. Lerne mit der nächsten Lektion weiter oder mach ein Schnell-Quiz.</p><div class="row" style="justify-content:center;margin-top:16px"><a class="btn" href="#mini">${ic("play")} Weiterlernen</a><a class="btn ghost" href="#quiz-mix">Schnell-Quiz</a></div></div>`); return; }
  const total = list.length; let queue = list.slice(), first = 0, miss = new Set(), n = 0;
