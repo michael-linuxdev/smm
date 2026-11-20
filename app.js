@@ -64,8 +64,8 @@ const ic = (n, extra = "") => `<svg viewBox="0 0 24 24" fill="none" stroke="curr
 /* ---------- Speicher ----------
    Doppelt: localStorage (schnell) + IndexedDB (robuster). Beim Start gewinnt der neuere Stand (Zeitstempel).
    Fragen und Lektionen haben stabile Schlüssel (unabhängig vom Modul), alte Schlüssel werden migriert. */
-const KEY = "smm-coach", VERSION = "0.30.0";
-const DEF = () => ({ lek: {}, q: {}, srs: {}, last: null, tests: [], pruefung: "", day: null, seen: 0, set: { size: "m", theme: "auto", goal: "25", vibe: true, step: true, mig1: 1, mig2: 1 }, lastBackup: 0, created: Date.now(), updated: 0, run: null, lastRun: null });
+const KEY = "smm-coach", VERSION = "0.31.0";
+const DEF = () => ({ lek: {}, q: {}, srs: {}, last: null, tests: [], pruefung: "", day: null, seen: 0, set: { size: "m", theme: "auto", goal: "25", vibe: true, step: true, mig1: 1, mig2: 1, mig3: 1 }, lastBackup: 0, created: Date.now(), updated: 0, run: null, lastRun: null });
 let S = DEF();
 try { const x = JSON.parse(localStorage.getItem(KEY) || "null"); if (x) S = Object.assign(DEF(), x); } catch (e) {}
 const IDB = { db: null };
@@ -157,6 +157,9 @@ function normalizeState() {
  S.q = S.q || {}; S.srs = S.srs || {}; S.lek = S.lek || {}; S.set = Object.assign({ size: "m", theme: "auto", goal: "25", vibe: true, step: true }, S.set || {});
  if (!S.set.mig1) { S.set.step = true; S.set.mig1 = 1; } // neue Standards 0.11.2
  if (!S.set.mig2) { S.set.goal = "25"; S.set.mig2 = 1; } // Standard-Tagesziel 25 (0.17)
+ // 0.31: Lektionen, Quizfragen und Praxisprojekte komplett neu aus den Kursunterlagen → Lernfortschritt auf 0 %.
+ // Einstellungen, Prüfungs- und Kurstermine sowie das Glossar („gelesen“) bleiben erhalten.
+ if (!S.set.mig3) { Object.assign(S, { lek: {}, q: {}, srs: {}, orph: {}, tests: [], run: null, lastRun: null, proj: {}, last: null, day: null }); S.set.mig3 = 1; }
  // Verwaiste Schlüssel werden geparkt (S.orph), nicht gelöscht – so kann eine Frage nach einer Textkorrektur
  // (Feld „alt“ = alte Fragetexte) ihren Lernstand zurückbekommen.
  S.orph = S.orph || {}; S.orph.q = S.orph.q || {}; S.orph.srs = S.orph.srs || {};
@@ -687,7 +690,7 @@ const FREI_POOL = () => POOL.filter(q => q.t === "frei" && !isZusatz(q));
 const isZusatz = q => !!modById(q.m)?.zusatz;
 const MC_POOL = () => POOL.filter(q => q.t !== "frei" && !isZusatz(q));
 const freiMatch = (q, txt) => q.muster.map(([, kw]) => { try { return new RegExp(kw, "i").test(txt); } catch (e) { return false; } });
-function chip(q) { const m = modById(q.m); return `<span class="chip mchip" style="--m:${m.farbe}">${m.kurz}${q.t === "frei" ? " · Freitext" : ""}</span>`; }
+function chip(q) { const m = modById(q.m); return `<span class="chip mchip" style="--m:${m.farbe}">${m.kurz}${q.t === "frei" ? " · Freitext" : ""}${q.beispiel ? " · Beispielfrage Abschlusstest" : ""}</span>`; }
 /* ---------- Fachbegriffe antippbar (Glossar) + Übersetzung beim ersten Auftreten ---------- */
 const TERM_RX = (() => {
  const v = [];

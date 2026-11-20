@@ -114,3 +114,10 @@ export const PROJEKTBILDER = {
   <rect x="40" y="110" width="30" height="50" rx="4" fill="#c3b79c"/><rect x="82" y="86" width="30" height="74" rx="4" fill="#a99a78"/><rect x="124" y="60" width="30" height="100" rx="4" fill="#8c7c58"/><ellipse cx="236" cy="150" rx="38" ry="10" fill="#c99d3c"/><ellipse cx="236" cy="138" rx="38" ry="10" fill="#d9b45a"/><ellipse cx="236" cy="126" rx="38" ry="10" fill="#c99d3c"/><ellipse cx="236" cy="114" rx="38" ry="10" fill="#d9b45a"/><ellipse cx="236" cy="102" rx="38" ry="10" fill="#c99d3c"/><ellipse cx="236" cy="90" rx="38" ry="10" fill="#d9b45a"/><ellipse cx="236" cy="78" rx="38" ry="10" fill="#c99d3c"/>
   <ellipse cx="236" cy="66" rx="38" ry="10" fill="#e8c873"/><text x="236" y="71" font-family="system-ui,sans-serif" font-size="13" font-weight="700" text-anchor="middle" fill="#7a5a1c">€</text>`),
 };
+
+// Hausaufgaben-Projekte (data/praxis/) nutzen die vorhandenen Illustrationen
+Object.assign(PROJEKTBILDER, {
+ viral: PROJEKTBILDER.tourismus, "nike-kanaele": PROJEKTBILDER.fitness, "influencer-messer": PROJEKTBILDER.mode,
+ azubis: PROJEKTBILDER.maschinenbau, "strategie-phasen": PROJEKTBILDER.baeckerei, guidelines: PROJEKTBILDER.kanzlei,
+ "blog-erfolg": PROJEKTBILDER.hotel, hundefutter: PROJEKTBILDER.baeckerei, krisenhandbuch: PROJEKTBILDER.stadtwerke
+});
