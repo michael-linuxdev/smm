@@ -1,8 +1,7 @@
-// Praxisprojekte: interaktive Fallgeschichten zum Anwenden des Wissens (zählen NICHT zum 400-Fragen-Limit).
-import { PROJEKTE_A } from "./projekte-a.js";
-import { PROJEKTE_B } from "./projekte-b.js";
-import { PROJEKTE_C } from "./projekte-c.js";
-import { PROJEKTE_D } from "./projekte-d.js";
-export const PROJEKTE = [...PROJEKTE_A, ...PROJEKTE_B, ...PROJEKTE_C, ...PROJEKTE_D];
-// Reiter „Praxis“ erst nach der unabhängigen Fachprüfung freischalten
+// Praxisprojekte: die Hausaufgaben des Lehrgangs mit Aufgabenstellung, Lösungsweg und Musterlösung
+// (zählen NICHT zum 400-Fragen-Limit). Reihenfolge wie im Vorlesungsplan.
+import { PRAXIS_A } from "./praxis/a.js";
+import { PRAXIS_B } from "./praxis/b.js";
+import { PRAXIS_C } from "./praxis/c.js";
+export const PROJEKTE = [...PRAXIS_A, ...PRAXIS_B, ...PRAXIS_C];
 export const PRAXIS_FREI = true;

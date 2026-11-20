@@ -2,7 +2,7 @@
 
 Lern-App (PWA) zum Zertifikatslehrgang **Social Media Manager/-in (IHK)** – ausgerichtet auf den Fernlehrgang der HSB Akademie mit Abschlusstest beim IHK-Bildungszentrum Dresden.
 
-- **Lernen:** sechs Module nach der Gliederung der HSB-Kursinformation, Story-Lektionen mit Wissens-Checks, Zusatzwissen Social Ads (nicht im Probetest)
+- **Lernen:** sechs Module nach der Gliederung der HSB-Kursinformation, Story-Lektionen aus den Kursunterlagen mit Wissens-Checks, Zusatzwissen Social Ads und KI in der Redaktion (nicht im Probetest)
 - **Üben:** Quiz pro Modul, Schnell-Quiz, Freitext in Runden à 8 mit Musterlösung und Selbstbewertung, Wiederholung (Leitner-System), Fehlerkiste, Glossar & Formeln
 - **Prüfung:** Probetest mit 30 Fragen (Multiple Choice + Freitext), 60 Minuten oder ohne Zeitlimit, Vor/Zurück, Markieren, Übersicht, Teilpunkte beim Freitext
 - **Lehrgang:** Ablauf, Kosten, Termine, Karriere
@@ -11,7 +11,17 @@ Lern-App (PWA) zum Zertifikatslehrgang **Social Media Manager/-in (IHK)** – au
 
 ## Inhaltliche Grenze
 
-**Höchstens 400 Fragen** (Quizfragen + Kurz-Checks in Lektionen). Neue Fragen nur im Tausch gegen bestehende. Gestrichene stehen in `data/gestrichen.js`. Prüfung: `node tests/check-data.mjs` (bricht bei mehr als 400 ab).
+**Höchstens 400 Fragen** (Quizfragen + Kurz-Checks in Lektionen). Neue Fragen nur im Tausch gegen bestehende. Prüfung: `node tests/check-data.mjs` (bricht bei mehr als 400 ab).
+
+## Lektionen aus den Kursunterlagen
+
+Lektionen, Quizfragen und Praxisprojekte stammen vollständig aus den Kursunterlagen. Die Lektionen aller Module sind Zusammenfassungen der Kurs-PDFs (Vorlesungsfolien und Studienbriefe smm1–smm3) in einfacher Sprache. Sie liegen in `data/lernen/` (eine Datei je Themenblock, eingebunden in `data/kurs.js`). Jede Lektion nennt ihre Quelle (`quelle`: Datei und Seiten) und hat genau einen Kurz-Check. Regeln wie beim Glossar: höchstens 18 Wörter pro Satz, Du-Ansprache, keine Abkürzungen – `node tests/check-data.mjs` prüft das. Veraltete Namen aus den Unterlagen sind angepasst (DDG statt TMG, TDDDG statt TTDSG, X statt Twitter). Zusatzmodul „KI in der Redaktion“ (aus dem Studienbrief „KI in der Onlineredaktion“) und „Social Ads“ zählen nicht zum Probetest. Der Vorlesungsplan (`data/vorlesungen.js`) verweist auf die neuen Lektionen. Die Kursunterlagen selbst (PDFs, Screenshots) liegen nicht im Repo.
+
+**Quizfragen** liegen in `data/fragen/` (je Modul eine Datei, `beispiel.js` = die 30 offiziellen Beispielfragen des Abschlusstests in eigener Formulierung, markiert mit `beispiel: true` und im Quiz als „Beispielfrage Abschlusstest“ gekennzeichnet). Jede Frage nennt ihre Quelle; Freitext-Fragen haben eine Musterlösung (`bsp`).
+
+**Praxisprojekte** (`data/praxis/`) sind die 9 Hausaufgaben des Lehrgangs: Aufgabenstellung → Lösungsweg (Entscheidungen mit Rückmeldung) → eigene Antwort mit Musterlösung → Lösung kompakt.
+
+Grundsatz: Alles, was Fragen und Hausaufgaben verlangen, steht in einer Lektion. **Fortschritt** = bearbeitete Fragen ÷ alle Fragen (Quizfragen und Kurz-Checks, derzeit 390); jede bearbeitete Frage zählt, auch eine falsch beantwortete. Standard-Tagesziel 20 Fragen – damit steigt der Fortschritt um gut 5 % pro Tag. Mit Version 0.31 beginnt der Lernfortschritt für alle bei 0 % (Migration `mig3` in `app.js`); Einstellungen, Termine und Glossar-Markierungen bleiben.
 
 ## Glossar in einfacher Sprache
 
