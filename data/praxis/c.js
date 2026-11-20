@@ -217,7 +217,7 @@ export const PRAXIS_C = [
         { t: "Abwarten, bis alle Fakten vollständig geklärt sind", p: 1,
           fb: "Fakten prüfen ist wichtig. Lange Stille wirkt aber wie Desinteresse. Ein kurzes erstes Statement zeigt: Wir kümmern uns." },
         { t: "Schnell Stellung nehmen, Werbung stoppen, Fragen gebündelt beantworten", p: 2,
-          fb: "Richtig. Selbst und sofort kommunizieren, sonst tun es andere. Geplante Werbung setzt du aus. Du informierst intern und beobachtest den Verlauf. So handelte auch der Hersteller von **Ariel**." }
+          fb: "Richtig. Selbst und sofort kommunizieren, sonst tun es andere. Geplante Werbung setzt du aus. Du informierst intern und beobachtest den Verlauf. Schnell handelte auch Procter & Gamble beim Fall **Ariel**: Der Konzern stoppte den Verkauf der Packung." }
       ] },
     { k: "wahl", h: "Was fehlt noch für den Ernstfall?", b: "Das Handbuch liegt fertig im Ordner. Bisher hat es niemand benutzt.",
       o: [
