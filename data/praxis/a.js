@@ -210,7 +210,7 @@ export const PRAXIS_A = [
         { t: "Ein Test auf einer echten Tour, in mehreren Teilen", p: 2,
           fb: "Ein **Test** im Einsatz macht das Produkt **erlebbar**. Die Community sieht Säge, Feuerstarter und Klinge in echten Situationen. Das schafft Vertrauen." },
         { t: "Das Messer liegt nur nebenbei im Bild", p: 0,
-          fb: "Bei so einem **Product Placement** geht die Botschaft leicht unter. Der Kurs warnt davor: Der Rahmen muss vorher klar sein." }
+          fb: "Liegt das Messer nur nebenbei im Bild, geht die Botschaft leicht unter. Das zeigt auch das Salat-Beispiel im Kurs. Auch ein **Product Placement** braucht einen klaren Rahmen. Für ein Funktionsprodukt passt ein Test im Einsatz besser." }
       ] },
     { k: "wahl", h: "Was gehört ins Briefing?",
       o: [

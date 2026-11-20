@@ -8,6 +8,7 @@ export const L_EINF = [
    "**Social-Media-Kommunikation:** Menschen reden in sozialen Medien miteinander. Jeder kann senden und antworten.",
    "Quelle der Einteilung: Hettler (2010), Social Media Marketing."
   ]},
+  { k: "bild", svg: "kommunikation", h: "Einer an viele – jeder mit jedem", b: "Massenmedien senden von einem an viele. Persönliche Kommunikation geht an eine Person. In sozialen Medien kann **jeder senden und antworten**." },
   { k: "merke", h: "Aus Monolog wird Dialog", b: "Klassische Medien senden Monologe. In sozialen Medien entstehen Dialoge. Der **Empfänger wird gleichzeitig zum Sender**. Das ist das Erfolgsrezept von Social Media." },
   { k: "liste", h: "So verhalten sich Nutzer heute", l: [
    "Nutzer hören nicht mehr nur zu. Nutzer bereichern Inhalte und gestalten mit.",
@@ -109,6 +110,7 @@ export const L_EINF = [
  { id: "viral", titel: "Der virale Effekt", min: 4, quelle: "smm3.pdf, S. 345 und Hausaufgabe „Social Media Management“; Beispiele: Nature 2017, Wikipedia „Heimkommen“, Fast Company 2025", folien: [
   { k: "intro", h: "Wie ein Virus – nur gewollt", b: "Die Unterlagen nennen den **viralen Effekt** als Chance von Social Media. Er steigert die Bekanntheit. Viral heißt: Nutzer geben einen Inhalt selbst weiter. Von Person zu Person." },
   { k: "text", h: "Warum es so schnell geht", b: "Wer teilt, erreicht sein eigenes Netzwerk. Teilen dort wieder einige, wächst die Reichweite sprunghaft. Algorithmen verstärken das: Viel Interaktion bringt mehr Ausspielung. So entsteht **Earned Media**, also verdiente statt gekaufte Reichweite." },
+  { k: "bild", svg: "viral", h: "Von Person zu Person", b: "Eine Person teilt einen Inhalt. Einige aus ihrem Netzwerk teilen ihn weiter. So wächst die Reichweite sprunghaft." },
   { k: "liste", h: "Was virales Teilen fördert", l: ["**Starke Gefühle:** Humor, Rührung oder Überraschung", "**Einfache Idee**, die man sofort versteht", "**Mitmachen:** zum Beispiel eine Challenge mit Nominierung", "**Leicht teilbar** und passend zur Plattform", "**Seeding:** Du gibst den Inhalt zuerst an passende Personen."] },
   { k: "liste", h: "Grenzen und Risiken", l: ["Viralität lässt sich nicht planen oder kaufen.", "Nutzer deuten Inhalte manchmal anders als gedacht.", "Die Aufmerksamkeit ist oft schnell wieder vorbei.", "Kritik verbreitet sich genauso schnell, bis zum **Shitstorm**."] },
   { k: "beispiel", h: "Ice Bucket Challenge (2014)", b: "Menschen kippten sich Eiswasser über den Kopf und nominierten drei andere. Über 17 Millionen luden ein Video hoch. Die ALS Association bekam rund 115 Millionen US-Dollar Spenden. Im Vorjahreszeitraum waren es 2,8 Millionen. Quelle: Nature, 2017." },
