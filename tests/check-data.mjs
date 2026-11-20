@@ -41,7 +41,7 @@ for (const g of GLOSSAR) { if (!pfadAlle.includes(g.w)) fehler.push("Lernpfad: B
 const ABK = /\b(z\. ?B\.|d\. ?h\.|u\. ?a\.|bzw\.|ggf\.|usw\.|etc\.|bspw\.|evtl\.|ca\.|inkl\.|vgl\.|sog\.)/;
 const satzTeile = t => t.replace(/\*\*/g, "").split(/\n+|(?<=[.!?:])\s+(?=[A-ZÄÖÜ„(0-9])/).filter(x => x.trim());
 for (const m of MODULE) for (const l of m.lektionen) {
-  if (!l.quelle) continue; // nur Lektionen aus den Kursunterlagen (Social Ads ist unverändert)
+  if (!l.quelle) continue; // nur Lektionen aus den Kursunterlagen
   if (l.folien.filter(f => f.k === "check").length !== 1) fehler.push(`Lektion ${l.id}: genau ein Kurz-Check nötig`);
   for (const f of l.folien) for (const t of [f.h, f.b, f.q, f.e, ...(f.l || []), ...(f.a || [])].filter(Boolean)) {
     if (ABK.test(t)) fehler.push(`Lektion ${l.id}: Abkürzung „${t.match(ABK)[0]}“ – ${t.slice(0, 50)}…`);
