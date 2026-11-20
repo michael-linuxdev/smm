@@ -1,8 +1,8 @@
 // Service Worker: alles für die Offline-Nutzung vorhalten.
 // Bei jeder Inhaltsänderung CACHE hochzählen, damit Geräte die neue Version laden.
-const CACHE = 'smm-v0.31.0';
+const CACHE = 'smm-v0.32.0';
 const ASSETS = ['./', 'index.html', 'app.css', 'app.js', 'data/kurs.js', 'data/glossar.js', 'data/bilder.js', 'data/glossar2.js', 'data/einfach/01.js', 'data/einfach/02.js', 'data/einfach/03.js', 'data/einfach/04.js', 'data/einfach/05.js', 'data/einfach/06.js', 'data/lernpfad.js', 'data/vorlesungen.js',
-  'data/lernen/einf.js', 'data/lernen/platt1.js', 'data/lernen/platt2.js', 'data/lernen/platt3.js', 'data/lernen/unt1.js', 'data/lernen/unt2.js', 'data/lernen/recht.js', 'data/lernen/kpi.js', 'data/lernen/plan.js', 'data/lernen/ki.js', 'data/lernen/ads.js',
+  'data/lernen/einf.js', 'data/lernen/platt1.js', 'data/lernen/platt2.js', 'data/lernen/platt3.js', 'data/lernen/unt1.js', 'data/lernen/unt2.js', 'data/lernen/recht.js', 'data/lernen/kpi.js', 'data/lernen/plan.js', 'data/lernen/ki.js',
   'data/fragen/beispiel.js', 'data/fragen/einf.js', 'data/fragen/platt.js', 'data/fragen/unt.js', 'data/fragen/recht.js', 'data/fragen/kpi.js', 'data/fragen/plan.js', 'data/fragen/ki.js',
   'data/projekte.js', 'data/praxis/a.js', 'data/praxis/b.js', 'data/praxis/c.js', 'data/projektbilder.js', 'data/bewerbung.js', 'manifest.webmanifest',
   'icons/icon.svg', 'icons/icon-192.png', 'icons/icon-512.png', 'icons/maskable-512.png',

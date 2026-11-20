@@ -13,7 +13,6 @@ import { L_RECHT } from "./lernen/recht.js";
 import { L_KPI } from "./lernen/kpi.js";
 import { L_PLAN } from "./lernen/plan.js";
 import { L_KI } from "./lernen/ki.js";
-import { L_ADS } from "./lernen/ads.js";
 import { F_EINF } from "./fragen/einf.js";
 import { F_PLATT } from "./fragen/platt.js";
 import { F_UNT } from "./fragen/unt.js";
@@ -42,9 +41,6 @@ export const MODULE = [
  { id: "plan", name: "Planung & Umsetzung", kurz: "Umsetzung", farbe: "#1c7ed6",
    text: "Guter Content, Jahres- und Redaktionsplan, Produktion und Verbreitung, Community Management, Reputation, Shitstorm und Krisenmanagement.",
    lektionen: L_PLAN },
- { id: "ads", name: "Social Ads", kurz: "Social Ads", farbe: "#c2410c", zusatz: true,
-   text: "Nicht Teil des Lehrplans und nicht im Probetest – aber in der Praxis gefragt: Anzeigen, Targeting, Funnel und Anzeigen-Kennzahlen.",
-   lektionen: L_ADS },
  { id: "ki", name: "KI in der Redaktion", kurz: "KI", farbe: "#0e7490", zusatz: true,
    text: "Zusatzwissen aus dem Studienbrief „KI in der Onlineredaktion“: Grundlagen, Text-, Übersetzungs- und Bilder-KI, gutes Prompting. Nicht im Probetest.",
    lektionen: L_KI }

@@ -7,7 +7,9 @@ export const LERNPFAD = {
   "Influencer", "Social Commerce", "Social Selling", "Social Customer Care", "HR", "Recruiting", "KI"],
  platt: ["Algorithmus", "Organische Reichweite", "Business-Konto", "Insights", "Dashboard", "Story", "Reels", "Microblogging",
   "Fediverse", "Corporate Blog", "Alt-Text", "Crossposting", "Repurposing", "Publishing-Tool", "Social Inbox", "Workflow", "CRM",
-  "Prompt", "Halluzination"],
+  "Prompt", "Halluzination",
+  "Social Ads", "Targeting", "Streuverlust", "Geotargeting", "Custom Audience", "Lookalike Audience",
+  "Ausschluss-Zielgruppe", "Retargeting", "Creatives", "SEO"],
  unt: ["Vision und Mission", "Status-quo-Analyse", "SWOT-Analyse", "PEST-Analyse", "SMART", "Persona", "Pain Points",
   "Owned Media", "Paid Media", "Earned Media", "PESO-Modell", "Content-Säulen / Themensäulen", "Hero-Hub-Help-Modell",
   "Tonalität", "Corporate Design", "Governance", "Hub-and-Spoke", "RACI-Matrix", "Compliance", "Outsourcing", "Briefing",
@@ -26,6 +28,4 @@ export const LERNPFAD = {
  plan: ["Customer Journey", "Touchpoint", "Funnel", "AIDA", "See – Think – Do – Care", "Redaktionsplan", "Storytelling",
   "Evergreen Content", "Seeding", "Community Management", "Netiquette", "Online Reputation Management", "Shitstorm",
   "Shitstorm-Skala", "Streisand-Effekt", "Krisenkommunikation", "Eskalationsmatrix", "Holding Statement", "Dark Site"],
- ads: ["Social Ads", "Targeting", "Streuverlust", "Geotargeting", "Custom Audience", "Lookalike Audience",
-  "Ausschluss-Zielgruppe", "Retargeting", "Creatives", "SEO"]
 };
