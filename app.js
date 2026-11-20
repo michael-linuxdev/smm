@@ -65,7 +65,7 @@ const ic = (n, extra = "") => `<svg viewBox="0 0 24 24" fill="none" stroke="curr
    Doppelt: localStorage (schnell) + IndexedDB (robuster). Beim Start gewinnt der neuere Stand (Zeitstempel).
    Fragen und Lektionen haben stabile Schlüssel (unabhängig vom Modul), alte Schlüssel werden migriert. */
 const KEY = "smm-coach", VERSION = "0.31.0";
-const DEF = () => ({ lek: {}, q: {}, srs: {}, last: null, tests: [], pruefung: "", day: null, seen: 0, set: { size: "m", theme: "auto", goal: "25", vibe: true, step: true, mig1: 1, mig2: 1, mig3: 1 }, lastBackup: 0, created: Date.now(), updated: 0, run: null, lastRun: null });
+const DEF = () => ({ lek: {}, q: {}, srs: {}, last: null, tests: [], pruefung: "", day: null, seen: 0, set: { size: "m", theme: "auto", goal: "20", vibe: true, step: true, mig1: 1, mig2: 1, mig3: 1 }, lastBackup: 0, created: Date.now(), updated: 0, run: null, lastRun: null });
 let S = DEF();
 try { const x = JSON.parse(localStorage.getItem(KEY) || "null"); if (x) S = Object.assign(DEF(), x); } catch (e) {}
 const IDB = { db: null };
@@ -119,7 +119,7 @@ S.seen = Date.now();
 const BOX_DAYS = [0, 1, 3, 7, 14, 30];
 /* ---------- Lernhilfen: Tagesziel, Serien, Vibration ---------- */
 const dayLocal = () => { const d = new Date(); return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0"); };
-const goal = () => +(S.set?.goal || 25);
+const goal = () => +(S.set?.goal || 20);
 const stepOn = () => S.set?.step !== false; // Schritt für Schritt: Standard an
 const heute = () => (S.day && S.day.d === dayLocal() ? S.day.n : 0);
 function buzz(p) { if (S.set?.vibe !== false && navigator.vibrate) try { navigator.vibrate(p); } catch (e) {} }
@@ -154,12 +154,12 @@ const POOL_KEYS = new Set(POOL.map(p => p.key));
 const LEGACY_MODS = ["einf", "platt", "unt", "recht", "kpi", "plan", "grund", "content", "ads"];
 // Alte Schlüssel (Modul + 40 Zeichen) und alte Lektionsschlüssel (Modul/Lektion) übernehmen, verwaiste entfernen
 function normalizeState() {
- S.q = S.q || {}; S.srs = S.srs || {}; S.lek = S.lek || {}; S.set = Object.assign({ size: "m", theme: "auto", goal: "25", vibe: true, step: true }, S.set || {});
+ S.q = S.q || {}; S.srs = S.srs || {}; S.lek = S.lek || {}; S.set = Object.assign({ size: "m", theme: "auto", goal: "20", vibe: true, step: true }, S.set || {});
  if (!S.set.mig1) { S.set.step = true; S.set.mig1 = 1; } // neue Standards 0.11.2
  if (!S.set.mig2) { S.set.goal = "25"; S.set.mig2 = 1; } // Standard-Tagesziel 25 (0.17)
  // 0.31: Lektionen, Quizfragen und Praxisprojekte komplett neu aus den Kursunterlagen → Lernfortschritt auf 0 %.
  // Einstellungen, Prüfungs- und Kurstermine sowie das Glossar („gelesen“) bleiben erhalten.
- if (!S.set.mig3) { Object.assign(S, { lek: {}, q: {}, srs: {}, orph: {}, tests: [], run: null, lastRun: null, proj: {}, last: null, day: null }); S.set.mig3 = 1; }
+ if (!S.set.mig3) { Object.assign(S, { lek: {}, q: {}, srs: {}, orph: {}, tests: [], run: null, lastRun: null, proj: {}, last: null, day: null }); S.set.goal = "20"; S.set.mig3 = 1; }
  // Verwaiste Schlüssel werden geparkt (S.orph), nicht gelöscht – so kann eine Frage nach einer Textkorrektur
  // (Feld „alt“ = alte Fragetexte) ihren Lernstand zurückbekommen.
  S.orph = S.orph || {}; S.orph.q = S.orph.q || {}; S.orph.srs = S.orph.srs || {};
@@ -174,8 +174,8 @@ function normalizeState() {
  S.tests = (Array.isArray(S.tests) ? S.tests : []).map(Number).filter(n => Number.isFinite(n) && n >= 0 && n <= 100).map(Math.round);
  const iso = v => /^\d{4}-\d{2}-\d{2}$/.test(v || "") ? v : "";
  S.pruefung = iso(S.pruefung); S.kursStart = iso(S.kursStart); S.workshops = [0, 1].map(k => iso((S.workshops || [])[k]));
- const okSet = { size: ["s", "m", "l", "xl"], theme: ["auto", "light", "dark"], goal: ["10", "15", "25"], pomo: ["", "10", "25"], clock: ["", "genau"] };
- for (const [k, v] of Object.entries(okSet)) if (!v.includes(String(S.set[k] ?? v[0]))) S.set[k] = k === "goal" ? "25" : v[0];
+ const okSet = { size: ["s", "m", "l", "xl"], theme: ["auto", "light", "dark"], goal: ["10", "15", "20", "25"], pomo: ["", "10", "25"], clock: ["", "genau"] };
+ for (const [k, v] of Object.entries(okSet)) if (!v.includes(String(S.set[k] ?? v[0]))) S.set[k] = k === "goal" ? "20" : v[0];
  if (S.run && !(Array.isArray(S.run.ids) && S.run.ans && typeof S.run.ans === "object")) S.run = null;
  if (S.lastRun && !(Array.isArray(S.lastRun.ids) && S.lastRun.ans && typeof S.lastRun.ans === "object")) S.lastRun = null;
  const LIDS = new Set(MODULE.flatMap(m => m.lektionen.map(l => l.id)));
@@ -186,13 +186,14 @@ normalizeState();
 const lekDone = m => m.lektionen.filter(l => S.lek[l.id]).length;
 const modPool = id => POOL.filter(p => p.m === id);
 const qDone = id => modPool(id).filter(p => p.key in S.q).length; // bearbeitet – richtig oder falsch ist für den Fortschritt egal
-// Fortschritt je Modul: zur Hälfte gelesene Lektionen, zur Hälfte bearbeitete Fragen (richtig oder falsch).
 // So kann die Zahl nie sinken – auch nicht durch eine falsche Antwort.
-const modProgress = m => lekDone(m) / m.lektionen.length * .5 + qDone(m.id) / modPool(m.id).length * .5;
+// Fortschritt (Wunsch 11/2026): jede Frage zählt gleich viel – Quizfragen und Kurz-Checks der Lektionen.
+// Bearbeitet zählt, egal ob richtig oder falsch. Bei 390 Fragen und 20 Fragen am Tag steigt er um gut 5 % täglich.
+const modProgress = m => modPool(m.id).length ? qDone(m.id) / modPool(m.id).length : lekDone(m) / m.lektionen.length;
 const KERN = () => MODULE.filter(m => !m.zusatz);
-const kernFragen = () => KERN().reduce((s, m) => s + modPool(m.id).length, 0);
-const kernBearbeitet = () => KERN().reduce((s, m) => s + qDone(m.id), 0);
-const allProgress = () => KERN().reduce((s, m) => s + modProgress(m), 0) / KERN().length;
+const kernFragen = () => POOL.length;
+const kernBearbeitet = () => POOL.filter(p => p.key in S.q).length;
+const allProgress = () => kernBearbeitet() / kernFragen();
 const prozent = p => p >= 1 ? 100 : Math.min(99, Math.round(p * 100)); // 100 erst, wenn wirklich alles geschafft ist
 
 function ringSvg(p, size = 76, w = 4, track = "var(--line)", color = null) {
@@ -1371,7 +1372,7 @@ function viewEinstellungen(o = {}) {
  <div class="card"><h2 class="h3">Design</h2><p class="small muted" style="margin:2px 0 10px">„Automatisch“ folgt der Einstellung deines Geräts.</p>${seg("theme", [["auto", "Automatisch"], ["light", "Hell"], ["dark", "Dunkel"]], "Design")}</div>
  <div class="card" id="lernhilfen"><h2 class="h3">Lernhilfen</h2><p class="small muted" style="margin:2px 0 6px">Für mehr Fokus und weniger Überforderung – zum Beispiel bei ADHS.</p>
   ${[["focus", "Fokusmodus", "Blendet Statistiken und Extras aus – nur das Nötigste bleibt."], ["step", "Schritt für Schritt", "Lektionskarten zeigen Satz für Satz bzw. Punkt für Punkt – weiter mit Tippen."], ["calm", "Ruhige Darstellung", "Keine Animationen, gedämpfte Farben, gut lesbare Schrift mit mehr Abstand."], ["vibe", "Vibration bei Antworten", "Kurzes Feedback bei richtig und falsch (nicht auf iPhone)."]].map(([k, t, d]) => `<label class="check sw"><input type="checkbox" data-opt="${k}" ${(k === "vibe" || k === "step" ? S.set[k] !== false : !!S.set[k]) ? "checked" : ""}><span><b>${t}</b><span class="small muted">${d}</span></span></label>`).join("")}
-  <h3 class="small" style="margin:14px 0 6px">Tagesziel</h3>${seg("goal", [["10", "10 Fragen"], ["15", "15 Fragen"], ["25", "25 Fragen"]], "Tagesziel")}
+  <h3 class="small" style="margin:14px 0 6px">Tagesziel</h3>${seg("goal", [["10", "10 Fragen"], ["15", "15 Fragen"], ["20", "20 Fragen"], ["25", "25 Fragen"]], "Tagesziel")}
   <h3 class="small" style="margin:14px 0 6px">Pausen-Erinnerung</h3>${seg("pomo", [["", "Aus"], ["10", "Nach 10 Min."], ["25", "Nach 25 Min."]], "Pausen-Erinnerung")}
   <h3 class="small" style="margin:14px 0 6px">Zeit im Probetest</h3>${seg("clock", [["", "Ruhig (Balken)"], ["genau", "Genau (Sekunden)"]], "Zeitanzeige im Probetest")}
   <p class="small muted" style="margin-top:12px">Vorlesen: Tippe in Lektionen und Fragen auf ${ic("speaker", 'style="width:16px;height:16px;vertical-align:-3px"')}.</p></div>

@@ -2,7 +2,7 @@
 export const F_BEISPIEL = [
  // ---------- Multiple Choice (smm1.pdf, S. 66–68, Lösungen S. 73) ----------
  { m: "einf", beispiel: true, q: "Was ist das Social Media Prisma von ethority?", a: ["Eine Grafik, die die Landschaft der Social-Media-Angebote zeigt", "Ein Schema, das die Abläufe in einer Redaktion darstellt", "Eine Methode, die Stärken und Schwächen im Marketing findet", "Eine Formel, mit der du den Return on Social Media berechnest"], c: 0, e: "Das Prisma ordnet die vielen Plattformen und Dienste in einer Grafik. Es ist eine Visualisierung der Social-Media-Landschaft, keine Analyse- oder Rechenmethode.", quelle: "smm1.pdf, S. 66, 73" },
- { m: "platt", beispiel: true, q: "Zu welcher Art von Plattform gehört die Online-Pinnwand Pinterest?", a: ["Zu den Social Sharing Plattformen", "Zu den Social Bookmark Netzwerken", "Zu den Enterprise Social Networks", "Zu den Weblogs von Unternehmen"], c: 0, e: "Auf Pinterest lädst du Bilder und Videos hoch und teilst sie. Darum zählt es zu den Social Sharing Plattformen.", quelle: "smm1.pdf, S. 66, 73" },
+ { m: "platt", beispiel: true, q: "Zu welcher Art von Plattform gehört die Online-Pinnwand Pinterest?", a: ["Zu den Social Sharing Plattformen", "Zu den Microblogging-Diensten", "Zu den Enterprise Social Networks", "Zu den Weblogs von Unternehmen"], c: 0, e: "Auf Pinterest lädst du Bilder und Videos hoch und teilst sie. Darum zählt es zu den Social Sharing Plattformen.", quelle: "smm1.pdf, S. 66, 73" },
  { m: "platt", beispiel: true, q: "Was ist KEINE Plattform, mit der du einen Blog betreiben kannst?", a: ["OpenOffice", "WordPress", "Textpattern", "Tumblr"], c: 0, e: "OpenOffice ist ein Büroprogramm für Texte und Tabellen. WordPress, Textpattern und Tumblr sind dagegen Blog-Plattformen.", quelle: "smm1.pdf, S. 66, 73" },
  { m: "unt", beispiel: true, q: "Was ist KEINE Phase bei der Planung von Social Media Marketing?", a: ["Die Findungsphase", "Die Analysephase", "Die Umsetzungsphase", "Die Kontrollphase"], c: 0, e: "Die Planung läuft über Analyse, Umsetzung und Kontrolle. Eine Findungsphase gibt es in diesem Ablauf nicht.", quelle: "smm1.pdf, S. 66, 73" },
  { m: "kpi", beispiel: true, q: "Mit welcher Kennzahl prüfst du die Interaktion auf einem Konto bei X (früher Twitter)?", a: ["Mit der Anzahl der Reposts (früher Retweets)", "Mit dem Share of Voice des eigenen Kontos", "Mit dem Customer Lifetime Value der Follower", "Mit der Anzahl der Consumer Insights"], c: 0, e: "Reposts zeigen, wie oft Nutzer deine Beiträge weiterverbreiten. Das ist Interaktion. Share of Voice und Customer Lifetime Value messen etwas anderes.", quelle: "smm1.pdf, S. 66, 73" },
@@ -27,16 +27,18 @@ export const F_BEISPIEL = [
    ["X (früher Twitter)", "(^|[^\\w-])x([^\\w-]|$)|twitter"],
    ["Threads", "\\bthreads"],
    ["Bluesky", "blue ?sky"],
-   ["Tumblr", "tumb?l(e)?r"]
-  ], min: 3, bsp: "• X (früher Twitter)\n• Threads\n• Bluesky\n• Tumblr", quelle: "smm1.pdf, S. 69, 74" },
+   ["Tumblr", "tumb?l(e)?r"],
+   ["Instagram (laut offizieller Lösung)", "\\binsta(gram)?\\b"]
+  ], min: 3, bsp: "• X (früher Twitter)\n• Threads\n• Bluesky\n• Tumblr\n• Instagram", quelle: "smm1.pdf, S. 69, 74" },
  { m: "platt", beispiel: true, t: "frei", q: "Nenne fünf Plattformen für Videos oder Bilder.", muster: [
    ["YouTube", "you ?tube"],
    ["Vimeo", "vimeo"],
    ["Dailymotion", "daily ?motion"],
    ["Pinterest", "pinterest"],
    ["Flickr", "flick?e?r"],
-   ["Instagram oder TikTok", "insta(gram)?\\b|tik ?tok"]
-  ], min: 5, bsp: "• YouTube\n• Vimeo\n• Dailymotion\n• Pinterest\n• Flickr\n• Instagram oder TikTok", quelle: "smm1.pdf, S. 69, 74" },
+   ["Instagram", "\\binsta(gram)?\\b"],
+   ["TikTok", "tik ?tok"]
+  ], min: 5, bsp: "• YouTube\n• Vimeo\n• Dailymotion\n• Pinterest\n• Flickr\n• Instagram\n• TikTok", quelle: "smm1.pdf, S. 69, 74" },
  { m: "plan", beispiel: true, t: "frei", q: "Was ist ein Shitstorm?", muster: [
    ["Plötzlich, in kurzer Zeit", "plötzlich|kurze\\w* zeit|schnell|auf einmal|welle|lawine"],
    ["Massenhaft, sehr viele Beiträge", "massenhaft|masse|sehr viele|\\bviele|unmengen|flut|hunderte|tausende"],
