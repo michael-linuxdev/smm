@@ -5,6 +5,16 @@ import { BEGRIFFSFRAGEN } from "./begriffsfragen.js";
 import { MEHRFACH } from "./mehrfach.js";
 import { LEKTIONEN_R4, FRAGEN_R4 } from "./lektionen4.js";
 import { GESTRICHEN } from "./gestrichen.js";
+import { L_EINF } from "./lernen/einf.js";
+import { L_PLATT1 } from "./lernen/platt1.js";
+import { L_PLATT2 } from "./lernen/platt2.js";
+import { L_PLATT3 } from "./lernen/platt3.js";
+import { L_UNT1 } from "./lernen/unt1.js";
+import { L_UNT2 } from "./lernen/unt2.js";
+import { L_RECHT } from "./lernen/recht.js";
+import { L_KPI } from "./lernen/kpi.js";
+import { L_PLAN } from "./lernen/plan.js";
+import { L_KI } from "./lernen/ki.js";
 // Lerninhalte SMM Coach. Aufbau je Modul: Lektionen (Story-Folien) → Quiz.
 // Folientypen: intro, text, liste, beispiel, merke, check (Verständnisfrage, Index c = richtige Antwort).
 // **fett** ist erlaubt. Rechtliche Inhalte: Stand 11/2026, vor Veröffentlichung fachlich prüfen lassen.
@@ -513,3 +523,29 @@ LX("content-strategie").folien.splice(LX("content-strategie").folien.length - 1,
 
 // Limit 400 Fragen: gestrichene Fragen herausnehmen (Liste in data/gestrichen.js)
 { const weg = new Set(GESTRICHEN); for (let i = FRAGEN.length - 1; i >= 0; i--) if (weg.has(FRAGEN[i].q)) FRAGEN.splice(i, 1); }
+
+/* =====================================================================
+   Lerninhalte aus den Kursunterlagen (11/2026): Die Lektionen aller Module
+   sind Zusammenfassungen der Kurs-PDFs (smm1–smm3) in einfacher Sprache,
+   Dateien in data/lernen/. Social Ads (Zusatzwissen) bleibt unverändert.
+   Die alten Lektionen oben bleiben nur als Quelle für Schaubilder und
+   Fragen-Zuordnung im Code stehen und werden hier ersetzt.
+   ===================================================================== */
+{
+ const M = Object.fromEntries(MODULE.map(m => [m.id, m]));
+ M.einf.lektionen = L_EINF;
+ M.platt.lektionen = [...L_PLATT1, ...L_PLATT2, ...L_PLATT3];
+ M.unt.lektionen = [...L_UNT1, ...L_UNT2];
+ M.recht.lektionen = L_RECHT;
+ M.kpi.lektionen = L_KPI;
+ M.plan.lektionen = L_PLAN;
+ M.einf.text = "Was Social Media ist und wie es wirkt, Nutzung in Deutschland, Chancen und Risiken, Anwendungsfelder, Rolle, Kompetenzen und Berufsfeld.";
+ M.platt.text = "Social Sharing, YouTube, Pinterest, Communitys, Blogs, LinkedIn, XING, X, Threads, Facebook, Instagram, TikTok, Hashtags und Tools.";
+ M.unt.text = "Governance, Team und Prozesse, Guidelines, Konzeption von der Analyse bis zum Budget, Social Media Relations, Influencer, Recruiting, Employer Branding und Enterprise 2.0.";
+ M.recht.text = "Wichtige Gesetze, Impressum, Haftung und Lizenzen, Fanpages und Cookies, Abmahnungen, Werbekennzeichnung und Übungsfälle zum Datenschutz.";
+ M.kpi.text = "Monitoring und Analytics, messbare Ziele, Kennzahlen, ROI, Monitoring-Tools, Reporting und Optimierung.";
+ M.plan.text = "Guter Content, Jahres- und Redaktionsplan, Produktion und Verbreitung, Community Management, Reputation, Shitstorm und Krisenmanagement.";
+ MODULE.push({ id: "ki", name: "KI in der Redaktion", kurz: "KI", farbe: "#0e7490", zusatz: true,
+  text: "Zusatzwissen aus dem Studienbrief „KI in der Onlineredaktion“: Grundlagen, Text-, Übersetzungs- und Bilder-KI, gutes Prompting. Nicht im Probetest.",
+  lektionen: L_KI });
+}

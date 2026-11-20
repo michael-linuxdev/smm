@@ -36,6 +36,17 @@ for (const mid of Object.keys(LERNPFAD)) if (!MODULE.some(m => m.id === mid)) fe
 if (new Set(pfadAlle).size !== pfadAlle.length) fehler.push("Lernpfad: Begriff doppelt: " + pfadAlle.filter((w, i) => pfadAlle.indexOf(w) !== i).join(", "));
 for (const w of pfadAlle) if (!gw.includes(w)) fehler.push("Lernpfad: Begriff nicht im Glossar: " + w);
 for (const g of GLOSSAR) { if (!pfadAlle.includes(g.w)) fehler.push("Lernpfad: Begriff fehlt: " + g.w); else if (!(LERNPFAD[g.m] || []).includes(g.w)) fehler.push(`Lernpfad: ${g.w} steht nicht bei seinem Modul (${g.m})`); }
+// Lektionen in einfacher Sprache (data/lernen/): kurze Sätze, keine Abkürzungen, genau ein Kurz-Check, Quelle angegeben
+const ABK = /\b(z\. ?B\.|d\. ?h\.|u\. ?a\.|bzw\.|ggf\.|usw\.|etc\.|bspw\.|evtl\.|ca\.|inkl\.|vgl\.|sog\.)/;
+const satzTeile = t => t.replace(/\*\*/g, "").split(/\n+|(?<=[.!?:])\s+(?=[A-ZÄÖÜ„(0-9])/).filter(x => x.trim());
+for (const m of MODULE) for (const l of m.lektionen) {
+  if (!l.quelle) continue; // nur Lektionen aus den Kursunterlagen (Social Ads ist unverändert)
+  if (l.folien.filter(f => f.k === "check").length !== 1) fehler.push(`Lektion ${l.id}: genau ein Kurz-Check nötig`);
+  for (const f of l.folien) for (const t of [f.h, f.b, f.q, f.e, ...(f.l || []), ...(f.a || [])].filter(Boolean)) {
+    if (ABK.test(t)) fehler.push(`Lektion ${l.id}: Abkürzung „${t.match(ABK)[0]}“ – ${t.slice(0, 50)}…`);
+    for (const satz of satzTeile(t)) if (woerter(satz) > 18) fehler.push(`Lektion ${l.id}: Satz mit mehr als 18 Wörtern – ${satz.slice(0, 50)}…`);
+  }
+}
 const mitStory = GLOSSAR.filter(g => g.s).length;
 console.log(`Fragen: ${total}/${MAX_FRAGEN} · Lektionen: ${lids.length} · Glossar: ${gw.length} (einfach erklärt: ${mitStory})`);
 if (fehler.length) { console.error(fehler.join("\n")); process.exit(1); } else console.log("OK");

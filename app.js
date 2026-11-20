@@ -48,6 +48,7 @@ const I = {
  left: '<path d="M15 5l-7 7 7 7"/>',
  right: '<path d="M9 5l7 7-7 7"/>',
  lock: '<rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 018 0v3"/>',
+ ki: '<rect x="6" y="6" width="12" height="12" rx="2"/><path d="M10 10h4v4h-4zM9 3v3M15 3v3M9 18v3M15 18v3M3 9h3M3 15h3M18 9h3M18 15h3"/>',
  ads: '<path d="M3 11v2a1 1 0 001 1h2l5 4V6L6 10H4a1 1 0 00-1 1zM15 9a3 3 0 010 6M18 6a7 7 0 010 12"/>',
  speaker: '<path d="M4 9v6h4l5 4V5L8 9H4zM16.5 8.5a5 5 0 010 7M19 6a8.5 8.5 0 010 12"/>',
  focus: '<circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3"/>',
@@ -63,7 +64,7 @@ const ic = (n, extra = "") => `<svg viewBox="0 0 24 24" fill="none" stroke="curr
 /* ---------- Speicher ----------
    Doppelt: localStorage (schnell) + IndexedDB (robuster). Beim Start gewinnt der neuere Stand (Zeitstempel).
    Fragen und Lektionen haben stabile Schlüssel (unabhängig vom Modul), alte Schlüssel werden migriert. */
-const KEY = "smm-coach", VERSION = "0.29.0";
+const KEY = "smm-coach", VERSION = "0.30.0";
 const DEF = () => ({ lek: {}, q: {}, srs: {}, last: null, tests: [], pruefung: "", day: null, seen: 0, set: { size: "m", theme: "auto", goal: "25", vibe: true, step: true, mig1: 1, mig2: 1 }, lastBackup: 0, created: Date.now(), updated: 0, run: null, lastRun: null });
 let S = DEF();
 try { const x = JSON.parse(localStorage.getItem(KEY) || "null"); if (x) S = Object.assign(DEF(), x); } catch (e) {}
