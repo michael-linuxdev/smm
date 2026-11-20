@@ -1,11 +1,11 @@
 // Lektionen „Routenplaner Web 2.0“ – Zusammenfassung von smm3.pdf, S. 328–382 (Vorlesung „Social Media Management – Eine Einführung“), S. 231–251 (BVCM-Stellenprofil Social Media Manager) und S. 252–327 (BVCM-Studie 2023), einfache Sprache.
 export const L_EINF = [
- { id: "web20", titel: "Was ist Social Media?", min: 4, quelle: "smm3.pdf, S. 331–337", folien: [
+ { id: "web20", titel: "Was ist Social Media?", min: 4, quelle: "smm3.pdf, S. 331–337; smm1.pdf, S. 66, 68 und 73", folien: [
   { k: "intro", h: "Worum es geht", b: "Social Media hat eine lange Vorgeschichte. Die Zeitleiste reicht vom Telefon (1890) über die erste E-Mail (1971) bis zu Facebook, Instagram und TikTok. 1997 startete SixDegrees.com mit Profilen und Freundeslisten. In dieser Lektion lernst du, was Social-Media-Kommunikation ausmacht und warum sie wirkt." },
   { k: "liste", h: "3 Formen der Kommunikation", l: [
-   "**Massenkommunikation:** Einer sendet an viele. Beispiele sind Zeitung, Website, Radio und TV.",
-   "**Persönliche Kommunikation:** Eine Botschaft geht direkt an eine Person. Beispiele sind E-Mail und Telemarketing.",
-   "**Social-Media-Kommunikation:** Menschen reden in sozialen Medien miteinander. Jeder kann senden und antworten.",
+   "**Massenkommunikation:** Einer sendet an viele, also 1:n (one-to-many). Beispiele sind Zeitung, Website, Radio und TV.",
+   "**Persönliche Kommunikation:** Eine Botschaft geht direkt an eine Person, also 1:1. Beispiele sind E-Mail und Telemarketing.",
+   "**Social-Media-Kommunikation:** offene n:n-Kommunikation (many-to-many). Viele reden mit vielen, jeder sendet und antwortet.",
    "Quelle der Einteilung: Hettler (2010), Social Media Marketing."
   ]},
   { k: "bild", svg: "kommunikation", h: "Einer an viele – jeder mit jedem", b: "Massenmedien senden von einem an viele. Persönliche Kommunikation geht an eine Person. In sozialen Medien kann **jeder senden und antworten**." },
@@ -22,6 +22,7 @@ export const L_EINF = [
    "**Anders:** eine epochale Veränderung, wie wir uns informieren und kommunizieren. Das gilt privat, mit Kunden und intern.",
    "**Alltag:** Unternehmen können sich nicht mehr entziehen. Menschen sprechen über Marken, und zwar jetzt."
   ]},
+  { k: "text", h: "Das Social Media Prisma", b: "Das **Social Media Prisma** von ethority ist eine Grafik. Es zeigt die deutsche Social-Media-Landschaft auf einen Blick. Es ist also eine Visualisierung, keine Analyse- oder Rechenmethode." },
   { k: "text", h: "Reputation und Vertrauen", b: "Menschen recherchieren Produkte und Firmen heute im Internet. Dabei entscheiden Käufer gern selbst, ohne aufdringliches Personal. Viele folgen dem Urteil anderer. Bewertungen gelten als verlässlich, vor allem bei teuren oder komplexen Produkten. Freunde wirken stärker als Fremde. Beispiel aus der Vorlesung: Jemand empfiehlt auf Facebook ein Hotel." },
   { k: "liste", h: "Wodurch Vertrauen entsteht", l: [
    "Weiterempfehlungen von anderen Nutzern",
@@ -107,9 +108,10 @@ export const L_EINF = [
   { k: "check", q: "Welche Lösung nennt die Vorlesung für die Risiken von Social Media?", a: ["Social Media Governance mit klaren Regeln", "Komplett auf eigene Social-Media-Kanäle verzichten", "Nur noch bezahlte Anzeigen schalten", "Kommentare auf allen Kanälen abschalten"], c: 0, e: "Die Vorlesung nennt Social Media Governance als Lösung. Regeln, Rollen und Abläufe senken Risiken wie Shitstorms, Rechtsverstöße oder Kontrollverlust." }
  ]},
 
- { id: "viral", titel: "Der virale Effekt", min: 4, quelle: "smm3.pdf, S. 345 und Hausaufgabe „Social Media Management“; Beispiele: Nature 2017, Wikipedia „Heimkommen“, Fast Company 2025", folien: [
+ { id: "viral", titel: "Der virale Effekt", min: 4, quelle: "smm3.pdf, S. 345 und Hausaufgabe „Social Media Management“; smm1.pdf, S. 72 und 75; Beispiele: Nature 2017, Wikipedia „Heimkommen“, Fast Company 2025", folien: [
   { k: "intro", h: "Wie ein Virus – nur gewollt", b: "Die Unterlagen nennen den **viralen Effekt** als Chance von Social Media. Er steigert die Bekanntheit. Viral heißt: Nutzer geben einen Inhalt selbst weiter. Von Person zu Person." },
   { k: "text", h: "Warum es so schnell geht", b: "Wer teilt, erreicht sein eigenes Netzwerk. Teilen dort wieder einige, wächst die Reichweite sprunghaft. Algorithmen verstärken das: Viel Interaktion bringt mehr Ausspielung. So entsteht **Earned Media**, also verdiente statt gekaufte Reichweite." },
+  { k: "text", h: "Word of Mouth Marketing (WOMM)", b: "**Word of Mouth Marketing** heißt: Du regst Nutzer gezielt zur Mundpropaganda an. Die Nutzer sprechen dann über dich und empfehlen dich weiter. Dafür nutzt du **Buzz Marketing** und **Viral Marketing**." },
   { k: "bild", svg: "viral", h: "Von Person zu Person", b: "Eine Person teilt einen Inhalt. Einige aus ihrem Netzwerk teilen ihn weiter. So wächst die Reichweite sprunghaft." },
   { k: "liste", h: "Was virales Teilen fördert", l: ["**Starke Gefühle:** Humor, Rührung oder Überraschung", "**Einfache Idee**, die man sofort versteht", "**Mitmachen:** zum Beispiel eine Challenge mit Nominierung", "**Leicht teilbar** und passend zur Plattform", "**Seeding:** Du gibst den Inhalt zuerst an passende Personen."] },
   { k: "liste", h: "Grenzen und Risiken", l: ["Viralität lässt sich nicht planen oder kaufen.", "Nutzer deuten Inhalte manchmal anders als gedacht.", "Die Aufmerksamkeit ist oft schnell wieder vorbei.", "Kritik verbreitet sich genauso schnell, bis zum **Shitstorm**."] },
@@ -118,7 +120,7 @@ export const L_EINF = [
   { k: "merke", h: "Ein Ergebnis, kein Werkzeug", b: "Viraler Effekt: Nutzer verbreiten einen Inhalt selbst weiter, die Reichweite wächst sprunghaft. Du schaffst gute Bedingungen, garantieren kannst du ihn nicht." },
   { k: "check", q: "Woran erkennst du den viralen Effekt?", a: ["Nutzer teilen den Inhalt selbst weiter, die Reichweite wächst sprunghaft", "Ein hohes Werbebudget lässt die Reichweite gleichmäßig wachsen", "Der Beitrag erscheint nur bei den eigenen Followern", "Die Plattform zeigt lange Videos grundsätzlich öfter"], c: 0, e: "Viral heißt Weitergabe von Person zu Person. Jede Weitergabe öffnet ein neues Netzwerk. Darum wächst die Reichweite so schnell." }
  ]},
- { id: "einsatz", titel: "Anwendungsfelder & Involvement", min: 4, quelle: "smm3.pdf, S. 346–369", folien: [
+ { id: "einsatz", titel: "Anwendungsfelder & Involvement", min: 4, quelle: "smm3.pdf, S. 346–369; smm1.pdf, S. 70 und 74", folien: [
   { k: "intro", h: "Worum es geht", b: "Social Media ist mehr als Werbung. Unternehmen nutzen es in vielen Bereichen. Außerdem entscheiden sie selbst, wie stark sie sich beteiligen. Das nennt man **Involvement**." },
   { k: "liste", h: "Anwendungsfelder", l: [
    "Werbung und Vertrieb",
@@ -145,6 +147,7 @@ export const L_EINF = [
    "**Zuhören:** mit Social Media Monitoring Marktforschung und Krisen-Früherkennung betreiben",
    "**Anzeigen schalten:** Social Media Advertising, zum Beispiel Anzeigen auf Instagram"
   ]},
+  { k: "text", h: "Reaktives Involvement", b: "**Reaktives Involvement** heißt: Du reagierst auf etwas, das Nutzer tun. Du antwortest zum Beispiel auf eine negative Bewertung. Oder du reagierst auf eine Äußerung oder Anfrage eines Nutzers." },
   { k: "merke", h: "Das solltest du nie tun", b: "Social Media komplett ignorieren! Nutzer reden online über Marken, ob du mitmachst oder nicht. Deshalb ist **Monitoring Pflicht**." },
   { k: "check", q: "Welche Form des Involvements passt zur Krisen-Früherkennung?", a: ["Zuhören mit Social Media Monitoring", "Eigene Anzeigen auf Instagram schalten", "Einen eigenen Unternehmensblog starten", "Gastbeiträge auf fremden Kanälen schreiben"], c: 0, e: "Beim „Ohr im Social Web“ beobachtet das Unternehmen, was über es gesagt wird. So erkennt es Krisen früh und gewinnt Daten für die Marktforschung." }
  ]},
@@ -227,7 +230,8 @@ export const L_EINF = [
   { k: "intro", h: "Worum es geht", b: "Die BVCM-Studie 2023 untersucht das Berufsfeld Social Media und Community Management. 302 Fachleute haben im Frühjahr 2023 online geantwortet. Die Studie ist nicht repräsentativ, zeigt aber klare Trends. Hier lernst du die wichtigsten Ergebnisse." },
   { k: "liste", h: "Berufsbilder und Profil", l: [
    "Die Berufsbilder lassen sich in der Praxis kaum trennen. 56 Prozent ordnen sich mehreren Feldern zu.",
-   "Schwerpunkt: 50 Prozent Community Management, 46 Prozent Social Media, 4 Prozent Corporate Community",
+   "**Hauptschwerpunkt** (nur 1 Antwort): 50 Prozent Community Management, 46 Prozent Social Media, 4 Prozent Corporate Community",
+   "Bei Mehrfachauswahl ordnen sich 81 Prozent dem Social Media Management zu, 58 Prozent dem Community Management.",
    "Nur 34 Prozent der Unternehmen kennen laut Befragten den Unterschied zwischen Social Media und Community Management.",
    "Die Branche ist überwiegend weiblich (72 Prozent). Ein Gender Pay Gap (Lohnlücke) ist deutlich sichtbar."
   ]},

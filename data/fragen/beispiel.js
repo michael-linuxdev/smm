@@ -32,13 +32,12 @@ export const F_BEISPIEL = [
   ], min: 3, bsp: "• X (früher Twitter)\n• Threads\n• Bluesky\n• Tumblr\n• Instagram", quelle: "smm1.pdf, S. 69, 74" },
  { m: "platt", beispiel: true, t: "frei", q: "Nenne fünf Plattformen für Videos oder Bilder.", muster: [
    ["YouTube", "you ?tube"],
-   ["Vimeo", "vimeo"],
-   ["Dailymotion", "daily ?motion"],
+   ["Vimeo", "vimeo|daily ?motion[\\s\\S]*tik ?tok|tik ?tok[\\s\\S]*daily ?motion"],
+   ["Dailymotion oder TikTok", "daily ?motion|tik ?tok"],
    ["Pinterest", "pinterest"],
    ["Flickr", "flick?e?r"],
-   ["Instagram", "\\binsta(gram)?\\b"],
-   ["TikTok", "tik ?tok"]
-  ], min: 5, bsp: "• YouTube\n• Vimeo\n• Dailymotion\n• Pinterest\n• Flickr\n• Instagram\n• TikTok", quelle: "smm1.pdf, S. 69, 74" },
+   ["Instagram", "\\binsta(gram)?\\b"]
+  ], min: 5, bsp: "• YouTube\n• Vimeo\n• Dailymotion\n• Pinterest\n• Flickr\n• Instagram\n• auch richtig: TikTok", quelle: "smm1.pdf, S. 69, 74" },
  { m: "plan", beispiel: true, t: "frei", q: "Was ist ein Shitstorm?", muster: [
    ["Plötzlich, in kurzer Zeit", "plötzlich|kurze\\w* zeit|schnell|auf einmal|welle|lawine"],
    ["Massenhaft, sehr viele Beiträge", "massenhaft|masse|sehr viele|\\bviele|unmengen|flut|hunderte|tausende"],
