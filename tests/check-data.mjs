@@ -47,6 +47,17 @@ for (const m of MODULE) for (const l of m.lektionen) {
   const hs = l.folien.map(f => f.h).filter(Boolean);
   for (const h of hs) if (/^(Worum es geht|Das Wichtigste|Überblick|Beispiel|Einführung|Fazit|Merke|Zusammenfassung)$/i.test(h.trim())) fehler.push(`Lektion ${l.id}: nichtssagende Überschrift „${h}“`);
   if (new Set(hs).size !== hs.length) fehler.push(`Lektion ${l.id}: doppelte Überschrift`);
+  // Kurz halten (Nutzerfeedback „zu viel Text je Story“): max. 8 Karten, 30 Wörter je Karte, 4 Listenpunkte à 10 Wörter, 220 Wörter je Lektion
+  if (l.folien.length > 8) fehler.push(`Lektion ${l.id}: ${l.folien.length} Karten (max. 8)`);
+  let summe = 0;
+  for (const f of l.folien) {
+    if (f.k === "check") continue;
+    const text = woerter(f.b || "") + (f.l || []).reduce((a, x) => a + woerter(x), 0);
+    summe += text + woerter(f.h || "");
+    if (text > 30) fehler.push(`Lektion ${l.id}: Karte „${f.h}“ hat ${text} Wörter (max. 30)`);
+    if ((f.l || []).length > 4 || (f.l || []).some(x => woerter(x) > 10)) fehler.push(`Lektion ${l.id}: Liste „${f.h}“ zu lang (max. 4 Punkte à 10 Wörter)`);
+  }
+  if (summe > 220) fehler.push(`Lektion ${l.id}: ${summe} Wörter (max. 220)`);
   for (const f of l.folien) for (const t of [f.h, f.b, f.q, f.e, ...(f.l || []), ...(f.a || [])].filter(Boolean)) {
     if (ABK.test(t)) fehler.push(`Lektion ${l.id}: Abkürzung „${t.match(ABK)[0]}“ – ${t.slice(0, 50)}…`);
     for (const satz of satzTeile(t)) if (woerter(satz) > 18) fehler.push(`Lektion ${l.id}: Satz mit mehr als 18 Wörtern – ${satz.slice(0, 50)}…`);

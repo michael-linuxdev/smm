@@ -1,136 +1,112 @@
 // Lektionen „Plattformen & Tools“ (Teil 3) – Zusammenfassung von smm2.pdf, S. 237–327 (Vorlesungen „Social Network“ und „TikTok & Reels“) und smm1.pdf, S. 63–64 („Tools für Social Media Einsteiger“), einfache Sprache.
 export const L_PLATT3 = [
- { id: "hashtags", titel: "Hashtags richtig einsetzen", min: 3, quelle: "smm2.pdf, S. 239–241", folien: [
-  { k: "intro", h: "Wozu brauchst du 2026 noch Hashtags?", b: "Ein **Hashtag** ist ein Schlagwort mit Raute davor, zum Beispiel #Kuchen. Früher galten Hashtags als Trick für mehr Reichweite. Heute haben sie eine andere Aufgabe. Nach dieser Lektion kannst du für jede Plattform die passende Zahl an Hashtags wählen." },
-  { k: "text", h: "Früher Reichweiten-Trick, heute Einordnung", b: "Früher: Hashtags waren ein Reichweiten-Hack. Hack heißt hier: ein schneller Trick.\nHeute: Hashtags geben **Einordnung und Kontext**. Hashtags zeigen, worum es im Beitrag geht." },
+ { id: "hashtags", titel: "Hashtags richtig einsetzen", min: 2, quelle: "smm2.pdf, S. 239–241", folien: [
+  { k: "intro", h: "Wozu brauchst du 2026 noch Hashtags?", b: "Ein **Hashtag** ist ein Schlagwort mit Raute davor, zum Beispiel #Kuchen. Ziel: Du kannst für jede Plattform die passende Zahl an Hashtags wählen." },
+  { k: "text", h: "Früher Reichweiten-Trick, heute Einordnung", b: "Früher waren Hashtags ein Reichweiten-Hack, also ein schneller Trick. Heute geben sie **Einordnung und Kontext**. So zeigt der Hashtag, worum es im Beitrag geht." },
   { k: "liste", h: "2 Aufgaben: einordnen und gefunden werden", l: [
-   "**Inhalte einordnen:** Der Algorithmus erkennt, worum es geht. Er weiß dann, wem er den Beitrag zeigen soll.",
-   "**Gefunden werden:** Nutzer suchen Themen-Hashtags und folgen ihnen. Das passiert vor allem auf TikTok und LinkedIn."
+   "**Einordnen:** Der Algorithmus erkennt, wem er den Beitrag zeigt.",
+   "**Gefunden werden:** Nutzer folgen Themen-Hashtags, vor allem TikTok und LinkedIn."
   ] },
   { k: "liste", h: "Hashtags je Plattform: TikTok hoch, Facebook kaum", l: [
-   "**TikTok – hoch:** wichtig für Kategorie und Suche. Nutze 3–5 genaue Hashtags.",
-   "**LinkedIn – mittel:** wichtig für Business-Themen und Follow-Hashtags. Nutze 2–3 pro Beitrag.",
-   "**Instagram – gering:** kaum Wirkung auf Reichweite. Hashtags helfen bei Struktur und Nischen. Höchstens 3–5.",
-   "**Facebook und YouTube – kaum:** Beschreibung und Titel sind wichtiger als Hashtags."
+   "**TikTok (hoch):** 3–5 genaue, für Kategorie und Suche",
+   "**LinkedIn (mittel):** 2–3, für Business-Themen",
+   "**Instagram (gering):** höchstens 3–5, für Struktur und Nischen",
+   "**Facebook, YouTube (kaum):** Titel und Beschreibung zählen mehr"
   ] },
-  { k: "merke", h: "Hashtags ordnen ein, statt Reichweite zu bringen", b: "Hashtags ordnen ein, sie bringen keine Reichweite mehr. Suchbegriffe gehören 2026 vor allem in Text, Untertitel und Bildbeschreibung." },
+  { k: "merke", h: "Hashtags ordnen ein, Reichweite bringen sie kaum", b: "Suchbegriffe gehören 2026 vor allem in Text, Untertitel und Bildbeschreibung." },
   { k: "check", q: "Auf welcher Plattform haben Hashtags 2026 laut Vorlesung die höchste Bedeutung?", a: ["Auf TikTok, für Kategorie und Suche", "Auf Facebook, für mehr Reichweite", "Auf YouTube, statt eines guten Titels", "Auf Instagram, mit bis zu 30 Hashtags"], c: 0, e: "TikTok hat die Relevanz „hoch“. Dort helfen 3–5 genaue Hashtags bei Kategorie und Suche. Auf Facebook und YouTube zählen Titel und Beschreibung mehr." }
  ]},
- { id: "automatisierung", titel: "KI-Tools & gute Prompts", min: 5, quelle: "smm2.pdf, S. 242–273", folien: [
-  { k: "intro", h: "Welche KI hilft dir bei welcher Aufgabe?", b: "KI-Tools schreiben Texte, erstellen Bilder und helfen bei Planung und Analyse. Gute Ergebnisse bekommst du aber nur mit einem guten Auftrag. Nach dieser Lektion kannst du einen Prompt aus 4 Bausteinen schreiben und KI-Inhalte richtig kennzeichnen." },
-  { k: "text", h: "KI erkennt Muster in großen Datenmengen", b: "**KI** heißt Künstliche Intelligenz. Eine Maschine analysiert mit Algorithmen und Regeln große Datenmengen. Man nennt sie „Big Data“. Die KI erkennt darin Muster. Auf dieser Grundlage trifft sie Entscheidungen oder erzeugt neue Inhalte." },
-  { k: "liste", h: "So lernt KI – mit jeder Nutzung", l: [
-   "**1 Daten:** Texte, Bilder und Nutzerverhalten sind die Grundlage.",
-   "**2 Muster:** Die KI erkennt Zusammenhänge und Regeln.",
-   "**3 Ergebnis:** Die KI schreibt, empfiehlt oder entscheidet.",
-   "**4 Feedback:** Deine Rückmeldung verbessert das nächste Ergebnis."
+ { id: "automatisierung", titel: "KI-Tools & gute Prompts", min: 4, quelle: "smm2.pdf, S. 242–273", folien: [
+  { k: "intro", h: "Welche KI hilft dir bei welcher Aufgabe?", b: "**KI** (Künstliche Intelligenz) erkennt Muster in großen Datenmengen („Big Data“). Gute Ergebnisse brauchen einen guten Auftrag. Ziel: Du kannst einen Prompt aus 4 Bausteinen schreiben und KI-Inhalte kennzeichnen." },
+  { k: "liste", h: "So lernt KI mit jeder Nutzung", l: [
+   "**1 Daten:** Texte, Bilder und Nutzerverhalten",
+   "**2 Muster:** Zusammenhänge und Regeln erkennen",
+   "**3 Ergebnis:** schreiben, empfehlen, entscheiden",
+   "**4 Feedback:** verbessert das nächste Ergebnis"
   ] },
   { k: "liste", h: "Für jede Aufgabe das passende KI-Werkzeug", l: [
-   "**Text und Ideen:** ChatGPT, Claude, Gemini, Microsoft Copilot",
-   "**Bild und Grafik:** Adobe Firefly, Canva Magic Studio, Midjourney",
-   "**Video:** Higgsfield, Runway, CapCut",
-   "**Werbung:** AdCreative.ai, Meta Advantage+",
-   "**Recherche:** Perplexity und die Deep-Research-Funktionen in ChatGPT und Gemini",
-   "**Planung und Analyse:** KI-Assistenten in Hootsuite, Later oder Metricool"
+   "**Text:** ChatGPT, Claude, Gemini, Microsoft Copilot",
+   "**Bild:** Adobe Firefly, Canva Magic Studio, Midjourney",
+   "**Video und Werbung:** Higgsfield, Runway, CapCut, AdCreative.ai",
+   "**Recherche und Planung:** Perplexity, Deep Research, Hootsuite, Metricool"
   ] },
-  { k: "text", h: "ChatGPT, Gemini, Claude: gleicher Preis, andere Stärken", b: "Ähnlicher Preis, andere Stärken:\n**ChatGPT** (OpenAI) ist vielseitig. Ideal für Ideen, Captions und Bilder.\n**Gemini** (Google) nutzt Google-Dienste und die aktuelle Suche. Es macht auch Videos mit Veo.\n**Claude** (Anthropic) ist stark bei langen Texten und Analysen. Es erzeugt keine Fotos.\nTipp: Teste denselben Prompt in allen 3 Tools." },
-  { k: "liste", h: "Ein guter Prompt: Rolle, Aufgabe, Kontext, Format", l: [
-   "Ein **Prompt** ist dein Auftrag an die KI. Er hat 4 Bausteine.",
-   "**Rolle:** Wer soll die KI sein? „Du bist Social Media Manager eines Cafés.“",
-   "**Aufgabe:** Was genau soll entstehen? „Schreibe 3 Instagram-Captions.“",
-   "**Kontext:** Für wen und worum? „Neuer Herbstkuchen, Zielgruppe Studierende.“",
-   "**Format:** Wie soll das Ergebnis aussehen? „Höchstens 150 Zeichen, lockerer Ton, mit Call-to-Action.“"
+  { k: "text", h: "ChatGPT, Gemini, Claude: andere Stärken", b: "**ChatGPT** (OpenAI): vielseitig, für Ideen, Captions und Bilder.\n**Gemini** (Google): aktuelle Google-Suche, Videos mit Veo.\n**Claude** (Anthropic): lange Texte und Analysen, keine Fotos.\nTeste denselben Prompt in allen 3." },
+  { k: "liste", h: "Prompt (Auftrag an die KI): 4 Bausteine", l: [
+   "**Rolle:** „Du bist Social Media Manager eines Cafés.“",
+   "**Aufgabe:** „Schreibe 3 Instagram-Captions.“",
+   "**Kontext:** „Neuer Herbstkuchen, Zielgruppe Studierende.“",
+   "**Format:** „Höchstens 150 Zeichen, lockerer Ton, mit Call-to-Action.“"
   ] },
-  { k: "liste", h: "Seit August 2026 müssen manche KI-Inhalte erkennbar sein", l: [
-   "Seit 2. August 2026 gilt die Kennzeichnungspflicht nach Art. 50 AI Act. Das ist das KI-Gesetz der EU.",
-   "**Muss erkennbar sein:** Chatbots. Nutzer müssen wissen, dass sie mit einer KI sprechen.",
-   "**Muss erkennbar sein:** Deepfakes, also echt wirkende Bilder, Videos und Stimmen.",
-   "**Muss erkennbar sein:** KI-Texte zu Themen von öffentlichem Interesse ohne redaktionelle Prüfung.",
-   "**Meist keine Pflicht:** reine Werbetexte, erkennbar künstliche Symbolbilder, Texte, die ein Mensch geprüft hat.",
-   "Instagram, TikTok und YouTube bieten eigene KI-Labels (Quellen: DQS 2026, TÜV Akademie 2026)."
+  { k: "liste", h: "Seit 2. August 2026: KI-Inhalte kennzeichnen", l: [
+   "**Gesetz:** Art. 50 AI Act der EU",
+   "**Pflicht:** Chatbots, Deepfakes (echt wirkende Bilder, Videos, Stimmen)",
+   "**Pflicht:** ungeprüfte KI-Texte zu öffentlichen Themen",
+   "**Meist frei:** Werbetexte, Symbolbilder, von Menschen geprüfte Texte"
   ] },
-  { k: "merke", h: "Klarer Prompt, klares Feedback, immer prüfen", b: "Je klarer dein Prompt und dein Feedback, desto besser das Ergebnis. Prüfe KI-Ergebnisse immer. Gib keine Kunden- oder Personendaten in kostenlose KI-Tools ein." },
+  { k: "merke", h: "Klarer Prompt, klares Feedback, immer prüfen", b: "Prüfe KI-Ergebnisse immer und gib keine Kunden- oder Personendaten in kostenlose KI-Tools ein." },
   { k: "check", q: "Welche vier Bausteine machen laut Vorlesung einen guten Prompt aus?", a: ["Rolle, Aufgabe, Kontext und Format", "Daten, Muster, Ergebnis und Feedback", "Ziel, Budget, Kanal und Zeitpunkt", "Hook, Kontext, Inhalt und Call-to-Action"], c: 0, e: "Der Prompt nennt die Rolle der KI und die Aufgabe. Dazu kommen Kontext und Format des Ergebnisses. Daten bis Feedback beschreibt dagegen, wie KI lernt." }
  ]},
- { id: "goldene-regeln", titel: "Die 10 goldenen Regeln & nützliche Tools", min: 4, quelle: "smm2.pdf, S. 274–302; smm1.pdf, S. 63–64", folien: [
-  { k: "intro", h: "10 Regeln für gute Arbeit im Social Network", b: "Der Dozent fasst gute Arbeit im Social Network in **10 goldenen Regeln** zusammen. Zu jeder Regel gibt es einen Praxis-Tipp. Dazu kommen Tools und Links für deinen Alltag. Nach dieser Lektion kannst du die 10 Regeln nennen und mit Praxis-Tipps umsetzen." },
-  { k: "liste", h: "Regeln 1 bis 5: vom Ziel bis zur Nahbarkeit", l: [
-   "**1 Ziele definieren:** Herausforderungen erkennen, Zielgruppe analysieren. Ohne Ziel hast du keinen Maßstab.",
-   "**2 Krisenprozess festlegen:** Wer reagiert, wer gibt frei, welche Antwort liegt bereit? Im Ernstfall zählt jede Stunde.",
-   "**3 Mehrwert schaffen:** Jeder Beitrag informiert, unterhält oder löst ein Problem der Zielgruppe.",
-   "**4 Keine plumpe Werbung:** Social Media ist ein Dialog. Reine Verkaufsbeiträge bekommen wenig Reichweite und Vertrauen.",
-   "**5 Authentisch und nahbar bleiben:** Dialog statt Monolog. Sprich mit deiner Community auf Augenhöhe."
+ { id: "goldene-regeln", titel: "Die 10 goldenen Regeln & nützliche Tools", min: 3, quelle: "smm2.pdf, S. 274–302; smm1.pdf, S. 63–64", folien: [
+  { k: "intro", h: "Welche 10 Regeln machen gute Arbeit aus?", b: "Der Dozent fasst gute Arbeit im Social Network in **10 goldenen Regeln** zusammen. Ziel: Du kannst die Regeln nennen und mit Praxis-Tipps umsetzen." },
+  { k: "liste", h: "Regeln 1 bis 4: Ziel, Krise, Mehrwert, Werbung", l: [
+   "**1 Ziele definieren:** Zielgruppe analysieren, SMART-Ziel",
+   "**2 Krisenprozess festlegen:** Notfallplan, Freigabeweg, Musterantworten",
+   "**3 Mehrwert schaffen:** informieren, unterhalten oder Probleme lösen",
+   "**4 Keine plumpe Werbung:** höchstens jeder 5. Beitrag wirbt direkt"
   ] },
-  { k: "liste", h: "Regeln 6 bis 10: von der Hotline bis zur Anzeige", l: [
-   "**6 Profile wie eine Hotline behandeln:** Antworte schnell. Offene Fragen wirken wie ein Anrufbeantworter.",
-   "**7 Qualität vor Quantität:** Lieber wenige gute Beiträge. Schwache Beiträge senken die Reichweite der nächsten.",
-   "**8 Lokalen Einfluss nutzen:** Kooperationen mit lokalen Partnern, Creatorn und Kunden schaffen Vertrauen und Reichweite.",
-   "**9 Social Media in den Marketing-Mix einbinden:** Es wirkt am besten mit Website, Newsletter, Events und Werbung.",
-   "**10 Werbeanzeigen schalten:** Organische Reichweite ist begrenzt. Anzeigen bringen gute Inhalte zur richtigen Zielgruppe."
+  { k: "liste", h: "Regeln 5 bis 7: Dialog, Tempo, Qualität", l: [
+   "**5 Authentisch und nahbar:** Dialog statt Monolog, auf Augenhöhe",
+   "**6 Profile wie eine Hotline:** innerhalb weniger Stunden antworten",
+   "**7 Qualität vor Quantität:** Schwache Beiträge senken die nächste Reichweite."
   ] },
-  { k: "beispiel", h: "Praxis-Tipps: So setzt du die Regeln um", b: "Formuliere ein SMART-Ziel, zum Beispiel „500 neue Follower bis Quartalsende“. Lege einen Notfallplan mit Kontaktliste, Freigabeweg und Musterantworten an. Höchstens jeder 5. Beitrag ist direkte Werbung. Antworte innerhalb weniger Stunden. Teste Anzeigen mit kleinem Budget. Bewirb deine besten organischen Beiträge." },
+  { k: "liste", h: "Regeln 8 bis 10: lokal, Mix, Anzeigen", l: [
+   "**8 Lokalen Einfluss nutzen:** Partner, Creator und Kunden",
+   "**9 In den Marketing-Mix einbinden:** Website, Newsletter, Events, Werbung",
+   "**10 Werbeanzeigen schalten:** klein testen, beste Beiträge bewerben"
+  ] },
   { k: "liste", h: "Tools für Grafik, Musik, Schnitt und Analyse", l: [
-   "**Gestaltung:** Canva für Grafiken und Beiträge",
-   "**Lizenzfreie Musik:** audiohub.de und artlist.io",
-   "**Videoschnitt:** InShot für schnellen Content, DaVinci Resolve Studio für Profis",
-   "**Dateien teilen:** Dropbox oder Google Drive statt privater Fotogalerie",
-   "**Zielgruppenanalyse:** NapoleonCat. Für Facebook-Inhalte am Handy: Facebook Mobile Studio"
+   "**Gestaltung:** Canva. **Musik:** audiohub.de, artlist.io",
+   "**Videoschnitt:** InShot, für Profis DaVinci Resolve Studio",
+   "**Dateien teilen:** Dropbox oder Google Drive",
+   "**Analyse:** NapoleonCat. **Handy:** Facebook Mobile Studio"
   ] },
   { k: "liste", h: "Weiterlernen: Blogs, Kurse und Hilfeseiten", l: [
-   "**Blogs:** thomashutter.com, allfacebook.de (AllSocial), onlinemarketing.de, Hootsuite-Blog und t3n.de",
-   "**Facebook Blueprint:** kostenlose Online-Kurse zu Facebook-Werbung",
-   "**TikTok-Hilfe:** Anleitungen zum Konto erstellen und Profil einrichten",
-   "**X (früher Twitter):** Grundlagen und Werbe-Leitfaden für Unternehmen"
+   "**Blogs:** thomashutter.com, allfacebook.de, onlinemarketing.de, t3n.de",
+   "**Facebook Blueprint:** kostenlose Kurse zu Facebook-Werbung",
+   "**TikTok-Hilfe:** Konto erstellen, Profil einrichten",
+   "**X (früher Twitter):** Werbe-Leitfaden für Unternehmen"
   ] },
-  { k: "merke", h: "Erst Ziel, dann Mehrwert, dann Dialog", b: "Erst Ziel und Zielgruppe, dann Inhalte mit Mehrwert. Führe Dialoge statt Werbung, antworte schnell und setze auf Qualität." },
+  { k: "merke", h: "Erst Ziel, dann Mehrwert, dann Dialog", b: "Erst Ziel und Zielgruppe, dann Inhalte mit Mehrwert, Dialog statt Werbung und schnelle Antworten." },
   { k: "check", q: "Was ist laut den 10 goldenen Regeln eine gute Faustregel für Werbung im Feed?", a: ["Höchstens jeder 5. Beitrag ist direkte Werbung", "Jeder 2. Beitrag sollte direkt etwas verkaufen", "Werbung gehört nur in bezahlte Anzeigen", "Jeder Beitrag sollte ein Angebot enthalten"], c: 0, e: "Regel 4 sagt: keine plumpe Werbung. Social Media ist ein Dialog. Reine Verkaufsbeiträge bekommen wenig Reichweite. Darum ist höchstens jeder 5. Beitrag direkte Werbung." }
  ]},
- { id: "insta-tiktok", titel: "TikTok & Reels: Kurzvideos für die Gen Z", min: 5, quelle: "smm2.pdf, S. 304–325", folien: [
-  { k: "intro", h: "Mit Kurzvideos erreichst du die Gen Z", b: "Die **Gen Z** ist zwischen 1996 und 2010 geboren. Diese Generation schätzt Authentizität, Ehrlichkeit und Individualität. Die Gen Z vertraut Freunden, Familie und Influencern mehr als Werbung. Nach dieser Lektion kannst du ein 30-Sekunden-TikTok aufbauen und erklären, wie der Algorithmus Reichweite verteilt." },
-  { k: "liste", h: "Gen Z und TikTok in Zahlen", l: [
-   "**Gen Z in Deutschland:** rund 12 Millionen Menschen, also 14,6 % (Quelle: doofinder.com, 2026). Die Gen Z kauft oft mobil.",
-   "**Wachstum:** TikTok wächst in Deutschland schneller als jedes andere Netzwerk.",
-   "**Nutzer:** 28,9 Millionen monatlich aktiv in Deutschland (kontor4.de, erstes Halbjahr 2026)",
-   "**Nutzungsdauer:** im Schnitt etwa 95 Minuten pro Tag (DataReportal/Similarweb, Oktober 2025)",
-   "**Videolänge:** Die meisten Videos sind kürzer als 1 Minute.",
-   "**Deine Chance:** Noch sind wenige lokale Unternehmen aktiv."
+ { id: "insta-tiktok", titel: "TikTok & Reels: Kurzvideos für die Gen Z", min: 4, quelle: "smm2.pdf, S. 304–325", folien: [
+  { k: "intro", h: "Wie erreichst du die Gen Z mit Kurzvideos?", b: "Die **Gen Z** ist 1996 bis 2010 geboren. Auf TikTok sind noch wenige lokale Firmen aktiv. Ziel: Du kannst ein 30-Sekunden-TikTok aufbauen und den Algorithmus erklären." },
+  { k: "liste", h: "4 Vorteile von TikTok", l: [
+   "**Organische Reichweite:** nach Interesse, nicht nach Followerzahl",
+   "**Content zählt:** Ein starkes Video schlägt großes Budget.",
+   "**Mitmachen:** Trends, Sounds, Challenges",
+   "**Authentisch:** echte Menschen, ungeschliffene Videos"
   ] },
-  { k: "liste", h: "4 Vorteile: Reichweite nach Interesse, nicht Budget", l: [
-   "**Hohe organische Reichweite:** Der Algorithmus zeigt Videos nach Interesse, nicht nach Followerzahl.",
-   "**Fokus auf den Content:** Ein starkes Video zählt mehr als ein großes Budget.",
-   "**Innovatives Marketing:** Trends, Sounds und Challenges laden zum Mitmachen ein.",
-   "**Kreativität und Authentizität:** Echte Menschen und ungeschliffene Videos wirken glaubwürdig."
+  { k: "liste", h: "Der Algorithmus testet jedes Video", l: [
+   "**1 Upload:** Video mit Beschreibung, Sound, Hashtags",
+   "**2 Testgruppe:** zuerst wenige im „Für dich“-Feed",
+   "**3 Signale:** Wiedergabedauer, Shares (stärkstes Signal), Kommentare, Speichern",
+   "**4 Ausweitung:** Gute Werte bringen größere Gruppen."
   ] },
-  { k: "liste", h: "Der Algorithmus testet jedes Video in 4 Schritten", l: [
-   "**1 Upload:** Du veröffentlichst das Video mit Beschreibung, Sound und Hashtags.",
-   "**2 Testgruppe:** Zuerst sieht es eine kleine Gruppe im „Für dich“-Feed.",
-   "**3 Signale:** TikTok misst, wie lange man schaut und ob man teilt, kommentiert oder speichert.",
-   "**4 Ausweitung:** Bei guten Werten sieht es eine größere Gruppe. Das wiederholt sich.",
-   "Shares sind das stärkste Signal. Die Followerzahl zählt weniger als bei Instagram."
+  { k: "liste", h: "Ein 30-Sekunden-TikTok in 4 Phasen", l: [
+   "**Hook (0–2 Sekunden):** Frage oder Behauptung macht neugierig.",
+   "**Kontext (3–8 Sekunden):** Worum geht es, warum wichtig?",
+   "**Inhalt (8–25 Sekunden):** Mehrwert zeigen statt erzählen",
+   "**Call-to-Action (25–30 Sekunden):** „Speichern für später“"
   ] },
-  { k: "liste", h: "Aufbau eines TikToks: 30 Sekunden in 4 Phasen", l: [
-   "**Hook (0–2 Sekunden):** Eine Frage oder Behauptung macht neugierig. „3 Fehler, die fast alle machen“",
-   "**Kontext (3–8 Sekunden):** Worum geht es und warum ist es wichtig? „Fehler 1 kostet dich jeden Tag Zeit.“",
-   "**Inhalt (8–25 Sekunden):** Der Mehrwert. Zeigen statt erzählen, Schritt für Schritt vorführen.",
-   "**Call-to-Action (25–30 Sekunden):** Was soll der Zuschauer tun? „Speichern für später“ oder „Folgen für Teil 2“"
+  { k: "liste", h: "TikTok, Reels und Shorts im Vergleich", l: [
+   "**TikTok:** optimal 15–60 Sekunden, schnellste organische Reichweite",
+   "**Reels:** unter 90 Sekunden, Community, Shopping und DMs",
+   "**Shorts:** 15–60 Sekunden, Einstieg in den Kanal",
+   "Quelle: skill-sprinters.de (2026), Instagram Creators (2025)"
   ] },
-  { k: "liste", h: "6 Regeln für erfolgreiche TikToks", l: [
-   "**Hook in 2 Sekunden:** Die ersten Sekunden entscheiden, ob jemand weiterschaut.",
-   "**Inspirieren lassen:** Beobachte andere Accounts und das Creative Center.",
-   "**Mehrwert liefern:** Löse Probleme, gib Tipps oder unterhalte.",
-   "**Rhythmus halten:** Lieber 3–5 einfache Videos pro Woche als ein perfektes.",
-   "**Untertitel nutzen:** Viele schauen ohne Ton.",
-   "**Community fordern:** Challenges, Duette und Antworten per Video. Ein Duett ist ein Video neben einem anderen Video."
-  ] },
-  { k: "liste", h: "TikTok, Reels und Shorts: gleiche Idee, andere Länge", l: [
-   "**TikTok:** bis 60 Minuten, optimal 15–60 Sekunden. Stärke: schnellste organische Reichweite, Trends und Sounds.",
-   "**Instagram Reels:** bis 3 Minuten, optimal unter 90 Sekunden. Stärke: Community pflegen, Shopping und DMs.",
-   "**YouTube Shorts:** bis 3 Minuten, optimal 15–60 Sekunden. Stärke: Einstieg in den Kanal, lange auffindbar.",
-   "Fazit: Ein gutes Video funktioniert auf allen 3 Plattformen. Passe Länge und Ton an.",
-   "Quelle: skill-sprinters.de (2026); Instagram Creators (2025)"
-  ] },
-  { k: "text", h: "TikTok für Unternehmen: Shop, Spark Ads, Creator", b: "**TikTok Shop:** Seit 2025 verkaufst du in Deutschland direkt im Video und Live-Stream.\n**Spark Ads:** Gut laufende eigene oder Creator-Videos werden zur Anzeige.\n**Creator:** Du findest sie über TikTok One. Kennzeichne Werbung immer.\n**Suche:** Viele Junge suchen hier nach Tipps.\nEinstieg: 4 Wochen organisch testen, dann die besten Videos bewerben." },
-  { k: "merke", h: "Auf TikTok entscheiden Zuschauer, nicht Follower", b: "TikTok zeigt Videos nach Interesse, nicht nach Followerzahl. Wiedergabe und Shares entscheiden über die Reichweite. Ein starker Hook hält die Zuschauer." },
+  { k: "text", h: "TikTok für Firmen: Shop, Spark Ads, Creator", b: "**TikTok Shop:** seit 2025 direkt im Video verkaufen.\n**Spark Ads:** Gut laufende eigene oder Creator-Videos werden Anzeigen.\n**TikTok One:** Creator finden, Werbung kennzeichnen.\nStart: 4 Wochen organisch testen, dann bewerben." },
+  { k: "merke", h: "Auf TikTok entscheiden Zuschauer, nicht Follower", b: "Wiedergabe und Shares entscheiden über die Reichweite, ein starker Hook hält die Zuschauer." },
   { k: "check", q: "Wovon hängt die Reichweite eines TikTok-Videos laut Vorlesung vor allem ab?", a: ["Vom Verhalten der Zuschauer, vor allem Wiedergabe und Shares", "Vor allem von der Zahl der Follower des Accounts", "Vor allem von der Zahl der Hashtags unter dem Video", "Vor allem vom Werbebudget, das hinter dem Video steht"], c: 0, e: "TikTok zeigt jedes Video erst einer kleinen Testgruppe. Wird es bis zum Ende geschaut und geteilt, bekommt es mehr Reichweite. Die Followerzahl spielt eine kleinere Rolle." }
  ]}
 ];
