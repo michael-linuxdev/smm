@@ -58,6 +58,10 @@ for (const m of MODULE) for (const l of m.lektionen) {
     if ((f.l || []).length > 4 || (f.l || []).some(x => woerter(x) > 10)) fehler.push(`Lektion ${l.id}: Liste „${f.h}“ zu lang (max. 4 Punkte à 10 Wörter)`);
   }
   if (summe > 220) fehler.push(`Lektion ${l.id}: ${summe} Wörter (max. 220)`);
+  // Lange Wörter gliedern (einfache Sprache): ab 18 Buchstaben ohne Bindestrich nur feste Namen und Prüfungsbegriffe
+  const NAMEN = /^(Kunsturhebergesetz|Bundesdatenschutzgesetz|Medienstaatsvertrag|Rundfunkstaatsvertrag|Selbstverständlichkeiten|operationalisierst|operationalisieren|Datenschutz-Grundverordnung)$/;
+  for (const f of l.folien) if (f.k !== "check") for (const t of [f.h, f.b, ...(f.l || [])].filter(Boolean))
+    for (const wort of t.replace(/\*\*/g, "").split(/[\s„“"()\/,.:;!?]+/)) if (!wort.startsWith("#")) for (const teil of wort.split("-")) if (teil.length >= 18 && !NAMEN.test(teil)) fehler.push(`Lektion ${l.id}: langes Wort „${teil}“ – mit Bindestrich gliedern oder umschreiben`);
   for (const f of l.folien) for (const t of [f.h, f.b, f.q, f.e, ...(f.l || []), ...(f.a || [])].filter(Boolean)) {
     if (ABK.test(t)) fehler.push(`Lektion ${l.id}: Abkürzung „${t.match(ABK)[0]}“ – ${t.slice(0, 50)}…`);
     for (const satz of satzTeile(t)) if (woerter(satz) > 18) fehler.push(`Lektion ${l.id}: Satz mit mehr als 18 Wörtern – ${satz.slice(0, 50)}…`);
