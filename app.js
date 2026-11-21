@@ -64,7 +64,7 @@ const ic = (n, extra = "") => `<svg viewBox="0 0 24 24" fill="none" stroke="curr
 /* ---------- Speicher ----------
    Doppelt: localStorage (schnell) + IndexedDB (robuster). Beim Start gewinnt der neuere Stand (Zeitstempel).
    Fragen und Lektionen haben stabile Schlüssel (unabhängig vom Modul), alte Schlüssel werden migriert. */
-const KEY = "smm-coach", VERSION = "0.37.0";
+const KEY = "smm-coach", VERSION = "0.38.0";
 const DEF = () => ({ lek: {}, q: {}, srs: {}, last: null, tests: [], pruefung: "", day: null, seen: 0, set: { size: "m", theme: "auto", goal: "20", vibe: true, step: true, mig1: 1, mig2: 1, mig3: 1 }, lastBackup: 0, created: Date.now(), updated: 0, run: null, lastRun: null });
 let S = DEF();
 try { const x = JSON.parse(localStorage.getItem(KEY) || "null"); if (x) S = Object.assign(DEF(), x); } catch (e) {}
@@ -748,7 +748,7 @@ const TERM_RX = (() => {
 const termIdx = t => { const i = TERM_RX.map.get(t.toLowerCase()); if (i === undefined) return; const g = GLOSSAR[i], all = [g.w, ...(g.syn || [])]; if (t.length <= 4 && !all.includes(t)) return; return i; };
 function linkTerms(root, seenDe, skip) {
  if (!root) return;
- const used = new Set(skip === undefined ? [] : [skip]), w = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, { acceptNode: n => n.parentElement.closest("button,a,.term,.kind,.chip,textarea,.mark,.l") ? NodeFilter.FILTER_REJECT : NodeFilter.FILTER_ACCEPT });
+ const used = new Set(skip === undefined ? [] : [skip]), w = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, { acceptNode: n => n.parentElement.closest("button,a,.term,.kind,.chip,textarea,.mark,.l,svg") ? NodeFilter.FILTER_REJECT : NodeFilter.FILTER_ACCEPT });
  const nodes = []; while (w.nextNode()) nodes.push(w.currentNode);
  for (const node of nodes) {
   const txt = node.nodeValue; TERM_RX.rx.lastIndex = 0; let m, last = 0, frag = null;

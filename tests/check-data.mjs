@@ -31,6 +31,15 @@ for (const [w, e] of Object.entries(EINFACH)) {
     for (const satz of t.split(/(?<=[.!?])\s+(?=[A-ZÄÖÜ„*(0-9])/)) if (woerter(satz) > 18) fehler.push(`Einfache Sprache: Satz mit mehr als 18 Wörtern in „${k}“: ${w} – ${satz.slice(0, 50)}…`);
   }
 }
+// Jeder Glossar-Begriff hat eine Story und kommt im Kurs vor (Lektionen, Quizfragen oder Hausaufgaben) –
+// erkannt wie in linkTerms (app.js): Wortgrenzen, Begriffe bis 4 Zeichen nur in exakter Schreibweise.
+const alleTexte = o => typeof o === "string" ? [o] : Array.isArray(o) ? o.flatMap(alleTexte) : o && typeof o === "object" ? Object.entries(o).filter(([k]) => !["quelle", "id", "muster"].includes(k)).flatMap(([, v]) => alleTexte(v)) : [];
+const kurstext = alleTexte([MODULE.map(m => m.lektionen), FRAGEN, PROJEKTE]).join("\n");
+for (const g of GLOSSAR) {
+  if (!EINFACH[g.w] || !g.s) fehler.push("Glossar: Begriff ohne Story in einfacher Sprache: " + g.w);
+  const da = [g.w, ...(g.syn || [])].filter(t => t && t.length >= 2).some(t => new RegExp(`(?<![\\p{L}\\p{N}_-])${t.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}(?![\\p{L}\\p{N}_])`, t.length <= 4 ? "u" : "iu").test(kurstext));
+  if (!da) fehler.push("Glossar: Begriff kommt im Kurs nicht vor: " + g.w);
+}
 // Lernpfad: jeder Begriff genau einmal, beim richtigen Modul; nur bekannte Module
 const pfadAlle = Object.values(LERNPFAD).flat();
 for (const mid of Object.keys(LERNPFAD)) if (!MODULE.some(m => m.id === mid)) fehler.push("Lernpfad: unbekanntes Modul " + mid);
