@@ -64,7 +64,7 @@ const ic = (n, extra = "") => `<svg viewBox="0 0 24 24" fill="none" stroke="curr
 /* ---------- Speicher ----------
    Doppelt: localStorage (schnell) + IndexedDB (robuster). Beim Start gewinnt der neuere Stand (Zeitstempel).
    Fragen und Lektionen haben stabile Schlüssel (unabhängig vom Modul), alte Schlüssel werden migriert. */
-const KEY = "smm-coach", VERSION = "0.33.0";
+const KEY = "smm-coach", VERSION = "0.34.0";
 const DEF = () => ({ lek: {}, q: {}, srs: {}, last: null, tests: [], pruefung: "", day: null, seen: 0, set: { size: "m", theme: "auto", goal: "20", vibe: true, step: true, mig1: 1, mig2: 1, mig3: 1 }, lastBackup: 0, created: Date.now(), updated: 0, run: null, lastRun: null });
 let S = DEF();
 try { const x = JSON.parse(localStorage.getItem(KEY) || "null"); if (x) S = Object.assign(DEF(), x); } catch (e) {}
@@ -188,7 +188,7 @@ const modPool = id => POOL.filter(p => p.m === id);
 const qDone = id => modPool(id).filter(p => p.key in S.q).length; // bearbeitet – richtig oder falsch ist für den Fortschritt egal
 // So kann die Zahl nie sinken – auch nicht durch eine falsche Antwort.
 // Fortschritt (Wunsch 11/2026): jede Frage zählt gleich viel – Quizfragen und Kurz-Checks der Lektionen.
-// Bearbeitet zählt, egal ob richtig oder falsch. Bei 390 Fragen und 20 Fragen am Tag steigt er um gut 5 % täglich.
+// Bearbeitet zählt, egal ob richtig oder falsch. Bei rund 390 Fragen und 20 Fragen am Tag steigt er um gut 5 % täglich.
 const modProgress = m => modPool(m.id).length ? qDone(m.id) / modPool(m.id).length : lekDone(m) / m.lektionen.length;
 const KERN = () => MODULE.filter(m => !m.zusatz);
 const kernFragen = () => POOL.length;
