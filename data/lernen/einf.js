@@ -1,26 +1,26 @@
 // Lektionen „Routenplaner Web 2.0“ – Zusammenfassung von smm3.pdf, S. 328–382 (Vorlesung „Social Media Management – Eine Einführung“), S. 231–251 (BVCM-Stellenprofil Social Media Manager) und S. 252–327 (BVCM-Studie 2023), einfache Sprache.
 export const L_EINF = [
  { id: "web20", titel: "Was ist Social Media?", min: 3, quelle: "smm3.pdf, S. 331–337; smm1.pdf, S. 66, 68 und 73", folien: [
-  { k: "intro", h: "Warum reden heute alle über Marken?", b: "Früher sendeten Medien, heute antworten alle. Durch alle Lektionen begleitet dich Bohnenwerk, eine Kaffeerösterei aus Leipzig. Ziel: Du unterscheidest 3 Formen der Kommunikation und erklärst, wie Vertrauen entsteht." },
+  { k: "intro", h: "Warum reden heute alle über Marken?", b: "Früher sendeten Medien, heute antworten alle. Durch alle Lektionen begleitet dich Bohnenwerk. Das ist eine Kaffeerösterei aus Leipzig. Ziel: Du kennst 3 Formen der Kommunikation. Du weißt, wie Vertrauen entsteht." },
   { k: "liste", h: "Einer an viele, einer an einen, viele an viele", l: [
    "**1:n Massen-Kommunikation:** Zeitung, Website, Radio, TV",
    "**1:1 persönlich:** E-Mail, Telemarketing (Werbe-Anrufe)",
    "**n:n Social Media:** Viele reden offen mit vielen.",
-   "Diese Einteilung stammt von Hettler (2010)."
+   "So teilt Hettler 2010 ein."
   ]},
-  { k: "bild", svg: "kommunikation", h: "Nutzer hören nicht nur zu, sie gestalten mit", b: "Nutzer wählen aus, ignorieren, kommentieren, bewerten, verändern und teilen. Empfehlungen beeinflussen, was andere kaufen." },
+  { k: "bild", svg: "kommunikation", h: "Nutzer hören nicht nur zu, sie gestalten mit", b: "Nutzer wählen aus oder lassen weg. Dazu kommentieren, bewerten, ändern und teilen sie. Was sie empfehlen, kaufen andere eher." },
   { k: "liste", h: "Die 3 A: Austausch, Anders, Alltag", l: [
-   "**Austausch:** Alle reden öffentlich online miteinander, weltweit.",
-   "**Anders:** Wir informieren uns heute grundlegend anders.",
-   "**Alltag:** Man spricht über Firmen, ob sie wollen oder nicht."
+   "**Austausch:** Alle reden offen im Netz, weltweit.",
+   "**Anders:** Wir holen uns Infos heute ganz anders.",
+   "**Alltag:** Man redet über Firmen, ob sie wollen oder nicht."
   ]},
   { k: "liste", h: "Vertrauen entsteht durch Empfehlung und Offenheit", l: [
    "**Empfehlungen:** Freunde wirken stärker als Fremde.",
-   "**Offenheit:** Die Firma ist ehrlich statt aufdringlich.",
-   "**Persönlicher Kontakt:** Die Firma wirkt menschlich.",
-   "**Gefühle:** Die Firma löst Gefühle aus und vermittelt sie."
+   "**Offenheit:** Die Firma ist ehrlich, nicht aufdringlich.",
+   "**Persönlicher Kontakt:** Die Firma wirkt wie ein Mensch.",
+   "**Gefühle:** Die Firma weckt Gefühle."
   ]},
-  { k: "text", h: "Das Social Media Prisma ist eine Grafik", b: "Das **Social Media Prisma** der Firma ethority zeigt die deutschen Social-Media-Plattformen auf einen Blick. Es ist eine Grafik, keine Rechenmethode." },
+  { k: "text", h: "Das Social Media Prisma ist eine Grafik", b: "Das **Social Media Prisma** kommt von der Firma ethority. Es zeigt die deutschen Plattformen auf einen Blick. Es ist eine Grafik, keine Rechenmethode." },
   { k: "merke", h: "Aus Monolog wird Dialog", b: "Das Erfolgsrezept von Social Media: Der **Empfänger wird gleichzeitig zum Sender**." },
   { k: "check", q: "Was macht laut Vorlesung das Erfolgsrezept von Social Media aus?", a: ["Der Empfänger wird gleichzeitig zum Sender.", "Unternehmen senden ihre Botschaft an viele Menschen.", "Nachrichten gehen nur direkt an eine Person.", "Nutzer lesen Inhalte, ohne zu antworten."], c: 0, e: "In sozialen Medien werden aus Monologen Dialoge. Jeder kann antworten, bewerten und teilen. Der Empfänger ist also zugleich Sender." }
  ]},
@@ -56,29 +56,35 @@ export const L_EINF = [
  ]},
 
  { id: "chancen", titel: "Potenziale, Chancen & Risiken", min: 3, quelle: "smm3.pdf, S. 344–345 und 370–371", folien: [
-  { k: "intro", h: "Lohnt sich Social Media trotz der Risiken?", b: "Fast alle Unternehmen sind dabei, besonders Dienstleister. Firmen nutzen Social Media immer professioneller, auch innerhalb der Firma. Ziel: Du kannst Chancen, Risiken und die Lösung nennen." },
+  { k: "intro", h: "Lohnt sich Social Media trotz der Risiken?", b: "Fast alle Firmen sind dabei, vor allem Dienstleister. Viele arbeiten damit immer gezielter, auch intern. Ziel: Du nennst Chancen, Risiken und die Lösung." },
+  { k: "woerter", h: "Neue Wörter: viral, Traffic, Shitstorm, Know-how", l: [
+   "**viral:** Nutzer teilen einen Inhalt selbst weiter",
+   "**Traffic:** Besucher auf deiner Website",
+   "**Shitstorm:** Welle der Empörung im Netz",
+   "**Know-how:** Fachwissen"
+  ]},
   { k: "liste", h: "Chancen: Reichweite, Dialog, niedrige Kosten", l: [
-   "**Reichweite:** viele Nutzer, **viraler Effekt** (Nutzer teilen weiter)",
+   "**Reichweite:** viele Nutzer, dazu der **virale Effekt**",
    "**Kosten:** niedrige **Transaktions-Kosten** (Aufwand je Kontakt)",
    "**Dialog:** Kunden binden sich stärker, weltweit.",
-   "**Sichtbarkeit:** mehr **Traffic** (Besucher) auf der Website"
+   "**Sichtbarkeit:** mehr **Traffic** auf der Website"
   ]},
   { k: "liste", h: "Risiken: Shitstorm, Rechtsverstoß, Kontrollverlust", l: [
    "**IT-Sicherheit**, Rechtsverstöße und Datenschutz",
-   "**Shitstorm** (Welle der Empörung): Fehltritte schaden dem Ruf.",
-   "**Kontrollverlust:** Die Firma bestimmt nicht allein die Gespräche.",
-   "**Aufwand:** Zeit, Geld; Wissen und Firmengeheimnisse dringen nach außen."
+   "**Shitstorm:** Fehltritte schaden dem Ruf.",
+   "**Kontrollverlust:** Die Firma lenkt die Gespräche nicht allein.",
+   "**Aufwand:** Zeit und Geld. Geheimnisse dringen nach außen."
   ]},
   { k: "liste", h: "Große Firmen kämpfen mit langen Wegen", l: [
    "Sie haben Angst vor Shitstorms.",
-   "Sie müssen Wildwuchs bremsen und Zuständigkeiten klären.",
-   "Entscheidungen dauern lange, die Strukturen sind starr.",
-   "**IT-Compliance** (Sicherheitsregeln) und Betriebsrat reden mit."
+   "Sie müssen Wildwuchs bremsen und klären, wer was macht.",
+   "Entscheidungen dauern lange, alles ist starr.",
+   "IT-Abteilung und Betriebsrat reden mit."
   ]},
   { k: "liste", h: "Kleinen Firmen fehlen Budget und Personal", l: [
    "Sie müssen überhaupt erst auffallen.",
-   "Es fehlen Budget, Personal, Erfahrung und **Know-how** (Fachwissen).",
-   "Meist macht eine Person alles, wie du bei Bohnenwerk.",
+   "Es fehlen Budget, Personal, Erfahrung und **Know-how**.",
+   "Oft macht eine Person alles, wie du bei Bohnenwerk.",
    "Die Technik fehlt. Viele fragen: „Brauch ich das?“"
   ]},
   { k: "merke", h: "Gegen Risiken hilft Social Media Governance", b: "**Social Media Governance** heißt: klare Regeln, Rollen und Abläufe für Social Media im Unternehmen." },
@@ -86,101 +92,125 @@ export const L_EINF = [
  ]},
 
  { id: "viral", titel: "Der virale Effekt", min: 3, quelle: "smm3.pdf, S. 345 und Hausaufgabe „Social Media Management“; smm1.pdf, S. 72 und 75; Beispiele: Nature 2017, Wikipedia „Heimkommen“", folien: [
-  { k: "intro", h: "Warum verbreiten sich Beiträge wie ein Virus?", b: "Viral heißt: Nutzer geben einen Inhalt selbst weiter, von Person zu Person. Ziel: Du kannst den Effekt erklären und mit einem Beispiel belegen." },
-  { k: "bild", svg: "viral", h: "Jede Weitergabe öffnet ein neues Netzwerk", b: "So wächst die Reichweite sprunghaft. Aber auch Kritik verbreitet sich so schnell, bis zum **Shitstorm** (Welle der Empörung)." },
-  { k: "text", h: "Geteilte Reichweite ist Earned Media", b: "Die Plattform zeigt Beiträge mit vielen Reaktionen öfter. So entsteht **Earned Media** (verdiente, nicht gekaufte Reichweite). **Word of Mouth Marketing** regt Mundpropaganda gezielt an, mit **Buzz** (Gesprächsstoff) und Viral Marketing." },
+  { k: "intro", h: "Warum verbreiten sich Beiträge wie ein Virus?", b: "Viral heißt: Nutzer geben einen Inhalt selbst weiter. Ziel: Du erklärst den Effekt mit einem Beispiel." },
+  { k: "woerter", h: "Neue Wörter: Earned Media, Buzz, Challenge, Seeding", l: [
+   "**Earned Media:** verdiente, nicht gekaufte Reichweite",
+   "**Buzz:** Gesprächsstoff, über den alle reden",
+   "**Challenge:** Mitmach-Aufgabe, oft mit Nominierung",
+   "**Seeding:** Inhalt gezielt an passende Leute streuen"
+  ]},
+  { k: "bild", svg: "viral", h: "Jede Weitergabe öffnet ein neues Netzwerk", b: "So wächst die Reichweite sprunghaft. Auch Kritik verbreitet sich so schnell, bis zum **Shitstorm** (Welle der Empörung)." },
+  { k: "text", h: "Geteilte Reichweite ist Earned Media", b: "Die Plattform zeigt Beiträge mit vielen Reaktionen öfter. So entsteht **Earned Media**. **Word of Mouth Marketing** regt Mundpropaganda gezielt an. Es nutzt **Buzz** und Viral Marketing." },
   { k: "liste", h: "Geteilt wird: Gefühl, einfache Idee, Mitmachen", l: [
    "**Starke Gefühle:** Humor, Rührung, Überraschung",
-   "**Einfache Idee**, sofort verständlich",
-   "**Mitmachen:** eine **Challenge** (Mitmach-Aufgabe), bei der man Freunde nominiert",
-   "**Seeding** (gezielt streuen): erst an passende Personen geben"
+   "**Einfache Idee**, sofort klar",
+   "**Mitmachen:** eine **Challenge**, bei der man Freunde nominiert",
+   "**Seeding:** Gib den Inhalt erst an passende Personen."
   ]},
   { k: "beispiel", h: "Ice Bucket Challenge 2014: 115 Millionen Dollar", b: "Eiswasser über den Kopf, 3 Leute nominieren. Über 17 Millionen posteten Videos. Die ALS Association bekam rund 115 statt 2,8 Millionen US-Dollar (Nature, 2017)." },
-  { k: "beispiel", h: "EDEKA #heimkommen: 43 Millionen Aufrufe", b: "Ein rührender Weihnachtsfilm auf YouTube (2015). Bis 18.12.2015 sah man ihn über 43 Millionen Mal. Quelle: Wikipedia „Heimkommen“." },
+  { k: "beispiel", h: "EDEKA #heimkommen: 43 Millionen Aufrufe", b: "Ein rührender Weihnachtsfilm auf YouTube, 2015. Bis 18.12.2015 sah man ihn über 43 Millionen Mal. Quelle: Wikipedia „Heimkommen“." },
   { k: "merke", h: "Viral ist ein Ergebnis, kein Werkzeug", b: "Nutzer geben den Inhalt selbst weiter. Das lässt sich nicht planen oder kaufen und ist oft schnell vorbei." },
   { k: "check", q: "Woran erkennst du den viralen Effekt?", a: ["Nutzer teilen den Inhalt selbst weiter, die Reichweite wächst sprunghaft", "Ein hohes Werbebudget lässt die Reichweite gleichmäßig wachsen", "Der Beitrag erscheint nur bei den eigenen Followern", "Die Plattform zeigt lange Videos grundsätzlich öfter"], c: 0, e: "Viral heißt Weitergabe von Person zu Person. Jede Weitergabe öffnet ein neues Netzwerk. Darum wächst die Reichweite so schnell." }
  ]},
+
  { id: "einsatz", titel: "Anwendungsfelder & Involvement", min: 3, quelle: "smm3.pdf, S. 346–369; smm1.pdf, S. 70 und 74", folien: [
-  { k: "intro", h: "Wofür setzt ein Unternehmen Social Media ein?", b: "Social Media ist mehr als Werbung. Wie stark sich eine Firma beteiligt, heißt **Involvement**. Ziel: Du kannst 6 Felder und 5 Formen der Beteiligung nennen." },
+  { k: "intro", h: "Wofür setzt ein Unternehmen Social Media ein?", b: "Social Media ist mehr als Werbung. Ziel: Du nennst 6 Felder und 5 Formen von **Involvement**." },
+  { k: "woerter", h: "Neue Wörter: Involvement, Social Intranet, Monitoring", l: [
+   "**Involvement:** wie stark sich eine Firma beteiligt",
+   "**Social Intranet:** Netzwerk nur für eigene Mitarbeiter",
+   "**Monitoring:** beobachten, was Nutzer über dich sagen"
+  ]},
   { k: "liste", h: "6 Felder: von Werbung bis Wissenstransfer", l: [
    "Werbung, Vertrieb und Krisen-Kommunikation",
-   "Kundenservice, Forschung, **Wissenstransfer** (Wissen weitergeben)",
-   "**Social Intranet:** Netzwerk nur für eigene Mitarbeitende",
-   "**Social Recruiting:** Personal über Social Media gewinnen"
+   "Service, Forschung, **Wissenstransfer** (Wissen teilen)",
+   "**Social Intranet** nach innen",
+   "**Social Recruiting:** Personal über Social Media finden"
   ]},
   { k: "liste", h: "Domino’s, Aldi, Telekom: Beispiele nach außen", l: [
    "**Werbung:** Jeder #letsdolunch-Post senkte den Pizzapreis (Domino’s, 2012).",
-   "**Vertrieb:** Einkäufer über die LinkedIn-Personensuche finden",
+   "**Vertrieb:** Du suchst Einkäufer bei LinkedIn.",
    "**Krise:** Aldi Süd erklärt im Blog seinen Fleischpreis.",
    "**Service:** „Telekom hilft“ und S-Bahn Berlin auf X"
   ]},
   { k: "liste", h: "Mitarbeiter-App und Fans: Beispiele nach innen", l: [
-   "**Social Intranet:** Mitarbeiter-App mit Nachrichten und Chat (Staffbase)",
-   "**Wissenstransfer:** Bahn-Video „Mitarbeiter-Kompass“ erklärt Social Media",
-   "**Forschung:** Follower stimmen über einen Produktnamen ab."
+   "**Social Intranet:** die Mitarbeiter-App von Staffbase mit Chat",
+   "**Wissenstransfer:** Das Bahn-Video „Mitarbeiter-Kompass“ erklärt Social Media.",
+   "**Forschung:** Fans wählen den Namen der neuen Bohnenwerk-Sorte."
   ]},
   { k: "liste", h: "5 Wege der Beteiligung, auch kombiniert", l: [
-   "**Eigener Kanal** (Blog, Forum) oder **eigenes Profil** (Instagram, LinkedIn)",
-   "**Kanäle anderer:** Gastbeiträge, Kommentare, Influencer",
-   "**Zuhören:** **Monitoring** (Beobachten) erkennt Meinungen und Krisen früh.",
+   "**Eigener Kanal** wie ein Blog, **eigenes Profil** bei Instagram",
+   "**Fremde Kanäle:** Gastbeiträge, Kommentare, Influencer",
+   "**Zuhören:** Mit **Monitoring** erkennst du Meinungen und Krisen früh.",
    "**Anzeigen:** Social Media Advertising, also bezahlte Werbung"
   ]},
-  { k: "text", h: "Reaktiv heißt: Du antwortest auf Nutzer", b: "**Reaktives Involvement:** Du reagierst auf etwas, das Nutzer tun. Du antwortest etwa auf eine negative Bewertung oder eine Anfrage." },
+  { k: "text", h: "Reaktiv heißt: Du antwortest auf Nutzer", b: "**Reaktives Involvement:** Du reagierst auf Nutzer. Ein Gast bewertet das Bohnenwerk-Café schlecht? Dann antwortest du." },
   { k: "merke", h: "Nie ignorieren – Monitoring ist Pflicht", b: "Nutzer reden online über Marken, ob du mitmachst oder nicht. Deshalb ist **Monitoring Pflicht**." },
   { k: "check", q: "Welche Form des Involvements passt zur Krisen-Früherkennung?", a: ["Zuhören mit Social Media Monitoring", "Eigene Anzeigen auf Instagram schalten", "Einen eigenen Unternehmensblog starten", "Gastbeiträge auf fremden Kanälen schreiben"], c: 0, e: "Beim „Ohr im Social Web“ beobachtet das Unternehmen, was über es gesagt wird. So erkennt es Krisen früh und gewinnt Daten für die Marktforschung." }
  ]},
 
  { id: "rolle", titel: "Die Rolle des Social Media Managers", min: 3, quelle: "smm3.pdf, S. 234–238, 259, 327 und 372–376", folien: [
-  { k: "intro", h: "Was macht ein Social Media Manager?", b: "Laut BVCM (Bundesverband Community Management) ist er der **Dreh- und Angelpunkt**. Ziel: Du kannst seine Aufgaben einordnen und ihn vom Community Manager abgrenzen." },
+  { k: "intro", h: "Was macht ein Social Media Manager?", b: "Laut Berufsverband BVCM ist er der **Dreh- und Angelpunkt**. Ziel: Du ordnest seine Aufgaben ein. Du trennst ihn vom Community Manager." },
+  { k: "woerter", h: "Neue Wörter: operativ, Community, KPI, Change Management", l: [
+   "**operativ:** im Tagesgeschäft",
+   "**Community:** Fan-Gemeinschaft einer Marke",
+   "**KPI:** Kennzahl für Erfolg",
+   "**Change Management:** Wandel in der Firma begleiten"
+  ]},
   { k: "liste", h: "3 Ebenen: strategisch, operativ, analytisch", l: [
    "**Strategisch:** Er plant, leitet und überzeugt die Chefs.",
-   "**Operativ** (Tagesgeschäft): Er koordiniert, erstellt Inhalte, betreut die **Community** (Fan-Gemeinschaft).",
-   "**Analytisch:** Er misst den Erfolg mit **KPI** (Kennzahlen) und berichtet."
+   "**Operativ:** Er schafft Inhalte und betreut die **Community**.",
+   "**Analytisch:** Er misst Erfolg mit **KPI**."
   ]},
   { k: "liste", h: "7 Aufgabenbereiche: von Strategie bis Teamführung", l: [
-   "**1 Strategie**, **2 Change Management** (Wandel begleiten, schulen)",
-   "**3 Monitoring** (Beobachten) **und Reporting** (Berichte erstellen)",
-   "**4 Schnittstelle** (Ansprechpartner), **5 Koordination** (Redaktionsplan)",
-   "**6 Qualitäts-Sicherung** vor dem Posten, **7 Führung** des Community-Teams"
+   "**1 Strategie**, **2 Change Management** mit Schulungen",
+   "**3 Monitoring** und **Reporting** (Berichte)",
+   "**4 Schnittstelle**, **5 Koordination** des Redaktionsplans",
+   "**6 Qualitäts-Sicherung** vor dem Posten, **7 Führung** des Teams"
   ]},
-  { k: "text", h: "Später rückt die Koordination in den Mittelpunkt", b: "Anfangs koordiniert er wenig, später ist das seine Hauptaufgabe. Ideal ist ein erfahrener **Allrounder** (Alleskönner). Er verbindet die Firma auch mit Agenturen." },
+  { k: "text", h: "Später rückt die Koordination in den Mittelpunkt", b: "Anfangs koordiniert er wenig, später vor allem. Ideal ist ein erfahrener Alleskönner." },
   { k: "liste", h: "3 Berufsbilder: Wer plant, spricht, betreut?", l: [
-   "**Social Media Manager:** plant, koordiniert, überprüft alle Maßnahmen",
+   "**Social Media Manager:** plant, koordiniert, prüft alles",
    "**Community Manager:** Gesicht nach außen, Sprachrohr der Nutzer nach innen",
-   "**Corporate Community Manager:** betreut Communitys der eigenen Mitarbeitenden"
+   "**Corporate Community Manager:** betreut Communitys der eigenen Mitarbeiter"
   ]},
   { k: "liste", h: "So startest du bei Bohnenwerk in den Arbeitstag", l: [
    "Prüfe Kommentare auf Instagram, LinkedIn und TikTok.",
-   "Beobachte Statistiken, Anzeigen, Marke und Mitbewerber.",
-   "Lies Trends und Tages-Nachrichten.",
-   "Prüfe den Redaktionsplan und schreib deine Aufgaben-Liste."
+   "Sieh dir Statistiken, Anzeigen und Mitbewerber an.",
+   "Lies Trends und Nachrichten.",
+   "Prüfe den Redaktionsplan, plane deine Aufgaben."
   ]},
   { k: "merke", h: "Social Media Manager plant und führt fachlich", b: "Der Social Media Manager plant und ist fachlich Vorgesetzter. Der Community Manager führt den direkten Dialog.", esel: "Erst planen, dann machen, dann messen: strategisch, operativ, analytisch." },
   { k: "check", q: "Wer führt laut BVCM vor allem den direkten Dialog mit der Community?", a: ["Der Community Manager", "Der Social Media Manager", "Der Corporate Community Manager", "Die Geschäftsführung des Unternehmens"], c: 0, e: "Der Community Manager ist Gesicht und Sprachrohr nach außen. Der Social Media Manager plant und koordiniert dagegen alle Maßnahmen der Strategie." }
  ]},
 
  { id: "kompetenzprofil", titel: "Kompetenzen & Stellenprofil", min: 3, quelle: "smm3.pdf, S. 237–250 und 377–379", folien: [
-  { k: "intro", h: "Was musst du als Social Media Manager können?", b: "Der Berufsverband BVCM nennt 5 Bereiche von **Kompetenzen** (Fähigkeiten): fachlich, methodisch, persönlich, sozial, Führung. Ziel: Du kannst Fähigkeiten zuordnen und 5 Stufen nennen." },
+  { k: "intro", h: "Was musst du als Social Media Manager können?", b: "Der Berufsverband BVCM teilt die **Kompetenzen** in 5 Bereiche. Ziel: Du ordnest Fähigkeiten zu. Du nennst 5 Stufen." },
+  { k: "woerter", h: "Neue Wörter: Kompetenz, ROI, SEO, Webaffinität", l: [
+   "**Kompetenz:** Fähigkeit für den Job",
+   "**ROI:** Gewinn je eingesetztem Euro",
+   "**SEO:** bei Google oben stehen",
+   "**Webaffinität:** Freude am Netz"
+  ]},
   { k: "liste", h: "Fachlich: Netzwerke, Marketing, PR, Recht, IT", l: [
    "Branchenwissen, große Netzwerke, eigener aktiver Account",
-   "Zielgruppe, **ROI** (Rendite), **KPI** (Kennzahlen), B2B (Firmenkunden), B2C (Endkunden)",
-   "Virales Marketing, **SEO** (Suchmaschinen-Optimierung), **PR** (Pressearbeit), Krisen-Kommunikation",
-   "Strategie, **Change Management** (Wandel begleiten), Recht, IT, Webanalyse"
+   "Zielgruppe, **ROI**, **KPI**, B2B und B2C",
+   "Virales Marketing, **SEO**, **PR** (Pressearbeit), auch in Krisen",
+   "Strategie, **Change Management**, Recht, IT, Webanalyse"
   ]},
   { k: "liste", h: "Methodisch und persönlich: organisiert, neugierig", l: [
-   "**Methoden:** organisieren, präsentieren, moderieren, Konzepte entwickeln",
-   "**Persönlich:** Webaffinität (Freude am Netz), Netzwerken, gute Umgangsformen",
+   "**Methoden:** organisieren, präsentieren, moderieren, Konzepte schreiben",
+   "**Persönlich:** **Webaffinität**, Netzwerken, gute Umgangsformen",
    "**Persönlich:** Neugier, Lernbereitschaft, Kreativität, Herzblut",
    "**Persönlich:** belastbar, flexibel, **Frustrations-Toleranz** (Rückschläge aushalten)"
   ]},
   { k: "liste", h: "Sozial und führend: Empathie, Durchsetzung", l: [
-   "**Sozial:** im Team arbeiten, gut kommunizieren",
+   "**Sozial:** im Team arbeiten, gut reden",
    "**Sozial:** Empathie (Einfühlung), diplomatisches Geschick",
    "**Führung:** sich durchsetzen, auch beim Vorstand",
-   "**Führung:** Entscheidungen treffen, Projekte leiten"
+   "**Führung:** entscheiden und Projekte leiten"
   ]},
-  { k: "bild", svg: "kompetenz", h: "Dreyfus: 5 Stufen vom Anfänger zum Experten", b: "Mit Erfahrung steigst du auf. Der **Experte** handelt aus dem Bauch und bricht auch mal Regeln." },
-  { k: "text", h: "Viel Praxis zählt so viel wie ein Zertifikat", b: "Ideal ist Erfahrung in digitaler Kommunikation, Service und Krisen. Ein Studium hilft, eine gleichwertige Ausbildung ersetzt es. Viel Praxis wiegt ein Zertifikat mit wenig Praxis auf." },
+  { k: "bild", svg: "kompetenz", h: "Dreyfus: 5 Stufen vom Anfänger zum Experten", b: "Mit Erfahrung steigst du auf. Der **Experte** handelt aus dem Bauch. Er bricht auch mal Regeln." },
+  { k: "text", h: "Viel Praxis zählt so viel wie ein Zertifikat", b: "Ideal: Du hast im Netz, im Service und in Krisen gearbeitet. Ein Studium hilft. Eine gleichwertige Lehre tut es auch. Viel Praxis wiegt ein Zertifikat mit wenig Praxis auf." },
   { k: "merke", h: "5 Bereiche, bewertet in 5 Stufen", b: "5 Bereiche: fachlich, methodisch, persönlich, sozial, Führung. Du stufst Bewerber nach Dreyfus von 1 bis 5 ein.", esel: "Bereiche: „Freche Mäuse putzen sonntags Fenster.“ Stufen: „Am Fluss kocht Emil Eier.“" },
   { k: "check", q: "Wie viele Bereiche hat das Kompetenzmodell des BVCM für Social Media Manager?", a: ["5: fachlich, methodisch, persönlich, sozial, Führung", "3: strategisch, operativ und analytisch", "4: Strategie, Content, Community und Ads", "7: von Strategie bis Führung des Teams"], c: 0, e: "Das Kompetenzmodell hat 5 Bereiche. Strategisch, operativ und analytisch sind dagegen die 3 Ebenen der Aufgaben. 7 ist die Zahl der Aufgabenbereiche." }
  ]},
@@ -196,7 +226,7 @@ export const L_EINF = [
   { k: "liste", h: "Inhalte zuerst, Personal fehlt", l: [
    "**Top-Aufgaben:** Inhalte erstellen 62, Redaktion planen 40 Prozent",
    "**Wichtiger:** LinkedIn, TikTok; **unwichtiger:** Facebook, X, XING",
-   "**Hürden:** Personal, Geld (je 50), Verständnis (49 Prozent)",
+   "**Hürden:** Personal und Geld je 50, Verständnis 49 Prozent",
    "**43 Prozent** haben kein eigenes Team."
   ]},
   { k: "liste", h: "Extra: 88 Prozent erleben Hasskommentare", l: [

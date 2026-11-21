@@ -57,7 +57,16 @@ for (const m of MODULE) for (const l of m.lektionen) {
   for (const h of hs) if (/^(Worum es geht|Das Wichtigste|Überblick|Beispiel|Einführung|Fazit|Merke|Zusammenfassung)$/i.test(h.trim())) fehler.push(`Lektion ${l.id}: nichtssagende Überschrift „${h}“`);
   if (new Set(hs).size !== hs.length) fehler.push(`Lektion ${l.id}: doppelte Überschrift`);
   // Kurz halten (Nutzerfeedback „zu viel Text je Story“): max. 8 Karten, 30 Wörter je Karte, 4 Listenpunkte à 10 Wörter, 220 Wörter je Lektion
-  if (l.folien.length > 8) fehler.push(`Lektion ${l.id}: ${l.folien.length} Karten (max. 8)`);
+  const mitWoertern = l.folien.some(f => f.k === "woerter");
+  if (l.folien.length > (mitWoertern ? 9 : 8)) fehler.push(`Lektion ${l.id}: ${l.folien.length} Karten (max. 8, mit „Neue Wörter“ 9)`);
+  if (l.folien.filter(f => f.k === "woerter").length > 1 || (mitWoertern && l.folien[1].k !== "woerter")) fehler.push(`Lektion ${l.id}: „Neue Wörter“ höchstens einmal, direkt nach dem Einstieg`);
+  // Verständlichkeit: höchstens eine Klammer-Erklärung pro Satz, Lesbarkeit (Flesch, deutsche Fassung) mindestens 55
+  const lesetext = l.folien.filter(f => f.k !== "check" && f.k !== "woerter").flatMap(f => [f.b, ...(f.l || [])]).filter(Boolean).join("\n").replace(/\*\*/g, "");
+  for (const satz of lesetext.split(/\n+|(?<=[.!?:])\s+/)) if ((satz.match(/\(/g) || []).length > 1) fehler.push(`Lektion ${l.id}: mehr als eine Klammer in einem Satz – ${satz.slice(0, 50)}…`);
+  { const silben = w => Math.max(1, (w.toLowerCase().match(/[aeiouyäöü]+/g) || []).length);
+    const S = lesetext.split(/\n+|(?<=[.!?:])\s+/).filter(x => x.trim()).length, W = lesetext.split(/\s+/).filter(Boolean);
+    const flesch = 180 - W.length / S - 58.5 * W.reduce((a, w) => a + silben(w), 0) / W.length;
+    if (flesch < 55) fehler.push(`Lektion ${l.id}: Lesbarkeit ${Math.round(flesch)} (mindestens 55)`); }
   let summe = 0;
   for (const f of l.folien) {
     if (f.k === "check") continue;
