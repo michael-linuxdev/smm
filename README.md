@@ -21,7 +21,7 @@ Lektionen, Quizfragen und Praxisprojekte stammen vollständig aus den Kursunterl
 
 **Praxisprojekte** (`data/praxis/`) sind die 9 Hausaufgaben des Lehrgangs: Aufgabenstellung → Lösungsweg (Entscheidungen mit Rückmeldung) → eigene Antwort mit Musterlösung → Lösung kompakt.
 
-Grundsatz: Alles, was Fragen und Hausaufgaben verlangen, steht in einer Lektion. **Fortschritt** = bearbeitete Fragen ÷ alle Fragen (Quizfragen und Kurz-Checks, derzeit 390); jede bearbeitete Frage zählt, auch eine falsch beantwortete. Standard-Tagesziel 20 Fragen – damit steigt der Fortschritt um gut 5 % pro Tag. Mit Version 0.31 beginnt der Lernfortschritt für alle bei 0 % (Migration `mig3` in `app.js`); Einstellungen, Termine und Glossar-Markierungen bleiben.
+Grundsatz: Alles, was Fragen und Hausaufgaben verlangen, steht in einer Lektion. **Fortschritt** = bearbeitete Fragen ÷ alle Fragen (Quizfragen und Kurz-Checks, derzeit 387); jede bearbeitete Frage zählt, auch eine falsch beantwortete. Standard-Tagesziel 20 Fragen – damit steigt der Fortschritt um gut 5 % pro Tag. Mit Version 0.31 beginnt der Lernfortschritt für alle bei 0 % (Migration `mig3` in `app.js`); Einstellungen, Termine und Glossar-Markierungen bleiben.
 
 ## Glossar in einfacher Sprache
 
