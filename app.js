@@ -64,7 +64,7 @@ const ic = (n, extra = "") => `<svg viewBox="0 0 24 24" fill="none" stroke="curr
 /* ---------- Speicher ----------
    Doppelt: localStorage (schnell) + IndexedDB (robuster). Beim Start gewinnt der neuere Stand (Zeitstempel).
    Fragen und Lektionen haben stabile Schlüssel (unabhängig vom Modul), alte Schlüssel werden migriert. */
-const KEY = "smm-coach", VERSION = "0.38.0";
+const KEY = "smm-coach", VERSION = "0.39.0";
 const DEF = () => ({ lek: {}, q: {}, srs: {}, last: null, tests: [], pruefung: "", day: null, seen: 0, set: { size: "m", theme: "auto", goal: "20", vibe: true, step: true, mig1: 1, mig2: 1, mig3: 1 }, lastBackup: 0, created: Date.now(), updated: 0, run: null, lastRun: null });
 let S = DEF();
 try { const x = JSON.parse(localStorage.getItem(KEY) || "null"); if (x) S = Object.assign(DEF(), x); } catch (e) {}
@@ -672,9 +672,9 @@ function openStory(mid, lid, start = 0) {
  swipeDown(storyEl, closeS);
  function draw() {
   const f = F[i], last = f.k === "ende";
-  const kindName = { intro: "Lektion", text: "Wissen", liste: "Überblick", beispiel: "Beispiel", merke: "Merke", check: "Kurz-Check", bild: "Schaubild" }[f.k] || "";
+  const kindName = { intro: "Lektion", woerter: "Neue Wörter", text: "Wissen", liste: "Überblick", beispiel: "Beispiel", merke: "Merke", check: "Kurz-Check", bild: "Schaubild" }[f.k] || "";
   let body = "";
-  if (f.k === "liste") body = `<span class="kind">${kindName}</span><h2>${md(f.h)}</h2><ul>${f.l.map((x, n) => `<li class="${stepOn() ? "rv" + (n ? " h" : "") : ""}" style="animation-delay:${n * 60}ms">${md(x)}</li>`).join("")}</ul>`;
+  if (f.k === "liste" || f.k === "woerter") body = `<span class="kind">${kindName}</span><h2>${md(f.h)}</h2><ul>${f.l.map((x, n) => `<li class="${stepOn() ? "rv" + (n ? " h" : "") : ""}" style="animation-delay:${n * 60}ms">${md(x)}</li>`).join("")}</ul>`;
   else if (f.k === "beispiel" || f.k === "merke") body = `<span class="kind">${kindName}</span><h2>${md(f.h)}</h2><div class="body">${saetze(f.b)}</div>${f.esel ? `<p class="esel"><b>Eselsbrücke:</b> ${md(f.esel)}</p>` : ""}`;
   else if (f.k === "check") {
    const order = f._o || (f._o = shuf(f.a.map((t, k) => k)));
