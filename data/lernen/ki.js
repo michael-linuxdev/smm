@@ -17,7 +17,7 @@ export const L_KI = [
   ]},
   { k: "text", h: "Seit den 2020ern ist KI im Alltag", b: "KI empfiehlt Beiträge in Social Media, schreibt Gesprochenes mit und lenkt selbstfahrende Autos. Offen sind Datenschutz, Vorurteile der KI und Jobs. Die EU verlangt Offenheit." },
   { k: "text", h: "Zukunft: erklärbar, multimodal, agentisch", b: "Die Forschung will KI, deren Entscheidungen du nachvollziehen kannst. **Multimodale Modelle** verbinden Text, Bild und Audio. **Agentische Systeme** steuern Aufgaben über längere Zeit selbst." },
-  { k: "merke", h: "Alle heutigen KI-Werkzeuge sind schwache KI", b: "Heutige KI kann einzelne Aufgaben sehr gut. Die Welt versteht sie aber nicht wie ein Mensch." },
+  { k: "merke", h: "Alle heutigen KI-Werkzeuge sind schwache KI", b: "Heutige KI kann einzelne Aufgaben sehr gut. Die Welt versteht sie aber nicht wie ein Mensch.", esel: "Test 1950, Taufe 1956, Winter 1974, Regeln 1980er, Turbo 2012." },
   { k: "check", q: "Zu welcher Art von KI gehört ein Textassistent wie ChatGPT laut Studienbrief?", a: ["Zur schwachen KI, denn er ist auf bestimmte Aufgaben spezialisiert", "Zur starken KI, denn er löst alle geistigen Aufgaben wie ein Mensch", "Zu den Expertensystemen, denn er arbeitet nur mit festen Regeln", "Zur starken KI, denn er besitzt ein eigenes Bewusstsein"], c: 0, e: "ChatGPT, Gemini oder Alexa sind schwache KI. Diese Systeme erledigen bestimmte Aufgaben gut. Ein allgemeines Verständnis oder Bewusstsein haben sie nicht." }
  ]},
  { id: "ki-redaktion", titel: "KI in der Onlineredaktion: Nutzen und Trends", min: 3, quelle: "smm1.pdf, S. 9–12", folien: [
@@ -33,7 +33,7 @@ export const L_KI = [
    "**Chatbots** (Antwort-Programme) beantworten Leserfragen und entlasten die Redaktion."
   ]},
   { k: "beispiel", h: "NLG macht aus Spielergebnissen Kurztexte", b: "Aus Wetterdaten, Börsenkursen oder Spielergebnissen entstehen fertige Kurztexte, etwa Sportberichte. Die Redaktion prüft sie, bevor sie online gehen." },
-  { k: "text", h: "Struktur und Metadaten machen Beiträge auffindbar", b: "Suchmaschinen und KI-Systeme brauchen eine klare Struktur und saubere **Metadaten**. Das sind Zusatzangaben wie Titel, Schlagworte oder Beschreibung." },
+  { k: "text", h: "Struktur und Metadaten machen Beiträge auffindbar", b: "Suchmaschinen und KI-Systeme brauchen klare Struktur und saubere **Metadaten**: Zusatzangaben wie Titel, Schlagworte oder Beschreibung. Bei Bohnenwerk bekommt jeder Blogartikel diese Angaben." },
   { k: "text", h: "Vorhersagen prüfen, KI-Bilder kennzeichnen", b: "Prüfe Vorhersagen, sonst ziehst du falsche Schlüsse. Chatbots sollen ihre Quellen zeigen. KI-Bilder und **Deepfakes**, also täuschend echte Fälschungen, musst du kennzeichnen." },
   { k: "merke", h: "Schneller mit KI, verantwortlich bleibt der Mensch", b: "KI macht Redaktionen schneller und persönlicher. **Transparenz** (Offenheit), Kennzeichnung und menschliche Verantwortung bleiben zentral." },
   { k: "check", q: "Was müssen Redaktionen laut Studienbrief tun, damit KI-Systeme ihre Beiträge gut verarbeiten können?", a: ["Beiträge klar strukturieren und mit sauberen Metadaten versehen", "Beiträge möglichst lang schreiben und viele Bilder einbauen", "Beiträge nur noch als Video veröffentlichen und Text weglassen", "Beiträge häufig löschen und unter neuer Adresse neu anlegen"], c: 0, e: "KI verändert die Sichtbarkeit von Inhalten. Suchmaschinen und KI-Systeme erkennen Beiträge besser, wenn sie klar aufgebaut sind und saubere Metadaten haben." }
@@ -59,7 +59,7 @@ export const L_KI = [
   { k: "check", q: "Welche Aufgabe hat der Decoder in einem maschinellen Übersetzungssystem?", a: ["Er wandelt den abstrakten Zusammenhang in Text der Zielsprache um", "Er zerlegt den Ausgangstext in einen abstrakten Zusammenhang", "Er sammelt zweisprachige Texte im Internet für das Training", "Er prüft die fertige Übersetzung auf kulturelle Feinheiten"], c: 0, e: "Der Encoder bringt den Ausgangstext in einen abstrakten Zusammenhang. Der Decoder erzeugt daraus den Text in der Zielsprache." }
  ]},
  { id: "ki-bilder-ethik", titel: "Bilder-KI, Ethik, Recht und Zukunft", min: 3, quelle: "smm1.pdf, S. 19–28", folien: [
-  { k: "intro", h: "Darfst du KI-Bilder einfach posten?", b: "Bilder-KI spart Zeit, wirft aber Fragen zu Recht und Ethik (Moral) auf. Ziel: Du kannst erklären, wie sie arbeitet, und Pflichten aus dem **AI Act** (EU-Gesetz) nennen." },
+  { k: "intro", h: "Darfst du KI-Bilder einfach posten?", b: "Bohnenwerk will ein KI-Bild vom Café posten. Das wirft Fragen zu Recht und Ethik (Moral) auf. Ziel: Du erklärst Bilder-KI und nennst Pflichten aus dem **AI Act** (EU-Gesetz)." },
   { k: "text", h: "Bilder-KI erkennt erst Kanten, dann Objekte", b: "**Computer Vision** (Bilder-KI) versteht, deutet und erzeugt Bilder. Die KI lernt aus vielen beschrifteten Bildern. **CNNs** (Convolutional Neural Networks) erkennen erst Kanten und Formen, dann Objekte und Szenen." },
   { k: "liste", h: "DALL-E und Midjourney erzeugen Bilder aus Text", l: [
    "**DALL-E** (OpenAI): Bild aus Text, etwa „Avocado beim Therapeuten“",
@@ -100,7 +100,7 @@ export const L_KI = [
   ]},
   { k: "text", h: "1 Kernbotschaft, 3 stützende Botschaften", b: "Ein **Botschafts-Gerüst** (Message Architecture) hat 1 **Kernbotschaft** und 3 stützende Botschaften. Jede nennt Kundennutzen, Produktbeweis und mögliche Einwände." },
   { k: "beispiel", h: "NORTH/24: Aus 24 Litern werden 30", b: "Der Rucksack kostet 149 Euro und hat 24 Liter. Die Erweiterung „FlexBase“ bringt 6 Liter extra. Die Kernbotschaft „24 → 30“ steht auf allen Kanälen gleich." },
-  { k: "merke", h: "Rolle, Kontext, Grenzen – dann in Schritten", b: "Arbeite in Schritten: analysieren, recherchieren, Strategie entwickeln, kritisieren, erstellen, prüfen und verbessern." },
+  { k: "merke", h: "Rolle, Kontext, Grenzen – dann in Schritten", b: "Arbeite in Schritten: analysieren, recherchieren, Strategie entwickeln, kritisieren, erstellen, prüfen und verbessern.", esel: "Tests Critic, So-What, Substitution, Claim: „Charlie sucht seine Cola.“" },
   { k: "check", q: "Was prüfst du beim Substitution Test?", a: ["Ob ein Wettbewerber eine Aussage fast unverändert für sich nutzen könnte", "Ob jede Produktaussage durch eine Quelle belegt werden kann", "Ob der zentrale Gedanke im Video auch ohne Text verständlich ist", "Ob die Message auf allen Kanälen genau gleich formuliert ist"], c: 0, e: "Der Substitution Test markiert austauschbare Aussagen. Du stufst jede Aussage ein: generisch und verzichtbar, nötige Produktinfo oder spezifisch für die eigene Strategie." }
  ]}
 ];

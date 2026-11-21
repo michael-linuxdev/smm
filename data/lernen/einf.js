@@ -1,7 +1,7 @@
 // Lektionen „Routenplaner Web 2.0“ – Zusammenfassung von smm3.pdf, S. 328–382 (Vorlesung „Social Media Management – Eine Einführung“), S. 231–251 (BVCM-Stellenprofil Social Media Manager) und S. 252–327 (BVCM-Studie 2023), einfache Sprache.
 export const L_EINF = [
  { id: "web20", titel: "Was ist Social Media?", min: 3, quelle: "smm3.pdf, S. 331–337; smm1.pdf, S. 66, 68 und 73", folien: [
-  { k: "intro", h: "Warum reden heute alle über Marken?", b: "Früher sendeten Medien, heute antworten alle. Ziel: Du kannst 3 Formen der Kommunikation unterscheiden und erklären, wie Vertrauen entsteht." },
+  { k: "intro", h: "Warum reden heute alle über Marken?", b: "Früher sendeten Medien, heute antworten alle. Durch alle Lektionen begleitet dich Bohnenwerk, eine Kaffeerösterei aus Leipzig. Ziel: Du unterscheidest 3 Formen der Kommunikation und erklärst, wie Vertrauen entsteht." },
   { k: "liste", h: "Einer an viele, einer an einen, viele an viele", l: [
    "**1:n Massen-Kommunikation:** Zeitung, Website, Radio, TV",
    "**1:1 persönlich:** E-Mail, Telemarketing (Werbe-Anrufe)",
@@ -78,7 +78,7 @@ export const L_EINF = [
   { k: "liste", h: "Kleinen Firmen fehlen Budget und Personal", l: [
    "Sie müssen überhaupt erst auffallen.",
    "Es fehlen Budget, Personal, Erfahrung und **Know-how** (Fachwissen).",
-   "Meist macht eine Person alle Aufgaben.",
+   "Meist macht eine Person alles, wie du bei Bohnenwerk.",
    "Die Technik fehlt. Viele fragen: „Brauch ich das?“"
   ]},
   { k: "merke", h: "Gegen Risiken hilft Social Media Governance", b: "**Social Media Governance** heißt: klare Regeln, Rollen und Abläufe für Social Media im Unternehmen." },
@@ -149,13 +149,13 @@ export const L_EINF = [
    "**Community Manager:** Gesicht nach außen, Sprachrohr der Nutzer nach innen",
    "**Corporate Community Manager:** betreut Communitys der eigenen Mitarbeitenden"
   ]},
-  { k: "liste", h: "So startest du in den Arbeitstag", l: [
-   "Prüfe Rückmeldungen und Kommentare auf eigenen Kanälen.",
+  { k: "liste", h: "So startest du bei Bohnenwerk in den Arbeitstag", l: [
+   "Prüfe Kommentare auf Instagram, LinkedIn und TikTok.",
    "Beobachte Statistiken, Anzeigen, Marke und Mitbewerber.",
    "Lies Trends und Tages-Nachrichten.",
    "Prüfe den Redaktionsplan und schreib deine Aufgaben-Liste."
   ]},
-  { k: "merke", h: "Social Media Manager plant und führt fachlich", b: "Der Social Media Manager plant und ist fachlich Vorgesetzter. Der Community Manager führt den direkten Dialog." },
+  { k: "merke", h: "Social Media Manager plant und führt fachlich", b: "Der Social Media Manager plant und ist fachlich Vorgesetzter. Der Community Manager führt den direkten Dialog.", esel: "Erst planen, dann machen, dann messen: strategisch, operativ, analytisch." },
   { k: "check", q: "Wer führt laut BVCM vor allem den direkten Dialog mit der Community?", a: ["Der Community Manager", "Der Social Media Manager", "Der Corporate Community Manager", "Die Geschäftsführung des Unternehmens"], c: 0, e: "Der Community Manager ist Gesicht und Sprachrohr nach außen. Der Social Media Manager plant und koordiniert dagegen alle Maßnahmen der Strategie." }
  ]},
 
@@ -181,7 +181,7 @@ export const L_EINF = [
   ]},
   { k: "text", h: "Dreyfus: 5 Stufen vom Anfänger zum Experten", b: "**1 Anfänger** folgt strikt Regeln.\n**2 Fortgeschritten** sieht nur Teile.\n**3 Kompetent** plant und setzt Prioritäten.\n**4 Erfahren** sieht das Ganze.\n**5 Experte** handelt aus dem Bauch, bricht Regeln." },
   { k: "text", h: "Viel Praxis zählt so viel wie ein Zertifikat", b: "Ideal ist Erfahrung in digitaler Kommunikation, Service und Krisen. Ein Studium hilft, eine gleichwertige Ausbildung ersetzt es. Viel Praxis wiegt ein Zertifikat mit wenig Praxis auf." },
-  { k: "merke", h: "5 Bereiche, bewertet in 5 Stufen", b: "5 Bereiche: fachlich, methodisch, persönlich, sozial, Führung. Du stufst Bewerber nach Dreyfus von 1 bis 5 ein." },
+  { k: "merke", h: "5 Bereiche, bewertet in 5 Stufen", b: "5 Bereiche: fachlich, methodisch, persönlich, sozial, Führung. Du stufst Bewerber nach Dreyfus von 1 bis 5 ein.", esel: "Bereiche: „Freche Mäuse putzen sonntags Fenster.“ Stufen: „Am Fluss kocht Emil Eier.“" },
   { k: "check", q: "Wie viele Bereiche hat das Kompetenzmodell des BVCM für Social Media Manager?", a: ["5: fachlich, methodisch, persönlich, sozial, Führung", "3: strategisch, operativ und analytisch", "4: Strategie, Content, Community und Ads", "7: von Strategie bis Führung des Teams"], c: 0, e: "Das Kompetenzmodell hat 5 Bereiche. Strategisch, operativ und analytisch sind dagegen die 3 Ebenen der Aufgaben. 7 ist die Zahl der Aufgabenbereiche." }
  ]},
 
