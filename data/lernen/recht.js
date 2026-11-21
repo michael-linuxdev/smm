@@ -15,7 +15,7 @@ export const L_RECHT = [
    "**BGB** (Bürgerliches Gesetzbuch): Verträge, Widerruf, Pflicht-Angaben"
   ] },
   { k: "text", h: "Grundgesetz und Medienstaatsvertrag gelten auch", b: "Aus dem **Grundgesetz** folgen das Persönlichkeits-Recht und das Recht am eigenen Bild. Der **Medienstaatsvertrag** (früher Rundfunkstaatsvertrag) gilt auch für Live-Übertragungen. Er verbietet zum Beispiel **Schleichwerbung** (versteckte Werbung)." },
-  { k: "text", h: "Die AGB der Plattform setzen eigene Grenzen", b: "Prüfe die **AGB** (Nutzungs-Regeln der Plattform): Darfst du das Konto geschäftlich nutzen? Nutze Firmenkonten wie die LinkedIn-Unternehmensseite. Beachte Regeln für Gewinnspiele, Werbung und bezahlte Leistungen." },
+  { k: "text", h: "Die AGB der Plattform setzen eigene Grenzen", b: "Prüfe die **AGB** (Nutzungs-Regeln der Plattform): Darfst du das Konto geschäftlich nutzen? Bohnenwerk nutzt für Firmenkunden die LinkedIn-Unternehmensseite, kein privates Profil. Beachte Regeln für Gewinnspiele, Werbung und bezahlte Leistungen." },
   { k: "liste", h: "Häufige Fallstricke im Online-Marketing", l: [
    "**Datenschutz:** Die Erklärung ist lückenhaft, die Einwilligung fehlt.",
    "**Fremde Inhalte:** Dir fehlen Nutzungsrechte an Bildern oder Marken.",
@@ -40,7 +40,7 @@ export const L_RECHT = [
    "**Schlecht:** „AGB“, „Info“ oder „Details“"
   ] },
   { k: "beispiel", h: "Otto auf LinkedIn: klar benannt, aber versteckt", b: "LinkedIn und X (früher Twitter) haben kein Impressum-Feld. Die Pflicht gilt trotzdem. Otto setzt den Link hinter „Mehr anzeigen“ unter „Über uns“. Dort ist er versteckt und nicht anklickbar." },
-  { k: "merke", h: "Verfügbar, erkennbar, erreichbar – in 2 Klicks", b: "Das Impressum ist ständig verfügbar, leicht erkennbar und unmittelbar erreichbar. Fehlt ein Feld, wähle die beste Notlösung." },
+  { k: "merke", h: "Verfügbar, erkennbar, erreichbar – in 2 Klicks", b: "Das Impressum ist ständig verfügbar, leicht erkennbar und unmittelbar erreichbar. Fehlt ein Feld, wähle die beste Notlösung.", esel: "Alles auf „-bar“: verfügbar, erkennbar, erreichbar – in 2 Klicks." },
   { k: "check", q: "Welche Linkbezeichnung erfüllt die Anforderung an einen sprechenden Link zum Impressum?", a: ["„Kontakt“", "„Details“", "„Info“", "„AGB“"], c: 0, e: "Ein sprechender Link ist aus sich heraus verständlich. „Impressum“ und „Kontakt“ sind gut, „AGB“, „Info“ und „Details“ nicht." }
  ]},
  { id: "bildrechte", titel: "Haftung, Lizenzen & Urheberrecht", min: 3, quelle: "smm2.pdf, S. 68–70 und S. 114; smm1.pdf, S. 67, 71, 73 und 74", folien: [
@@ -89,12 +89,12 @@ export const L_RECHT = [
    "**Weg 3:** Kein Verstoß? Wehre dich, auch vor Gericht."
   ] },
   { k: "text", h: "Schulung und Freigaben senken das Risiko", b: "Schule dein Team und lass Beiträge von der Rechtsabteilung freigeben. Ein **Disclaimer** (Ausschluss der Haftung) wie „Keine Haftung für Links“ hilft selten. Er kann sogar Abmahnungen auslösen." },
-  { k: "merke", h: "Erst Abmahnung, dann Verfügung, dann Klage", b: "Ohne Unterlassungs-Erklärung folgen Verfügung und Klage. Reagiere rechtzeitig und mit Anwalt. Vernichte nie Beweise." },
+  { k: "merke", h: "Erst Abmahnung, dann Verfügung, dann Klage", b: "Ohne Unterlassungs-Erklärung folgen Verfügung und Klage. Reagiere rechtzeitig und mit Anwalt. Vernichte nie Beweise.", esel: "Abmahnung, Verfügung, Klage: „Alle verlieren Kohle.“" },
   { k: "check", q: "Was folgt meist, wenn du nach einer Abmahnung die Frist für die Unterlassungserklärung verstreichen lässt?", a: ["Ein Antrag auf eine einstweilige Verfügung", "Eine sofortige Löschung deines gesamten Profils", "Ein Bußgeld der Datenschutzbehörde in Millionenhöhe", "Eine zweite Abmahnung mit einer längeren Frist"], c: 0, e: "Die einstweilige Verfügung ist Stufe 2. Das Gericht sichert damit den Unterlassungsanspruch vorläufig und verursacht weitere Kosten." }
  ]},
  { id: "werbekennzeichnung", titel: "Werbung kennzeichnen & Werbeaussagen", min: 4, quelle: "smm2.pdf, S. 80, 95–98 und S. 121", folien: [
   { k: "intro", h: "Muss dein Post als Werbung gekennzeichnet sein?", b: "Werbung muss erkennbar sein. Das verlangen **UWG** (Gesetz gegen unlauteren, also unfairen Wettbewerb) und **BGH** (Bundesgerichtshof). Ziel: Du erkennst Kennzeichnungs-Pflicht und verbotene Werbeaussagen." },
-  { k: "text", h: "BGH 2021: Übertrieben werblich heißt kennzeichnen", b: "**Influencer** (Meinungsmacher im Netz) haben Reichweite, Einfluss, Vernetzung und Relevanz. Lobt ihr Beitrag nur Vorzüge, ohne Abstand, kennzeichnen sie ihn als Werbung. Ein Link zum Hersteller ist immer Werbung." },
+  { k: "text", h: "BGH 2021: Übertrieben werblich heißt kennzeichnen", b: "**Influencer** (Meinungsmacher im Netz) haben Reichweite, Einfluss, Vernetzung und Relevanz. Lobt ihr Beitrag nur Vorzüge, ohne Abstand, kennzeichnen sie ihn als Werbung. Bezahlt Bohnenwerk eine Bloggerin, gilt das auch." },
   { k: "liste", h: "Das ist in der Regel unlauter", l: [
    "**Schleichwerbung:** Werbung, die als Information getarnt ist",
    "Gekaufte Influencer ohne Kennzeichnung, gekaufte Bewertungen",
@@ -118,7 +118,7 @@ export const L_RECHT = [
   { k: "check", q: "Welche Werbeform gilt nach dem UWG in der Regel als unlauter?", a: ["Ein Fake-Profil, das positiv über die eigene Firma berichtet", "Eine offensichtliche Übertreibung, die jeder sofort erkennt", "Ein bezahlter Beitrag mit dem deutlichen Hinweis „Anzeige“", "Ein Unternehmensprofil mit klar erkennbarem Firmennamen"], c: 0, e: "Fake-Profile tarnen Werbung als echte Meinung. Das ist Schleichwerbung und in der Regel unlauter." }
  ]},
  { id: "datenschutz", titel: "Übungsfälle: Werbung per Post und E-Mail", min: 3, quelle: "smm2.pdf, S. 100–104", folien: [
-  { k: "intro", h: "Darfst du deinen Shop-Kunden Werbung schicken?", b: "Viele Kunden haben sich in deinem Onlineshop angemeldet. Ob du werben darfst, hängt vom Weg ab. Ziel: Du entscheidest, wann Werbung per Post oder E-Mail erlaubt ist." },
+  { k: "intro", h: "Darfst du deinen Shop-Kunden Werbung schicken?", b: "Bei Bohnenwerk haben sich viele Kunden im Onlineshop angemeldet. Ob du werben darfst, hängt vom Weg ab. Ziel: Du entscheidest, wann Werbung per Post oder E-Mail erlaubt ist." },
   { k: "liste", h: "Briefwerbung an Kunden: geht mit Hinweisen", l: [
    "Informiere bei der Anmeldung über Werbung und Widerspruch.",
    "Nenne im Brief den Werbenden als verantwortliche Stelle.",
@@ -137,7 +137,7 @@ export const L_RECHT = [
    "Der Kunde hat nicht widersprochen.",
    "Du weist stets auf kostenlosen Widerspruch hin."
   ] },
-  { k: "beispiel", h: "Abgebrochene Bestellung: keine Erinnerungs-Mail", b: "Ein Kunde meldet sich an und bricht die Bestellung ab. Ohne Double-Opt-in darfst du ihn nicht per Mail erinnern. Es gab keinen Verkauf, die Ausnahme greift nicht." },
+  { k: "beispiel", h: "Abgebrochene Bestellung: keine Erinnerungs-Mail", b: "Eine Kundin legt im Bohnenwerk-Shop Espresso in den Warenkorb und bricht ab. Ohne Double-Opt-in darfst du sie nicht per Mail erinnern. Es gab keinen Verkauf, die Ausnahme greift nicht." },
   { k: "merke", h: "E-Mail-Werbung nur mit Double-Opt-in oder Ausnahme", b: "E-Mail-Werbung braucht ein Double-Opt-in. Oder alle Bedingungen von § 7 Absatz 3 UWG treffen zusammen zu." },
   { k: "check", q: "Ein Kunde bricht die Bestellung ab. Wann darfst du ihn per E-Mail an den Kauf erinnern?", a: ["Nur wenn er vorher per Double-Opt-in eingewilligt hat", "Immer, weil er seine E-Mail-Adresse freiwillig angab", "Immer, wenn die Erinnerung innerhalb von 24 Stunden kommt", "Nur wenn im Shop ein vollständiges Impressum steht"], c: 0, e: "Ohne Verkauf greift die Ausnahme nach § 7 Abs. 3 UWG nicht. Dann brauchst du eine Einwilligung per Double-Opt-in." }
  ]}

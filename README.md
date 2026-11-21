@@ -23,6 +23,13 @@ Lektionen, Quizfragen und Praxisprojekte stammen vollständig aus den Kursunterl
 
 Grundsatz: Alles, was Fragen und Hausaufgaben verlangen, steht in einer Lektion. **Fortschritt** = bearbeitete Fragen ÷ alle Fragen (Quizfragen und Kurz-Checks, derzeit 387); jede bearbeitete Frage zählt, auch eine falsch beantwortete. Standard-Tagesziel 20 Fragen – damit steigt der Fortschritt um gut 5 % pro Tag. Mit Version 0.31 beginnt der Lernfortschritt für alle bei 0 % (Migration `mig3` in `app.js`); Einstellungen, Termine und Glossar-Markierungen bleiben.
 
+## Lernhilfen
+
+- **Tagesrunde** (Startknopf): nächste ungelesene Lektion, danach 10 Fragen – 5 zur gerade gelesenen Lektion (`lek` an jeder Quizfrage), 5 Wiederholungen.
+- **In der Lektion nachlesen:** Nach einer falschen Antwort zeigt das Quiz die passende Lektionskarte (Wortabgleich innerhalb der Lektion `lek`) und verlinkt sie (`#lektion-<modul>-<id>@<karte>`).
+- **Karteikarten** (`#karten`): vorn die Leitfrage einer gelesenen Lektion, hinten ihr Merksatz mit Eselsbrücke (`esel` an der Merke-Karte). Eigenes Leitner-System in `S.kk` (1, 3, 7, 14, 30 Tage), zählt nicht zum Fortschritt. Jede Lektion hat deshalb genau eine Merke-Karte – die Datenprüfung achtet darauf.
+- **Beispielfirma Bohnenwerk** (Kaffeerösterei aus Leipzig) zieht sich durch die Lektionen; Beispiele aus den Kursunterlagen bleiben unverändert.
+
 ## Glossar in einfacher Sprache
 
 Die Begriffe stehen in `data/glossar.js` und `data/glossar2.js`. Die Texte in einfacher Sprache liegen in `data/einfach/` (alphabetisch: `01.js` bis `05.js` mit je 20 Begriffen, `06.js` mit den übrigen 70 – damit sind alle 170 Begriffe überarbeitet): eine Kurzerklärung und vier Karten für die Begriffs-Story (Was ist das? · Beispiel · Wozu brauchst du das? bzw. Nicht verwechseln · Merke). In der Glossarliste öffnet ein Tipp die Story, im Lektionstext führt „Mehr dazu“ im Begriffs-Blatt dorthin. Regeln: kurze Sätze (höchstens 18 Wörter), Du-Ansprache, keine Abkürzungen – `node tests/check-data.mjs` prüft das. Neue Datei auch in `sw.js` (ASSETS) eintragen.

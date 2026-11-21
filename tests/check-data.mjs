@@ -58,6 +58,9 @@ for (const m of MODULE) for (const l of m.lektionen) {
     if ((f.l || []).length > 4 || (f.l || []).some(x => woerter(x) > 10)) fehler.push(`Lektion ${l.id}: Liste „${f.h}“ zu lang (max. 4 Punkte à 10 Wörter)`);
   }
   if (summe > 220) fehler.push(`Lektion ${l.id}: ${summe} Wörter (max. 220)`);
+  // Karteikarten brauchen genau einen Merksatz je Lektion; Eselsbrücken kurz halten
+  if (l.folien.filter(f => f.k === "merke").length !== 1) fehler.push(`Lektion ${l.id}: genau eine Merke-Karte nötig (Karteikarten)`);
+  for (const f of l.folien) if (f.esel && woerter(f.esel) > 14) fehler.push(`Lektion ${l.id}: Eselsbrücke länger als 14 Wörter`);
   // Lange Wörter gliedern (einfache Sprache): ab 18 Buchstaben ohne Bindestrich nur feste Namen und Prüfungsbegriffe
   const NAMEN = /^(Kunsturhebergesetz|Bundesdatenschutzgesetz|Medienstaatsvertrag|Rundfunkstaatsvertrag|Selbstverständlichkeiten|operationalisierst|operationalisieren|Datenschutz-Grundverordnung)$/;
   for (const f of l.folien) if (f.k !== "check") for (const t of [f.h, f.b, ...(f.l || [])].filter(Boolean))
