@@ -68,6 +68,7 @@ for (const q of FRAGEN) {
   const w = q.q.slice(0, 50);
   if (!q.quelle) fehler.push("Frage ohne Quelle: " + w);
   if (!MODULE.some(m => m.id === q.m)) fehler.push("Frage mit unbekanntem Modul: " + w);
+  if (!lids.includes(q.lek)) fehler.push("Frage ohne gültige Lektion (lek): " + w);
   for (const t of [q.q, q.e, q.bsp, ...(q.a || [])].filter(Boolean)) if (ABK.test(t)) fehler.push(`Frage: Abkürzung „${t.match(ABK)[0]}“ – ${w}`);
   if (q.t === "frei") { if (!q.bsp) fehler.push("Freitext ohne Musterlösung: " + w); else if (q.muster.filter(([, r]) => { try { return new RegExp(r, "i").test(q.bsp); } catch (e) { return false; } }).length < q.min) fehler.push("Musterlösung erreicht min nicht: " + w); }
 }
