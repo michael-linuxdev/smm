@@ -668,3 +668,12 @@ label.check.sw input:checked{background:var(--ok)} label.check.sw input:checked:
 .story.begriff .snav .next{white-space:nowrap;padding-inline:14px}
 .nb-s{display:none}
 @media (max-width:359px){.nb-l{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}.nb-s{display:inline}}
+
+/* Eselsbrücke auf Merke-Karten und Karteikarten */
+.esel{display:block;margin-top:.7em;padding:.45em .7em;border-radius:.6em;background:var(--surface-2);font-size:.92em}
+/* „In der Lektion nachlesen“ nach falscher Antwort */
+.nachlesen{margin-top:10px;padding:10px 12px}
+.nachlesen summary{cursor:pointer;font-weight:700;display:flex;align-items:center;gap:8px}
+.nachlesen summary svg{width:18px;height:18px}
+.nachlesen ul{margin:6px 0 8px;padding-left:20px}
+.nachlesen p{margin:4px 0 8px}

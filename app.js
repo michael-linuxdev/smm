@@ -64,7 +64,7 @@ const ic = (n, extra = "") => `<svg viewBox="0 0 24 24" fill="none" stroke="curr
 /* ---------- Speicher ----------
    Doppelt: localStorage (schnell) + IndexedDB (robuster). Beim Start gewinnt der neuere Stand (Zeitstempel).
    Fragen und Lektionen haben stabile Schlüssel (unabhängig vom Modul), alte Schlüssel werden migriert. */
-const KEY = "smm-coach", VERSION = "0.36.0";
+const KEY = "smm-coach", VERSION = "0.37.0";
 const DEF = () => ({ lek: {}, q: {}, srs: {}, last: null, tests: [], pruefung: "", day: null, seen: 0, set: { size: "m", theme: "auto", goal: "20", vibe: true, step: true, mig1: 1, mig2: 1, mig3: 1 }, lastBackup: 0, created: Date.now(), updated: 0, run: null, lastRun: null });
 let S = DEF();
 try { const x = JSON.parse(localStorage.getItem(KEY) || "null"); if (x) S = Object.assign(DEF(), x); } catch (e) {}
@@ -252,9 +252,11 @@ function route() {
  closeBegriff(true); closeStory(); clearInterval(testTimer);
  const h = (location.hash || "#start").slice(1);
  const [a, b, ...rest] = h.split("-");
- if (a === "lektion" && b) return openStory(b, rest.join("-"));
+ if (a === "lektion" && b) { const [lid, k] = rest.join("-").split("@"); return openStory(b, lid, +k || 0); }
  if (a === "modul" && b) return viewModul(b);
- if (h === "mini") { const n = nextLesson(); return replaceHash(n ? `#lektion-${n.m.id}-${n.l.id}` : "#quiz-mini"); }
+ // Tagesrunde: nächste Lektion lesen, danach 10 Fragen (5 zur Lektion + 5 Wiederholungen)
+ if (h === "mini" || h === "runde") { const n = nextLesson(); if (n) rundeLid = n.l.id; return replaceHash(n ? `#lektion-${n.m.id}-${n.l.id}` : "#quiz-mini"); }
+ if (h === "karten") return viewKarten();
  if (h === "endspurt") { // erst Fehler/Wiederholung, dann schwächstes Modul, sonst nächste Lektion
   if (uebenN()) return replaceHash("#quiz-ueben");
   const lr = S.lastRun && S.lastRun.saved ? schwaechstesModul(S.lastRun) : null;
@@ -262,7 +264,7 @@ function route() {
   return replaceHash("#mini");
  }
  if (a === "kompakt" && b) return viewKompakt(b);
- if (a === "quiz") return viewQuiz(b || "mix");
+ if (a === "quiz") return viewQuiz(b || "mix", rest.join("-"));
  if (h === "lernen") return replaceHash("#start"); // Reiter „Lernen“ gibt es nicht mehr – alles ist auf Start
  if (h === "pruefung") return viewPruefung();
  if (h === "test") return viewTest();
@@ -358,6 +360,46 @@ function daysLeft() { if (!S.pruefung) return null; const d = Math.ceil((new Dat
 // Hauptseiten sollen ohne Scrollen passen: notfalls die unwichtigsten Hinweiskarten ausblenden
 /* ---------- Vorlesungsplan (laut Foto des Teilnehmers, nicht offiziell) ---------- */
 const LEK = id => { for (const m of MODULE) { const l = m.lektionen.find(x => x.id === id); if (l) return { m, l }; } return null; };
+let rundeLid = null;
+// „In der Lektion nachlesen“: die Karte der zugeordneten Lektion (q.lek), die am besten zur Frage passt (Wortüberschneidung)
+const wortSet = t => new Set(String(t || "").toLowerCase().replace(/\*\*/g, "").match(/[a-zäöüß0-9]{4,}/g) || []);
+function besteKarte(q) {
+ const x = q.lek && LEK(q.lek); if (!x) return null;
+ const richtig = Array.isArray(q.c) ? q.c.map(k => q.a[k]).join(" ") : q.a ? q.a[q.c] : (q.bsp || "");
+ const ziel = wortSet(`${q.q} ${richtig} ${q.e || ""}`);
+ let best = null, bs = -1;
+ x.l.folien.forEach((f, i) => { if (f.k === "check") return; let s = 0; for (const t of wortSet([f.h, f.b, ...(f.l || [])].join(" "))) if (ziel.has(t)) s++; if (s > bs) { bs = s; best = { ...x, f, i }; } });
+ return best;
+}
+function nachlesenHtml(q) {
+ const k = besteKarte(q); if (!k) return "";
+ const f = k.f, inhalt = f.l ? `<ul>${f.l.map(x => `<li>${md(x)}</li>`).join("")}</ul>` : f.k === "bild" ? `<div class="dg">${BILDER[f.svg] || ""}</div><p>${md(f.b || "")}</p>` : `<p>${md(f.b || "")}</p>`;
+ return `<details class="card nachlesen"><summary>${ic("book")} In der Lektion nachlesen</summary><span class="small muted">${esc(k.l.titel)}</span><b style="display:block;margin:4px 0">${md(f.h || "")}</b>${inhalt}<a class="small" href="#lektion-${k.m.id}-${k.l.id}@${k.i}">Ganze Lektion öffnen</a></details>`;
+}
+// Karteikarten: vorn die Leitfrage der Lektion, hinten der Merksatz (mit Eselsbrücke). Eigenes Leitner-System in S.kk,
+// zählt nicht zum Fragen-Fortschritt. Nur Lektionen, die schon gelesen sind.
+const KK_TAGE = [0, 1, 3, 7, 14, 30];
+const KARTEN = () => MODULE.flatMap(m => m.lektionen.map(l => { const mk = l.folien.find(f => f.k === "merke"); return mk ? { id: l.id, m, l, vorn: l.folien[0].h, hinten: mk } : null; })).filter(Boolean);
+const kkFaellig = () => KARTEN().filter(k => S.lek[k.id] && (!S.kk?.[k.id] || S.kk[k.id].due <= Date.now()));
+function viewKarten() {
+ S.kk = S.kk || {};
+ const liste = shuf(kkFaellig()); let i = 0, gewusst = 0;
+ if (!liste.length) { page("start", `<a class="back" href="#start">${ic("left")} Start</a><div class="qcard result"><h2>Keine Karte fällig</h2><p class="muted">Karteikarten gibt es für jede gelesene Lektion. Gewusste Karten kommen nach 1, 3, 7, 14 und 30 Tagen wieder.</p><div class="row" style="justify-content:center;margin-top:16px"><a class="btn" href="#runde">${ic("play")} Tagesrunde</a></div></div>`); return; }
+ show(false);
+ function show(offen) {
+  const k = liste[i]; if (!k) return fertig();
+  page("start", `<h1 class="sr-only">Karteikarten</h1><div class="row qhead"><a class="back" href="#start" style="margin:0">${ic("x")} Beenden</a><span class="chip">Karteikarten · ${i + 1} / ${liste.length}</span></div>
+  <div class="qcard"><div class="qtop">${chip({ m: k.m.id })}<span class="small muted">${esc(k.l.titel)}</span></div><p class="qtext" id="qt">${md(k.vorn)}</p>
+  ${offen ? `<div class="fb ok"><b>${md(k.hinten.h)}</b>${md(k.hinten.b)}${k.hinten.esel ? `<span class="esel"><b>Eselsbrücke:</b> ${md(k.hinten.esel)}</span>` : ""}</div><p class="rate-q" style="font-weight:700;margin:14px 0 8px">Wusstest du es?</p><div class="row rate-row" role="group" aria-label="Selbstbewertung"><button type="button" class="btn ghost" data-r="0">Noch nicht</button><button type="button" class="btn" data-r="1">Gewusst</button></div>` : `<p class="small muted">Überlege kurz: Was ist hier der Merksatz?</p><button type="button" class="btn block" id="dreh">Merksatz zeigen</button>`}</div>`);
+  if (!offen) { $("#dreh").onclick = () => show(true); $("#dreh").focus({ preventScroll: true }); return; }
+  $$("[data-r]").forEach(b => b.onclick = () => {
+   const e = S.kk[k.id] || { b: 0 };
+   if (b.dataset.r === "1") { e.b = Math.min(e.b + 1, KK_TAGE.length - 1); gewusst++; } else { e.b = 0; liste.push(k); }
+   e.due = Date.now() + KK_TAGE[e.b] * 864e5 - 36e5; S.kk[k.id] = e; save(); buzz(b.dataset.r === "1" ? 18 : [40, 50, 40]); i++; show(false);
+  });
+ }
+ function fertig() { page("start", `<div class="qcard result"><h2>Karten geschafft</h2><p class="muted">${gewusst} Merksätze gewusst. Die Karten kommen in größer werdenden Abständen wieder.</p><div class="row" style="justify-content:center;margin-top:16px"><a class="btn" href="#runde">${ic("play")} Tagesrunde</a><a class="btn ghost" href="#start">Start</a></div></div>`); }
+}
 const datumDE = d => new Date(d + "T12:00").toLocaleDateString("de-DE", { day: "2-digit", month: "2-digit" });
 // nächste Vorlesung mit Inhalt (ab heute; Montag gilt noch bis zum Ende des Tages)
 function naechsteVorlesung() { const heuteD = dayLocal(), ab = S.kursStart && S.kursStart > heuteD ? S.kursStart : heuteD; return VORLESUNGEN.find(v => v.datum >= ab && v.lektionen.length) || null; }
@@ -384,10 +426,11 @@ function viewStart() {
   ${(() => { const h = heute(), g = goal(), ok = h >= g; return `<div class="hgoal ${ok ? "ok" : ""}"><div class="row" style="justify-content:space-between;align-items:center"><b>${ok ? "Tagesziel geschafft ✓" : "Heute"}</b><span>${Math.min(h, g)} von ${g} Fragen</span></div><div class="hbar" aria-hidden="true"><i style="width:${Math.min(1, h / g) * 100}%"></i></div></div>`; })()}
   <p style="opacity:.92;max-width:460px">${los ? planText : "Lektionen, Quiz und Probetest für deinen IHK-Abschlusstest."}</p>
   <div class="hero-stat fx"><div><b>${kernDone}/${kernAll}</b><span>Lektionen</span></div><div><b>${kernBearbeitet()}/${kernFragen()}</b><span>Fragen bearbeitet</span></div><div><b>${best === null ? "–" : best + " %"}</b><span>Bester Test</span></div></div>
-  <div class="row"><a class="btn white" href="${endspurt ? "#endspurt" : "#mini"}">${ic("play")} ${endspurt ? "Endspurt heute" : los ? "Weiterlernen" : "Loslegen"}</a></div>
+  <div class="row"><a class="btn white" href="${endspurt ? "#endspurt" : "#runde"}">${ic("play")} ${endspurt ? "Endspurt heute" : los ? "Tagesrunde: Lektion + 10 Fragen" : "Loslegen"}</a></div>
  </section>
  ${countdownHtml()}
  ${[(S.run ? `<a class="cont" href="#test" style="margin-bottom:10px"><div class="thumb" style="background:var(--grad-strong)">${ic("clock")}</div><div><b style="font-size:1rem">Probetest läuft</b><div class="small muted">Weitermachen, wo du aufgehört hast</div></div><span class="chev" style="margin-left:auto">${ic("right")}</span></a>` : ""), ((() => { const n = naechsterTermin(); if (!n || n.k === "pruefung" || n.d > 7) return ""; return `<a class="cont" href="#lehrgang"><div class="thumb" style="background:linear-gradient(135deg,#2b8a3e,#1864ab)">${ic("cal")}</div><div><b style="font-size:1rem">${esc(n.t)} ${n.d === 0 ? "heute" : n.d === 1 ? "morgen" : `in ${n.d} Tagen`}</b><div class="small muted">${n.k === "beginn" ? "Am besten vorher den Grundwortschatz lernen" : "Termin im Lehrgang ansehen"}</div></div><span class="chev" style="margin-left:auto">${ic("right")}</span></a>`; })()), (() => { const v = naechsteVorlesung(); if (!v) return ""; const offen = v.lektionen.map(LEK).filter(x => x && !S.lek[x.l.id]); if (!offen.length) return ""; const t = (new Date(v.datum + "T12:00") - Date.now()) / 86400000; if (t > 8) return ""; return `<a class="cont" href="#lektion-${offen[0].m.id}-${offen[0].l.id}"><div class="thumb" style="background:linear-gradient(135deg,#2b8a3e,#1864ab)">${ic("cal")}</div><div><b style="font-size:1rem">Vorlesung ${datumDE(v.datum)}: ${esc(v.titel)}</b><div class="small muted">${offen.length} passende Lektion${offen.length === 1 ? "" : "en"} vorab lernen</div></div><span class="chev" style="margin-left:auto">${ic("right")}</span></a>`; })(), ((() => { const alt = uebenN(), d = uebenListe().length; return d ? `<a class="cont" href="#quiz-ueben" style="margin-bottom:10px"><div class="thumb" style="background:linear-gradient(135deg,#1864ab,#6741d9)">${ic("repeat")}</div><div><b style="font-size:1rem">Üben: ${d} Frage${d === 1 ? "" : "n"}</b><div class="small muted">${alt >= d ? "Fehler und fällige Wiederholungen" : alt ? "Fehler, Wiederholungen und neue Fragen" : "Neue Fragen, die du noch nicht richtig hattest"} – damit es bis zur Prüfung sitzt.</div></div><span class="chev" style="margin-left:auto">${ic("right")}</span></a>` : ""; })()), (S.lek.grundwortschatz && !S.set?.hilfeGefragt ? `<a class="cont" href="#einstellungen" data-hilfe style="margin-bottom:10px"><div class="thumb" style="background:linear-gradient(135deg,#2b8a3e,#1864ab)">${ic("focus")}</div><div><b style="font-size:1rem">Lernhilfen einstellen</b><div class="small muted">Fokusmodus, Pausen, ruhige Darstellung – z. B. bei ADHS</div></div><span class="chev" style="margin-left:auto">${ic("right")}</span></a>` : ""), (hasProgress(S) && Date.now() - (S.lastBackup || S.created || 0) > (S.lastBackup ? 14 : 7) * 86400000 /* erste Erinnerung nach 7 Tagen, danach alle 14 */ ? `<a class="cont" href="#einstellungen" style="margin-bottom:10px"><div class="thumb" style="background:linear-gradient(135deg,#495057,#212529)">${ic("download")}</div><div><b style="font-size:1rem">Lernstand sichern</b><div class="small muted">Lade eine Sicherungsdatei herunter – falls der Browser Daten löscht.</div></div><span class="chev" style="margin-left:auto;color:var(--ink-3)">${ic("right")}</span></a>` : ""), (platform().standalone && !hasProgress(S) && !S.set?.restoreGesehen && !S.day && Date.now() - (S.created || 0) < 3 * 86400000 ? `<a class="cont" href="#einstellungen" data-restore style="margin-bottom:10px"><div class="thumb" style="background:linear-gradient(135deg,#495057,#212529)">${ic("upload")}</div><div><b style="font-size:1rem">Kommst du aus dem Browser?</b><div class="small muted">Dort gesicherten Lernstand in den Einstellungen wiederherstellen.</div></div><span class="chev" style="margin-left:auto">${ic("right")}</span></a>` : ""), (S.pruefung ? "" : `<a class="cont" href="#lehrgang" style="margin-bottom:6px"><div class="thumb" style="background:var(--grad-strong)">${ic("cal")}</div><div><b style="font-size:1rem">Termine eintragen</b><div class="small muted">Beginn, Workshops und Prüfung – für deinen Lernplan.</div></div><span class="chev" style="margin-left:auto;color:var(--ink-3)">${ic("right")}</span></a>`)].filter(Boolean).slice(0, 2).join("")}
+ ${(() => { const n = kkFaellig().length, alle = KARTEN().filter(k => S.lek[k.id]).length; return alle ? `<a class="cont" href="#karten" style="margin-bottom:10px"><div class="thumb" style="background:linear-gradient(135deg,#7048e8,#e83e8c)">${ic("book")}</div><div><b style="font-size:1rem">Karteikarten</b><div class="small muted">${n ? `${n} Merksatz-Karte${n === 1 ? "" : "n"} fällig` : `Alle ${alle} Karten wiederholt – morgen geht's weiter`}</div></div><span class="chev" style="margin-left:auto">${ic("right")}</span></a>` : ""; })()}
  <a class="cont" href="#glossar" style="margin-bottom:10px"><div class="thumb" style="background:linear-gradient(135deg,#2b8a3e,#1864ab)">${ic("abc")}</div><div><b style="font-size:1rem">Glossar & Formeln</b><div class="small muted">${gelesenZahl() ? `${gelesenZahl()} von ${GLOSSAR.length} Begriffen gelesen · ${FORMELN.length} Formeln` : `${GLOSSAR.length} Begriffe Schritt für Schritt · ${FORMELN.length} Formeln`}</div></div><span class="chev" style="margin-left:auto">${ic("right")}</span></a>
 `, { compact: true });
  fitMain();
@@ -597,13 +640,13 @@ function openBegriff(gi, o = {}) {
 /* ---------- Story-Player (Erstvermittlung) ---------- */
 let storyEl = null, storyKey = null;
 function closeStory() { if (canSay) speechSynthesis.cancel(); if (storyEl) { storyEl.remove(); storyEl = null; if (!document.getElementById("gate")) document.body.classList.remove("no-scroll"); removeEventListener("keydown", storyKey); } }
-function openStory(mid, lid) {
+function openStory(mid, lid, start = 0) {
  const m = modById(mid), l = m && m.lektionen.find(x => x.id === lid);
  if (!l) return viewStart();
  viewModul(mid);
  S.last = mid + "/" + lid; save();
  const F = [...l.folien, { k: "ende" }];
- let i = 0, answered = {};
+ let i = Math.max(0, Math.min(start, F.length - 2)), answered = {};
  storyEl = document.createElement("div");
  storyEl.className = "story"; storyEl.style.setProperty("--m", m.farbe);
  storyEl.setAttribute("role", "dialog"); storyEl.setAttribute("aria-modal", "true"); storyEl.setAttribute("aria-label", "Lektion: " + l.titel);
@@ -632,7 +675,7 @@ function openStory(mid, lid) {
   const kindName = { intro: "Lektion", text: "Wissen", liste: "Überblick", beispiel: "Beispiel", merke: "Merke", check: "Kurz-Check", bild: "Schaubild" }[f.k] || "";
   let body = "";
   if (f.k === "liste") body = `<span class="kind">${kindName}</span><h2>${md(f.h)}</h2><ul>${f.l.map((x, n) => `<li class="${stepOn() ? "rv" + (n ? " h" : "") : ""}" style="animation-delay:${n * 60}ms">${md(x)}</li>`).join("")}</ul>`;
-  else if (f.k === "beispiel" || f.k === "merke") body = `<span class="kind">${kindName}</span><h2>${md(f.h)}</h2><div class="body">${saetze(f.b)}</div>`;
+  else if (f.k === "beispiel" || f.k === "merke") body = `<span class="kind">${kindName}</span><h2>${md(f.h)}</h2><div class="body">${saetze(f.b)}</div>${f.esel ? `<p class="esel"><b>Eselsbrücke:</b> ${md(f.esel)}</p>` : ""}`;
   else if (f.k === "check") {
    const order = f._o || (f._o = shuf(f.a.map((t, k) => k)));
    const a = answered[i];
@@ -645,7 +688,7 @@ function openStory(mid, lid) {
   storyEl.innerHTML = `<p class="sr-only" aria-live="polite">${last ? "Lektion geschafft" : `Karte ${i + 1} von ${F.length - 1}`}</p><div class="segs" aria-hidden="true">${F.slice(0, -1).map((_, n) => `<i class="${n < i || last ? "on" : ""}"><b style="${n === i ? "width:100%" : ""}"></b></i>`).join("")}</div>
   <div class="shead"><div class="av">${ic(m.id)}</div><div class="n">${esc(l.titel)}<small>${esc(m.name)}</small></div>${sayBtn()}<button class="x" aria-label="Schließen">${ic("x")}</button></div>
   <div class="stage">${f.k !== "check" && !last ? '<div class="tapzone l"></div><div class="tapzone r"></div>' : ""}<div class="slide ${f.k === "beispiel" || f.k === "merke" ? "note" : ""}">${body}</div></div>
-  <div class="snav">${i > 0 ? `<button class="btn prev" aria-label="Zurück">${ic("left")}</button>` : ""}${last ? (nx ? `<a class="btn" data-rep href="#lektion-${m.id}-${nx.id}">Nächste Lektion ${ic("right")}</a>` : `<a class="btn" data-rep href="#quiz-${m.id}">Zum Modul-Quiz ${ic("right")}</a>`) : (f.k === "check" && !(i in answered) ? `<button class="btn next" aria-disabled="true">Antwort wählen</button>` : `<button class="btn next">Weiter ${ic("right")}</button>`)}</div>`;
+  <div class="snav">${i > 0 ? `<button class="btn prev" aria-label="Zurück">${ic("left")}</button>` : ""}${last ? (rundeLid === l.id ? `<a class="btn" data-rep href="#quiz-runde-${l.id}">10 Fragen dazu ${ic("right")}</a>` : nx ? `<a class="btn" data-rep href="#lektion-${m.id}-${nx.id}">Nächste Lektion ${ic("right")}</a>` : `<a class="btn" data-rep href="#quiz-${m.id}">Zum Modul-Quiz ${ic("right")}</a>`) : (f.k === "check" && !(i in answered) ? `<button class="btn next" aria-disabled="true">Antwort wählen</button>` : `<button class="btn next">Weiter ${ic("right")}</button>`)}</div>`;
   if (last && !S.lek[l.id]) { S.lek[l.id] = true; save(); buzz([20, 40, 20]); }
   const mehr = () => { const rest = $$(".rv.h", storyEl).length, nb = $(".next", storyEl); if (nb && nb.getAttribute("aria-disabled")) return; if (nb) nb.innerHTML = rest ? `Weiter lesen <span class="dots" aria-hidden="true">${"●".repeat(rest)}</span>` : `Weiter ${ic("right")}`; }; mehr(); draw.mehr = mehr;
   $(".x", storyEl).onclick = closeS;
@@ -782,20 +825,21 @@ function musterHtml(q, txt) {
  const hit = freiMatch(q, txt || ""), n = hit.filter(Boolean).length;
  return `<div class="fb muster-box" style="margin-top:12px"><b>Musterlösung</b><span class="small">Gefordert: mindestens ${q.min} Punkt${q.min > 1 ? "e" : ""}. ${txt ? `In deiner Antwort erkannt: ${n}.` : ""}</span><ul class="muster">${q.muster.map(([t], i) => `<li class="${hit[i] ? "hit" : ""}">${ic(hit[i] ? "check" : "right", 'stroke-width="3"')}<span>${esc(t)}</span></li>`).join("")}</ul>${q.bsp ? `<details class="bsp"><summary>Beispiel für eine volle Antwort</summary><p class="small" style="white-space:pre-line;margin:6px 0 0">${esc(q.bsp)}</p></details>` : ""}<span class="small muted">Die Erkennung ist nur eine Hilfe – entscheide selbst, ob deine Antwort passt.</span></div>`;
 }
-function viewQuiz(id) {
+function viewQuiz(id, lid = "") {
  const m = modById(id), isMini = id === "mini", isMix = id === "mix" || isMini, isFrei = id === "frei", isWdh = id === "ueben" || id === "wdh" || id === "fehler", isErr = false; // isErr: Altlast, Fehlerkiste ist in „Üben“ aufgegangen
  const byKeys = ks => shuf(POOL.filter(q => ks.includes(q.key)));
- let list = isMini ? [...neueFragen(5), ...byKeys(dueKeys()).filter(q => q.t !== "frei"), ...shuf(MC_POOL())].filter((q, i, a) => a.indexOf(q) === i).slice(0, 5) : isWdh ? uebenListe() : isErr ? byKeys(errorKeys()) : isMix ? shuf(MC_POOL()).sort((a, b) => (S.q[a.key] ? 2 : a.key in S.q ? 1 : 0) - (S.q[b.key] ? 2 : b.key in S.q ? 1 : 0)).slice(0, 10) : isFrei ? shuf(FREI_POOL()).sort((a, b) => (S.q[a.key] ? 1 : 0) - (S.q[b.key] ? 1 : 0)).slice(0, 8) : shuf(modPool(id)).sort((a, b) => (S.q[a.key] ? 1 : 0) - (S.q[b.key] ? 1 : 0));
- if (!m && !isMix && !isFrei && !isWdh && !isErr) return viewStart();
+ const isRunde = id === "runde";
+ let list = isRunde ? [...shuf(POOL.filter(q => q.lek === lid)).sort((a, b) => (a.key in S.q ? 1 : 0) - (b.key in S.q ? 1 : 0)).slice(0, 5), ...uebenListe()].filter((q, i, a) => a.indexOf(q) === i).slice(0, 10) : isMini ? [...neueFragen(5), ...byKeys(dueKeys()).filter(q => q.t !== "frei"), ...shuf(MC_POOL())].filter((q, i, a) => a.indexOf(q) === i).slice(0, 5) : isWdh ? uebenListe() : isErr ? byKeys(errorKeys()) : isMix ? shuf(MC_POOL()).sort((a, b) => (S.q[a.key] ? 2 : a.key in S.q ? 1 : 0) - (S.q[b.key] ? 2 : b.key in S.q ? 1 : 0)).slice(0, 10) : isFrei ? shuf(FREI_POOL()).sort((a, b) => (S.q[a.key] ? 1 : 0) - (S.q[b.key] ? 1 : 0)).slice(0, 8) : shuf(modPool(id)).sort((a, b) => (S.q[a.key] ? 1 : 0) - (S.q[b.key] ? 1 : 0));
+ if (!m && !isMix && !isFrei && !isWdh && !isErr && !isRunde) return viewStart();
  if (!list.length) { page("start", `<a class="back" href="#start">${ic("left")} Start</a><div class="qcard result"><h2>Gerade nichts zu üben</h2><p class="muted">Keine offenen Fehler, keine fälligen Wiederholungen und keine neuen Fragen. Lerne mit der nächsten Lektion weiter oder mach ein Schnell-Quiz.</p><div class="row" style="justify-content:center;margin-top:16px"><a class="btn" href="#mini">${ic("play")} Weiterlernen</a><a class="btn ghost" href="#quiz-mix">Schnell-Quiz</a></div></div>`); return; }
  const total = list.length; let queue = list.slice(), first = 0, miss = new Set(), n = 0;
- const backHref = m ? "#modul-" + id : isWdh || isMini ? "#start" : "#pruefung", tab = m || isWdh || isMini ? "start" : "pruefung";
+ const backHref = m ? "#modul-" + id : isWdh || isMini || isRunde ? "#start" : "#pruefung", tab = m || isWdh || isMini || isRunde ? "start" : "pruefung";
  next();
  function next() {
   if (!queue.length) return done();
   const q = queue.shift(); n++;
   const { html } = quizCard(q, miss.has(q) ? "Wiederholung" : `${Math.min(n, total)} / ${total}`);
-  page(tab, `<h1 class="sr-only">${isFrei ? "Freitext üben" : isWdh ? "Üben" : m ? m.name + " – Quiz" : "Schnell-Quiz"}</h1><div class="row qhead"><a class="back" href="${backHref}" style="margin:0">${ic("x")} Beenden</a><span class="chip">${isFrei ? "Freitext üben" : isWdh ? "Üben" : m ? "Modul-Quiz" : isMini ? "Kurz-Quiz" : "Schnell-Quiz"}</span></div>${isFrei ? `<details class="card tippbox" style="margin:0 0 14px"><summary><b>So schreibst du Freitext-Antworten</b></summary><ol class="small" style="margin:8px 0 0;padding-left:20px"><li><b>Benennen:</b> Problem oder Fachbegriff nennen (z. B. „Vanity Metrics“, „Recht am eigenen Bild“).</li><li><b>Begründen:</b> immer das Warum – „weil die Zielgruppe …“.</li><li><b>Konkret werden:</b> wie du es umsetzt, mit Beispiel.</li></ol><p class="small" style="margin:8px 0 0">Stichpunkte statt langer Fließtexte. Genau so viele Punkte nennen, wie gefragt. Bei Unsicherheit das Prinzip beschreiben – dafür gibt es oft Teilpunkte. Im Test wirst du gesiezt – hier üben wir genau so.</p></details>` : ""}<div class="bar dark" style="margin:0 0 16px" aria-hidden="true"><i style="width:${(1 - (queue.length + 1) / (total + miss.size)) * 100}%"></i></div>${html}`);
+  page(tab, `<h1 class="sr-only">${isFrei ? "Freitext üben" : isWdh ? "Üben" : m ? m.name + " – Quiz" : "Schnell-Quiz"}</h1><div class="row qhead"><a class="back" href="${backHref}" style="margin:0">${ic("x")} Beenden</a><span class="chip">${isRunde ? "Tagesrunde" : isFrei ? "Freitext üben" : isWdh ? "Üben" : m ? "Modul-Quiz" : isMini ? "Kurz-Quiz" : "Schnell-Quiz"}</span></div>${isFrei ? `<details class="card tippbox" style="margin:0 0 14px"><summary><b>So schreibst du Freitext-Antworten</b></summary><ol class="small" style="margin:8px 0 0;padding-left:20px"><li><b>Benennen:</b> Problem oder Fachbegriff nennen (z. B. „Vanity Metrics“, „Recht am eigenen Bild“).</li><li><b>Begründen:</b> immer das Warum – „weil die Zielgruppe …“.</li><li><b>Konkret werden:</b> wie du es umsetzt, mit Beispiel.</li></ol><p class="small" style="margin:8px 0 0">Stichpunkte statt langer Fließtexte. Genau so viele Punkte nennen, wie gefragt. Bei Unsicherheit das Prinzip beschreiben – dafür gibt es oft Teilpunkte. Im Test wirst du gesiezt – hier üben wir genau so.</p></details>` : ""}<div class="bar dark" style="margin:0 0 16px" aria-hidden="true"><i style="width:${(1 - (queue.length + 1) / (total + miss.size)) * 100}%"></i></div>${html}`);
   linkTerms($(".qtext")); { const qt = $("#qt"); if (qt && n > 1) { qt.tabIndex = -1; qt.focus({ preventScroll: true }); } }
   const rate = (ok, requeue = !ok) => { grade(q.key, ok); if (ok) { if (!miss.has(q)) first++; } else if (requeue && !miss.has(q)) { miss.add(q); queue.push(q); } else miss.add(q); save(); };
   const weiter = () => { $(".fbx").insertAdjacentHTML("afterend", `<button type="button" class="btn block" style="margin-top:14px" id="nx">Weiter ${ic("right")}</button>`); $("#nx").onclick = next; const calm = matchMedia("(prefers-reduced-motion: reduce)").matches || S.set?.calm; $(".fbx").scrollIntoView({ block: "start", behavior: calm ? "auto" : "smooth" }); $("#nx").focus({ preventScroll: true }); };
@@ -808,7 +852,7 @@ function viewQuiz(id) {
     const btn = $("#show"); if (btn.disabled) return;
     btn.disabled = true; btn.textContent = "Musterlösung siehe unten";
     const txt = $("#ftxt").value; $("#ftxt").readOnly = true;
-    $(".fbx").innerHTML = musterHtml(q, txt) + `${(() => { const n = freiMatch(q, txt).filter(Boolean).length, vs = !txt.trim() ? 0 : n >= q.min ? 2 : n >= Math.ceil(q.min / 2) ? 1 : 0; return `<p class="rate-q" style="font-weight:700;margin:14px 0 8px">Wie gut war deine Antwort? <span class="small muted" style="font-weight:500">Vorschlag nach Stichwörtern: ${["Daneben", "Teilweise", "Richtig"][vs]}</span></p><div class="row rate-row" role="group" aria-label="Selbstbewertung">${["Daneben", "Teilweise", "Richtig"].map((t, k) => `<button type="button" class="btn ghost ${k === vs ? "sel" : ""}" data-r="${k}" style="flex:1">${t}</button>`).join("")}</div>`; })()}`;
+    $(".fbx").innerHTML = musterHtml(q, txt) + nachlesenHtml(q) + `${(() => { const n = freiMatch(q, txt).filter(Boolean).length, vs = !txt.trim() ? 0 : n >= q.min ? 2 : n >= Math.ceil(q.min / 2) ? 1 : 0; return `<p class="rate-q" style="font-weight:700;margin:14px 0 8px">Wie gut war deine Antwort? <span class="small muted" style="font-weight:500">Vorschlag nach Stichwörtern: ${["Daneben", "Teilweise", "Richtig"][vs]}</span></p><div class="row rate-row" role="group" aria-label="Selbstbewertung">${["Daneben", "Teilweise", "Richtig"].map((t, k) => `<button type="button" class="btn ghost ${k === vs ? "sel" : ""}" data-r="${k}" style="flex:1">${t}</button>`).join("")}</div>`; })()}`;
     $$("[data-r]").forEach(b => b.onclick = () => { const r = b.dataset.r; rate(r === "2", r === "0"); $(".rate-row")?.remove(); $(".rate-q")?.remove(); toast(r === "2" ? "Stark!" : r === "1" ? "Gut – kommt in der Wiederholung wieder" : "Kommt gleich nochmal dran"); weiter(); });
    };
    return;
@@ -820,7 +864,7 @@ function viewQuiz(id) {
     if ($(".fbx").innerHTML) return; const ans = [...sel], ok = istRichtig(q, ans);
     $$(".opt").forEach(x => { x.removeAttribute("aria-pressed"); const k = +x.dataset.k, soll = q.c.includes(k), ist = sel.has(k); x.classList.remove("sel"); markOpt(x, soll ? "ok" : ist ? "bad" : "dim"); if (soll && !ist) x.classList.add("missed"); });
     $("#chk").remove(); rate(ok);
-    $(".fbx").innerHTML = `<div class="fb ${ok ? "ok" : "bad"}"><b>${ok ? "Richtig – alle gefunden!" : "Nicht ganz – grün sind alle richtigen Antworten."}</b>${esc(q.e)}</div>`;
+    $(".fbx").innerHTML = `<div class="fb ${ok ? "ok" : "bad"}"><b>${ok ? "Richtig – alle gefunden!" : "Nicht ganz – grün sind alle richtigen Antworten."}</b>${esc(q.e)}</div>${ok ? "" : nachlesenHtml(q)}`;
     weiter();
    };
    return;
@@ -830,7 +874,7 @@ function viewQuiz(id) {
    const k = +b.dataset.k, ok = k === q.c;
    $$(".opt").forEach(x => markOpt(x, +x.dataset.k === q.c ? "ok" : +x.dataset.k === k ? "bad" : "dim"));
    rate(ok);
-   $(".fbx").innerHTML = `<div class="fb ${ok ? "ok" : "bad"}"><b>${ok ? "Richtig!" : "Nicht ganz – die Frage kommt gleich nochmal."}</b>${esc(q.e)}</div>`; linkTerms($(".fbx .fb"));
+   $(".fbx").innerHTML = `<div class="fb ${ok ? "ok" : "bad"}"><b>${ok ? "Richtig!" : "Nicht ganz – die Frage kommt gleich nochmal."}</b>${esc(q.e)}</div>${ok ? "" : nachlesenHtml(q)}`; linkTerms($(".fbx .fb"));
    weiter();
   });
  }
