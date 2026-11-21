@@ -31,6 +31,15 @@ for (const [w, e] of Object.entries(EINFACH)) {
     for (const satz of t.split(/(?<=[.!?])\s+(?=[A-ZÄÖÜ„*(0-9])/)) if (woerter(satz) > 18) fehler.push(`Einfache Sprache: Satz mit mehr als 18 Wörtern in „${k}“: ${w} – ${satz.slice(0, 50)}…`);
   }
 }
+// Jeder Glossar-Begriff hat eine Story und kommt im Kurs vor (Lektionen, Quizfragen oder Hausaufgaben) –
+// erkannt wie in linkTerms (app.js): Wortgrenzen, Begriffe bis 4 Zeichen nur in exakter Schreibweise.
+const alleTexte = o => typeof o === "string" ? [o] : Array.isArray(o) ? o.flatMap(alleTexte) : o && typeof o === "object" ? Object.entries(o).filter(([k]) => !["quelle", "id", "muster"].includes(k)).flatMap(([, v]) => alleTexte(v)) : [];
+const kurstext = alleTexte([MODULE.map(m => m.lektionen), FRAGEN, PROJEKTE]).join("\n");
+for (const g of GLOSSAR) {
+  if (!EINFACH[g.w] || !g.s) fehler.push("Glossar: Begriff ohne Story in einfacher Sprache: " + g.w);
+  const da = [g.w, ...(g.syn || [])].filter(t => t && t.length >= 2).some(t => new RegExp(`(?<![\\p{L}\\p{N}_-])${t.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}(?![\\p{L}\\p{N}_])`, t.length <= 4 ? "u" : "iu").test(kurstext));
+  if (!da) fehler.push("Glossar: Begriff kommt im Kurs nicht vor: " + g.w);
+}
 // Lernpfad: jeder Begriff genau einmal, beim richtigen Modul; nur bekannte Module
 const pfadAlle = Object.values(LERNPFAD).flat();
 for (const mid of Object.keys(LERNPFAD)) if (!MODULE.some(m => m.id === mid)) fehler.push("Lernpfad: unbekanntes Modul " + mid);
@@ -58,6 +67,13 @@ for (const m of MODULE) for (const l of m.lektionen) {
     if ((f.l || []).length > 4 || (f.l || []).some(x => woerter(x) > 10)) fehler.push(`Lektion ${l.id}: Liste „${f.h}“ zu lang (max. 4 Punkte à 10 Wörter)`);
   }
   if (summe > 220) fehler.push(`Lektion ${l.id}: ${summe} Wörter (max. 220)`);
+  // Karteikarten brauchen genau einen Merksatz je Lektion; Eselsbrücken kurz halten
+  if (l.folien.filter(f => f.k === "merke").length !== 1) fehler.push(`Lektion ${l.id}: genau eine Merke-Karte nötig (Karteikarten)`);
+  for (const f of l.folien) if (f.esel && woerter(f.esel) > 14) fehler.push(`Lektion ${l.id}: Eselsbrücke länger als 14 Wörter`);
+  // Lange Wörter gliedern (einfache Sprache): ab 18 Buchstaben ohne Bindestrich nur feste Namen und Prüfungsbegriffe
+  const NAMEN = /^(Kunsturhebergesetz|Bundesdatenschutzgesetz|Medienstaatsvertrag|Rundfunkstaatsvertrag|Selbstverständlichkeiten|operationalisierst|operationalisieren|Datenschutz-Grundverordnung)$/;
+  for (const f of l.folien) if (f.k !== "check") for (const t of [f.h, f.b, ...(f.l || [])].filter(Boolean))
+    for (const wort of t.replace(/\*\*/g, "").split(/[\s„“"()\/,.:;!?]+/)) if (!wort.startsWith("#")) for (const teil of wort.split("-")) if (teil.length >= 18 && !NAMEN.test(teil)) fehler.push(`Lektion ${l.id}: langes Wort „${teil}“ – mit Bindestrich gliedern oder umschreiben`);
   for (const f of l.folien) for (const t of [f.h, f.b, f.q, f.e, ...(f.l || []), ...(f.a || [])].filter(Boolean)) {
     if (ABK.test(t)) fehler.push(`Lektion ${l.id}: Abkürzung „${t.match(ABK)[0]}“ – ${t.slice(0, 50)}…`);
     for (const satz of satzTeile(t)) if (woerter(satz) > 18) fehler.push(`Lektion ${l.id}: Satz mit mehr als 18 Wörtern – ${satz.slice(0, 50)}…`);
@@ -68,6 +84,7 @@ for (const q of FRAGEN) {
   const w = q.q.slice(0, 50);
   if (!q.quelle) fehler.push("Frage ohne Quelle: " + w);
   if (!MODULE.some(m => m.id === q.m)) fehler.push("Frage mit unbekanntem Modul: " + w);
+  if (!lids.includes(q.lek)) fehler.push("Frage ohne gültige Lektion (lek): " + w);
   for (const t of [q.q, q.e, q.bsp, ...(q.a || [])].filter(Boolean)) if (ABK.test(t)) fehler.push(`Frage: Abkürzung „${t.match(ABK)[0]}“ – ${w}`);
   if (q.t === "frei") { if (!q.bsp) fehler.push("Freitext ohne Musterlösung: " + w); else if (q.muster.filter(([, r]) => { try { return new RegExp(r, "i").test(q.bsp); } catch (e) { return false; } }).length < q.min) fehler.push("Musterlösung erreicht min nicht: " + w); }
 }
