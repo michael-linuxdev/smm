@@ -154,5 +154,40 @@ export const BILDER = {
   ${[0, 1, 2].map(i => `<line class="l" x1="98" y1="88" x2="${168}" y2="${38 + i * 50}"/><rect class="f3" x="170" y="${18 + i * 50}" width="30" height="42" rx="6"/><rect class="scr" x="175" y="${24 + i * 50}" width="20" height="26" rx="2"/>${T(212, 44 + i * 50, (i + 1) + ". Anzeige", 'class="s"')}`).join("")}
   <rect class="pill" x="8" y="162" width="146" height="24" rx="12"/>${T(81, 178, "= 1 Reichweite", 'class="c w b s"')}
   <rect class="pill2" x="166" y="162" width="146" height="24" rx="12"/>${T(239, 178, "= 3 Impressionen", 'class="c b s"')}`,
-  "Eine Person sieht einen Beitrag dreimal: 1 Reichweite, 3 Impressionen")
+  "Eine Person sieht einen Beitrag dreimal: 1 Reichweite, 3 Impressionen"),
+ bvdw: svg("0 0 320 228", `
+  <line class="l" x1="20" y1="24" x2="20" y2="160"/>
+  ${[["Organisation", "Umsatz steigern, Kosten senken"], ["Strategie &amp; Maßnahme", "Bekanntheit steigern, Leads"], ["Messung", "Wirkung: Aufmerksamkeit, Treue"], ["Kennzahl &amp; Methode", "Netto-Reichweite per Analytics"]].map(([n, t], i) => {
+   const y = 4 + i * 46;
+   return `<rect class="f3" x="42" y="${y}" width="276" height="40" rx="10"/><circle class="f1" cx="20" cy="${y + 20}" r="15"/>${T(20, y + 25, i + 1, 'class="c w b"')}${T(54, y + 17, n, 'class="b"')}${T(54, y + 32, t, 'class="s"')}`;
+  }).join("")}
+  <rect class="pill" x="2" y="192" width="316" height="32" rx="16"/>${T(160, 213, "Erst das Ziel, dann die Kennzahl", 'class="c w b"')}`,
+  "BVDW-Modell in 4 Ebenen: Organisation, Strategie und Maßnahme, Messung, Kennzahl und Methode – erst das Ziel, dann die Kennzahl"),
+
+ fuenfps: svg("-16 0 352 240", kreis([["Planen", "Strategie, Orga"], ["Produzieren", "erstellen"], ["Publizieren", "veröffentlichen"], ["Promoten", "bewerben"], ["Prüfen", "kontrollieren"]], ["Community", "braucht Content"]),
+  "Die 5 Ps des Content-Managements im Kreis: Planen, Produzieren, Publizieren, Promoten, Prüfen – in der Mitte die Community"),
+
+ mix702010: svg("0 0 320 222", `
+  <line class="l" x1="2" y1="164" x2="318" y2="164"/>
+  ${[["70 %", "Mehrwert", "für die Zielgruppe", 140], ["20 %", "Kuratiert", "Inhalte von anderen", 40], ["10 %", "Werbung", "für Eigenes", 20]].map(([p, n, t, h], i) => {
+   const x = 6 + i * 106, f = i + 1;
+   return `<rect class="f${f}" x="${x}" y="${163 - h}" width="96" height="${h}" rx="8"/>` + (i ? T(x + 48, 155 - h, p, 'class="c b"') : T(x + 48, 50, p, 'class="c w b"')) + T(x + 48, 184, n, 'class="c b"') + T(x + 48, 200, t, 'class="c s"');
+  }).join("")}`,
+  "Faustregel 70-20-10: 70 Prozent Mehrwert-Themen, 20 Prozent kuratierte Inhalte von anderen, 10 Prozent reine Werbung"),
+
+ kompetenz: svg("0 0 320 214", `
+  ${[["Anfänger", "folgt strikt Regeln"], ["Fortgeschritten", "sieht nur Teile"], ["Kompetent", "plant, setzt Prioritäten"], ["Erfahren", "sieht das Ganze"], ["Experte", "handelt aus dem Bauch"]].map(([n, t], i) => {
+   const x = 2 + i * 36, y = 172 - i * 42, f = i < 2 ? 3 : i < 4 ? 2 : 1, w = f === 1 ? " w" : "";
+   return `<rect class="f${f}" x="${x}" y="${y}" width="${i < 4 ? 170 : 172}" height="38" rx="9"/><circle class="pill2" cx="${x + 19}" cy="${y + 19}" r="12"/>${T(x + 19, y + 23, i + 1, 'class="c b"')}${T(x + 38, y + 16, n, `class="b${w}"`)}${T(x + 38, y + 31, t, `class="s${w}"`)}`;
+  }).join("")}`,
+  "Die 5 Kompetenzstufen nach Dreyfus als Treppe: Anfänger, Fortgeschritten, Kompetent, Erfahren, Experte"),
+
+ claimaudit: svg("0 0 320 226", `
+  ${[["Critic Loop", "KI sucht Schwächen"], ["So-What-Test", "5-mal: Warum wichtig?"], ["Substitution Test", "Könnte das jeder sagen?"], ["Claim Audit", "Jede Aussage einstufen"]].map(([n, t], i) => {
+   const y = 4 + i * 40, f = i < 3 ? 3 : 1, w = f === 1 ? " w" : "";
+   return `<rect class="f${f}" x="2" y="${y}" width="316" height="34" rx="10"/>${T(14, y + 22, n, `class="b${w}"`)}${T(306, y + 22, t, `class="s${w}" text-anchor="end"`)}`;
+  }).join("")}
+  ${[54, 160, 266].map(x => `<line class="l" x1="${x}" y1="158" x2="${x}" y2="186"/>`).join("")}
+  ${["belegt", "Deutung", "unbelegt"].map((k, i) => `<rect class="pill2" x="${4 + i * 106}" y="186" width="100" height="32" rx="16"/>${T(54 + i * 106, 207, k, 'class="c b"')}`).join("")}`,
+  "Vier Tests für starke Aussagen: Critic Loop, So-What-Test, Substitution Test und Claim Audit – jede Aussage ist belegt, Deutung oder unbelegt")
 };

@@ -1,11 +1,12 @@
 // Lektionen „Plattformen & Tools“ (Teil 3) – Zusammenfassung von smm2.pdf, S. 237–327 (Vorlesungen „Social Network“ und „TikTok & Reels“) und smm1.pdf, S. 63–64 („Tools für Social Media Einsteiger“), einfache Sprache.
 export const L_PLATT3 = [
  { id: "hashtags", titel: "Hashtags richtig einsetzen", min: 2, quelle: "smm2.pdf, S. 239–241", folien: [
-  { k: "intro", h: "Wozu brauchst du 2026 noch Hashtags?", b: "Ein **Hashtag** ist ein Schlagwort mit Raute davor, zum Beispiel #Kuchen. Ziel: Du kannst für jede Plattform die passende Zahl an Hashtags wählen." },
+  { k: "intro", h: "Wozu brauchst du 2026 noch Hashtags?", b: "Ein **Hashtag** ist ein Schlagwort mit Raute davor, zum Beispiel #Kaffee. Ziel: Du kannst für jede Plattform die passende Zahl an Hashtags wählen." },
   { k: "text", h: "Früher Reichweiten-Trick, heute Einordnung", b: "Früher waren Hashtags ein Reichweiten-Hack, also ein schneller Trick. Heute geben sie **Einordnung und Kontext** (Zusammenhang). So zeigt der Hashtag, worum es im Beitrag geht." },
   { k: "liste", h: "2 Aufgaben: einordnen und gefunden werden", l: [
    "**Einordnen:** Der Algorithmus (Auswahl-Regeln) erkennt passende Zuschauer.",
-   "**Gefunden werden:** Auf TikTok und LinkedIn folgen Nutzer Themen-Hashtags."
+   "**Gefunden werden:** Auf TikTok und LinkedIn folgen Nutzer Themen-Hashtags.",
+   "**Bei Bohnenwerk:** #kaffeerösten ordnet das Röst-Video auf TikTok ein."
   ] },
   { k: "liste", h: "Hashtags je Plattform: TikTok hoch, Facebook kaum", l: [
    "**TikTok (hoch):** 3–5 genaue, für Kategorie und Suche",
@@ -13,7 +14,7 @@ export const L_PLATT3 = [
    "**Instagram (gering):** höchstens 3–5, für Struktur, Nischen (kleine Themen)",
    "**Facebook, YouTube (kaum):** Titel und Beschreibung zählen mehr"
   ] },
-  { k: "merke", h: "Hashtags ordnen ein, Reichweite bringen sie kaum", b: "Suchbegriffe gehören 2026 vor allem in Text, Untertitel und Bildbeschreibung." },
+  { k: "merke", h: "Hashtags ordnen ein, Reichweite bringen sie kaum", b: "Suchbegriffe gehören 2026 vor allem in Text, Untertitel und Bildbeschreibung.", esel: "Hashtag-Wert sinkt: TikTok, LinkedIn, Instagram, Facebook – „Tante Lisa isst Fisch.“" },
   { k: "check", q: "Auf welcher Plattform haben Hashtags 2026 laut Vorlesung die höchste Bedeutung?", a: ["Auf TikTok, für Kategorie und Suche", "Auf Facebook, für mehr Reichweite", "Auf YouTube, statt eines guten Titels", "Auf Instagram, mit bis zu 30 Hashtags"], c: 0, e: "TikTok hat die Relevanz „hoch“. Dort helfen 3–5 genaue Hashtags bei Kategorie und Suche. Auf Facebook und YouTube zählen Titel und Beschreibung mehr." }
  ]},
  { id: "automatisierung", titel: "KI-Tools & gute Prompts", min: 4, quelle: "smm2.pdf, S. 242–273", folien: [
@@ -32,9 +33,9 @@ export const L_PLATT3 = [
   ] },
   { k: "text", h: "ChatGPT, Gemini, Claude: andere Stärken", b: "**ChatGPT** (OpenAI) ist vielseitig: Ideen, Captions (Bildtexte) und Bilder.\n**Gemini** (Google) nutzt die Google-Suche und macht Videos.\n**Claude** (Anthropic) kann lange Texte und Analysen, keine Fotos.\nTeste denselben Prompt überall." },
   { k: "liste", h: "Prompt: 4 Bausteine", l: [
-   "**Rolle:** „Du bist Social Media Manager eines Cafés.“",
+   "**Rolle:** „Du bist Social Media Manager bei Bohnenwerk.“",
    "**Aufgabe:** „Schreibe 3 Instagram-Captions.“",
-   "**Kontext:** „Neuer Herbstkuchen, Zielgruppe Studierende.“",
+   "**Kontext:** „Kaffeerösterei, neue Herbst-Röstung, Zielgruppe Studierende.“",
    "**Format:** „Höchstens 150 Zeichen, lockerer Ton, mit Call-to-Action (Handlungsaufruf).“"
   ] },
   { k: "liste", h: "Seit 2. August 2026: KI-Inhalte kennzeichnen", l: [
@@ -43,7 +44,7 @@ export const L_PLATT3 = [
    "**Pflicht:** Deepfakes (echt wirkende Fälschungen)",
    "**Meist frei:** Werbetexte, Symbolbilder, von Menschen geprüfte Texte"
   ] },
-  { k: "merke", h: "Klarer Prompt, klares Feedback, immer prüfen", b: "Prüfe KI-Ergebnisse immer und gib keine Kunden- oder Personendaten in kostenlose KI-Tools ein." },
+  { k: "merke", h: "Klarer Prompt, klares Feedback, immer prüfen", b: "Prüfe KI-Ergebnisse immer und gib keine Kunden- oder Personendaten in kostenlose KI-Tools ein.", esel: "Rolle, Aufgabe, Kontext, Format: „Rote Autos kommen flott.“" },
   { k: "check", q: "Welche vier Bausteine machen laut Vorlesung einen guten Prompt aus?", a: ["Rolle, Aufgabe, Kontext und Format", "Daten, Muster, Ergebnis und Feedback", "Ziel, Budget, Kanal und Zeitpunkt", "Hook, Kontext, Inhalt und Call-to-Action"], c: 0, e: "Der Prompt nennt die Rolle der KI und die Aufgabe. Dazu kommen Kontext und Format des Ergebnisses. Daten bis Feedback beschreibt dagegen, wie KI lernt." }
  ]},
  { id: "goldene-regeln", titel: "Die 10 goldenen Regeln & nützliche Tools", min: 3, quelle: "smm2.pdf, S. 274–302; smm1.pdf, S. 63–64", folien: [
@@ -94,18 +95,18 @@ export const L_PLATT3 = [
    "**4 Ausweitung:** Gute Werte bringen mehr Zuschauer."
   ] },
   { k: "liste", h: "Ein 30-Sekunden-TikTok in 4 Phasen", l: [
-   "**Hook** (Aufhänger, 0–2 Sekunden): Eine Frage macht neugierig.",
+   "**Hook** (Aufhänger, 0–2 Sekunden): Bohnenwerk fragt: „Warum knackt Kaffee?“",
    "**Kontext (3–8 Sekunden):** Worum geht es?",
    "**Inhalt (8–25 Sekunden):** Zeig den Nutzen.",
    "**Call-to-Action** (Aufruf, 25–30 Sekunden): „Speichern für später“"
   ] },
-  { k: "liste", h: "TikTok, Reels und Shorts im Vergleich", l: [
+  { k: "liste", h: "TikTok, Reels und Shorts verglichen", l: [
    "**TikTok:** optimal 15–60 Sekunden, schnellste organische Reichweite",
    "**Reels** (Instagram): unter 90 Sekunden, mit Shopping und DMs (Direktnachrichten)",
    "**Shorts** (YouTube-Kurzvideos): 15–60 Sekunden, Einstieg in den Kanal"
   ] },
   { k: "text", h: "TikTok für Firmen: Shop, Spark Ads, Creator", b: "**TikTok Shop:** Du verkaufst direkt im Video.\n**Spark Ads:** Gute Videos von dir oder Creatorn (Inhalte-Machern) werden Anzeigen.\n**TikTok One:** Dort findest du Creator.\nTeste 4 Wochen ohne Werbung." },
-  { k: "merke", h: "Auf TikTok entscheiden Zuschauer, nicht Follower", b: "Wiedergabe und Shares entscheiden über die Reichweite, ein starker Hook hält die Zuschauer." },
+  { k: "merke", h: "Auf TikTok entscheiden Zuschauer, nicht Follower", b: "Wiedergabe und Shares entscheiden über die Reichweite, ein starker Hook hält die Zuschauer.", esel: "Hook, Kontext, Inhalt, Call-to-Action: „Heute kocht Ida Cappuccino.“" },
   { k: "check", q: "Wovon hängt die Reichweite eines TikTok-Videos laut Vorlesung vor allem ab?", a: ["Vom Verhalten der Zuschauer, vor allem Wiedergabe und Shares", "Vor allem von der Zahl der Follower des Accounts", "Vor allem von der Zahl der Hashtags unter dem Video", "Vor allem vom Werbebudget, das hinter dem Video steht"], c: 0, e: "TikTok zeigt jedes Video erst einer kleinen Testgruppe. Wird es bis zum Ende geschaut und geteilt, bekommt es mehr Reichweite. Die Followerzahl spielt eine kleinere Rolle." }
  ]}
 ];

@@ -179,7 +179,7 @@ export const L_EINF = [
    "**Führung:** sich durchsetzen, auch beim Vorstand",
    "**Führung:** Entscheidungen treffen, Projekte leiten"
   ]},
-  { k: "text", h: "Dreyfus: 5 Stufen vom Anfänger zum Experten", b: "**1 Anfänger** folgt strikt Regeln.\n**2 Fortgeschritten** sieht nur Teile.\n**3 Kompetent** plant und setzt Prioritäten.\n**4 Erfahren** sieht das Ganze.\n**5 Experte** handelt aus dem Bauch, bricht Regeln." },
+  { k: "bild", svg: "kompetenz", h: "Dreyfus: 5 Stufen vom Anfänger zum Experten", b: "Mit Erfahrung steigst du auf. Der **Experte** handelt aus dem Bauch und bricht auch mal Regeln." },
   { k: "text", h: "Viel Praxis zählt so viel wie ein Zertifikat", b: "Ideal ist Erfahrung in digitaler Kommunikation, Service und Krisen. Ein Studium hilft, eine gleichwertige Ausbildung ersetzt es. Viel Praxis wiegt ein Zertifikat mit wenig Praxis auf." },
   { k: "merke", h: "5 Bereiche, bewertet in 5 Stufen", b: "5 Bereiche: fachlich, methodisch, persönlich, sozial, Führung. Du stufst Bewerber nach Dreyfus von 1 bis 5 ein.", esel: "Bereiche: „Freche Mäuse putzen sonntags Fenster.“ Stufen: „Am Fluss kocht Emil Eier.“" },
   { k: "check", q: "Wie viele Bereiche hat das Kompetenzmodell des BVCM für Social Media Manager?", a: ["5: fachlich, methodisch, persönlich, sozial, Führung", "3: strategisch, operativ und analytisch", "4: Strategie, Content, Community und Ads", "7: von Strategie bis Führung des Teams"], c: 0, e: "Das Kompetenzmodell hat 5 Bereiche. Strategisch, operativ und analytisch sind dagegen die 3 Ebenen der Aufgaben. 7 ist die Zahl der Aufgabenbereiche." }
