@@ -43,6 +43,10 @@ const satzTeile = t => t.replace(/\*\*/g, "").split(/\n+|(?<=[.!?:])\s+(?=[A-ZÄ
 for (const m of MODULE) for (const l of m.lektionen) {
   if (!l.quelle) continue; // nur Lektionen aus den Kursunterlagen
   if (l.folien.filter(f => f.k === "check").length !== 1) fehler.push(`Lektion ${l.id}: genau ein Kurz-Check nötig`);
+  // Überschriften müssen sagen, worum es geht – keine Leerformeln, keine Doppelten in einer Lektion
+  const hs = l.folien.map(f => f.h).filter(Boolean);
+  for (const h of hs) if (/^(Worum es geht|Das Wichtigste|Überblick|Beispiel|Einführung|Fazit|Merke|Zusammenfassung)$/i.test(h.trim())) fehler.push(`Lektion ${l.id}: nichtssagende Überschrift „${h}“`);
+  if (new Set(hs).size !== hs.length) fehler.push(`Lektion ${l.id}: doppelte Überschrift`);
   for (const f of l.folien) for (const t of [f.h, f.b, f.q, f.e, ...(f.l || []), ...(f.a || [])].filter(Boolean)) {
     if (ABK.test(t)) fehler.push(`Lektion ${l.id}: Abkürzung „${t.match(ABK)[0]}“ – ${t.slice(0, 50)}…`);
     for (const satz of satzTeile(t)) if (woerter(satz) > 18) fehler.push(`Lektion ${l.id}: Satz mit mehr als 18 Wörtern – ${satz.slice(0, 50)}…`);
