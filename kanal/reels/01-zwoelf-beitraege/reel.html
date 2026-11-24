@@ -1,0 +1,100 @@
+<!doctype html><html lang="de"><meta charset="utf-8"><title>smm.mit.ki – Reel 01: 12 Beiträge bis Montag</title>
+<link rel="stylesheet" href="../../vorlage/vorlage.css">
+<style>
+body{background:#000;margin:0}
+#c{position:absolute;left:0;top:0;width:1080px;height:1920px}
+.szene{position:absolute;left:0;top:0;margin:0;background:none}
+/* Farbverlauf hinter der Schrift, damit sie vor der Kulisse lesbar bleibt */
+.szene::before{content:"";position:absolute;left:0;right:0;top:0;height:1000px;background:linear-gradient(var(--grund) 0,var(--grund) 62%,transparent);opacity:.94}
+.szene>*{position:relative}
+.szene>.sprech{position:absolute}
+#s2::before{height:560px}
+.reel h1{font-size:88px} #s1 h1{font-size:66px} .reel h1.riesig{font-size:124px}
+.reel .feld{font-size:52px;line-height:1.36;min-height:500px;margin-top:0} .reel .chat{font-size:58px;margin-top:44px;transform-origin:0 100%}
+.cursor{display:inline-block;width:6px;height:1em;background:var(--tinte);vertical-align:-.14em;margin-left:3px}
+.reel .zeile{font-size:44px}
+</style>
+<canvas id="c"></canvas>
+<div class="szene blatt reel g-koralle" id="s1">
+  <h1>12 Beiträge. Bis Montag.</h1>
+  <div class="chat" id="nachricht"><small>Kundin, Freitag 17:42</small>Können wir bis Montag noch 12 Beiträge für Dezember haben?</div>
+</div>
+<div class="szene blatt reel g-tinte" id="s2">
+  <div class="feld" id="tipp"></div>
+</div>
+<div class="szene blatt reel g-minze" id="s3">
+  <h1 style="margin-bottom:30px">Fertig ist der Plan.</h1>
+  <div class="zeile"><b>01.12.</b><span>Reel</span><span>Adventsröstung</span></div>
+  <div class="zeile"><b>03.12.</b><span>Karussell</span><span>Geschenk-Ideen</span></div>
+  <div class="zeile"><b>05.12.</b><span>Story</span><span>Blick in die Rösterei</span></div>
+  <div class="zeile"><b>08.12.</b><span>Reel</span><span>Kaffee-Irrtümer</span></div>
+  <span class="sprech rechts" id="mehr" style="left:84px;top:1130px">und 8 weitere!</span>
+</div>
+<div class="szene blatt reel g-minze" id="s4">
+  <h1 class="riesig" id="schluss" style="transform-origin:0 50%;font-size:112px">Speichern. Montag brauchst du’s.</h1>
+  <p id="wo" style="font-size:46px;font-weight:700;margin-top:28px;transform-origin:0 50%">Der ganze Prompt steht im ersten Kommentar.</p>
+</div>
+<script src="../../vorlage/glimm.js"></script>
+<script>
+const TEXT = 'Erstelle einen Redaktionsplan mit 12 Instagram-Beiträgen für [eine Kaffeerösterei in Leipzig] im [Dezember]. Als Tabelle mit Datum, Format, Thema und Aufhänger.';
+const DAUER = 14, B = 720, H = 1280;      // 3D-Bild wird in 720×1280 gerechnet und auf 1080×1920 gezogen; Schrift bleibt scharf
+const $ = id => document.getElementById(id), g = new Glimm($('c'));
+const kl = (x, a = 0, b = 1) => Math.max(a, Math.min(b, x));
+const weich = x => { x = kl(x); return x * x * (3 - 2 * x); };
+const mix = (a, b, k) => a + (b - a) * k;
+const pop = (t, s, d = .35) => { const x = kl((t - s) / d), c = 1.70158; return x === 0 ? 0 : 1 + (c + 1) * Math.pow(x - 1, 3) + c * Math.pow(x - 1, 2); };
+const T = [2.9, 8.6, 11.5];               // Szenenwechsel
+const TIPP = [3.3, 6.5];                  // Prompt wird 3,2 s getippt und bleibt dann 2 s stehen
+// Ein Raum, drei Lichtstimmungen
+const LICHT = {
+  abend:  { uHimmel: 0, uLicht: [1.05, .68, .42], uUmg: [.78, .62, .72], uStehlampe: .5, uBildschirm: .3 },
+  nacht:  { uHimmel: 1, uLicht: [.05, .06, .16], uUmg: [.15, .17, .42], uStehlampe: 1, uBildschirm: 1 },
+  morgen: { uHimmel: 2, uLicht: [.9, .87, .82], uUmg: [.82, .82, .88], uStehlampe: 0, uBildschirm: .2 } };
+function zeige(t) {
+  const s = t < T[0] ? 1 : t < T[1] ? 2 : t < T[2] ? 3 : 4;
+  [1, 2, 3, 4].forEach(i => $('s' + i).style.display = i === s ? 'block' : 'none');
+  $('nachricht').style.transform = `scale(${pop(t, .25)})`;
+  const n = Math.floor(kl((t - TIPP[0]) / (TIPP[1] - TIPP[0])) * TEXT.length);
+  $('tipp').innerHTML = TEXT.slice(0, n).replace(/\[([^\]]*)\]?/g, '<mark>$1</mark>') + (Math.floor(t * 3) % 2 ? '' : '<span class="cursor"></span>');
+  $('tipp').style.transform = `scale(${pop(t, T[0] + .05, .3)})`;
+  document.querySelectorAll('#s3 .zeile').forEach((z, i) => z.style.transform = `scale(${pop(t, T[1] + .3 + i * .3)})`);
+  $('mehr').style.transform = `scale(${pop(t, T[1] + 1.7)})`;
+  $('schluss').style.transform = `scale(${pop(t, T[2] + .75, .3)})`;
+  $('wo').style.transform = `scale(${pop(t, T[2] + 1.5)})`;
+
+  let p, k;
+  const blinzeln = [1.9, 4.4, 7.4, 10.2, 13.2].some(z => Math.abs(t - z) < .07) ? 1 : 0;
+  if (s === 1) {            // Glimm liest die Nachricht, erschrickt, Kamera fährt aufs Gesicht
+    k = weich((t - .7) / .2);
+    p = Glimm.misch('handy', 'schreck', k);
+    const zoom = weich((t - .75) / .5);
+    Object.assign(p, { uSet: 1, ...LICHT.abend, uTisch: [2.75, -.62, -.9], uKamDist: mix(12, 8.6, zoom), uKamZiel: [0, mix(1.95, 1.62, zoom), 0], uKamHoch: .03, uAA: 1,
+      uStauch: t > .7 && t < 1.1 ? -Math.sin((t - .7) / .4 * Math.PI) * .12 : 0,
+      uOhr: t > .7 && t < 1.3 ? Math.sin((t - .7) * 40) * .5 * (1.3 - t) : Math.sin(t * 3) * .05 });
+  } else if (s === 2) {     // Glimm tippt am Tresen, Kamera schräg von der Seite; ist der Prompt fertig, geht die Lampe an
+    const fertig = weich((t - TIPP[1] - .1) / .3), tippt = t > TIPP[0] && t < TIPP[1] ? 1 : 0;
+    p = { ...GLIMM_LAUNEN.froh, uMund: mix(-.1, 1, fertig), uLid: mix(.22, .05, fertig), uBrL: mix(.35, -.2, fertig), uBrR: mix(.35, -.2, fertig), uBrH: mix(-.02, .06, fertig), uDreh: 0,
+      uVor: 1 - fertig, uArmL: mix(-.28 + .13 * tippt * Math.sin(t * 24), .95, fertig), uArmR: mix(-.28 + .13 * tippt * Math.sin(t * 24 + 3.14), .95, fertig),
+      uLampe: fertig > 0 ? fertig : .15 + .5 * tippt * (Math.sin(t * 31) > .2 ? 1 : 0) * (Math.sin(t * 7) > -.3 ? 1 : .2),
+      uHops: t > TIPP[1] + .1 ? Math.abs(Math.sin((t - TIPP[1] - .1) * 5.5)) * .22 * Math.exp(-(t - TIPP[1] - .1) * 1.2) : 0,
+      uPos: [0, 0, -.95], uSet: 1, ...LICHT.nacht, uTisch: [0, -.62, .75],
+      uAA: 1, uKamDreh: mix(.55, .38, weich((t - T[0]) / 5.5)), uKamHoch: .2, uKamDist: mix(8.2, 7.2, weich((t - T[0]) / 5.5)), uKamZiel: [0, mix(1.75, 1.9, fertig), .1], uOhr: Math.sin(t * 3) * .05 };
+  } else if (s === 3) {     // Der Plan baut sich auf: Glimm wirft jede Zeile mit einer Armbewegung hoch
+    p = { ...GLIMM_LAUNEN.froh };
+    const wurf = [0, 1, 2, 3].reduce((a, i) => Math.max(a, Math.exp(-Math.pow((t - (T[1] + .3 + i * .3)) / .12, 2))), 0);
+    Object.assign(p, { uArmR: mix(.2, 1, wurf), uArmL: mix(.2, 1, wurf), uSet: 3, ...LICHT.morgen, uTisch: [2.75, -.62, -.9], uPos: [.55, 0, 0], uKamDist: 12, uKamZiel: [0, 2.3, 0], uKamHoch: .03, uAA: 1,
+      uHops: t > T[1] + 1.6 ? Math.abs(Math.sin((t - T[1] - 1.6) * 5.5)) * .26 * Math.exp(-(t - T[1] - 1.6) * .9) : 0, uOhr: Math.sin(t * 3) * .05 });
+  } else {                  // Glimm drückt den Speichern-Knopf, Kamera ruckt heran
+    const druck = weich((t - T[2] - .55) / .14), los = weich((t - T[2] - .95) / .3);
+    p = { ...GLIMM_LAUNEN.froh, uDreh: 0, uVor: 1, uArmL: -.9, uArmR: mix(.35, -.28, druck), uLid: .1,
+      uPos: [0, 0, -.95], uSet: 2, ...LICHT.morgen, uTisch: [0, -.62, .75], uKnopf: druck * (1 - .5 * los),
+      uAA: 1, uKamDreh: .48, uKamHoch: .22, uKamDist: mix(9.2, 8.2, druck), uKamZiel: [0, 1.72, .1], uOhr: Math.sin(t * 3) * .05, uStauch: -.05 * druck * (1 - los) };
+  }
+  p.uLid = Math.max(p.uLid, blinzeln); p.uStauch = (p.uStauch || 0) + Math.sin(t * 2.2) * .012;
+  g.zeichne(p, B, {}, H);
+  // Farbverlauf hinter der Schrift: nimmt die Wandfarbe, die gerade oben im Bild zu sehen ist
+  const px = new Uint8Array(4); g.gl.readPixels(Math.round(B * .08), Math.round(H * .93), 1, 1, g.gl.RGBA, g.gl.UNSIGNED_BYTE, px);
+  $('s' + s).style.setProperty('--grund', `rgb(${px[0]},${px[1]},${px[2]})`);
+}
+zeige(0);
+</script>

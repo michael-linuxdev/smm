@@ -1,0 +1,23 @@
+Der ganze Prompt zum Kopieren 👇 Alles in eckigen Klammern ersetzt du.
+
+Du bist Social Media Manager für [Unternehmen, Branche, Ort].
+
+Aufgabe: Erstelle einen Redaktionsplan mit 12 Instagram-Beiträgen für [Monat].
+
+Das musst du wissen:
+- Zielgruppe: [wer, Alter, was sie beschäftigt]
+- Ziel des Monats: [z. B. Probierpaket verkaufen]
+- Markenton: [z. B. locker, per Du, kurze Sätze]. So klingen wir: [1 bis 2 eigene Beiträge einfügen]
+- Unsere Themen: [3 bis 4 Themensäulen, z. B. Produkt, Blick hinter die Kulissen, Wissen, Kundenstimmen]
+- Feste Termine: [Aktionen, Feiertage, Veranstaltungen]
+- Das geht nicht: [Tabus, z. B. keine Rabattschlacht]
+
+So gehst du vor:
+1. Stell mir zuerst bis zu 5 Rückfragen, wenn dir etwas fehlt. Warte auf meine Antwort.
+2. Erstelle dann den Plan als Tabelle mit den Spalten: Datum, Format (Reel, Karussell oder Story), Themensäule, Thema, Aufhänger im ersten Satz, Ziel des Beitrags, Handlungsaufforderung.
+3. Verteile die Formate so: [z. B. 5 Reels, 4 Karussells, 3 Storys]. Jede Themensäule kommt mindestens zweimal vor, kein Thema doppelt.
+4. Markiere die 3 Beiträge mit dem meisten Aufwand.
+
+Erfinde keine Fakten über das Unternehmen. Wenn du etwas annimmst, schreib „Annahme:“ davor.
+
+Danach geht es weiter mit: „Schreib Beitrag Nr. 3 fertig aus: Text mit höchstens 80 Wörtern, 5 Hashtags und eine Idee fürs Bild.“
