@@ -137,7 +137,8 @@ vec3 himmel(vec2 u){
 }
 // Kulisse (uSet): 0 keine (durchsichtiger Grund), 1 Büro, 2 Büro mit Speichern-Knopf auf dem Schreibtisch, 3 Büro (wie 1)
 vec2 map(vec3 p){
-  vec2 r = glimmMap(lokal(p));
+  vec3 gp = lokal(p); float gb = length(gp-vec3(0.,.35,0.))-2.5;               // weit weg von Glimm: nur Abstand schätzen (spart Rechenzeit)
+  vec2 r = gb>.5 ? vec2(gb,1.) : glimmMap(gp);
   if(uSet>.5){
     float ra = min(min(p.y+1.3, p.z+3.4), min(p.x+4.8, 4.8-p.x)); if(ra<r.x) r=vec2(ra,10.);
     vec2 e = rueckwand(p); if(e.x<r.x) r=e;
@@ -146,8 +147,8 @@ vec2 map(vec3 p){
   }
   return r;
 }
-vec3 normale(vec3 p){ vec2 e=vec2(.002,0.); return normalize(vec3(map(p+e.xyy).x-map(p-e.xyy).x, map(p+e.yxy).x-map(p-e.yxy).x, map(p+e.yyx).x-map(p-e.yyx).x)); }
-float schatten(vec3 ro, vec3 rd){ nurKoerper=true; float s=1., t=.05; for(int i=0;i<30;i++){ float h=map(ro+rd*t).x; s=min(s,9.*h/t); t+=clamp(h,.03,.35); if(s<.01||t>7.) break; } nurKoerper=false; return clamp(s,0.,1.); }
+vec3 normale(vec3 p){ const vec2 k=vec2(1.,-1.); const float e=.0015; return normalize(k.xyy*map(p+k.xyy*e).x + k.yyx*map(p+k.yyx*e).x + k.yxy*map(p+k.yxy*e).x + k.xxx*map(p+k.xxx*e).x); }
+float schatten(vec3 ro, vec3 rd){ nurKoerper=true; float s=1., t=.05; for(int i=0;i<24;i++){ float h=map(ro+rd*t).x; s=min(s,9.*h/t); t+=clamp(h,.04,.45); if(s<.01||t>7.) break; } nurKoerper=false; return clamp(s,0.,1.); }
 float ao(vec3 p, vec3 n){ float a=0., s=1.; for(int i=1;i<=4;i++){ float h=.07*float(i); a+=(h-map(p+n*h).x)*s; s*=.6; } return clamp(1.-2.2*a,0.,1.); }
 vec4 bild(vec2 uv){
   vec3 ro = uKamZiel + uKamDist*vec3(sin(uKamDreh)*cos(uKamHoch), sin(uKamHoch), cos(uKamDreh)*cos(uKamHoch));

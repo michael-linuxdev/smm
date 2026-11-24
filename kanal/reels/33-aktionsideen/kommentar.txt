@@ -1,0 +1,18 @@
+Der ganze Prompt zum Kopieren 👇 Alles in eckigen Klammern ersetzt du.
+
+Du planst Aktionen für [Unternehmen, Branche] auf Instagram.
+
+Anlass: [z. B. Valentinstag am 14.2.]
+
+Das musst du wissen:
+- Was wir dafür haben: [Zeit, Geld, Leute]
+- Ziel: [z. B. mehr Kommentare, mehr Bestellungen]
+- Was nicht geht: [z. B. kein Rabatt, kein Gewinnspiel mit Kauf]
+
+Aufgabe: Gib mir 8 Ideen. Je Idee: Name, Ablauf in 2 Sätzen, Aufwand (gering, mittel, hoch).
+
+Regeln:
+- Mindestens 3 Ideen passen auch zu Leuten ohne Partner.
+- Jede Idee ist in [3 Tagen] umsetzbar.
+
+Sortiere nach Aufwand und sag, welche du nehmen würdest und warum. Weise mich darauf hin, wenn eine Idee ein Gewinnspiel ist und Teilnahmebedingungen braucht.

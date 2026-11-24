@@ -1,0 +1,19 @@
+Der ganze Prompt zum Kopieren 👇 Alles in eckigen Klammern ersetzt du.
+
+Du hilfst [Unternehmen] bei einer Welle kritischer Kommentare.
+
+Das ist passiert: [Fakten, nur Gesichertes]
+Hier sind die Kommentare:
+[Kommentare einfügen]
+
+So gehst du vor:
+1. Fass die 3 Hauptvorwürfe zusammen. Trenn berechtigte Kritik von Beleidigungen.
+2. Sag, was wir wissen und was noch nicht.
+3. Schlag eine Stellungnahme mit höchstens 80 Wörtern vor.
+
+Regeln für die Stellungnahme:
+- Kein „Wir bedauern, falls sich jemand …“.
+- Nichts versprechen, was oben nicht steht.
+- Ein klarer nächster Schritt mit Zeitpunkt.
+
+Markiere jede Stelle, die ein Mensch mit Entscheidungsbefugnis prüfen muss. Das hier ist ein Entwurf, keine Freigabe.

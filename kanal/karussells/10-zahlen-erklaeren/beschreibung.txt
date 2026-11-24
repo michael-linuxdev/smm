@@ -1,0 +1,23 @@
+Der Prompt der Woche, Baustein für Baustein 🧩
+„Was bedeuten diese Zahlen? Kurz bitte. Ich hab gleich einen Termin.“ So wird aus der Kurzfassung ein Prompt, der trägt:
+
+Du erklärst Instagram-Zahlen für [wer, z. B. die Inhaberin eines Cafés].
+
+Hier sind die Zahlen für [Monat] und den Vormonat:
+[Zahlen einfügen]
+
+Aufgabe:
+1. Erklär in 3 Sätzen, was gut lief und was nicht.
+2. Erklär jedes Fachwort beim ersten Mal in einem Halbsatz.
+3. Nenn eine Sache, die wir nächsten Monat ausprobieren.
+
+Regeln:
+- Keine Prozentzahlen ohne die echten Zahlen dahinter.
+- Kein „signifikant“, kein „Performance“.
+- Wenn zwei Zahlen sich widersprechen, sag das offen.
+
+Schreib so, dass man es in 30 Sekunden vorlesen kann.
+
+Alles in eckigen Klammern ersetzt du. Speichern 💡
+
+#socialmediamanager #socialmediamarketing #ki #prompt #promptderwoche

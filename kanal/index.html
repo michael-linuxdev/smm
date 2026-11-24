@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="de">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex">
+<title>smm.mit.ki – Redaktionsplan</title>
+<style>
+@font-face{font-family:Poppins;src:url(../fonts/Poppins-Bold.woff) format("woff");font-weight:700}
+:root{--tinte:#1d1b4b;--marker:#ffe14a;--minze:#3ddbb4;--koralle:#ff8a6b;--blau:#4f6bff;--veilchen:#b9a4ff;--grund:#f6f3ff;--linie:#d9d3f3}
+*{box-sizing:border-box;margin:0}
+body{font:17px/1.45 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;color:var(--tinte);background:var(--grund);padding-bottom:env(safe-area-inset-bottom)}
+h1,h2,h3{font-family:Poppins,sans-serif;font-weight:700;line-height:1.15}
+header{background:var(--tinte);color:#fff;padding:26px 20px 22px;display:flex;gap:14px;align-items:center}
+header img{width:92px;height:92px;border-radius:50%;flex:none}
+header h1{font-size:26px} header p{opacity:.85;margin-top:4px}
+main{max-width:720px;margin:0 auto;padding:16px 14px 60px}
+.filter{display:flex;gap:8px;overflow-x:auto;padding:4px 0 14px;position:sticky;top:0;background:var(--grund);z-index:2}
+.filter button{flex:none;font:inherit;font-weight:700;border:2px solid var(--tinte);background:#fff;color:var(--tinte);border-radius:999px;padding:8px 16px;min-height:44px}
+.filter button[aria-pressed=true]{background:var(--tinte);color:#fff}
+h2{font-size:19px;margin:22px 4px 8px}
+.heute h2::after{content:"diese Woche";font:700 13px/1 inherit;background:var(--marker);border-radius:8px;padding:4px 8px;margin-left:10px;vertical-align:middle}
+details{background:#fff;border:2px solid var(--linie);border-radius:18px;margin-bottom:10px;overflow:hidden}
+details[open]{border-color:var(--tinte)}
+summary{list-style:none;display:grid;grid-template-columns:64px 1fr auto;gap:10px;align-items:center;padding:12px 14px;min-height:64px;cursor:pointer}
+summary::-webkit-details-marker{display:none}
+.tag{font-weight:700;font-size:14px;line-height:1.2}
+.titel{font-weight:700} .rubrik{display:inline-block;font-size:13px;font-weight:700;border-radius:8px;padding:2px 8px;margin-bottom:3px}
+.r-Prompt{background:var(--marker)} .r-Claude{background:var(--minze)} .r-Werkzeug-Check{background:var(--koralle)} .r-Spickzettel{background:var(--veilchen)}
+.stand{font-size:13px;font-weight:700;border-radius:999px;padding:4px 10px;border:2px solid var(--linie);white-space:nowrap}
+.stand.ok{background:var(--tinte);color:#fff;border-color:var(--tinte)}
+.inhalt{padding:4px 14px 16px}
+video{width:100%;max-width:300px;border-radius:14px;display:block;background:#000;aspect-ratio:9/16}
+.seiten{display:flex;gap:8px;overflow-x:auto;scroll-snap-type:x mandatory}
+.seiten a{flex:none;width:72%;max-width:300px;scroll-snap-align:start}
+.seiten img{width:100%;border-radius:12px;display:block}
+h3{font-size:16px;margin:16px 0 6px;display:flex;justify-content:space-between;align-items:center;gap:10px}
+h3 button,.laden a{font:inherit;font-size:15px;font-weight:700;background:var(--tinte);color:#fff;border:0;border-radius:12px;padding:10px 16px;min-height:44px;text-decoration:none;display:inline-block}
+pre{white-space:pre-wrap;font-family:inherit;font-size:15px;line-height:1.45;background:var(--grund);border-radius:12px;padding:12px 14px;max-height:260px;overflow:auto}
+.laden{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.leer{background:var(--grund);border-radius:12px;padding:14px;font-weight:700}
+button:focus-visible,summary:focus-visible,a:focus-visible{outline:3px solid var(--blau);outline-offset:2px}
+</style>
+<header><img src="profil/profilbild.png" alt=""><div><h1>smm.mit.ki</h1><p id="stand">Redaktionsplan wird geladen …</p></div></header>
+<main>
+  <div class="filter" id="filter"></div>
+  <div id="plan"></div>
+</main>
+<script>
+const esc = s => s.replace(/&/g, '&amp;').replace(/</g, '&lt;');
+const montag = d => { const x = new Date(d + 'T12:00'); x.setDate(x.getDate() - (x.getDay() + 6) % 7); return x; };
+let PLAN = [], auswahl = 'Alle';
+function zeichne() {
+  const heute = montag(new Date().toISOString().slice(0, 10)).toDateString();
+  let html = '', woche = '';
+  for (const p of PLAN.filter(p => auswahl === 'Alle' || p.rubrik === auswahl)) {
+    const mo = montag(p.datum), w = mo.toDateString();
+    if (w !== woche) { html += `${woche ? '</section>' : ''}<section class="${w === heute ? 'heute' : ''}"><h2>Woche ab ${mo.getDate()}.${mo.getMonth() + 1}.</h2>`; woche = w; }
+    const id = p.art + p.nr, kopie = (name, text) => `<h3>${name}<button data-kopie="${id}-${name}">Kopieren</button></h3><pre id="${id}-${name}">${esc(text)}</pre>`;
+    const medien = !p.fertig ? '<p class="leer">Wird noch gerechnet.</p>' : p.art === 'Reel'
+      ? `<video controls preload="none" playsinline poster="${p.ordner}/titelbild.jpg" src="${p.ordner}/reel.mp4"></video><div class="laden"><a href="${p.ordner}/reel.mp4" download="smm-${p.nr}.mp4">Reel laden</a><a href="${p.ordner}/titelbild.jpg" download="smm-${p.nr}-titel.jpg">Titelbild laden</a></div>`
+      : `<div class="seiten">${Array.from({ length: p.seiten }, (_, i) => `<a href="${p.ordner}/${i + 1}.png" download="smm-k${p.nr}-${i + 1}.png"><img loading="lazy" src="${p.ordner}/${i + 1}.png" alt="Seite ${i + 1}"></a>`).join('')}</div><p style="font-size:14px;margin-top:6px">Seite antippen zum Laden.</p>`;
+    html += `<details><summary><span class="tag">${p.tag}<br>${p.art}</span><span><span class="rubrik r-${p.rubrik.split(' ')[0]}">${p.rubrik}</span><br><span class="titel">${esc(p.titel)}</span></span><span class="stand ${p.fertig ? 'ok' : ''}">${p.fertig ? 'fertig' : 'offen'}</span></summary>
+      <div class="inhalt">${medien}${kopie('Beschreibung', p.beschreibung)}${p.kommentar ? kopie('Kommentar', p.kommentar) + '<p style="font-size:14px;margin-top:6px">Als ersten Kommentar posten und anheften.</p>' : ''}</div></details>`;
+  }
+  document.getElementById('plan').innerHTML = html + '</section>';
+}
+document.addEventListener('click', async e => {
+  const b = e.target.closest('[data-kopie]'); if (!b) return;
+  const text = document.getElementById(b.dataset.kopie).textContent;
+  try { await navigator.clipboard.writeText(text); b.textContent = 'Kopiert'; } catch { b.textContent = 'Bitte von Hand kopieren'; }
+  setTimeout(() => b.textContent = 'Kopieren', 1800);
+});
+fetch('plan.json', { cache: 'no-store' }).then(r => r.json()).then(p => {
+  PLAN = p;
+  const fertig = p.filter(x => x.fertig).length;
+  document.getElementById('stand').textContent = `Redaktionsplan bis ${new Date(p[p.length - 1].datum).toLocaleDateString('de-DE')}: ${p.length} Beiträge, ${fertig} fertig`;
+  document.getElementById('filter').innerHTML = ['Alle', 'Prompt der Woche', 'Claude am Rechner', 'Werkzeug-Check', 'Spickzettel'].map(r => `<button aria-pressed="${r === auswahl}">${r}</button>`).join('');
+  document.getElementById('filter').onclick = e => { if (e.target.tagName !== 'BUTTON') return; auswahl = e.target.textContent; [...e.currentTarget.children].forEach(b => b.setAttribute('aria-pressed', b === e.target)); zeichne(); };
+  zeichne();
+}).catch(() => document.getElementById('stand').textContent = 'Der Plan konnte nicht geladen werden. Bitte Seite neu laden.');
+</script>
+</html>

@@ -1,0 +1,24 @@
+Der Prompt der Woche, Baustein für Baustein 🧩
+„Unter dem Post hat einer gemeckert. Antworte nett, aber bestimmt!“ So wird aus der Kurzfassung ein Prompt, der trägt:
+
+Du betreust die Kommentare für [Unternehmen, Branche].
+
+Aufgabe: Schreib 3 Antworten auf diesen Kommentar:
+[Kommentar einfügen]
+
+Das musst du wissen:
+- Was wirklich passiert ist: [Fakten, soweit bekannt]
+- Markenton: [z. B. freundlich, per Du]
+- Was wir anbieten können: [z. B. Ersatz, Rückruf, nichts]
+
+Regeln:
+- Höchstens 2 Sätze je Antwort.
+- Erst Verständnis zeigen, dann den nächsten Schritt nennen.
+- Nichts zugeben oder versprechen, was oben nicht steht.
+- Keine Floskeln wie „Wir bedauern die Unannehmlichkeiten“.
+
+Gib drei Varianten: sachlich, herzlich, kurz. Sag dazu, wann ich besser gar nicht öffentlich antworte.
+
+Alles in eckigen Klammern ersetzt du. Speichern 💡
+
+#socialmediamanager #socialmediamarketing #ki #prompt #promptderwoche

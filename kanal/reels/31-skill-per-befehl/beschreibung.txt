@@ -1,0 +1,13 @@
+Ein Befehl, fünf Beiträge 💻
+
+So geht’s:
+1. Skill „artikel-zu-posts“ anlegen
+2. Schritte festlegen: lesen, kürzen, 5 Formate
+3. In Claude Code /artikel-zu-posts tippen
+4. Artikel anhängen, fertig
+
+Skills von Hand starten: Mit Schrägstrich und Namen rufst du einen Skill direkt auf.
+
+Was soll Glimm als Nächstes am Rechner zeigen? Schreib es in die Kommentare.
+
+#socialmediamanager #socialmediamarketing #ki #prompt #claude #claudeamrechner
