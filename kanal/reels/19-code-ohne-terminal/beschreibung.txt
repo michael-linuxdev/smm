@@ -1,0 +1,13 @@
+Claude Code, ganz ohne Terminal 💻
+
+So geht’s:
+1. Claude-App öffnen
+2. Auf den Reiter „Code“ gehen
+3. Einen Ordner auswählen
+4. Aufgabe in normalen Worten stellen
+
+Was ist anders als im Chat?: Im Chat bekommst du Text. Hier arbeitet Claude in deinen Dateien. Dafür brauchst du ein Bezahl-Abo.
+
+Was soll Glimm als Nächstes am Rechner zeigen? Schreib es in die Kommentare.
+
+#socialmediamanager #socialmediamarketing #ki #prompt #claude #claudeamrechner

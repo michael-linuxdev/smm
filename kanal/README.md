@@ -21,3 +21,13 @@ Inhalte für den Instagram-Kanal **smm.mit.ki** (KI-Werkzeuge für neue Social M
     python3 werkzeug/reel.py <pfad>/reel.html <pfad>/reel.mp4 <dauer> [von bis]
 
 Ein Reel in Büro-Kulisse braucht etwa 2,3 Sekunden pro Bild. Lange Reels in Abschnitten rechnen (Bildnummern `von bis`), der letzte Abschnitt setzt das Video zusammen.
+
+## Redaktionsplan und Website
+
+- `werkzeug/inhalt.py` ist die eine Quelle für Plan und Texte. Ein Aufruf schreibt `plan.json` und legt die Ordner unter `reels/` und `karussells/` an.
+- `index.html` zeigt den Plan unter smm.micana.de/kanal/: je Beitrag Video oder Seiten, Beschreibung und Kommentar zum Kopieren.
+- `vorlage/reel.js` baut ein Reel aus einer Liste von Szenen (nachricht, tippen, liste, karte, schluss).
+- `python3 werkzeug/alle.py` rechnet alle offenen Reels, lässt sich unterbrechen und fortsetzen. Danach `inhalt.py` erneut aufrufen, damit `plan.json` den Stand „fertig“ kennt.
+- `python3 werkzeug/seiten.py <seiten.html> <ordner>` rechnet die Seiten eines Karussells.
+
+Die Angaben im Werkzeug-Check (Freitag) stammen aus Allgemeinwissen und sind nicht einzeln gegen die Anbieterseiten geprüft. Vor dem Posten kurz gegenlesen.

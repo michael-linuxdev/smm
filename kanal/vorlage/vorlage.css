@@ -1,5 +1,5 @@
 /* smm.mit.ki – Vorlage für Karussells (1080×1350) und Reels (1080×1920)
-   Fest bleibt: Blink (die gelbe Figur), Gelb nur für Blink und Markierungen, die fette Schrift, der Reiter.
+   Fest bleibt: Glimm (die 3D-Figur, siehe glimm.js), Gelb nur für Glimms Lampe und Markierungen, die fette Schrift, der Reiter.
    Wechseln darf: die Grundfarbe (Klasse g-…) und der Bildaufbau.
    Kleinste Schrift: 40px – alles darunter ist am Handy nicht lesbar. */
 :root{ --tinte:#1d1b4b; --weiss:#fff; --marker:#ffe14a;
@@ -27,9 +27,7 @@ h1.riesig{font-size:132px;line-height:1}
 .wisch{display:flex;align-items:center;gap:14px}
 .wisch svg{width:64px;height:40px;fill:none;stroke:currentColor;stroke-width:8;stroke-linecap:round;stroke-linejoin:round}
 
-/* Blink und seine Sprechblase */
-[data-blink]{position:absolute;display:block;width:var(--g,300px)}
-.blink{display:block;width:100%;overflow:visible}
+/* Sprechblase */
 .sprech{position:absolute;background:var(--weiss);color:var(--tinte);border:5px solid var(--tinte);border-radius:32px;
   padding:20px 34px 24px;font-size:46px;font-weight:700;line-height:1.2}
 .sprech::after{content:"";position:absolute;width:34px;height:34px;background:var(--weiss);border:5px solid var(--tinte);
@@ -70,3 +68,8 @@ mark{background:var(--marker);color:inherit;padding:2px 8px;border-radius:8px;-w
 /* Tabelle als Ergebnis */
 .zeile{display:grid;grid-template-columns:160px 220px 1fr;gap:18px;background:#fff;border:5px solid var(--tinte);border-radius:22px;padding:26px 30px;font-size:42px;font-weight:500;margin-top:18px;align-items:center;color:var(--tinte)}
 .zeile b{font-weight:700}
+
+/* Karussell: Glimm als Bild, Begründung unter dem Baustein */
+.karussell img.g{position:absolute}
+.warum{font-size:46px;line-height:1.3;font-weight:500;margin-top:44px;max-width:600px}
+.karussell .feld{font-size:46px}

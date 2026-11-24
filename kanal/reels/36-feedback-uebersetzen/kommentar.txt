@@ -1,0 +1,18 @@
+Der ganze Prompt zum Kopieren 👇 Alles in eckigen Klammern ersetzt du.
+
+Du hilfst mir, unklares Feedback zu verstehen.
+
+Das ist der Entwurf:
+[Entwurf einfügen]
+Das hat der Kunde gesagt:
+[Feedback wörtlich einfügen]
+
+So gehst du vor:
+1. Nenn 3 mögliche Gründe für das Feedback, vom wahrscheinlichsten zum unwahrscheinlichsten.
+2. Schreib 5 Fragen, die ich dem Kunden stellen kann. Jede lässt sich in einem Satz beantworten.
+3. Schreib eine kurze, freundliche Nachricht, mit der ich die Fragen stelle.
+
+Regeln:
+- Keine Frage, die nach Rechtfertigung klingt.
+- Mindestens eine Frage bietet zwei Möglichkeiten zur Auswahl.
+- Überarbeite den Entwurf noch nicht.

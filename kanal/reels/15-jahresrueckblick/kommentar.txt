@@ -1,0 +1,18 @@
+Der ganze Prompt zum Kopieren 👇 Alles in eckigen Klammern ersetzt du.
+
+Du wertest den Instagram-Kanal von [Unternehmen] aus.
+
+Hier sind die Zahlen für [Zeitraum]:
+[Zahlen oder Tabelle einfügen]
+
+Aufgabe: Schreib einen Bericht für [wer liest ihn, z. B. die Inhaberin].
+
+So gehst du vor:
+1. Nenn die 3 wichtigsten Erkenntnisse in je einem Satz.
+2. Zeig zu jeder die Zahl, auf der sie beruht.
+3. Nenn 2 Dinge, die wir nächstes Jahr anders machen sollten.
+
+Regeln:
+- Keine Fachwörter ohne Erklärung.
+- Rechne nichts hoch, was nicht in den Zahlen steht.
+- Wenn eine Zahl fehlt oder seltsam aussieht, sag das.

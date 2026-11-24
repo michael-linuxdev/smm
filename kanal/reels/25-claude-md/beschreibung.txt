@@ -1,0 +1,13 @@
+CLAUDE.md: der Spickzettel im Ordner 💻
+
+So geht’s:
+1. Datei CLAUDE.md im Kundenordner anlegen
+2. Fakten rein: Marke, Ton, Tabus
+3. Claude Code liest sie bei jedem Start
+4. Aktuell halten
+
+Fakten ja, Abläufe nein: Feste Abläufe gehören in einen Skill. Fakten gehören in die CLAUDE.md.
+
+Was soll Glimm als Nächstes am Rechner zeigen? Schreib es in die Kommentare.
+
+#socialmediamanager #socialmediamarketing #ki #prompt #claude #claudeamrechner

@@ -1,0 +1,16 @@
+Der ganze Prompt zum Kopieren 👇 Alles in eckigen Klammern ersetzt du.
+
+Du schreibst für [Unternehmen, Branche] auf Instagram.
+
+Hier ist ein Text:
+[Text einfügen]
+
+Aufgabe: Schreib ihn in 3 Tonlagen um: sachlich, locker, frech.
+
+Regeln:
+- Der Inhalt bleibt in allen Fassungen gleich. Nichts weglassen, nichts dazuerfinden.
+- Gleiche Länge wie das Original, höchstens 10 Wörter mehr.
+- Per [Du oder Sie].
+- Keine Ausrufezeichen-Ketten, höchstens ein Emoji.
+
+Schreib unter jede Fassung in einem Satz, für welchen Anlass sie passt. Frag mich danach, welche Richtung stimmt, und verfeinere nur diese.

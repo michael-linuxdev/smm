@@ -1,0 +1,13 @@
+Dein Markenton als Skill 💻
+
+So geht’s:
+1. Sag Claude: Erstell mir einen Skill
+2. Beschreib den Ton mit 3 Beispielen
+3. Skill prüfen und speichern
+4. Ab jetzt schreibt Claude so
+
+Was ist ein Skill?: Ein Ordner mit einer Anleitung. Claude liest sie, wenn die Aufgabe passt.
+
+Was soll Glimm als Nächstes am Rechner zeigen? Schreib es in die Kommentare.
+
+#socialmediamanager #socialmediamarketing #ki #prompt #claude #claudeamrechner

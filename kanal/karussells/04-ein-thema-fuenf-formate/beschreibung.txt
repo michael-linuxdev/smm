@@ -1,0 +1,24 @@
+Der Prompt der Woche, Baustein für Baustein 🧩
+„Wir haben einen Blogartikel. Mach daraus bitte Content für den ganzen Monat.“ So wird aus der Kurzfassung ein Prompt, der trägt:
+
+Du bist Social Media Manager für [Unternehmen, Branche].
+
+Aufgabe: Mach aus diesem Text 5 Instagram-Beiträge:
+[Artikel einfügen]
+
+Das musst du wissen:
+- Zielgruppe: [wer]
+- Markenton: [z. B. locker, per Du]
+
+So gehst du vor:
+1. Nenn die 5 stärksten Aussagen des Textes.
+2. Mach aus jeder Aussage einen Beitrag in einem anderen Format: Reel, Karussell, Zitatbild, Story mit Umfrage, Beitrag mit Frage.
+3. Gib je Beitrag an: Aufhänger, Inhalt in Stichpunkten, Handlungsaufforderung.
+
+Regeln:
+- Nichts dazuerfinden, was nicht im Text steht.
+- Kein Beitrag wiederholt einen anderen.
+
+Alles in eckigen Klammern ersetzt du. Speichern 💡
+
+#socialmediamanager #socialmediamarketing #ki #prompt #promptderwoche
