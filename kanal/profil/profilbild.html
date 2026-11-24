@@ -1,0 +1,12 @@
+<!doctype html><html lang="de"><meta charset="utf-8"><title>smm.mit.ki – Profilbild</title>
+<style>*{margin:0}body{background:#888}.blatt{position:relative;width:1080px;height:1080px;overflow:hidden;margin-bottom:40px}
+.blatt img{position:absolute;width:1380px;left:-150px;top:-70px}
+.kreis{position:absolute;inset:0;border-radius:50%;box-shadow:0 0 0 400px rgba(0,0,0,.35)}</style>
+<div class="blatt" id="profilbild" style="background:#1d1b4b"><img class="g"></div>
+<div class="blatt" id="profilbild-koralle" style="background:#ff8a6b"><img class="g"></div>
+<div class="blatt" id="vorschau-kreis" style="background:#1d1b4b"><img class="g"><div class="kreis"></div></div>
+<script src="../vorlage/glimm.js"></script>
+<script>
+const src = Glimm.bild('froh', 1560, { uArmL: -1, uArmR: -1, uDreh: .22, uLid: .12, uBrL: -.3, uBrR: .25 });
+document.querySelectorAll('.g').forEach(i => i.src = src);
+</script>
