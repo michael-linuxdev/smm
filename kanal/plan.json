@@ -95,7 +95,7 @@
   "ordner": "reels/06-kommentar-antwort",
   "beschreibung": "Kundin, Sonntag 22:10: „Unter dem Post hat einer gemeckert. Antworte nett, aber bestimmt!“ 😅\nGeht. Mit einem Prompt. Die Kurzfassung:\n\nSchreib 3 Antworten auf diesen Kommentar: [Kommentar einfügen]. Freundlich, sachlich, höchstens 2 Sätze.\n\nDer ganze Prompt steht im ersten Kommentar 👇 Alles in eckigen Klammern ersetzt du.\nSpeichern nicht vergessen 💡\n\n#socialmediamanager #socialmediamarketing #ki #prompt #promptderwoche",
   "kommentar": "Der ganze Prompt zum Kopieren 👇 Alles in eckigen Klammern ersetzt du.\n\nDu betreust die Kommentare für [Unternehmen, Branche].\n\nAufgabe: Schreib 3 Antworten auf diesen Kommentar:\n[Kommentar einfügen]\n\nDas musst du wissen:\n- Was wirklich passiert ist: [Fakten, soweit bekannt]\n- Markenton: [z. B. freundlich, per Du]\n- Was wir anbieten können: [z. B. Ersatz, Rückruf, nichts]\n\nRegeln:\n- Höchstens 2 Sätze je Antwort.\n- Erst Verständnis zeigen, dann den nächsten Schritt nennen.\n- Nichts zugeben oder versprechen, was oben nicht steht.\n- Keine Floskeln wie „Wir bedauern die Unannehmlichkeiten“.\n\nGib drei Varianten: sachlich, herzlich, kurz. Sag dazu, wann ich besser gar nicht öffentlich antworte.",
-  "fertig": false
+  "fertig": true
  },
  {
   "nr": 7,
@@ -107,7 +107,7 @@
   "ordner": "reels/07-projekt-pro-kunde",
   "beschreibung": "Ein Projekt pro Kunde 💻\n\nSo geht’s:\n1. Neues Projekt anlegen\n2. Markenleitfaden hochladen\n3. Anweisungen fürs Projekt schreiben\n4. Jeder Chat dort kennt den Kunden\n\nNie wieder von vorn erklären: Was im Projekt liegt, weiß Claude in jedem neuen Chat dort.\n\nWas soll Glimm als Nächstes am Rechner zeigen? Schreib es in die Kommentare.\n\n#socialmediamanager #socialmediamarketing #ki #prompt #claude #claudeamrechner",
   "kommentar": null,
-  "fertig": false
+  "fertig": true
  },
  {
   "nr": 8,
@@ -119,7 +119,7 @@
   "ordner": "reels/08-meta-business-suite",
   "beschreibung": "Werkzeug-Check: Meta Business Suite 🔍\nPlanen ohne Extra-Kosten?\n\nWofür: Beiträge für Instagram und Facebook planen\nStark bei: kostenlos, direkt von Meta\nGrenze: nur für Kanäle von Meta\n\nGlimms Urteil: Reicht, solange du nur Instagram und Facebook betreust.\n\nPreise und Funktionen ändern sich, schau vor dem Start beim Anbieter nach.\nWelches Werkzeug soll Glimm als Nächstes prüfen?\n\n#socialmediamanager #socialmediamarketing #ki #prompt #werkzeugcheck #socialmediatools",
   "kommentar": null,
-  "fertig": false
+  "fertig": true
  },
  {
   "nr": 3,
@@ -144,7 +144,7 @@
   "ordner": "reels/09-ein-thema-fuenf-formate",
   "beschreibung": "Kundin, Dienstag 8:15: „Wir haben einen Blogartikel. Mach daraus bitte Content für den ganzen Monat.“ 😅\nGeht. Mit einem Prompt. Die Kurzfassung:\n\nMach aus diesem Artikel 5 Instagram-Beiträge in 5 Formaten: [Artikel einfügen]. Jeder mit eigenem Schwerpunkt.\n\nDer ganze Prompt steht im ersten Kommentar 👇 Alles in eckigen Klammern ersetzt du.\nSpeichern nicht vergessen 💡\n\n#socialmediamanager #socialmediamarketing #ki #prompt #promptderwoche",
   "kommentar": "Der ganze Prompt zum Kopieren 👇 Alles in eckigen Klammern ersetzt du.\n\nDu bist Social Media Manager für [Unternehmen, Branche].\n\nAufgabe: Mach aus diesem Text 5 Instagram-Beiträge:\n[Artikel einfügen]\n\nDas musst du wissen:\n- Zielgruppe: [wer]\n- Markenton: [z. B. locker, per Du]\n\nSo gehst du vor:\n1. Nenn die 5 stärksten Aussagen des Textes.\n2. Mach aus jeder Aussage einen Beitrag in einem anderen Format: Reel, Karussell, Zitatbild, Story mit Umfrage, Beitrag mit Frage.\n3. Gib je Beitrag an: Aufhänger, Inhalt in Stichpunkten, Handlungsaufforderung.\n\nRegeln:\n- Nichts dazuerfinden, was nicht im Text steht.\n- Kein Beitrag wiederholt einen anderen.",
-  "fertig": false
+  "fertig": true
  },
  {
   "nr": 10,
