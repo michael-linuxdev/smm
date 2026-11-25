@@ -352,7 +352,7 @@
   "ordner": "reels/22-bilder-umbenennen",
   "beschreibung": "300 Bilder umbenennen? Macht Claude 💻\n\nSo geht’s:\n1. Kopie des Ordners im Reiter „Code“ öffnen\n2. Sag: Benenne alle Bilder nach Datum und Kunde\n3. Vorschlag ansehen\n4. Erst dann bestätigen\n\nImmer auf einer Kopie: Arbeite nie auf dem einzigen Original. Dann kann nichts verloren gehen.\n\nWas soll Glimm als Nächstes am Rechner zeigen? Schreib es in die Kommentare.\n\n#socialmediamanager #socialmediamarketing #ki #prompt #claude #claudeamrechner",
   "kommentar": null,
-  "fertig": false
+  "fertig": true
  },
  {
   "nr": 23,
@@ -364,7 +364,7 @@
   "ordner": "reels/23-elevenlabs",
   "beschreibung": "Werkzeug-Check: ElevenLabs 🔍\nEine Stimme aus der Maschine?\n\nWofür: Sprechertext für Reels\nStark bei: klingt natürlich, viele Sprachen\nGrenze: KI-Stimme kennzeichnen, Rechte klären\n\nGlimms Urteil: Praktisch, wenn niemand sprechen will. Sag offen, dass es KI ist.\n\nPreise und Funktionen ändern sich, schau vor dem Start beim Anbieter nach.\nWelches Werkzeug soll Glimm als Nächstes prüfen?\n\n#socialmediamanager #socialmediamarketing #ki #prompt #werkzeugcheck #socialmediatools",
   "kommentar": null,
-  "fertig": false
+  "fertig": true
  },
  {
   "nr": 8,
@@ -389,7 +389,7 @@
   "ordner": "reels/24-reel-skript",
   "beschreibung": "Kunde, Montag 10:05: „Wir wollen auch mal so ein Reel. So ein lustiges. Wie die anderen.“ 😅\nGeht. Mit einem Prompt. Die Kurzfassung:\n\nSchreib ein Reel-Skript für [eine Kaffeerösterei]: 15 Sekunden, 4 Szenen, ohne Sprechen. Thema: [Montagmorgen].\n\nDer ganze Prompt steht im ersten Kommentar 👇 Alles in eckigen Klammern ersetzt du.\nSpeichern nicht vergessen 💡\n\n#socialmediamanager #socialmediamarketing #ki #prompt #promptderwoche",
   "kommentar": "Der ganze Prompt zum Kopieren 👇 Alles in eckigen Klammern ersetzt du.\n\nDu planst Reels für [Unternehmen, Branche].\n\nAufgabe: Schreib ein Skript für ein Reel zum Thema [Thema].\n\nDas musst du wissen:\n- Länge: [z. B. 15 Sekunden]\n- Wer dreht und womit: [z. B. eine Person, Handy, im Laden]\n- Was nicht geht: [z. B. keine Gesichter, kein Sprechen]\n\nGib mir eine Tabelle mit den Spalten: Szene, Sekunden, was man sieht, Text im Bild.\n\nRegeln:\n- Die erste Szene dauert höchstens 2 Sekunden und macht neugierig.\n- Jede Szene muss mit einem Handy an einem Ort drehbar sein.\n- Am Ende steht eine Handlungsaufforderung.\n\nSchreib darunter eine Liste: Was ich zum Dreh mitbringen muss.",
-  "fertig": false
+  "fertig": true
  },
  {
   "nr": 25,
@@ -401,7 +401,7 @@
   "ordner": "reels/25-claude-md",
   "beschreibung": "CLAUDE.md: der Spickzettel im Ordner 💻\n\nSo geht’s:\n1. Datei CLAUDE.md im Kundenordner anlegen\n2. Fakten rein: Marke, Ton, Tabus\n3. Claude Code liest sie bei jedem Start\n4. Aktuell halten\n\nFakten ja, Abläufe nein: Feste Abläufe gehören in einen Skill. Fakten gehören in die CLAUDE.md.\n\nWas soll Glimm als Nächstes am Rechner zeigen? Schreib es in die Kommentare.\n\n#socialmediamanager #socialmediamarketing #ki #prompt #claude #claudeamrechner",
   "kommentar": null,
-  "fertig": false
+  "fertig": true
  },
  {
   "nr": 26,
@@ -413,7 +413,7 @@
   "ordner": "reels/26-descript",
   "beschreibung": "Werkzeug-Check: Descript 🔍\nVideo schneiden wie einen Text?\n\nWofür: Interviews und Podcasts kürzen\nStark bei: Wort löschen, Stelle ist raus\nGrenze: braucht Einarbeitung am Rechner\n\nGlimms Urteil: Lohnt sich für lange Aufnahmen. Für kurze Reels ist es zu viel.\n\nPreise und Funktionen ändern sich, schau vor dem Start beim Anbieter nach.\nWelches Werkzeug soll Glimm als Nächstes prüfen?\n\n#socialmediamanager #socialmediamarketing #ki #prompt #werkzeugcheck #socialmediatools",
   "kommentar": null,
-  "fertig": false
+  "fertig": true
  },
  {
   "nr": 9,
@@ -438,7 +438,7 @@
   "ordner": "reels/27-zahlen-erklaeren",
   "beschreibung": "Kundin, Montag 8:50: „Was bedeuten diese Zahlen? Kurz bitte. Ich hab gleich einen Termin.“ 😅\nGeht. Mit einem Prompt. Die Kurzfassung:\n\nErklär diese Instagram-Zahlen in 3 Sätzen für jemanden ohne Fachwissen: [Zahlen einfügen]. Was lief gut, was nicht?\n\nDer ganze Prompt steht im ersten Kommentar 👇 Alles in eckigen Klammern ersetzt du.\nSpeichern nicht vergessen 💡\n\n#socialmediamanager #socialmediamarketing #ki #prompt #promptderwoche",
   "kommentar": "Der ganze Prompt zum Kopieren 👇 Alles in eckigen Klammern ersetzt du.\n\nDu erklärst Instagram-Zahlen für [wer, z. B. die Inhaberin eines Cafés].\n\nHier sind die Zahlen für [Monat] und den Vormonat:\n[Zahlen einfügen]\n\nAufgabe:\n1. Erklär in 3 Sätzen, was gut lief und was nicht.\n2. Erklär jedes Fachwort beim ersten Mal in einem Halbsatz.\n3. Nenn eine Sache, die wir nächsten Monat ausprobieren.\n\nRegeln:\n- Keine Prozentzahlen ohne die echten Zahlen dahinter.\n- Kein „signifikant“, kein „Performance“.\n- Wenn zwei Zahlen sich widersprechen, sag das offen.\n\nSchreib so, dass man es in 30 Sekunden vorlesen kann.",
-  "fertig": false
+  "fertig": true
  },
  {
   "nr": 28,
