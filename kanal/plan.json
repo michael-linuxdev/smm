@@ -450,7 +450,7 @@
   "ordner": "reels/28-skill-mit-vorlage",
   "beschreibung": "Skill mit Vorlage: dein Redaktionsplan 💻\n\nSo geht’s:\n1. Deinen besten Plan als Datei nehmen\n2. In den Ordner des Skills legen\n3. In der Anleitung darauf verweisen\n4. Neue Pläne haben denselben Aufbau\n\nBeispiele schlagen Regeln: Eine gute Vorlage erklärt mehr als zehn Sätze Anleitung.\n\nWas soll Glimm als Nächstes am Rechner zeigen? Schreib es in die Kommentare.\n\n#socialmediamanager #socialmediamarketing #ki #prompt #claude #claudeamrechner",
   "kommentar": null,
-  "fertig": false
+  "fertig": true
  },
  {
   "nr": 29,
@@ -462,7 +462,7 @@
   "ordner": "reels/29-notion",
   "beschreibung": "Werkzeug-Check: Notion 🔍\nEin Ort für den ganzen Plan?\n\nWofür: Redaktionsplan und Ideen sammeln\nStark bei: passt sich deinem Ablauf an\nGrenze: der Aufbau kostet anfangs Zeit\n\nGlimms Urteil: Gut fürs Team. Allein reicht oft eine Tabelle.\n\nPreise und Funktionen ändern sich, schau vor dem Start beim Anbieter nach.\nWelches Werkzeug soll Glimm als Nächstes prüfen?\n\n#socialmediamanager #socialmediamarketing #ki #prompt #werkzeugcheck #socialmediatools",
   "kommentar": null,
-  "fertig": false
+  "fertig": true
  },
  {
   "nr": 10,
@@ -487,7 +487,7 @@
   "ordner": "reels/30-kritik-welle",
   "beschreibung": "Kundin, Samstag 23:48: „Unter dem Post brennt es!!! Was schreiben wir???“ 😅\nGeht. Mit einem Prompt. Die Kurzfassung:\n\nHier sind 20 kritische Kommentare: [einfügen]. Fass die 3 Hauptvorwürfe zusammen und schlag eine Stellungnahme vor.\n\nDer ganze Prompt steht im ersten Kommentar 👇 Alles in eckigen Klammern ersetzt du.\nSpeichern nicht vergessen 💡\n\n#socialmediamanager #socialmediamarketing #ki #prompt #promptderwoche",
   "kommentar": "Der ganze Prompt zum Kopieren 👇 Alles in eckigen Klammern ersetzt du.\n\nDu hilfst [Unternehmen] bei einer Welle kritischer Kommentare.\n\nDas ist passiert: [Fakten, nur Gesichertes]\nHier sind die Kommentare:\n[Kommentare einfügen]\n\nSo gehst du vor:\n1. Fass die 3 Hauptvorwürfe zusammen. Trenn berechtigte Kritik von Beleidigungen.\n2. Sag, was wir wissen und was noch nicht.\n3. Schlag eine Stellungnahme mit höchstens 80 Wörtern vor.\n\nRegeln für die Stellungnahme:\n- Kein „Wir bedauern, falls sich jemand …“.\n- Nichts versprechen, was oben nicht steht.\n- Ein klarer nächster Schritt mit Zeitpunkt.\n\nMarkiere jede Stelle, die ein Mensch mit Entscheidungsbefugnis prüfen muss. Das hier ist ein Entwurf, keine Freigabe.",
-  "fertig": false
+  "fertig": true
  },
  {
   "nr": 31,
@@ -499,7 +499,7 @@
   "ordner": "reels/31-skill-per-befehl",
   "beschreibung": "Ein Befehl, fünf Beiträge 💻\n\nSo geht’s:\n1. Skill „artikel-zu-posts“ anlegen\n2. Schritte festlegen: lesen, kürzen, 5 Formate\n3. In Claude Code /artikel-zu-posts tippen\n4. Artikel anhängen, fertig\n\nSkills von Hand starten: Mit Schrägstrich und Namen rufst du einen Skill direkt auf.\n\nWas soll Glimm als Nächstes am Rechner zeigen? Schreib es in die Kommentare.\n\n#socialmediamanager #socialmediamarketing #ki #prompt #claude #claudeamrechner",
   "kommentar": null,
-  "fertig": false
+  "fertig": true
  },
  {
   "nr": 32,
@@ -511,7 +511,7 @@
   "ordner": "reels/32-buffer",
   "beschreibung": "Werkzeug-Check: Buffer 🔍\nEinmal planen, überall posten?\n\nWofür: Beiträge für mehrere Netzwerke planen\nStark bei: einfach und schnell gelernt\nGrenze: Gratis-Fassung: wenige Kanäle\n\nGlimms Urteil: Die einfachste Planung für den Anfang.\n\nPreise und Funktionen ändern sich, schau vor dem Start beim Anbieter nach.\nWelches Werkzeug soll Glimm als Nächstes prüfen?\n\n#socialmediamanager #socialmediamarketing #ki #prompt #werkzeugcheck #socialmediatools",
   "kommentar": null,
-  "fertig": false
+  "fertig": true
  },
  {
   "nr": 11,
@@ -536,7 +536,7 @@
   "ordner": "reels/33-aktionsideen",
   "beschreibung": "Kunde, Montag 12:20: „Valentinstag ist in sechs Tagen! Uns fällt nichts ein. Dir?“ 😅\nGeht. Mit einem Prompt. Die Kurzfassung:\n\nGib mir 8 Ideen für eine Valentinstag-Aktion auf Instagram für [eine Kaffeerösterei]. Ohne Rabatt, umsetzbar in 3 Tagen.\n\nDer ganze Prompt steht im ersten Kommentar 👇 Alles in eckigen Klammern ersetzt du.\nSpeichern nicht vergessen 💡\n\n#socialmediamanager #socialmediamarketing #ki #prompt #promptderwoche",
   "kommentar": "Der ganze Prompt zum Kopieren 👇 Alles in eckigen Klammern ersetzt du.\n\nDu planst Aktionen für [Unternehmen, Branche] auf Instagram.\n\nAnlass: [z. B. Valentinstag am 14.2.]\n\nDas musst du wissen:\n- Was wir dafür haben: [Zeit, Geld, Leute]\n- Ziel: [z. B. mehr Kommentare, mehr Bestellungen]\n- Was nicht geht: [z. B. kein Rabatt, kein Gewinnspiel mit Kauf]\n\nAufgabe: Gib mir 8 Ideen. Je Idee: Name, Ablauf in 2 Sätzen, Aufwand (gering, mittel, hoch).\n\nRegeln:\n- Mindestens 3 Ideen passen auch zu Leuten ohne Partner.\n- Jede Idee ist in [3 Tagen] umsetzbar.\n\nSortiere nach Aufwand und sag, welche du nehmen würdest und warum. Weise mich darauf hin, wenn eine Idee ein Gewinnspiel ist und Teilnahmebedingungen braucht.",
-  "fertig": false
+  "fertig": true
  },
  {
   "nr": 34,
