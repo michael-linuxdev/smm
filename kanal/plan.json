@@ -266,7 +266,7 @@
   "ordner": "reels/17-notebooklm",
   "beschreibung": "Werkzeug-Check: NotebookLM 🔍\nLange PDFs? Lass sie dir erklären\n\nWofür: Fragen an deine eigenen Unterlagen\nStark bei: antwortet aus deinen Quellen\nGrenze: nur so gut wie das, was du hochlädst\n\nGlimms Urteil: Ideal für Markenleitfäden und Studien, die keiner lesen will.\n\nPreise und Funktionen ändern sich, schau vor dem Start beim Anbieter nach.\nWelches Werkzeug soll Glimm als Nächstes prüfen?\n\n#socialmediamanager #socialmediamarketing #ki #prompt #werkzeugcheck #socialmediatools",
   "kommentar": null,
-  "fertig": false
+  "fertig": true
  },
  {
   "nr": 6,
@@ -291,7 +291,7 @@
   "ordner": "reels/18-zielgruppe",
   "beschreibung": "Kunde, Montag 9:12: „Unsere Zielgruppe? Na, alle! Jeder trinkt doch Kaffee.“ 😅\nGeht. Mit einem Prompt. Die Kurzfassung:\n\nBeschreib 3 Kundentypen für [eine Kaffeerösterei mit Online-Shop]. Je Typ: Alltag, Problem, was sie überzeugt.\n\nDer ganze Prompt steht im ersten Kommentar 👇 Alles in eckigen Klammern ersetzt du.\nSpeichern nicht vergessen 💡\n\n#socialmediamanager #socialmediamarketing #ki #prompt #promptderwoche",
   "kommentar": "Der ganze Prompt zum Kopieren 👇 Alles in eckigen Klammern ersetzt du.\n\nDu berätst [Unternehmen, Branche] zu seiner Zielgruppe auf Instagram.\n\nDas weiß ich schon:\n- Was wir verkaufen: [Angebot, Preislage]\n- Wer bisher kauft: [was du weißt, auch Vermutungen]\n\nAufgabe: Beschreib 3 Kundentypen.\n\nJe Typ:\n- ein sprechender Name\n- Alltag in 2 Sätzen\n- das Problem, das wir lösen\n- was diesen Typ überzeugt\n- welches Format auf Instagram zu ihm passt\n\nRegeln:\n- Kennzeichne alles, was du vermutest, mit „Annahme:“.\n- Nenn je Typ eine Frage, mit der ich die Annahme bei echten Kunden prüfen kann.",
-  "fertig": false
+  "fertig": true
  },
  {
   "nr": 19,
@@ -303,7 +303,7 @@
   "ordner": "reels/19-code-ohne-terminal",
   "beschreibung": "Claude Code, ganz ohne Terminal 💻\n\nSo geht’s:\n1. Claude-App öffnen\n2. Auf den Reiter „Code“ gehen\n3. Einen Ordner auswählen\n4. Aufgabe in normalen Worten stellen\n\nWas ist anders als im Chat?: Im Chat bekommst du Text. Hier arbeitet Claude in deinen Dateien. Dafür brauchst du ein Bezahl-Abo.\n\nWas soll Glimm als Nächstes am Rechner zeigen? Schreib es in die Kommentare.\n\n#socialmediamanager #socialmediamarketing #ki #prompt #claude #claudeamrechner",
   "kommentar": null,
-  "fertig": false
+  "fertig": true
  },
  {
   "nr": 20,
@@ -315,7 +315,7 @@
   "ordner": "reels/20-perplexity",
   "beschreibung": "Werkzeug-Check: Perplexity 🔍\nRecherche mit Quellenangabe?\n\nWofür: schneller Einstieg in ein Thema\nStark bei: zeigt, woher die Antwort kommt\nGrenze: Quellen trotzdem selbst öffnen\n\nGlimms Urteil: Gut für den Anfang einer Recherche. Die Prüfung bleibt bei dir.\n\nPreise und Funktionen ändern sich, schau vor dem Start beim Anbieter nach.\nWelches Werkzeug soll Glimm als Nächstes prüfen?\n\n#socialmediamanager #socialmediamarketing #ki #prompt #werkzeugcheck #socialmediatools",
   "kommentar": null,
-  "fertig": false
+  "fertig": true
  },
  {
   "nr": 7,
@@ -340,7 +340,7 @@
   "ordner": "reels/21-drei-tonlagen",
   "beschreibung": "Kundin, Montag 14:40: „Der Text klingt zu steif. Mach’s lockerer. Aber seriös. Du weißt schon.“ 😅\nGeht. Mit einem Prompt. Die Kurzfassung:\n\nSchreib diesen Text in 3 Tonlagen um: [Text einfügen]. Sachlich, locker, frech. Inhalt bleibt gleich.\n\nDer ganze Prompt steht im ersten Kommentar 👇 Alles in eckigen Klammern ersetzt du.\nSpeichern nicht vergessen 💡\n\n#socialmediamanager #socialmediamarketing #ki #prompt #promptderwoche",
   "kommentar": "Der ganze Prompt zum Kopieren 👇 Alles in eckigen Klammern ersetzt du.\n\nDu schreibst für [Unternehmen, Branche] auf Instagram.\n\nHier ist ein Text:\n[Text einfügen]\n\nAufgabe: Schreib ihn in 3 Tonlagen um: sachlich, locker, frech.\n\nRegeln:\n- Der Inhalt bleibt in allen Fassungen gleich. Nichts weglassen, nichts dazuerfinden.\n- Gleiche Länge wie das Original, höchstens 10 Wörter mehr.\n- Per [Du oder Sie].\n- Keine Ausrufezeichen-Ketten, höchstens ein Emoji.\n\nSchreib unter jede Fassung in einem Satz, für welchen Anlass sie passt. Frag mich danach, welche Richtung stimmt, und verfeinere nur diese.",
-  "fertig": false
+  "fertig": true
  },
  {
   "nr": 22,
