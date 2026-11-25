@@ -54,7 +54,7 @@ function baueReel(D) {
       dauer = .3 + z.zeilen.length * (z.takt || .45) + 2.2;
     }
     if (z.typ === 'karte') { h += `<h1>${esc(z.titel)}</h1>` + (z.text ? `<div class="beitrag">${z.kopf ? `<small>${esc(z.kopf)}</small>` : ''}${marke(z.text)}</div>` : ''); dauer = z.dauer || (2.2 + (z.text || '').length / 40); }
-    if (z.typ === 'schluss') { h += `<h1 class="riesig">${esc(z.titel)}</h1>` + (z.zeile ? `<p class="unter">${esc(z.zeile)}</p>` : ''); dauer = 2.6; }
+    if (z.typ === 'schluss') { h += `<h1 class="riesig"${z.titel.length > 36 ? ' style="font-size:86px"' : ''}>${esc(z.titel)}</h1>` + (z.zeile ? `<p class="unter">${esc(z.zeile)}</p>` : ''); dauer = 2.6; }
     e.innerHTML = h; document.body.appendChild(e);
     const s = { ...z, e, licht, start, dauer }; start += dauer; return s;
   });
