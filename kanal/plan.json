@@ -242,7 +242,7 @@
   "ordner": "reels/15-jahresrueckblick",
   "beschreibung": "Kundin, Montag 11:30: „Schick mir bis morgen den Jahresbericht für Instagram. Mit Erkenntnissen!“ 😅\nGeht. Mit einem Prompt. Die Kurzfassung:\n\nHier sind die Zahlen von Instagram für [2026]: [Zahlen einfügen]. Nenn die 3 wichtigsten Erkenntnisse in einfachen Sätzen.\n\nDer ganze Prompt steht im ersten Kommentar 👇 Alles in eckigen Klammern ersetzt du.\nSpeichern nicht vergessen 💡\n\n#socialmediamanager #socialmediamarketing #ki #prompt #promptderwoche",
   "kommentar": "Der ganze Prompt zum Kopieren 👇 Alles in eckigen Klammern ersetzt du.\n\nDu wertest den Instagram-Kanal von [Unternehmen] aus.\n\nHier sind die Zahlen für [Zeitraum]:\n[Zahlen oder Tabelle einfügen]\n\nAufgabe: Schreib einen Bericht für [wer liest ihn, z. B. die Inhaberin].\n\nSo gehst du vor:\n1. Nenn die 3 wichtigsten Erkenntnisse in je einem Satz.\n2. Zeig zu jeder die Zahl, auf der sie beruht.\n3. Nenn 2 Dinge, die wir nächstes Jahr anders machen sollten.\n\nRegeln:\n- Keine Fachwörter ohne Erklärung.\n- Rechne nichts hoch, was nicht in den Zahlen steht.\n- Wenn eine Zahl fehlt oder seltsam aussieht, sag das.",
-  "fertig": false
+  "fertig": true
  },
  {
   "nr": 16,
@@ -254,7 +254,7 @@
   "ordner": "reels/16-zahlen-auswerten",
   "beschreibung": "Deine Insights als Datei? Claude liest sie 💻\n\nSo geht’s:\n1. Zahlen in der Meta Business Suite exportieren\n2. Datei in den Chat ziehen\n3. Fragen: Was lief gut, was nicht?\n4. Um ein Diagramm bitten\n\nErst prüfen, dann glauben: Lass dir zeigen, aus welchen Zeilen eine Aussage stammt.\n\nWas soll Glimm als Nächstes am Rechner zeigen? Schreib es in die Kommentare.\n\n#socialmediamanager #socialmediamarketing #ki #prompt #claude #claudeamrechner",
   "kommentar": null,
-  "fertig": false
+  "fertig": true
  },
  {
   "nr": 17,
